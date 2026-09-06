@@ -7,7 +7,7 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
-	root.size = Vector2i(2560, 1440)
+	root.size = Vector2i(1920, 1080)
 	var scene: Node = load("res://scenes/main/main.tscn").instantiate()
 	root.add_child(scene)
 	await process_frame
@@ -19,9 +19,7 @@ func _run() -> void:
 	_check(manager.startup_error.is_empty(), "scene initializes")
 	manager._process(10)
 	_check(manager.simulation.state.time_usec == 0, "layout stage stays at time zero")
-	_key(KEY_SPACE)
-	_check(not manager.simulation.clock.paused, "Space in preparation cannot pre-pause battle")
-	_check(ProjectSettings.get_setting("display/window/size/viewport_width") == 2560 and ProjectSettings.get_setting("display/window/size/viewport_height") == 1440, "2K design resolution")
+	_check(ProjectSettings.get_setting("display/window/size/viewport_width") == 1920 and ProjectSettings.get_setting("display/window/size/viewport_height") == 1080, "1080p design resolution")
 	var drag := bag.drag_data_at(bag.cell_center(Vector2i(0, 1)))
 	_check(drag["offset"] == Vector2i(0, 1), "drag keeps grab offset from sword lower cell")
 	_check(bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), drag), "legal bottom-right sword drop")
@@ -53,8 +51,8 @@ func _run() -> void:
 	_check(manager.simulation.clock.speed_multiplier == 0.5, "F1 maps to half speed")
 	_key(KEY_F2)
 	_check(manager.simulation.clock.speed_multiplier == 1.0, "F2 maps to normal speed")
-	_check(_press(ui, "开始战斗"), "start button exists")
-	_check(manager.inventory.locked and manager.simulation.state.phase == GameState.Phase.BATTLE, "start locks layout")
+	_key(KEY_SPACE)
+	_check(manager.inventory.locked and manager.simulation.state.phase == GameState.Phase.BATTLE, "Space starts battle and locks layout")
 	_check(not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO), "cannot move during battle")
 	_check(bag.drag_data_at(bag.cell_center(Vector2i(3, 2))).is_empty(), "battle disables drag")
 	manager._process(1.0)
@@ -88,11 +86,14 @@ func _run() -> void:
 	_check(not manager.inventory.locked and manager.inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i(3, 2), "reprepare preserves layout and unlocks")
 	_check(not bag._can_drop_data(bag.cell_center(Vector2i.ZERO), armor_drag), "stale drag payload rejected after restart")
 	_check(ui._log_label.text.contains("布阵中") and not ui._log_label.text.contains("造成"), "reprepare clears log")
+	_check(_press(ui, "开始战斗  [空格]"), "start button still starts battle")
+	_check(manager.simulation.state.phase == GameState.Phase.BATTLE, "start button enters battle phase")
+	_press(ui, "重新布阵")
 	manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO)
 	manager.move_item(GameManager.ARMOR_INSTANCE, Vector2i(1, 1))
 	bag.reset_interaction()
 	if DisplayServer.get_name() != "headless":
-		for dimensions in [Vector2i(2560, 1440), Vector2i(1280, 720), Vector2i(1280, 800), Vector2i(1720, 720)]:
+		for dimensions in [Vector2i(1920, 1080), Vector2i(1280, 720), Vector2i(1280, 800), Vector2i(1720, 720)]:
 			root.size = dimensions
 			await process_frame
 			await process_frame
@@ -100,7 +101,7 @@ func _run() -> void:
 			var path := "res://artifacts/backpack_%dx%d.png" % [dimensions.x, dimensions.y]
 			_check(root.get_texture().get_image().save_png(path) == OK, "rendered screenshot " + path)
 			_check(ui.get_rect().size.x <= root.get_visible_rect().size.x + 1, "UI fits viewport width")
-		root.size = Vector2i(2560, 1440)
+		root.size = Vector2i(1920, 1080)
 		manager.start_battle()
 		manager._process(12.5)
 		_key(KEY_SPACE)

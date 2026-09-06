@@ -14,7 +14,7 @@ var _generation: int = 0
 var _textures: Dictionary = {}
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(660, 660)
+	custom_minimum_size = Vector2(495, 495)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	resized.connect(queue_redraw)
 	mouse_exited.connect(func(): _hover_cell = Vector2i(-100, -100); queue_redraw())
@@ -38,7 +38,7 @@ func reset_interaction() -> void:
 	queue_redraw()
 
 func grid_rect() -> Rect2:
-	var side := minf(size.x, size.y) - 24.0
+	var side := minf(size.x, size.y) - 18.0
 	return Rect2((size - Vector2.ONE * side) * 0.5, Vector2.ONE * side)
 
 func cell_center(cell: Vector2i) -> Vector2:
@@ -54,31 +54,31 @@ func _draw() -> void:
 		return
 	var area := grid_rect()
 	var step := area.size.x / 4.0
-	draw_rect(area.grow(9), Color("a8a579"), false, 2)
+	draw_rect(area.grow(7), Color("a8a579"), false, 2)
 	for y in 4:
 		for x in 4:
-			var rect := Rect2(area.position + Vector2(x, y) * step, Vector2.ONE * step).grow(-3)
+			var rect := Rect2(area.position + Vector2(x, y) * step, Vector2.ONE * step).grow(-2)
 			draw_rect(rect, Color("263b3e"))
 			draw_rect(rect, Color("506160"), false, 1)
 			draw_circle(rect.get_center(), 2, Color("708079", 0.4))
 	for instance in manager.inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])
-		var rect := Rect2(area.position + Vector2(instance["cell"]) * step, Vector2(item.grid_size) * step).grow(-5)
+		var rect := Rect2(area.position + Vector2(instance["cell"]) * step, Vector2(item.grid_size) * step).grow(-4)
 		var active: bool = instance["instance_id"] == selected_instance
 		draw_rect(rect, Color("394943") if item.type == "armor" else Color("4a3c30"))
 		draw_rect(rect, Color("e5c181") if active else Color("a99b71"), false, 3 if active else 2)
-		var icon_rect := Rect2(rect.position + Vector2(12, 10), rect.size - Vector2(24, 50))
+		var icon_rect := Rect2(rect.position + Vector2(9, 8), rect.size - Vector2(18, 38))
 		if _textures.has(item.id):
 			var texture: Texture2D = _textures[item.id]
 			var icon_size := texture.get_size() * minf(icon_rect.size.x / texture.get_width(), icon_rect.size.y / texture.get_height())
 			draw_texture_rect(texture, Rect2(icon_rect.get_center() - icon_size * 0.5, icon_size), false)
-		draw_rect(Rect2(rect.position + Vector2(0, rect.size.y - 40), Vector2(rect.size.x, 40)), Color("101b20", 0.85))
-		draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 12), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 24, Color("e4d8b7"))
+		draw_rect(Rect2(rect.position + Vector2(0, rect.size.y - 30), Vector2(rect.size.x, 30)), Color("101b20", 0.85))
+		draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 9), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 18, Color("e4d8b7"))
 	if not _drag_instance.is_empty() and _hover_cell.x > -100:
 		var instance := manager.inventory.get_instance(_drag_instance)
 		if not instance.is_empty():
 			var dimensions := manager.registry.get_item(instance["item_id"]).grid_size
-			var preview := Rect2(area.position + Vector2(_hover_cell) * step, Vector2(dimensions) * step).grow(-4)
+			var preview := Rect2(area.position + Vector2(_hover_cell) * step, Vector2(dimensions) * step).grow(-3)
 			var tint := Color("7ed6ad") if _hover_valid else Color("ee857a")
 			draw_rect(preview, Color(tint, 0.22))
 			draw_rect(preview, tint, false, 4)
@@ -126,7 +126,7 @@ func _get_drag_data(point: Vector2) -> Variant:
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	preview.size = Vector2(item.grid_size) * grid_rect().size.x / 4.0
 	preview.modulate.a = 0.7
-	preview.position = -Vector2(_grab_offset) * grid_rect().size.x / 4.0 - Vector2.ONE * 30
+	preview.position = -Vector2(_grab_offset) * grid_rect().size.x / 4.0 - Vector2.ONE * 22
 	var holder := Control.new()
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	holder.add_child(preview)

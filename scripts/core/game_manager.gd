@@ -71,7 +71,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo():
 		return
 	if event.is_action_pressed("battle_pause"):
-		toggle_pause()
+		if simulation != null and simulation.state.phase == GameState.Phase.PREPARATION:
+			start_battle()
+		else:
+			toggle_pause()
 	elif event.is_action_pressed("speed_half"):
 		set_speed(0.5)
 	elif event.is_action_pressed("speed_normal"):

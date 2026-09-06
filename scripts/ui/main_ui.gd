@@ -44,7 +44,7 @@ func _ready() -> void:
 
 func _build_ui() -> void:
 	var ui_theme := Theme.new()
-	ui_theme.default_font_size = 28
+	ui_theme.default_font_size = 21
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif"])
 	ui_theme.default_font = font
@@ -61,105 +61,105 @@ func _build_ui() -> void:
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for edge in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + edge, 36)
+		margin.add_theme_constant_override("margin_" + edge, 27)
 	add_child(margin)
 	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 24)
+	root.add_theme_constant_override("separation", 18)
 	margin.add_child(root)
 	var header := HBoxContainer.new()
-	header.add_theme_constant_override("separation", 32)
+	header.add_theme_constant_override("separation", 24)
 	root.add_child(header)
-	_label(header, "修仙之路", 48, GOLD)
-	var identity := _column(header, 8)
-	_label(identity, "无名修士   /   炼气初期", 27, INK)
-	_label(identity, "演武场 · 初试锋芒", 23, MUTED)
+	_label(header, "修仙之路", 36, GOLD)
+	var identity := _column(header, 6)
+	_label(identity, "无名修士   /   炼气初期", 20, INK)
+	_label(identity, "演武场 · 初试锋芒", 17, MUTED)
 	_spacer(header)
-	_label(header, "法器构筑    /    V0.2", 25, MUTED)
+	_label(header, "法器构筑    /    V0.2", 19, MUTED)
 	root.add_child(HSeparator.new())
 	var clock_row := HBoxContainer.new()
 	root.add_child(clock_row)
-	_phase_label = _label(clock_row, "战前准备", 28, JADE)
+	_phase_label = _label(clock_row, "战前准备", 21, JADE)
 	_spacer(clock_row)
-	_time = _label(clock_row, "00:00.00", 42, GOLD)
+	_time = _label(clock_row, "00:00.00", 32, GOLD)
 	_spacer(clock_row)
-	_label(clock_row, "演武木桩 · 无反击", 27, MUTED)
+	_label(clock_row, "演武木桩 · 无反击", 20, MUTED)
 	var arena := HBoxContainer.new()
 	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	arena.add_theme_constant_override("separation", 40)
+	arena.add_theme_constant_override("separation", 30)
 	root.add_child(arena)
-	var left := _column(arena, 22)
+	var left := _column(arena, 16)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var player_header := HBoxContainer.new()
-	player_header.add_theme_constant_override("separation", 32)
+	player_header.add_theme_constant_override("separation", 24)
 	left.add_child(player_header)
-	_portrait(player_header, "res://assets/images/characters/cultivator.svg", Vector2(230, 250))
+	_portrait(player_header, "res://assets/images/characters/cultivator.svg", Vector2(172, 188))
 	var player_info := _column(player_header)
 	player_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_label(player_info, "我方修士", 38, INK)
-	_label(player_info, "炼气初期", 28, GOLD)
-	_player_hp = _label(player_info, "气血  100 / 100", 26, JADE)
+	_label(player_info, "我方修士", 29, INK)
+	_label(player_info, "炼气初期", 21, GOLD)
+	_player_hp = _label(player_info, "气血  100 / 100", 20, JADE)
 	_bar(player_info, JADE).value = 100
-	_label(player_info, "法器自动战斗", 24, MUTED)
+	_label(player_info, "法器自动战斗", 18, MUTED)
 	var bag_heading := HBoxContainer.new()
 	left.add_child(bag_heading)
-	_label(bag_heading, "储物袋", 34, GOLD)
+	_label(bag_heading, "储物袋", 26, GOLD)
 	_spacer(bag_heading)
-	_bag_usage = _label(bag_heading, "", 25, MUTED)
+	_bag_usage = _label(bag_heading, "", 19, MUTED)
 	var bag_row := HBoxContainer.new()
-	bag_row.add_theme_constant_override("separation", 24)
+	bag_row.add_theme_constant_override("separation", 18)
 	left.add_child(bag_row)
 	inventory_view = InventoryView.new()
 	inventory_view.name = "Backpack"
 	bag_row.add_child(inventory_view)
-	var description := _column(bag_row, 20)
-	description.custom_minimum_size.x = 290
+	var description := _column(bag_row, 15)
+	description.custom_minimum_size.x = 218
 	description.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_label(description, "装备详情", 27, JADE)
-	_selection = _label(description, "", 25, INK)
+	_label(description, "装备详情", 20, JADE)
+	_selection = _label(description, "", 19, INK)
 	_selection.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_selection.custom_minimum_size.y = 260
-	_label(description, "法器轮转", 26, GOLD)
-	_cooldown = _label(description, "待开战", 25, MUTED)
+	_selection.custom_minimum_size.y = 195
+	_label(description, "法器轮转", 20, GOLD)
+	_cooldown = _label(description, "待开战", 19, MUTED)
 	_cooldown_bar = _bar(description, GOLD)
-	var rules := _label(description, "拖动装备调整位置\n绿色：可以放置\n红色：无法放置\n\n也可点选装备后\n点击空格放置", 23, MUTED)
+	var rules := _label(description, "拖动装备调整位置\n绿色：可以放置\n红色：无法放置\n\n也可点选装备后\n点击空白格放置", 17, MUTED)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_layout_hint = _label(left, "拖动玄火剑和铁甲，安排你的背包。", 25, JADE)
-	var middle := _column(arena, 24)
-	middle.custom_minimum_size.x = 270
+	_layout_hint = _label(left, "拖动玄火剑和铁甲，安排你的背包。", 19, JADE)
+	var middle := _column(arena, 18)
+	middle.custom_minimum_size.x = 203
 	_spacer(middle, true)
-	var duel := _label(middle, "对 阵", 36, GOLD)
+	var duel := _label(middle, "对 阵", 27, GOLD)
 	duel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_start = _button(middle, "开始战斗", manager.start_battle)
-	_start.custom_minimum_size.y = 82
+	_start = _button(middle, "开始战斗  [空格]", manager.start_battle)
+	_start.custom_minimum_size.y = 62
 	_start.add_theme_stylebox_override("normal", _box(Color("625134"), GOLD))
 	_pause = _button(middle, "暂停  [空格]", manager.toggle_pause)
 	_button(middle, "重新布阵", manager.restart)
 	_spacer(middle, true)
-	var right := _column(arena, 22)
+	var right := _column(arena, 16)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var enemy_title := _label(right, "敌 方", 28, RED)
+	var enemy_title := _label(right, "敌 方", 21, RED)
 	enemy_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var portrait_center := CenterContainer.new()
 	right.add_child(portrait_center)
-	_portrait(portrait_center, "res://assets/images/enemies/dummy.svg", Vector2(400, 390))
-	var enemy_name := _label(right, "演武木桩", 40, INK)
+	_portrait(portrait_center, "res://assets/images/enemies/dummy.svg", Vector2(300, 293))
+	var enemy_name := _label(right, "演武木桩", 30, INK)
 	enemy_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_hp = _label(right, "", 28, RED)
+	_hp = _label(right, "", 21, RED)
 	_hp_bar = _bar(right, RED)
-	_status = _label(right, "等待开战", 27, GOLD)
-	_stats = _label(right, "", 25, MUTED)
+	_status = _label(right, "等待开战", 20, GOLD)
+	_stats = _label(right, "", 19, MUTED)
 	var log_panel := _panel(right)
-	_label(log_panel, "战斗记录", 27, INK)
+	_label(log_panel, "战斗记录", 20, INK)
 	_log_label = RichTextLabel.new()
-	_log_label.custom_minimum_size = Vector2(0, 220)
+	_log_label.custom_minimum_size = Vector2(0, 165)
 	_log_label.scroll_following = true
-	_log_label.add_theme_font_size_override("normal_font_size", 24)
+	_log_label.add_theme_font_size_override("normal_font_size", 18)
 	_log_label.add_theme_color_override("default_color", MUTED)
 	log_panel.add_child(_log_label)
 	var footer := HBoxContainer.new()
-	footer.add_theme_constant_override("separation", 18)
+	footer.add_theme_constant_override("separation", 14)
 	root.add_child(footer)
-	_label(footer, "战斗速度", 26, MUTED)
+	_label(footer, "战斗速度", 20, MUTED)
 	var captions := ["F1  半速 0.5×", "F2  正常 1×", "F3  2×"]
 	for index in SimulationClock.SPEEDS.size():
 		var speed: float = SimulationClock.SPEEDS[index]
@@ -167,7 +167,7 @@ func _build_ui() -> void:
 		button.toggle_mode = true
 		_speed_buttons[speed] = button
 	_spacer(footer)
-	_label(footer, "空格  暂停 / 恢复    ·    战斗中锁定背包", 25, MUTED)
+	_label(footer, "空格  开战 / 暂停 / 恢复    ·    战斗中锁定背包", 19, MUTED)
 
 func _process(_delta: float) -> void:
 	_refresh()
@@ -220,7 +220,7 @@ func _show_item(item_id: String) -> void:
 func _on_restart() -> void:
 	_last_revision = -1
 	_battle_log.reset()
-	_log_label.text = "布阵中。调整装备后，点击「开始战斗」。"
+	_log_label.text = "布阵中。调整装备后，按空格或点击「开始战斗」。"
 	_layout_hint.text = "拖动玄火剑和铁甲，安排你的背包。"
 	_bag_usage.text = "4 × 4   ·   已用 %d / 16 格" % manager.inventory.occupied_cells()
 	_show_item(GameManager.ITEM_ID)
@@ -242,7 +242,7 @@ func _label(parent: Node, value: String, font_size: int, color: Color) -> Label:
 	parent.add_child(label)
 	return label
 
-func _column(parent: Node, gap: int = 16) -> VBoxContainer:
+func _column(parent: Node, gap: int = 12) -> VBoxContainer:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", gap)
 	parent.add_child(column)
@@ -269,27 +269,27 @@ func _button(parent: Node, value: String, action: Callable) -> Button:
 	button.text = value
 	button.focus_mode = Control.FOCUS_NONE
 	button.disabled = not manager.startup_error.is_empty()
-	button.custom_minimum_size = Vector2(140, 66)
+	button.custom_minimum_size = Vector2(105, 50)
 	button.pressed.connect(action)
 	parent.add_child(button)
 	return button
 
 func _panel(parent: Node) -> VBoxContainer:
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _box(Color("14242a", 0.9), Color("4a5b58"), 22))
+	panel.add_theme_stylebox_override("panel", _box(Color("14242a", 0.9), Color("4a5b58"), 16))
 	parent.add_child(panel)
 	return _column(panel)
 
 func _bar(parent: Node, color: Color) -> ProgressBar:
 	var bar := ProgressBar.new()
-	bar.custom_minimum_size.y = 20
+	bar.custom_minimum_size.y = 15
 	bar.show_percentage = false
 	bar.add_theme_stylebox_override("background", _box(Color("0c191e"), Color.TRANSPARENT, 0))
 	bar.add_theme_stylebox_override("fill", _box(color, Color.TRANSPARENT, 0))
 	parent.add_child(bar)
 	return bar
 
-func _box(color: Color, border: Color, padding: int = 16) -> StyleBoxFlat:
+func _box(color: Color, border: Color, padding: int = 12) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = color
 	box.border_color = border
