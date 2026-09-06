@@ -28,9 +28,11 @@ func get_character(id: String) -> Dictionary:
 func register_character(raw: Dictionary) -> bool:
 	var error := _validate_identity(raw)
 	if error.is_empty():
-		for stat in ["max_hp", "max_stamina", "max_spirit"]:
-			if not _positive_integer(raw.get(stat)):
-				error = stat + " must be a positive integer"
+		if not _positive_integer(raw.get("max_hp")):
+			error = "max_hp must be a positive integer"
+		for stat in ["max_stamina", "max_spirit"]:
+			if not _nonnegative_integer(raw.get(stat)):
+				error = stat + " must be a nonnegative integer"
 		for field in ["realm", "portrait"]:
 			if not raw.get(field) is String or str(raw[field]).strip_edges().is_empty():
 				error = field + " must be a nonempty string"
@@ -68,6 +70,8 @@ func register_item(raw: Dictionary) -> bool:
 					error = "size dimensions must be integers from 1 to 4"
 	if error.is_empty() and not raw.get("icon", "") is String:
 		error = "icon must be a resource path string"
+	if error.is_empty() and not _nonnegative_integer(raw.get("stamina_cost", 0)):
+		error = "stamina_cost must be a nonnegative integer"
 	if error.is_empty():
 		for effect in raw["effects"]:
 			if not effect is Dictionary or not EffectSystem.validate_definition(effect):
@@ -82,6 +86,12 @@ func register_enemy(raw: Dictionary) -> bool:
 	var error := _validate_identity(raw)
 	if error.is_empty() and not _positive_integer(raw.get("max_hp")):
 		error = "max_hp must be a positive integer <= 1 billion"
+	if error.is_empty():
+		for stat in ["max_stamina", "max_spirit"]:
+			if not _nonnegative_integer(raw.get(stat, 0)):
+				error = stat + " must be a nonnegative integer"
+		if not raw.get("portrait", "") is String:
+			error = "portrait must be a resource path string"
 	if not error.is_empty():
 		return _reject(raw, error)
 	_enemies[raw["id"]] = raw.duplicate(true)
@@ -104,6 +114,9 @@ static func _positive_number(value: Variant) -> bool:
 
 static func _positive_integer(value: Variant) -> bool:
 	return _positive_number(value) and float(value) <= 1_000_000_000.0 and float(value) == floor(float(value))
+
+static func _nonnegative_integer(value: Variant) -> bool:
+	return (value is int or value is float) and is_finite(float(value)) and float(value) >= 0 and float(value) <= 1_000_000_000.0 and float(value) == floor(float(value))
 
 func _reject(raw: Dictionary, message: String) -> bool:
 	errors.append("%s: %s" % [str(raw.get("id", "<missing id>")), message])

@@ -1,92 +1,63 @@
 # 修仙之路 · Path of Immortals
 
-Godot 4.7.2 / GDScript / Mobile Renderer 的修仙构筑原型。当前版本 **V0.3：三人队伍、独立背包与轮转揭示**。
+Godot 4.7.2 / GDScript / Mobile Renderer 的修仙构筑原型。当前 **V0.4：阵型、双方战斗与体力**。
 
-接手开发先读 [项目开发进度](PROJECT_PROGRESS.md) 和 [工程规则](AGENTS.md)。最新成果、验证与限制统一维护在进度文档中。
+接手先读 [项目开发进度](PROJECT_PROGRESS.md) 和 [工程规则](AGENTS.md)。每轮遇到新规则歧义先向用户确认再修改。
 
 ## 运行与操作
 
-Godot 打开 `project.godot`，按 **F5**。主场景是 `scenes/main/main.tscn`。
+Godot 打开 project.godot 后按 F5。设计及默认窗口1920×1080，最小1280×720。
 
-1. 启动进入布阵阶段，游戏时间为零。左侧为**辰宇（炼气初期）、角色2、角色3**，每人使用独立大头像及气血/体力/灵力组合；选中组合按 100% 显示，其余按 66% 显示。每人有独立 **4×4** 背包。右侧使用怪物头像表示测试木桩。
-2. 玄火剑固定占 **1×2** 格，铁甲占 **2×2** 格。鼠标左键拖动，绿色表示可放，红色表示越界或重叠；非法落点保留原位置。不旋转、不交换或丢弃装备。
-3. 也可点击装备选中，再点击空格，以该空格为装备左上角放置。
-4. 布阵或战斗暂停时，点击角色卡片或小背包切换选中角色。选中者的背包放大，其他角色按原顺序在右上、右下显示；战斗运行中不能切换。
-5. 按 **空格**或点击**开始战斗**后锁定三人的背包。三把玄火剑各自每 3 游戏秒造成 10 伤害；100 HP 木桩在第 12 游戏秒被击破。
-6. 战斗中再按**空格**暂停/恢复；**F1** = 0.5×，**F2** = 1×，**F3** = 2×。默认 1×，1 真实秒 = 1 游戏秒。每把剑半速每 6 真实秒攻击，正常每 3 秒攻击，2× 每 1.5 秒攻击。
-7. 轮转时，武器图标上的虚线从下往上移动，线上方为灰色蒙版，下方为原图；发动后重新轮转，暂停冻结，切换角色不重置进度。
-8. 暂停时可以切换角色并移动其背包中的剑和甲；恢复战斗后重新锁定，冷却保持原进度。**重新布阵**保留三人布局和选中角色，重置属性、时间、战斗记录及速度（1×），等待再次开战。
+1. 启动进入布阵。默认辰宇在右侧前排，角色2/3在左侧后排。野狗是单人阵型，头像和背包在敌方区域居中。
+2. 辰宇背包固定正常大小，队友固定缩小；所有我方背包都能直接拖放。剑1×2、铁甲2×2，不旋转、不跨人交换；非法落点回到原处。敌方背包只读。
+3. 三人布阵时可点击阵型按钮切换“前1后2”和“前2后1”；两人只有前1后1，一人不分前后排。当前没有增减队员的操作入口，代码和测试支持1/2/3人。
+4. 空格或开始按钮开战。运行中和暂停中都锁定背包与阵型；点击人物不改变其大小。
+5. 空格暂停/恢复；F1/F2/F3分别为0.5/1/2倍速，默认1倍速。计时严格水平居中，速度按钮在右侧。
+6. 重新布阵保留装备格位和阵型，恢复双方资源、清空日志、时间归零、速度恢复1倍，再次允许整理背包。
 
-人物区域与背包区域外边界对齐，选中人物在左，另外两人上下堆叠在右；名字与境界按示意蓝框放在头像旁、属性条上方。小背包分别对齐大背包的顶边和底边。计时严格水平居中，速度控制位于计时右侧。属性色为生命 #AF3549、体力 #8CD259、灵力 #5598EB（原输入 `5598eb6` 非标准 7 位，暂按前六位处理）。
+## 战斗规则
 
-结束时冻结在实际击破时刻。三人先使用相同的剑和甲作为测试配置，气血/体力/灵力均为 100/100，尚无消耗或恢复规则。铁甲仅实现占格和摆放；木桩不会反击。本轮先改我方，敌方三人尚未实现。
+| 内容 | 气血 / 体力 / 灵力 | 装备 |
+| --- | --- | --- |
+| 我方三人 | 各100 / 100 / 100 | 各一把玄火剑及一件铁甲 |
+| 野狗 | 100 / 100 / 0 | 一件爪子 |
 
-## 目录与架构
+玄火剑每3游戏秒造成10伤害，爪子每3游戏秒造成5伤害。每次发动扣攻击者5体力；不足5不发动，不自动恢复。铁甲暂时仅占格，无防御效果。
 
-```text
-assets/images/             原创 SVG 占位图：角色、木桩、剑、甲
-assets/backgroundtest.png 用户提供的战斗背景
-assets/weapontest.webp     用户提供的测试武器图片
-assets/portrait1-3.webp    用户提供的三名角色头像
-assets/guaiwu.webp         用户提供的敌人头像
-data/items/                道具 JSON（尺寸、图标、效果）
-data/enemies/              敌人 JSON
-data/characters/           角色 JSON（名字、境界、三项资源上限、肖像）
-scenes/main/main.tscn      入口场景：Manager + UI
-scripts/core/             游戏状态、角色/背包状态、管理入口、日志
-scripts/data/             道具静态定义
-scripts/registries/       内容读取、校验、稳定 ID 查询
-scripts/simulation/       时钟、稳定事件队列、战斗模拟
-scripts/systems/          通用 damage 效果接口
-scripts/ui/               属性卡片、背包切换/拖放、轮转蒙版、背景贴图
-scripts/presentation/     有长度上限的战斗记录
-tests/                    逻辑、输入联动与渲染检查
-docs/                     设计审查和历史验证记录
-artifacts/                本地测试日志与截图（忽略，不上传）
-```
+目标优先前排存活者，同排从上到下，前排全灭后打后排。阵亡角色停止发动装备。敌方全灭胜利，我方全灭失败；双方均无法继续发动装备时平局，单方体力耗尽不阻止另一方继续攻击。
 
-`JSON → ContentRegistry → BattleSimulation / PartyMemberState / InventoryState → UI`
+同刻事件固定按我方成员/装备顺序、再敌方顺序逐次处理；致死后不会同刻反击。默认配置在第12游戏秒胜利，辰宇剩85气血；我方发动10次，野狗发动3次。
 
-- 模拟与背包状态继承 `RefCounted`，不依赖场景或 UI。`GameManager` 负责时间桥接、战斗阶段和操作命令。
-- 背包保存实例 ID、内容 ID、左上角格坐标；尺寸从 Registry 读取。`InventoryView` 不持有权威布局，只负责坐标换算、预览和命令转发。
-- `PREPARATION / BATTLE / FINISHED` 明确区分布阵、战斗和完成；开始战斗才排入首个攻击事件。
-- 时钟使用整数微秒并保留换算余数，速度为浮点数，支持 0.5×。不改变 `Engine.time_scale`。
-- 最小堆按到期微秒、插入顺序排程；循环从上一次到期时间续排，长帧补算不丢事件。
-- 多个主动装备按稳定实例 ID 分别保存下一次发动时间和次数；日志带所属角色。被选中与否不参与战斗计算。
-- UI 读取状态并批量消费表现事件；血量和统计按 revision 更新。图标从内容路径加载并缓存。
+武器轮转时虚线自下而上移动，上方灰色蒙版、下方原图。暂停冻结、发动后重置。体力不足或角色阵亡时停止轮转。
 
-设计取舍见 [V0.3 设计审查](docs/v0.3-design-review.md)，旧版设计保留在 docs 中。
+## 架构与内容
 
-## 数据约定
+`JSON → ContentRegistry → FormationRules / PartyMemberState / InventoryState → BattleSimulation / GameState → UI`
 
-- 玄火剑稳定 ID：`base.test.fire_sword`，原有 ID 保持不变。
-- 铁甲稳定 ID：`base.armor.iron_armor`。
-- 木桩稳定 ID：`base.test.dummy`。
-- 角色稳定 ID：`base.character.chen_yu`、`base.character.role_2`、`base.character.role_3`。`max_hp / max_stamina / max_spirit` 为正整数，`realm / portrait` 为非空字符串。
-- 道具 `size: [宽, 高]` 两维均为 1–4 的整数；`icon` 为资源路径；`tags` 为字符串数组。
-- 主动道具：`effects` 非空，冷却范围 0.001–86400 秒，当前只支持 `on_activate / damage`，伤害为正整数。
-- 无主动效果装备：`effects: []`、`cooldown: 0`，不进入攻击队列。
-- 修改 JSON 后重新运行生效。未知效果、重复 ID、非法尺寸和数值会在启动时被拒绝。
+- 模拟、队伍、阵型及背包状态均不依赖UI或系统时间。速度只缩放模拟时钟，不改 Engine.time_scale。
+- 按稳定实例ID排程，最小堆以到期时间及插入顺序排序；长帧补算，每次发动重新按阵型选择目标。
+- GameState持有双方权威成员引用、阵型、装备运行状态、结果和阵营统计。UI只读取数值和发命令。
+- TeamPanel复用双方界面；主角大小固定，成员数量和阵型决定摆放。InventoryView显式绑定阵营/成员，缩小背包也能在布阵时操作。
+- 角色/道具/敌人来自 data/ 下的JSON；stamina_cost为非负整数，主动装备有正冷却；体力/灵力上限允许0，气血上限须大于0。
+
+稳定ID：玄火剑 base.test.fire_sword、铁甲 base.armor.iron_armor、爪子 base.weapon.dog_claw、野狗 base.enemy.wild_dog；角色为 base.character.chen_yu / role_2 / role_3。旧木桩 base.test.dummy 留作历史内容。
+
+素材：assets/ 下用户提供的背景、武器、portrait1/2/3.webp和guaiwu.webp；assets/images/items/dog_claw.svg为原创爪子占位图。当前中文依赖系统字体。
 
 ## 验证
-
-在项目根目录的 PowerShell 执行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tests\run.ps1
 powershell -ExecutionPolicy Bypass -File .\tests\run.ps1 -Render
-# 本机引擎路径不同时指定：
-powershell -ExecutionPolicy Bypass -File .\tests\run.ps1 -GodotPath 'D:\Godot\Godot.exe'
+# 引擎路径不同时添加 -GodotPath 'D:\Godot\Godot.exe'
 ```
 
-目前通过 **1078 项逻辑检查、97 项无窗口 UI 检查、122 项真实渲染场景检查**。无窗口 Godot 通过 Input.parse_input_event 验证三名角色各自的剑和甲在布阵、暂停时均能拖动。还验证角色切换、大小排序、边界对齐、计时居中、快捷键及多武器轮转保持。渲染模式检验拖放回调、键盘和画面，不操纵用户的系统鼠标。详情见 [V0.3 验证记录](docs/v0.3-validation.md)。
+通过1023项纯逻辑、109项无窗口UI、164项真实渲染检查及导入/启动验证。包括伤害/体力、阵型优先、阵亡、胜负/平局、倍速等价、所有我方背包原生拖放、锁定/重开、1/2/3人及两阵型排版。
 
-设计及默认窗口分辨率为 **1920×1080**，最小 1280×720，使用容器布局与 `canvas_items` 缩放。已检查 1080p、720p、16:10、超宽屏和三种选中角色的暂停画面。中文使用系统字体，尚未打包可分发字体。背景、武器、角色和敌人使用用户提供图片；铁甲仍为 SVG 占位图，没有正式动画或音效。测试截图在忽略的 artifacts/ 中。
+原生鼠标拖放在无窗口模式使用虚拟指针；隐藏渲染窗口检查回调、键盘和画面，不移动用户系统鼠标。截图和日志位于忽略的 artifacts/；详见 [V0.4验证](docs/v0.4-validation.md)。
 
-## 版本管理与后续范围
+## 范围
 
-仓库：[SimonZhangM/path-of-immortals](https://github.com/SimonZhangM/path-of-immortals)，主分支 `main`。忽略 `.godot/`、测试产物和构建目录。
+仓库：[SimonZhangM/path-of-immortals](https://github.com/SimonZhangM/path-of-immortals)，main分支。
 
-尚未实现敌方三人、反击、目标选择、铁甲防御效果、资源消耗、旋转、相邻触发、成长、存档、MOD 或 Steam。下一步可继续敌方展示并讨论最小攻防规则；新增规则与数值需用户确定。
-
-尚未导出发行包。未来导出时需显式包含 `data/**/*.json`，并在导出产物中验证加载。
+未做队员增减操作、铁甲防御、体力恢复、技能/法术、范围伤害、相邻触发、成长、存档、MOD、Steam或联网。后续新增规则先确认。未导出发行包；未来导出需包含 data/**/*.json 并验证加载。

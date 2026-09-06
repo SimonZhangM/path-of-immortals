@@ -6,6 +6,7 @@ var display_name: String
 var type: String
 var tags: Array
 var cooldown_usec: int
+var stamina_cost: int
 var effects: Array
 var grid_size: Vector2i
 var icon_path: String
@@ -17,6 +18,7 @@ func _init(raw: Dictionary) -> void:
 	type = raw["type"]
 	tags = raw["tags"].duplicate()
 	cooldown_usec = roundi(float(raw["cooldown"]) * 1_000_000.0)
+	stamina_cost = int(raw.get("stamina_cost", 0))
 	effects = raw["effects"].duplicate(true)
 	grid_size = Vector2i(int(raw["size"][0]), int(raw["size"][1]))
 	icon_path = raw.get("icon", "")

@@ -1,0 +1,8 @@
+{
+  "id": "base.enemy.wild_dog",
+  "name": "野狗",
+  "max_hp": 100,
+  "max_stamina": 100,
+  "max_spirit": 0,
+  "portrait": "res://assets/guaiwu.webp"
+}

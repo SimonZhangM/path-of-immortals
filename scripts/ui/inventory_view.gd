@@ -6,11 +6,14 @@ signal feedback(message: String)
 
 var manager: GameManager
 var member_index: int = 0
+var enemy_side: bool = false
 var compact: bool = false
 var display_side: float = 0.0
 var inventory: InventoryState:
 	get:
-		return manager.party[member_index].inventory if manager != null else null
+		if manager == null:
+			return null
+		return (manager.enemies if enemy_side else manager.party)[member_index].inventory
 var selected_instance: String = ""
 var _grab_offset := Vector2i.ZERO
 var _hover_cell := Vector2i(-100, -100)
@@ -29,14 +32,14 @@ func _ready() -> void:
 	resized.connect(queue_redraw)
 	mouse_exited.connect(func(): _hover_cell = Vector2i(-100, -100); queue_redraw())
 
-func bind_game(game: GameManager, index: int = 0) -> void:
+func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> void:
 	manager = game
 	member_index = index
+	enemy_side = is_enemy
 	manager.inventory_changed.connect(queue_redraw)
 	manager.battle_restarted.connect(reset_interaction)
 	manager.battle_started.connect(reset_interaction)
-	manager.inventory_access_changed.connect(reset_interaction)
-	manager.member_selected.connect(func(_index: int): reset_interaction())
+	manager.formation_changed.connect(reset_interaction)
 	for instance in inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])
 		if not item.icon_path.is_empty():
@@ -119,12 +122,7 @@ func _draw() -> void:
 func _gui_input(event: InputEvent) -> void:
 	if manager == null:
 		return
-	if compact:
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			manager.select_member(member_index)
-			accept_event()
-		return
-	if inventory.locked or manager.selected_member_index != member_index:
+	if enemy_side or inventory.locked or not manager.can_edit_inventory():
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var cell := _cell_at(event.position)
@@ -135,13 +133,13 @@ func _gui_input(event: InputEvent) -> void:
 			_grab_offset = cell - Vector2i(instance["cell"])
 			selection_changed.emit(instance["item_id"])
 		elif not selected_instance.is_empty():
-			var moved := manager.move_item(selected_instance, cell)
+			var moved := manager.move_item(member_index, selected_instance, cell)
 			feedback.emit("已调整位置" if moved else "此处放不下：不能越界或与其他装备重叠")
 		queue_redraw()
 		accept_event()
 
 func drag_data_at(point: Vector2) -> Dictionary:
-	if manager == null or compact or inventory.locked or manager.selected_member_index != member_index:
+	if manager == null or enemy_side or inventory.locked or not manager.can_edit_inventory():
 		return {}
 	var cell := _cell_at(point)
 	var hit := inventory.item_at(cell)
@@ -174,7 +172,7 @@ func _get_drag_data(point: Vector2) -> Variant:
 	return data
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
-	if compact or not data is Dictionary or data.get("source") != get_instance_id() or data.get("generation") != _generation or data.get("member_index") != member_index or member_index != manager.selected_member_index:
+	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("source") != get_instance_id() or data.get("generation") != _generation or data.get("member_index") != member_index:
 		return false
 	_hover_cell = _cell_at(point) - Vector2i(data["offset"])
 	_drag_instance = data["instance_id"]
@@ -184,7 +182,7 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
-		manager.move_item(data["instance_id"], _hover_cell)
+		manager.move_item(member_index, data["instance_id"], _hover_cell)
 		feedback.emit("已调整位置")
 	_drag_instance = ""
 	_hover_cell = Vector2i(-100, -100)

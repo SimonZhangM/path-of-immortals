@@ -6,5 +6,6 @@
   "size": [1, 2],
   "icon": "res://assets/weapontest.webp",
   "cooldown": 3.0,
+  "stamina_cost": 5,
   "effects": [{"trigger": "on_activate", "effect": "damage", "value": 10}]
 }

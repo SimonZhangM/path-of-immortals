@@ -1,37 +1,21 @@
 extends Control
 
 const INK := Color("ece4cd")
-const MUTED := Color("9caba7")
+const MUTED := Color("b2bdb6")
 const JADE := Color("91c6b0")
 const GOLD := Color("dfc28a")
-const RED := Color("af3549")
-const PARTY_GAP := 18.0
-const ALLY_WIDTH := PartyMemberCard.BASE_SIZE.x * (1.0 + PartyMemberCard.COMPACT_SCALE) + PARTY_GAP
-const BAG_SIDE := 548.0
-const PREVIEW_SIDE := ALLY_WIDTH - BAG_SIDE - PARTY_GAP
-
 @onready var manager: GameManager = $"../GameManager"
-var inventory_view: InventoryView
-var _hp: Label
-var _hp_bar: ProgressBar
+var ally_panel: TeamPanel
+var enemy_panel: TeamPanel
 var _time: Label
 var _header_separator: HSeparator
-var _enemy_portrait: TextureRect
 var _status: Label
-var _stats: Label
 var _pause: Button
 var _start: Button
+var _formation: Button
 var _log_label: RichTextLabel
 var _phase_label: Label
-var _bag_usage: Label
-var _bag_title: Label
-var _cards: Array[PartyMemberCard] = []
-var _preview_views: Array[InventoryView] = []
-var _preview_titles: Array[Label] = []
-var _party_primary: VBoxContainer
-var _party_previews: VBoxContainer
 var _speed_buttons: Dictionary = {}
-var _last_revision: int = -1
 var _battle_log := BattleLog.new()
 
 func _ready() -> void:
@@ -41,18 +25,14 @@ func _ready() -> void:
 		_log_label.text = manager.startup_error
 		set_process(false)
 		return
-	inventory_view.bind_game(manager)
-	for index in _preview_views.size():
-		_preview_views[index].bind_game(manager, index + 1)
 	manager.presentation_events.connect(_on_events)
 	manager.battle_restarted.connect(_on_restart)
 	manager.battle_started.connect(_on_started)
-	manager.member_selected.connect(_on_member_selected)
 	_on_restart()
 
 func _build_ui() -> void:
 	var ui_theme := Theme.new()
-	ui_theme.default_font_size = 21
+	ui_theme.default_font_size = 18
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif"])
 	ui_theme.default_font = font
@@ -81,12 +61,10 @@ func _build_ui() -> void:
 	var header := Control.new()
 	header.custom_minimum_size.y = 72
 	root.add_child(header)
-	var identity := _column(header, 0)
-	var title_row := HBoxContainer.new()
-	title_row.add_theme_constant_override("separation", 24)
-	identity.add_child(title_row)
-	_label(title_row, "修仙之路", 36, GOLD)
-	_label(title_row, "演武场 · 初试锋芒", 20, INK)
+	var identity := VBoxContainer.new()
+	identity.add_theme_constant_override("separation", 0)
+	header.add_child(identity)
+	_label(identity, "修仙之路", 36, GOLD)
 	_phase_label = _label(identity, "战前准备", 18, JADE)
 	_time = _label(header, "00:00.00", 32, GOLD)
 	_time.anchor_left = 0.5
@@ -113,86 +91,41 @@ func _build_ui() -> void:
 	_header_separator = HSeparator.new()
 	root.add_child(_header_separator)
 	var arena := HBoxContainer.new()
-	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	arena.add_theme_constant_override("separation", 30)
+	arena.add_theme_constant_override("separation", 20)
 	root.add_child(arena)
-	var left := _column(arena, 12)
-	left.custom_minimum_size.x = ALLY_WIDTH
-	var party_row := HBoxContainer.new()
-	party_row.add_theme_constant_override("separation", int(PARTY_GAP))
-	left.add_child(party_row)
-	_party_primary = _column(party_row, 0)
-	_party_primary.custom_minimum_size.x = PartyMemberCard.BASE_SIZE.x
-	_party_primary.alignment = BoxContainer.ALIGNMENT_CENTER
-	_party_previews = _column(party_row, 12)
-	for index in manager.party.size():
-		var card := PartyMemberCard.new()
-		(_party_primary if index == 0 else _party_previews).add_child(card)
-		card.configure(index, manager.party[index])
-		card.pressed.connect(manager.select_member.bind(index))
-		_cards.append(card)
-	var bag_heading := HBoxContainer.new()
-	left.add_child(bag_heading)
-	_bag_title = _label(bag_heading, "", 24, GOLD)
-	bag_heading.add_theme_constant_override("separation", 18)
-	_bag_usage = _label(bag_heading, "", 16, MUTED)
-	var bag_row := HBoxContainer.new()
-	bag_row.add_theme_constant_override("separation", 18)
-	left.add_child(bag_row)
-	inventory_view = InventoryView.new()
-	inventory_view.display_side = BAG_SIDE
-	inventory_view.name = "Backpack"
-	bag_row.add_child(inventory_view)
-	var previews := _column(bag_row, 0)
-	previews.custom_minimum_size = Vector2(PREVIEW_SIDE, BAG_SIDE)
-	for index in 2:
-		if index == 1:
-			_spacer(previews, true)
-		var preview := InventoryView.new()
-		preview.compact = true
-		preview.display_side = PREVIEW_SIDE
-		preview.name = "BackpackPreview%d" % index
-		previews.add_child(preview)
-		var title := _label(preview, "", 18, INK)
-		title.anchor_right = 1
-		title.offset_top = -28
-		title.offset_bottom = 0
-		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_preview_titles.append(title)
-		_preview_views.append(preview)
-	var middle := _column(arena, 18)
-	middle.custom_minimum_size.x = 203
-	_spacer(middle, true)
+	ally_panel = TeamPanel.new()
+	arena.add_child(ally_panel)
+	if manager.startup_error.is_empty():
+		ally_panel.configure(manager, false)
+	var middle := VBoxContainer.new()
+	middle.custom_minimum_size.x = 182
+	middle.add_theme_constant_override("separation", 14)
+	arena.add_child(middle)
+	var spacing := Control.new()
+	spacing.custom_minimum_size.y = 125
+	middle.add_child(spacing)
 	var duel := _label(middle, "对 阵", 27, GOLD)
 	duel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_start = _button(middle, "开始战斗  [空格]", manager.start_battle)
-	_start.custom_minimum_size.y = 62
-	_start.add_theme_stylebox_override("normal", _box(Color("625134"), GOLD))
-	_pause = _button(middle, "暂停  [空格]", manager.toggle_pause)
+	_formation = _button(middle, "", _toggle_formation)
+	_start = _button(middle, "开始战斗 [空格]", manager.start_battle)
+	_pause = _button(middle, "暂停 [空格]", manager.toggle_pause)
 	_button(middle, "重新布阵", manager.restart)
-	_spacer(middle, true)
-	var right := _column(arena, 16)
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var enemy_title := _label(right, "演武木桩", 24, INK)
-	enemy_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var portrait_center := CenterContainer.new()
-	right.add_child(portrait_center)
-	_enemy_portrait = _portrait(portrait_center, "res://assets/guaiwu.webp", Vector2(360, 250))
-	_hp = _label(right, "", 21, RED)
-	_hp_bar = _bar(right, RED)
-	_status = _label(right, "等待开战", 20, GOLD)
-	_stats = _label(right, "", 19, MUTED)
-	var log_panel := _panel(right)
-	log_panel.get_parent().size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_label(log_panel, "战斗记录", 20, INK)
+	_status = _label(middle, "", 17, GOLD)
+	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(middle, "战斗记录", 18, INK)
 	_log_label = RichTextLabel.new()
-	_log_label.custom_minimum_size = Vector2(0, 165)
+	_log_label.custom_minimum_size = Vector2(182, 290)
 	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_log_label.add_theme_stylebox_override("normal", _box(Color("14242a", 0.9), Color("4a5b58")))
+	_log_label.add_theme_font_size_override("normal_font_size", 14)
 	_log_label.scroll_following = true
-	_log_label.add_theme_font_size_override("normal_font_size", 18)
 	_log_label.add_theme_color_override("default_color", MUTED)
-	log_panel.add_child(_log_label)
+	middle.add_child(_log_label)
+	enemy_panel = TeamPanel.new()
+	arena.add_child(enemy_panel)
+	if manager.startup_error.is_empty():
+		enemy_panel.configure(manager, true)
 
 func _process(_delta: float) -> void:
 	_refresh()
@@ -204,53 +137,30 @@ func _refresh() -> void:
 	var state := sim.state
 	var preparing := state.phase == GameState.Phase.PREPARATION
 	var fighting := state.phase == GameState.Phase.BATTLE
-	for index in _cards.size():
-		_cards[index].refresh(manager.party[index])
-		_cards[index].disabled = not manager.can_select_member()
-		_cards[index].show_selected(index == manager.selected_member_index)
 	var seconds := state.time_usec / 1_000_000.0
 	_time.text = "%02d:%05.2f" % [int(seconds) / 60, fmod(seconds, 60.0)]
 	_start.disabled = not preparing
 	_pause.disabled = not fighting
-	_pause.text = "继续  [空格]" if sim.clock.paused else "暂停  [空格]"
-	_phase_label.text = "战前准备 · 布阵中" if preparing else ("战斗已暂停" if sim.clock.paused else ("战斗进行中" if fighting else "试炼完成"))
+	_pause.text = "继续 [空格]" if sim.clock.paused else "暂停 [空格]"
+	_formation.text = FormationRules.label(manager.party.size(), manager.formation) + (" · 切换" if manager.party.size() == 3 else "")
+	_formation.disabled = not preparing or manager.party.size() != 3
+	_phase_label.text = "战前准备 · 可整理背包" if preparing else ("战斗已暂停 · 背包锁定" if sim.clock.paused and fighting else ("战斗进行中" if fighting else "战斗结束"))
 	for speed in _speed_buttons:
 		_speed_buttons[speed].set_pressed_no_signal(is_equal_approx(speed, sim.clock.speed_multiplier))
 	if preparing:
-		_status.text = "等待我方完成布阵"
+		_status.text = "准备就绪后开战"
 	elif state.is_finished():
-		_status.text = "已击破 · 耗时 %.2f 游戏秒" % (state.defeated_at_usec / 1_000_000.0)
+		_status.text = "%s\n%.2f 游戏秒" % [{"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局 · 无法继续攻击"}[state.result], seconds]
 	else:
-		_status.text = "战斗已暂停" if sim.clock.paused else "法器自动运转中 · %s×" % str(sim.clock.speed_multiplier)
-	if state.revision != _last_revision:
-		_last_revision = state.revision
-		var max_hp := int(manager.registry.get_enemy(state.enemy_id)["max_hp"])
-		_hp.text = "气血  %d / %d" % [state.enemy_hp, max_hp]
-		_hp_bar.value = 100.0 * state.enemy_hp / max_hp
-		_stats.text = "法器发动 %d 次    /    累计伤害 %d" % [state.activation_count, state.damage_total]
+		_status.text = "战斗已暂停" if sim.clock.paused else "战斗进行中"
 
-func _on_member_selected(index: int) -> void:
-	inventory_view.set_member(index)
-	var preview_indices := manager.preview_member_indices()
-	for member_index in _cards.size():
-		var slot := _party_primary if member_index == index else _party_previews
-		if _cards[member_index].get_parent() != slot:
-			_cards[member_index].reparent(slot)
-	for slot_index in preview_indices.size():
-		_party_previews.move_child(_cards[preview_indices[slot_index]], slot_index)
-	for slot in preview_indices.size():
-		var member_index: int = preview_indices[slot]
-		_preview_views[slot].set_member(member_index)
-		_preview_titles[slot].text = manager.party[member_index].definition["name"]
-	_bag_title.text = "%s · 储物袋" % manager.party[index].definition["name"]
-	_bag_usage.text = "4 × 4   ·   已用 %d / 16 格" % manager.inventory.occupied_cells()
-	_refresh()
+func _toggle_formation() -> void:
+	manager.set_formation(FormationRules.Kind.FRONT_TWO if manager.formation == FormationRules.Kind.FRONT_ONE else FormationRules.Kind.FRONT_ONE)
 
 func _on_restart() -> void:
-	_last_revision = -1
 	_battle_log.reset()
 	_log_label.text = "布阵中。"
-	_on_member_selected(manager.selected_member_index)
+	_refresh()
 
 func _on_started() -> void:
 	_log_label.text = _battle_log.consume([], manager.registry)
@@ -267,62 +177,24 @@ func _label(parent: Node, value: String, font_size: int, color: Color) -> Label:
 	parent.add_child(label)
 	return label
 
-func _column(parent: Node, gap: int = 12) -> VBoxContainer:
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", gap)
-	parent.add_child(column)
-	return column
-
-func _spacer(parent: Node, vertical: bool = false) -> void:
-	var spacer := Control.new()
-	if vertical:
-		spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	else:
-		spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(spacer)
-
-func _portrait(parent: Node, path: String, dimensions: Vector2) -> TextureRect:
-	var portrait := TextureRect.new()
-	portrait.texture = load(path)
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size = dimensions
-	parent.add_child(portrait)
-	return portrait
-
 func _button(parent: Node, value: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text = value
 	button.focus_mode = Control.FOCUS_NONE
-	button.disabled = not manager.startup_error.is_empty()
-	button.custom_minimum_size = Vector2(105, 50)
+	button.add_theme_font_size_override("font_size", 16)
+	button.custom_minimum_size.y = 48
 	button.pressed.connect(action)
 	parent.add_child(button)
 	return button
 
-func _panel(parent: Node) -> VBoxContainer:
-	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _box(Color("14242a", 0.9), Color("4a5b58"), 16))
-	parent.add_child(panel)
-	return _column(panel)
-
-func _bar(parent: Node, color: Color) -> ProgressBar:
-	var bar := ProgressBar.new()
-	bar.custom_minimum_size.y = 15
-	bar.show_percentage = false
-	bar.add_theme_stylebox_override("background", _box(Color("0c191e"), Color.TRANSPARENT, 0))
-	bar.add_theme_stylebox_override("fill", _box(color, Color.TRANSPARENT, 0))
-	parent.add_child(bar)
-	return bar
-
-func _box(color: Color, border: Color, padding: int = 12) -> StyleBoxFlat:
+func _box(color: Color, border: Color) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = color
 	box.border_color = border
 	box.set_border_width_all(1)
 	box.set_corner_radius_all(8)
-	box.content_margin_left = padding
-	box.content_margin_right = padding
-	box.content_margin_top = padding
-	box.content_margin_bottom = padding
+	box.content_margin_left = 8
+	box.content_margin_right = 8
+	box.content_margin_top = 8
+	box.content_margin_bottom = 8
 	return box

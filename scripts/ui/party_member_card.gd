@@ -1,8 +1,8 @@
 class_name PartyMemberCard
-extends Button
+extends Control
 
 const BAR_WIDTH := 200.0
-const BASE_SIZE := Vector2(464, 216)
+const BASE_SIZE := Vector2(484, 236)
 const COMPACT_SCALE := 0.66
 var member_index: int = -1
 var stat_bars: Dictionary = {}
@@ -15,13 +15,9 @@ var _last_values: Array = []
 func configure(index: int, member: PartyMemberState) -> void:
 	member_index = index
 	name = "PartyMember%d" % (index + 1)
-	toggle_mode = true
-	focus_mode = Control.FOCUS_NONE
 	custom_minimum_size = BASE_SIZE
 	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	for style in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
-		add_theme_stylebox_override(style, StyleBoxEmpty.new())
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_content = HBoxContainer.new()
 	_content.custom_minimum_size = BASE_SIZE
 	_content.size = BASE_SIZE
@@ -31,13 +27,15 @@ func configure(index: int, member: PartyMemberState) -> void:
 	portrait.texture = load(member.definition["portrait"])
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size = Vector2(216, 216)
+	portrait.custom_minimum_size = Vector2(236, 236)
 	_content.add_child(portrait)
 	var details := VBoxContainer.new()
 	_content.add_child(details)
 	var title := Label.new()
 	_title = title
-	title.text = "%s（%s）" % [member.definition["name"], member.definition["realm"]]
+	title.text = str(member.definition["name"])
+	if not str(member.definition.get("realm", "")).is_empty():
+		title.text += "（%s）" % member.definition["realm"]
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	title.add_theme_font_size_override("font_size", 19)
 	details.add_child(title)
@@ -87,23 +85,23 @@ func configure(index: int, member: PartyMemberState) -> void:
 	_ignore_mouse(_content)
 	refresh(member)
 
-func show_selected(selected: bool) -> void:
-	set_pressed_no_signal(selected)
-	var display_scale := 1.0 if selected else COMPACT_SCALE
+func set_primary(primary: bool) -> void:
+	var display_scale := 1.0 if primary else COMPACT_SCALE
 	custom_minimum_size = BASE_SIZE * display_scale
 	_content.scale = Vector2.ONE * display_scale
-	_title.add_theme_color_override("font_color", Color("f4d48e") if selected else Color("ece4cd"))
+	_title.add_theme_color_override("font_color", Color("f4d48e") if primary else Color("ece4cd"))
 
 func refresh(member: PartyMemberState) -> void:
 	var values := [member.hp, member.stamina, member.spirit]
 	if values == _last_values:
 		return
 	_last_values = values
+	portrait.modulate = Color(0.45, 0.45, 0.45) if member.hp <= 0 else Color.WHITE
 	var keys := ["hp", "stamina", "spirit"]
 	for index in keys.size():
 		var key: String = keys[index]
 		var maximum := int(member.definition["max_" + key])
-		stat_bars[key].max_value = maximum
+		stat_bars[key].max_value = maxi(maximum, 1)
 		stat_bars[key].value = values[index]
 		stat_values[key].text = "%d / %d" % [values[index], maximum]
 

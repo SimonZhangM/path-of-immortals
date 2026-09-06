@@ -2,6 +2,8 @@ extends SceneTree
 
 var failures: int = 0
 var checks: int = 0
+var ui: Control
+var manager: GameManager
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -10,208 +12,148 @@ func _run() -> void:
 	root.size = Vector2i(1920, 1080)
 	var scene: Node = load("res://scenes/main/main.tscn").instantiate()
 	root.add_child(scene)
-	await process_frame
-	await process_frame
-	var manager: GameManager = scene.get_node("GameManager")
-	var ui: Control = scene.get_node("MainUI")
+	manager = scene.get_node("GameManager")
 	manager.set_process(false)
-	var bag: InventoryView = ui.inventory_view
-	_check(manager.startup_error.is_empty(), "scene initializes")
-	_check(manager.party.size() == 3 and ui._cards.size() == 3, "three allied characters")
-	_check(ui.get_node("BattleBackground").texture.resource_path == "res://assets/backgroundtest.png", "supplied battle background")
-	_check(manager.registry.get_item(GameManager.ITEM_ID).icon_path == "res://assets/weapontest.webp", "supplied weapon picture")
-	_check(ui._cards[0].portrait.texture.resource_path == "res://assets/portrait1.webp" and ui._cards[1].portrait.texture.resource_path == "res://assets/portrait2.webp" and ui._cards[2].portrait.texture.resource_path == "res://assets/portrait3.webp", "three supplied large portraits")
-	_check(ui._enemy_portrait.texture.resource_path == "res://assets/guaiwu.webp", "supplied enemy portrait")
-	_check(ui._time.get_global_rect().end.y <= ui._header_separator.get_global_rect().position.y, "time appears above header line")
-	_check(ui._cards[0].custom_minimum_size == PartyMemberCard.BASE_SIZE and is_equal_approx(ui._cards[1].custom_minimum_size.x / PartyMemberCard.BASE_SIZE.x, 0.66) and is_equal_approx(ui._cards[2].custom_minimum_size.y / PartyMemberCard.BASE_SIZE.y, 0.66), "selected portrait group is 100 percent and others 66 percent")
-	for card in ui._cards:
-		for stat in ["hp", "stamina", "spirit"]:
-			_check(card.stat_bars[stat].size.x == 200 and card.stat_values[stat].text == "100 / 100", "short resource bar and centered value")
-	for selected in [1, 2, 0]:
-		ui._cards[selected].pressed.emit()
-		await process_frame
-		await process_frame
-		_check(manager.selected_member_index == selected and bag.member_index == selected, "character card selects its large backpack")
-		for index in 3:
-			var expected_scale := 1.0 if index == selected else 0.66
-			_check(is_equal_approx(ui._cards[index].custom_minimum_size.x / PartyMemberCard.BASE_SIZE.x, expected_scale), "portrait group follows selected scale")
-		var expected: Array = [[1, 2], [0, 2], [0, 1]][selected]
-		_check(ui._preview_views[0].member_index == expected[0] and ui._preview_views[1].member_index == expected[1], "ordered upper and lower previews")
-	var previous_drag := bag.drag_data_at(bag.cell_center(Vector2i.ZERO))
-	manager.select_member(1)
-	_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), previous_drag), "member change invalidates drag")
-	_check(manager.move_item(GameManager.sword_instance(1), Vector2i(3, 0)), "second member moves own sword")
-	_check(manager.party[0].inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i.ZERO, "backpack layouts are independent")
-	_check(not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i(2, 0)), "cannot move another member's equipment")
-	manager.move_item(GameManager.sword_instance(1), Vector2i.ZERO)
-	await process_frame
-	await process_frame
-	if DisplayServer.get_name() == "headless":
-		var point: Vector2 = ui._cards[2].get_global_rect().get_center()
-		_mouse_motion(point)
-		_mouse_button(point, true)
-		_mouse_button(point, false)
-		await process_frame
-		_check(manager.selected_member_index == 2, "native mouse selects character card")
-		await process_frame
-		point = ui._preview_views[0].get_global_rect().get_center()
-		_mouse_motion(point)
-		_mouse_button(point, true)
-		_mouse_button(point, false)
-		await process_frame
-		_check(manager.selected_member_index == 0, "native mouse selects backpack thumbnail")
-	manager.select_member(0)
-	await _move_every_member(manager, bag)
-	await process_frame
-	await process_frame
-	_check_layout(ui)
-	manager._process(10)
-	_check(manager.simulation.state.time_usec == 0, "layout stage stays at time zero")
-	_check(ProjectSettings.get_setting("display/window/size/viewport_width") == 1920 and ProjectSettings.get_setting("display/window/size/viewport_height") == 1080, "1080p design resolution")
-	var drag := bag.drag_data_at(bag.cell_center(Vector2i(0, 1)))
-	_check(drag["offset"] == Vector2i(0, 1), "drag keeps grab offset from sword lower cell")
-	_check(bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), drag), "legal bottom-right sword drop")
-	bag._drop_data(bag.cell_center(Vector2i(3, 3)), drag)
-	_check(manager.inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i(3, 2), "sword drop reaches authoritative state")
-	var armor_drag := bag.drag_data_at(bag.cell_center(Vector2i(2, 2)))
-	bag._drop_data(bag.cell_center(Vector2i(1, 3)), armor_drag)
-	_check(manager.inventory.get_instance(GameManager.ARMOR_INSTANCE)["cell"] == Vector2i(0, 2), "armor moves using lower-right grab offset")
-	armor_drag = bag.drag_data_at(bag.cell_center(Vector2i(0, 2)))
-	_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), armor_drag), "invalid drag rejected")
-	bag._drop_data(bag.cell_center(Vector2i(3, 3)), armor_drag)
-	_check(manager.inventory.get_instance(GameManager.ARMOR_INSTANCE)["cell"] == Vector2i(0, 2), "invalid drop returns to original location")
-	manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO)
-	manager.move_item(GameManager.ARMOR_INSTANCE, Vector2i(1, 1))
-	bag.reset_interaction()
-	# Headless Input owns its virtual pointer, so native drag can be exercised without
-	# moving the user's OS cursor. A hidden rendered Window reads the real OS pointer.
-	if DisplayServer.get_name() == "headless":
-		await _native_drag(bag, Vector2i(0, 1), Vector2i(3, 3))
-		_check(manager.inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i(3, 2), "native Godot mouse drag moves sword")
-		await _native_drag(bag, Vector2i(2, 2), Vector2i(1, 3))
-		_check(manager.inventory.get_instance(GameManager.ARMOR_INSTANCE)["cell"] == Vector2i(0, 2), "native Godot mouse drag moves armor")
-		await _native_drag(bag, Vector2i(3, 2), Vector2i(4, 4))
-		_check(manager.inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i(3, 2), "native outside drop preserves sword")
-	else:
-		manager.move_item(GameManager.SWORD_INSTANCE, Vector2i(3, 2))
-		manager.move_item(GameManager.ARMOR_INSTANCE, Vector2i(0, 2))
-	_key(KEY_F1)
-	_check(manager.simulation.clock.speed_multiplier == 0.5, "F1 maps to half speed")
-	_key(KEY_F2)
-	_check(manager.simulation.clock.speed_multiplier == 1.0, "F2 maps to normal speed")
+	ui = scene.get_node("MainUI")
+	await _layout()
+	_check(manager.startup_error.is_empty(), "startup succeeds")
+	_check(manager.party.size() == 3 and manager.enemies.size() == 1, "three allies and one dog")
+	_check(ui.enemy_panel.cards[0].stat_values["spirit"].text == "0 / 0", "zero spirit displayed correctly")
+	_check(ui.enemy_panel.cards[0].portrait.texture.resource_path == "res://assets/guaiwu.webp", "dog portrait loaded")
+	_check(ui.get_node("BattleBackground").texture.resource_path == "res://assets/backgroundtest.png", "supplied background")
+	_check(manager.registry.get_item(GameManager.CLAW_ID).icon_path == "res://assets/images/items/dog_claw.svg", "claw artwork configured")
+	_check_layout()
+	await _capture("formation_front_one")
+	for index in 3:
+		var card: PartyMemberCard = ui.ally_panel.cards[index]
+		var before := card.custom_minimum_size
+		if DisplayServer.get_name() == "headless":
+			var point := card.get_global_rect().get_center()
+			_mouse_motion(point)
+			_mouse_button(point, true)
+			_mouse_button(point, false)
+			await _layout()
+		_check(card.custom_minimum_size == before, "clicking character never changes fixed size")
+	await _move_all_bags()
+	var bag: InventoryView = ui.ally_panel.bags[0]
+	var stale := bag.drag_data_at(bag.cell_center(Vector2i.ZERO))
+	_check(not ui.ally_panel.bags[1]._can_drop_data(ui.ally_panel.bags[1].cell_center(Vector2i(3, 0)), stale), "cross-character drag rejected")
+	_check(manager.set_formation(FormationRules.Kind.FRONT_TWO), "formation switch in preparation")
+	await _layout()
+	_check_layout()
+	_check(not ui.ally_panel.bags[0]._can_drop_data(ui.ally_panel.bags[0].cell_center(Vector2i(3, 0)), stale), "rebuild invalidates stale drag")
+	await _capture("formation_front_two")
+	manager.set_formation(FormationRules.Kind.FRONT_ONE)
+	await _layout()
+	manager._process(20)
+	_check(manager.simulation.state.time_usec == 0, "preparation time frozen")
+	manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 2))
 	_key(KEY_SPACE)
-	_check(manager.inventory.locked and manager.simulation.state.phase == GameState.Phase.BATTLE, "Space starts battle and locks layout")
-	_check(not manager.select_member(1) and bag.member_index == 0, "running battle rejects character selection")
-	_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0, "cooldown begins fully masked")
-	for member in manager.party:
-		_check(member.inventory.locked, "all backpacks lock on start")
-	_check(not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO), "cannot move during battle")
-	_check(bag.drag_data_at(bag.cell_center(Vector2i(3, 2))).is_empty(), "battle disables drag")
-	manager._process(1.0)
-	_check(manager.simulation.state.time_usec == 1_000_000, "default 1x is one real second per game second")
-	_key(KEY_F1)
-	manager._process(2.0)
-	_check(manager.simulation.state.time_usec == 2_000_000, "half speed advances one second in two seconds")
-	_key(KEY_F3)
-	manager._process(0.5)
 	ui._refresh()
-	_check(manager.simulation.state.enemy_hp == 70 and ui._hp.text == "气血  70 / 100", "three swords attack independently at three seconds")
-	_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0, "cooldown mask resets on activation")
-	_check(ui._log_label.text.contains("造成 10 伤害"), "damage log delivered")
+	_check(manager.simulation.state.phase == GameState.Phase.BATTLE and ui._formation.disabled, "space starts and locks formation")
+	_check(not manager.set_formation(FormationRules.Kind.FRONT_TWO), "cannot change formation in battle")
+	for index in 3:
+		_check(ui.ally_panel.bags[index].drag_data_at(ui.ally_panel.bags[index].cell_center(Vector2i.ZERO)).is_empty(), "all allied backpacks locked in battle")
+	_key(KEY_F1)
+	manager._process(3)
+	_check(manager.simulation.state.time_usec == 1_500_000, "half speed")
 	_key(KEY_SPACE)
-	manager._process(10)
-	_check(manager.simulation.clock.paused and manager.simulation.state.time_usec == 3_000_000, "Space pauses battle")
-	_check(manager.select_member(2) and ui._preview_views[0].member_index == 0 and ui._preview_views[1].member_index == 1, "pause allows ordered character selection")
-	_check(manager.simulation.state.activation_count == 3 and bag.cooldown_progress(GameManager.sword_instance(2)) == 0, "selection preserves cooldown and attacks")
-	manager.select_member(0)
 	_key(KEY_SPACE, true)
-	_check(manager.simulation.clock.paused, "key-repeat does not toggle pause")
-	await _move_every_member(manager, bag)
-	_check(manager.simulation.state.time_usec == 3_000_000 and manager.simulation.state.activation_count == 3, "paused rearrangement preserves battle time and cooldown")
-	_key(KEY_F1)
-	_check(manager.simulation.clock.paused and manager.simulation.clock.speed_multiplier == 0.5, "speed selection preserves pause")
+	_key(KEY_F3)
+	manager._process(20)
+	_check(manager.simulation.clock.paused and manager.simulation.state.time_usec == 1_500_000, "pause ignores repeat and speed changes do not resume")
+	_check(not manager.move_item(1, GameManager.sword_instance(1), Vector2i(3, 0)), "paused battle cannot rearrange ally items")
+	_check(ui.ally_panel.bags[1].drag_data_at(ui.ally_panel.bags[1].cell_center(Vector2i.ZERO)).is_empty(), "paused compact bag cannot drag")
+	_check(ui.enemy_panel.bags[0].cooldown_progress(GameManager.CLAW_INSTANCE) == 0.5, "enemy cooldown frozen halfway")
+	await _capture("formation_paused")
 	_key(KEY_SPACE)
-	_check(manager.inventory.locked and not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO), "resume locks all layouts again")
-	manager._process(2)
-	_check(not manager.simulation.clock.paused and manager.simulation.state.time_usec == 4_000_000, "second Space resumes at selected speed")
-	manager._process(52)
+	manager._process(0.75)
 	ui._refresh()
-	_check(manager.simulation.state.is_finished() and ui._status.text.contains("12.00"), "party victory displayed at exact time")
-	_check(ui._log_label.text.contains("试炼完成"), "defeat event displayed")
-	_press(ui, "重新布阵")
+	await _layout()
+	_check(manager.party[0].hp == 95 and manager.enemies[0].hp == 70, "both sides exchange damage at three seconds")
+	_check(ui.ally_panel.cards[0].stat_values["hp"].text == "95 / 100" and ui.enemy_panel.cards[0].stat_values["stamina"].text == "95 / 100", "HP and stamina bars reflect simulation")
+	_check(ui._log_label.text.contains("野狗") and ui._log_label.text.contains("体力-5"), "combat log includes enemy and stamina cost")
+	await _capture("formation_battle_3s")
+	_key(KEY_F2)
+	manager._process(9)
 	ui._refresh()
-	_check(manager.simulation.state.enemy_hp == 100 and manager.simulation.clock.speed_multiplier == 1 and manager.simulation.state.time_usec == 0, "reprepare resets battle and speed")
-	_check(not manager.inventory.locked and manager.inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i(3, 2), "reprepare preserves layout and unlocks")
-	_check(not bag._can_drop_data(bag.cell_center(Vector2i.ZERO), armor_drag), "stale drag payload rejected after restart")
-	_check(ui._log_label.text.contains("布阵中") and not ui._log_label.text.contains("造成"), "reprepare clears log")
-	_check(_press(ui, "开始战斗  [空格]"), "start button still starts battle")
-	_check(manager.simulation.state.phase == GameState.Phase.BATTLE, "start button enters battle phase")
-	_press(ui, "重新布阵")
-	manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO)
-	manager.move_item(GameManager.ARMOR_INSTANCE, Vector2i(1, 1))
-	bag.reset_interaction()
+	await _layout()
+	_check(manager.simulation.state.result == "victory" and ui._status.text.contains("12.00"), "victory displayed at exact time")
+	_check(manager.party[0].hp == 85 and manager.enemies[0].hp == 0, "default combat resources")
+	_check(ui.enemy_panel.cards[0].portrait.modulate.r < 1, "fallen portrait dimmed")
+	var old_bag: InventoryView = ui.ally_panel.bags[0]
+	manager.restart()
+	await _layout()
+	_check(manager.party[0].hp == 100 and manager.party[0].stamina == 100 and manager.enemies[0].hp == 100, "reprepare resets both teams")
+	_check(manager.can_edit_inventory() and manager.simulation.clock.speed_multiplier == 1 and manager.simulation.state.time_usec == 0, "reprepare unlocks allies and resets clock")
+	_check(not is_instance_valid(old_bag), "old inventory view disposed safely")
+	_check(ui._log_label.text == "布阵中。", "reprepare resets log")
+	_check(manager.party[2].inventory.get_instance(GameManager.sword_instance(2))["cell"] == Vector2i(3, 2), "reprepare preserves custom companion layout")
+	manager.move_item(2, GameManager.sword_instance(2), Vector2i.ZERO)
+	await _move_all_bags()
+	# Roster-size fixtures exercise layout support without introducing party-management gameplay.
+	var full_party: Array[PartyMemberState] = manager.party.duplicate()
+	for count in [2, 1, 3]:
+		manager.party.assign(full_party.slice(0, count))
+		manager.restart()
+		await _layout()
+		_check_layout()
+		_check(ui._formation.disabled == (count != 3), "only three-person roster offers two formations")
+		await _capture("formation_roster_%d" % count)
 	if DisplayServer.get_name() != "headless":
 		for dimensions in [Vector2i(1920, 1080), Vector2i(1280, 720), Vector2i(1280, 800), Vector2i(1720, 720)]:
 			root.size = dimensions
-			await process_frame
-			await process_frame
-			await RenderingServer.frame_post_draw
-			_check_layout(ui)
-			var path := "res://artifacts/party_%dx%d.png" % [dimensions.x, dimensions.y]
-			_check(root.get_texture().get_image().save_png(path) == OK, "rendered screenshot " + path)
-			_check(ui.get_rect().size.x <= root.get_visible_rect().size.x + 1, "UI fits viewport width")
-		root.size = Vector2i(1920, 1080)
-		manager.start_battle()
-		manager._process(1.5)
-		_key(KEY_SPACE)
-		_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0.5, "halfway cooldown reveal")
-		manager._process(10)
-		_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0.5, "pause freezes reveal")
-		ui._refresh()
-		await process_frame
-		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://artifacts/party_battle_paused.png")
-		for selected in [1, 2]:
-			manager.select_member(selected)
-			await process_frame
-			await RenderingServer.frame_post_draw
-			root.get_texture().get_image().save_png("res://artifacts/party_selected_%d.png" % selected)
+			await _layout()
+			_check_layout()
+			await _capture("formation_%dx%d" % [dimensions.x, dimensions.y])
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 
-func _move_every_member(manager: GameManager, bag: InventoryView) -> void:
-	for index in 3:
-		manager.select_member(index)
-		await process_frame
-		await process_frame
-		var sword_id := GameManager.sword_instance(index)
-		var armor_id := GameManager.armor_instance(index)
-		var sword_origin: Vector2i = manager.inventory.get_instance(sword_id)["cell"]
-		var armor_origin: Vector2i = manager.inventory.get_instance(armor_id)["cell"]
-		for movement in [[sword_origin, Vector2i(3, 0), sword_id], [armor_origin, Vector2i.ZERO, armor_id]]:
+func _move_all_bags() -> void:
+	for index in manager.party.size():
+		var bag: InventoryView = ui.ally_panel.bags[index]
+		for move in [[Vector2i.ZERO, Vector2i(3, 2), GameManager.sword_instance(index)], [Vector2i(1, 1), Vector2i(0, 2), GameManager.armor_instance(index)]]:
 			if DisplayServer.get_name() == "headless":
-				await _native_drag(bag, movement[0], movement[1])
+				await _native_drag(bag, move[0], move[1])
 			else:
-				var data := bag.drag_data_at(bag.cell_center(movement[0]))
-				bag._drop_data(bag.cell_center(movement[1]), data)
-			_check(manager.inventory.get_instance(movement[2])["cell"] == movement[1], "selected member %d equipment moves in current phase" % index)
-		manager.move_item(armor_id, armor_origin)
-		manager.move_item(sword_id, sword_origin)
-	manager.select_member(0)
+				var data := bag.drag_data_at(bag.cell_center(move[0]))
+				bag._drop_data(bag.cell_center(move[1]), data)
+			_check(manager.party[index].inventory.get_instance(move[2])["cell"] == move[1], "own equipment moves directly in bag %d" % index)
+		var invalid := bag.drag_data_at(bag.cell_center(Vector2i(0, 2)))
+		_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), invalid), "invalid footprint rejected in each bag")
+		manager.move_item(index, GameManager.armor_instance(index), Vector2i(1, 1))
+		manager.move_item(index, GameManager.sword_instance(index), Vector2i.ZERO)
+	_check(ui.enemy_panel.bags[0].drag_data_at(ui.enemy_panel.bags[0].cell_center(Vector2i(1, 1))).is_empty(), "enemy inventory always read-only")
 
-func _check_layout(ui: Control) -> void:
-	_check(absf(ui._time.get_global_rect().get_center().x - ui.size.x / 2) < 1, "timer strictly centered on viewport")
-	var bag_rect: Rect2 = ui.inventory_view.get_global_rect()
-	var upper: Rect2 = ui._preview_views[0].get_global_rect()
-	var lower: Rect2 = ui._preview_views[1].get_global_rect()
-	var main_card: Rect2 = ui._cards[ui.manager.selected_member_index].get_global_rect()
-	var card_indices: Array[int] = ui.manager.preview_member_indices()
-	var upper_card: Rect2 = ui._cards[card_indices[0]].get_global_rect()
-	var lower_card: Rect2 = ui._cards[card_indices[1]].get_global_rect()
-	_check(absf(bag_rect.position.y - upper.position.y) < 1 and absf(bag_rect.end.y - lower.end.y) < 1, "small backpacks match main bag top and bottom")
-	_check(absf(main_card.position.x - bag_rect.position.x) < 1 and absf(upper_card.end.x - upper.end.x) < 1, "portrait group aligns with backpack outer edges")
-	_check(upper_card.end.y <= lower_card.position.y and main_card.end.x <= upper_card.position.x, "one main and two stacked portraits do not overlap")
-	_check(bag_rect.end.y <= ui.size.y, "backpacks fit viewport height")
+func _check_layout() -> void:
+	_check(absf(ui._time.get_global_rect().get_center().x - ui.size.x / 2) < 1, "timer centered on viewport")
+	_check(ui.enemy_panel.get_global_rect().end.x <= ui.size.x + 1, "both teams fit width")
+	_check(ui.enemy_panel.bags[0].get_global_rect().end.y <= ui.size.y + 1, "bags fit viewport height")
+	for panel in [ui.ally_panel, ui.enemy_panel]:
+		_check(panel.cards.size() == panel.members.size() and panel.bags.size() == panel.members.size(), "no empty roster placeholders")
+		var hero: Rect2 = panel.bags[0].get_global_rect()
+		if panel.members.size() == 1:
+			_check(absf(hero.get_center().x - panel.get_global_rect().get_center().x) < 1, "single backpack centered")
+			_check(absf(panel.cards[0].get_global_rect().get_center().x - panel.get_global_rect().get_center().x) < 1, "single portrait group centered")
+		else:
+			_check(hero.size.x > panel.bags[1].size.x and panel.cards[0].custom_minimum_size.x > panel.cards[1].custom_minimum_size.x, "hero always large and companions small")
+			var main_on_right: bool = hero.position.x > panel.bags[1].global_position.x
+			_check(main_on_right == (manager.formation == FormationRules.Kind.FRONT_ONE or panel.members.size() == 2), "ally front row toward screen center")
+			_check((panel.cards[0].global_position.x > panel.cards[1].global_position.x) == main_on_right, "portraits and bags share formation orientation")
+			if panel.members.size() == 3:
+				_check(absf(panel.bags[1].global_position.y - hero.position.y) < 1 and absf(panel.bags[2].get_global_rect().end.y - hero.end.y) < 1, "rear bags align top and bottom")
+
+func _layout() -> void:
+	for frame in 4:
+		await process_frame
+	ui._refresh()
+
+func _capture(name: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	await _layout()
+	await RenderingServer.frame_post_draw
+	_check(root.get_texture().get_image().save_png("res://artifacts/%s.png" % name) == OK, "render " + name)
 
 func _key(code: Key, echo_event: bool = false) -> void:
 	var event := InputEventKey.new()
@@ -254,15 +196,6 @@ func _mouse_button(point: Vector2, pressed: bool) -> void:
 	event.pressed = pressed
 	event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
 	Input.parse_input_event(event)
-
-func _press(node: Node, label: String) -> bool:
-	if node is Button and node.text == label and not node.disabled:
-		node.pressed.emit()
-		return true
-	for child in node.get_children():
-		if _press(child, label):
-			return true
-	return false
 
 func _check(condition: bool, description: String) -> void:
 	checks += 1
