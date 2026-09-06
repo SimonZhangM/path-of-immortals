@@ -2,9 +2,14 @@ class_name PartyMemberCard
 extends Button
 
 const BAR_WIDTH := 200.0
+const BASE_SIZE := Vector2(464, 252)
+const COMPACT_SCALE := 0.66
 var member_index: int = -1
 var stat_bars: Dictionary = {}
 var stat_values: Dictionary = {}
+var _title: Label
+var portrait: TextureRect
+var _content: HBoxContainer
 var _last_values: Array = []
 
 func configure(index: int, member: PartyMemberState) -> void:
@@ -12,27 +17,35 @@ func configure(index: int, member: PartyMemberState) -> void:
 	name = "PartyMember%d" % (index + 1)
 	toggle_mode = true
 	focus_mode = Control.FOCUS_NONE
-	custom_minimum_size = Vector2(264, 228)
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for edge in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + edge, 8)
-	add_child(margin)
+	custom_minimum_size = BASE_SIZE
+	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	for style in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
+		add_theme_stylebox_override(style, StyleBoxEmpty.new())
+	_content = HBoxContainer.new()
+	_content.custom_minimum_size = BASE_SIZE
+	_content.size = BASE_SIZE
+	_content.add_theme_constant_override("separation", 8)
+	add_child(_content)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 7)
-	margin.add_child(column)
+	_content.add_child(column)
 	var title := Label.new()
+	_title = title
 	title.text = "%s（%s）" % [member.definition["name"], member.definition["realm"]]
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 19)
 	column.add_child(title)
-	var portrait := TextureRect.new()
+	portrait = TextureRect.new()
 	portrait.texture = load(member.definition["portrait"])
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size.y = 88
-	portrait.modulate = [Color.WHITE, Color("b3cfde"), Color("dcc9a3")][index]
+	portrait.custom_minimum_size = Vector2(216, 216)
 	column.add_child(portrait)
+	var resources := VBoxContainer.new()
+	resources.size_flags_vertical = Control.SIZE_SHRINK_END
+	resources.add_theme_constant_override("separation", 7)
+	_content.add_child(resources)
 	var keys := ["hp", "stamina", "spirit"]
 	var labels := ["气血", "体力", "灵力"]
 	var colors := [Color("a7655f"), Color("62916c"), Color("598aab")]
@@ -41,7 +54,7 @@ func configure(index: int, member: PartyMemberState) -> void:
 		var row := HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_CENTER
 		row.add_theme_constant_override("separation", 6)
-		column.add_child(row)
+		resources.add_child(row)
 		var label := Label.new()
 		label.text = labels[stat_index]
 		label.add_theme_font_size_override("font_size", 17)
@@ -69,8 +82,15 @@ func configure(index: int, member: PartyMemberState) -> void:
 		bar.add_child(value)
 		stat_bars[key] = bar
 		stat_values[key] = value
-	_ignore_mouse(margin)
+	_ignore_mouse(_content)
 	refresh(member)
+
+func show_selected(selected: bool) -> void:
+	set_pressed_no_signal(selected)
+	var display_scale := 1.0 if selected else COMPACT_SCALE
+	custom_minimum_size = BASE_SIZE * display_scale
+	_content.scale = Vector2.ONE * display_scale
+	_title.add_theme_color_override("font_color", Color("f4d48e") if selected else Color("ece4cd"))
 
 func refresh(member: PartyMemberState) -> void:
 	var values := [member.hp, member.stamina, member.spirit]

@@ -11,6 +11,8 @@ var inventory_view: InventoryView
 var _hp: Label
 var _hp_bar: ProgressBar
 var _time: Label
+var _header_separator: HSeparator
+var _enemy_portrait: TextureRect
 var _status: Label
 var _stats: Label
 var _pause: Button
@@ -68,7 +70,7 @@ func _build_ui() -> void:
 		margin.add_theme_constant_override("margin_" + edge, 27)
 	add_child(margin)
 	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 18)
+	root.add_theme_constant_override("separation", 12)
 	margin.add_child(root)
 	var header := HBoxContainer.new()
 	header.add_theme_constant_override("separation", 24)
@@ -77,30 +79,41 @@ func _build_ui() -> void:
 	var identity := _column(header, 6)
 	_label(identity, "演武场 · 初试锋芒", 20, INK)
 	_spacer(header)
+	_time = _label(header, "00:00.00", 32, GOLD)
+	_spacer(header)
 	_label(header, "法器构筑    /    V0.3", 19, MUTED)
-	root.add_child(HSeparator.new())
+	_header_separator = HSeparator.new()
+	root.add_child(_header_separator)
 	var clock_row := HBoxContainer.new()
 	root.add_child(clock_row)
 	_phase_label = _label(clock_row, "战前准备", 21, JADE)
 	_spacer(clock_row)
-	_time = _label(clock_row, "00:00.00", 32, GOLD)
-	_spacer(clock_row)
 	_label(clock_row, "演武木桩 · 无反击", 20, MUTED)
-	var arena := HBoxContainer.new()
-	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	arena.add_theme_constant_override("separation", 30)
-	root.add_child(arena)
-	var left := _column(arena, 16)
-	left.custom_minimum_size.x = 820
+	var combatants := HBoxContainer.new()
+	combatants.add_theme_constant_override("separation", 30)
+	root.add_child(combatants)
 	var party_row := HBoxContainer.new()
 	party_row.add_theme_constant_override("separation", 12)
-	left.add_child(party_row)
+	combatants.add_child(party_row)
 	for index in manager.party.size():
 		var card := PartyMemberCard.new()
 		party_row.add_child(card)
 		card.configure(index, manager.party[index])
 		card.pressed.connect(manager.select_member.bind(index))
 		_cards.append(card)
+	var enemy := _column(combatants, 8)
+	enemy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var enemy_title := _label(enemy, "敌 方 · 演武木桩", 21, RED)
+	enemy_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var portrait_center := CenterContainer.new()
+	enemy.add_child(portrait_center)
+	_enemy_portrait = _portrait(portrait_center, "res://assets/guaiwu.webp", Vector2(300, 210))
+	var arena := HBoxContainer.new()
+	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	arena.add_theme_constant_override("separation", 30)
+	root.add_child(arena)
+	var left := _column(arena, 16)
+	left.custom_minimum_size.x = 820
 	var bag_heading := HBoxContainer.new()
 	left.add_child(bag_heading)
 	_bag_title = _label(bag_heading, "", 24, GOLD)
@@ -136,21 +149,16 @@ func _build_ui() -> void:
 	_spacer(middle, true)
 	var right := _column(arena, 16)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var enemy_title := _label(right, "敌 方", 21, RED)
-	enemy_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var portrait_center := CenterContainer.new()
-	right.add_child(portrait_center)
-	_portrait(portrait_center, "res://assets/images/enemies/dummy.svg", Vector2(300, 293))
-	var enemy_name := _label(right, "演武木桩", 30, INK)
-	enemy_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hp = _label(right, "", 21, RED)
 	_hp_bar = _bar(right, RED)
 	_status = _label(right, "等待开战", 20, GOLD)
 	_stats = _label(right, "", 19, MUTED)
 	var log_panel := _panel(right)
+	log_panel.get_parent().size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_label(log_panel, "战斗记录", 20, INK)
 	_log_label = RichTextLabel.new()
 	_log_label.custom_minimum_size = Vector2(0, 165)
+	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_log_label.scroll_following = true
 	_log_label.add_theme_font_size_override("normal_font_size", 18)
 	_log_label.add_theme_color_override("default_color", MUTED)
@@ -181,7 +189,7 @@ func _refresh() -> void:
 	for index in _cards.size():
 		_cards[index].refresh(manager.party[index])
 		_cards[index].disabled = not manager.can_select_member()
-		_cards[index].set_pressed_no_signal(index == manager.selected_member_index)
+		_cards[index].show_selected(index == manager.selected_member_index)
 	var seconds := state.time_usec / 1_000_000.0
 	_time.text = "%02d:%05.2f" % [int(seconds) / 60, fmod(seconds, 60.0)]
 	_start.disabled = not preparing
@@ -249,13 +257,14 @@ func _spacer(parent: Node, vertical: bool = false) -> void:
 		spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(spacer)
 
-func _portrait(parent: Node, path: String, dimensions: Vector2) -> void:
+func _portrait(parent: Node, path: String, dimensions: Vector2) -> TextureRect:
 	var portrait := TextureRect.new()
 	portrait.texture = load(path)
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	portrait.custom_minimum_size = dimensions
 	parent.add_child(portrait)
+	return portrait
 
 func _button(parent: Node, value: String, action: Callable) -> Button:
 	var button := Button.new()

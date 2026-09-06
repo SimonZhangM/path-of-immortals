@@ -20,12 +20,19 @@ func _run() -> void:
 	_check(manager.party.size() == 3 and ui._cards.size() == 3, "three allied characters")
 	_check(ui.get_node("BattleBackground").texture.resource_path == "res://assets/backgroundtest.png", "supplied battle background")
 	_check(manager.registry.get_item(GameManager.ITEM_ID).icon_path == "res://assets/weapontest.webp", "supplied weapon picture")
+	_check(ui._cards[0].portrait.texture.resource_path == "res://assets/portrait1.webp" and ui._cards[1].portrait.texture.resource_path == "res://assets/portrait2.webp" and ui._cards[2].portrait.texture.resource_path == "res://assets/portrait3.webp", "three supplied large portraits")
+	_check(ui._enemy_portrait.texture.resource_path == "res://assets/guaiwu.webp", "supplied enemy portrait")
+	_check(ui._time.get_global_rect().end.y <= ui._header_separator.get_global_rect().position.y, "time appears above header line")
+	_check(ui._cards[0].custom_minimum_size == PartyMemberCard.BASE_SIZE and is_equal_approx(ui._cards[1].custom_minimum_size.x / PartyMemberCard.BASE_SIZE.x, 0.66) and is_equal_approx(ui._cards[2].custom_minimum_size.y / PartyMemberCard.BASE_SIZE.y, 0.66), "selected portrait group is 100 percent and others 66 percent")
 	for card in ui._cards:
 		for stat in ["hp", "stamina", "spirit"]:
 			_check(card.stat_bars[stat].size.x == 200 and card.stat_values[stat].text == "100 / 100", "short resource bar and centered value")
 	for selected in [1, 2, 0]:
 		ui._cards[selected].pressed.emit()
 		_check(manager.selected_member_index == selected and bag.member_index == selected, "character card selects its large backpack")
+		for index in 3:
+			var expected_scale := 1.0 if index == selected else 0.66
+			_check(is_equal_approx(ui._cards[index].custom_minimum_size.x / PartyMemberCard.BASE_SIZE.x, expected_scale), "portrait group follows selected scale")
 		var expected: Array = [[1, 2], [0, 2], [0, 1]][selected]
 		_check(ui._preview_views[0].member_index == expected[0] and ui._preview_views[1].member_index == expected[1], "ordered upper and lower previews")
 	var previous_drag := bag.drag_data_at(bag.cell_center(Vector2i.ZERO))
