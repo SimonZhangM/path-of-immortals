@@ -7,6 +7,7 @@ signal feedback(message: String)
 var manager: GameManager
 var member_index: int = 0
 var compact: bool = false
+var display_side: float = 0.0
 var inventory: InventoryState:
 	get:
 		return manager.party[member_index].inventory if manager != null else null
@@ -21,6 +22,9 @@ var _last_time_usec: int = -1
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(220, 220) if compact else Vector2(495, 495)
+	if display_side > 0:
+		custom_minimum_size = Vector2.ONE * display_side
+	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	resized.connect(queue_redraw)
 	mouse_exited.connect(func(): _hover_cell = Vector2i(-100, -100); queue_redraw())
@@ -31,6 +35,7 @@ func bind_game(game: GameManager, index: int = 0) -> void:
 	manager.inventory_changed.connect(queue_redraw)
 	manager.battle_restarted.connect(reset_interaction)
 	manager.battle_started.connect(reset_interaction)
+	manager.inventory_access_changed.connect(reset_interaction)
 	manager.member_selected.connect(func(_index: int): reset_interaction())
 	for instance in inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])

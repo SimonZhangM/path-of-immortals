@@ -4,6 +4,7 @@ extends Node
 signal battle_restarted
 signal battle_started
 signal inventory_changed
+signal inventory_access_changed
 signal member_selected(index: int)
 signal presentation_events(events: Array[Dictionary])
 
@@ -93,12 +94,15 @@ func start_battle() -> void:
 		battle_started.emit()
 
 func move_item(instance_id: String, cell: Vector2i) -> bool:
-	if simulation == null or simulation.state.phase != GameState.Phase.PREPARATION:
+	if not can_edit_inventory():
 		return false
 	if inventory.move_item(instance_id, cell):
 		inventory_changed.emit()
 		return true
 	return false
+
+func can_edit_inventory() -> bool:
+	return simulation != null and (simulation.state.phase == GameState.Phase.PREPARATION or (simulation.state.phase == GameState.Phase.BATTLE and simulation.clock.paused))
 
 func set_speed(speed: float) -> void:
 	if simulation != null:
@@ -107,6 +111,9 @@ func set_speed(speed: float) -> void:
 func toggle_pause() -> void:
 	if simulation != null and simulation.state.phase == GameState.Phase.BATTLE:
 		simulation.clock.paused = not simulation.clock.paused
+		for member in party:
+			member.inventory.locked = not simulation.clock.paused
+		inventory_access_changed.emit()
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo():

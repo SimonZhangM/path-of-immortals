@@ -2,7 +2,7 @@ class_name PartyMemberCard
 extends Button
 
 const BAR_WIDTH := 200.0
-const BASE_SIZE := Vector2(464, 252)
+const BASE_SIZE := Vector2(464, 216)
 const COMPACT_SCALE := 0.66
 var member_index: int = -1
 var stat_bars: Dictionary = {}
@@ -27,28 +27,30 @@ func configure(index: int, member: PartyMemberState) -> void:
 	_content.size = BASE_SIZE
 	_content.add_theme_constant_override("separation", 8)
 	add_child(_content)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 7)
-	_content.add_child(column)
-	var title := Label.new()
-	_title = title
-	title.text = "%s（%s）" % [member.definition["name"], member.definition["realm"]]
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 19)
-	column.add_child(title)
 	portrait = TextureRect.new()
 	portrait.texture = load(member.definition["portrait"])
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	portrait.custom_minimum_size = Vector2(216, 216)
-	column.add_child(portrait)
+	_content.add_child(portrait)
+	var details := VBoxContainer.new()
+	_content.add_child(details)
+	var title := Label.new()
+	_title = title
+	title.text = "%s（%s）" % [member.definition["name"], member.definition["realm"]]
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	title.add_theme_font_size_override("font_size", 19)
+	details.add_child(title)
+	var space := Control.new()
+	space.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	details.add_child(space)
 	var resources := VBoxContainer.new()
 	resources.size_flags_vertical = Control.SIZE_SHRINK_END
 	resources.add_theme_constant_override("separation", 7)
-	_content.add_child(resources)
+	details.add_child(resources)
 	var keys := ["hp", "stamina", "spirit"]
 	var labels := ["气血", "体力", "灵力"]
-	var colors := [Color("a7655f"), Color("62916c"), Color("598aab")]
+	var colors := [Color("af3549"), Color("8cd259"), Color("5598eb")]
 	for stat_index in keys.size():
 		var key: String = keys[stat_index]
 		var row := HBoxContainer.new()

@@ -4,7 +4,11 @@ const INK := Color("ece4cd")
 const MUTED := Color("9caba7")
 const JADE := Color("91c6b0")
 const GOLD := Color("dfc28a")
-const RED := Color("cd8470")
+const RED := Color("af3549")
+const PARTY_GAP := 18.0
+const ALLY_WIDTH := PartyMemberCard.BASE_SIZE.x * (1.0 + PartyMemberCard.COMPACT_SCALE) + PARTY_GAP
+const BAG_SIDE := 548.0
+const PREVIEW_SIDE := ALLY_WIDTH - BAG_SIDE - PARTY_GAP
 
 @onready var manager: GameManager = $"../GameManager"
 var inventory_view: InventoryView
@@ -24,6 +28,8 @@ var _bag_title: Label
 var _cards: Array[PartyMemberCard] = []
 var _preview_views: Array[InventoryView] = []
 var _preview_titles: Array[Label] = []
+var _party_primary: VBoxContainer
+var _party_previews: VBoxContainer
 var _speed_buttons: Dictionary = {}
 var _last_revision: int = -1
 var _battle_log := BattleLog.new()
@@ -72,69 +78,88 @@ func _build_ui() -> void:
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 12)
 	margin.add_child(root)
-	var header := HBoxContainer.new()
-	header.add_theme_constant_override("separation", 24)
+	var header := Control.new()
+	header.custom_minimum_size.y = 72
 	root.add_child(header)
-	_label(header, "修仙之路", 36, GOLD)
-	var identity := _column(header, 6)
-	_label(identity, "演武场 · 初试锋芒", 20, INK)
-	_spacer(header)
+	var identity := _column(header, 0)
+	var title_row := HBoxContainer.new()
+	title_row.add_theme_constant_override("separation", 24)
+	identity.add_child(title_row)
+	_label(title_row, "修仙之路", 36, GOLD)
+	_label(title_row, "演武场 · 初试锋芒", 20, INK)
+	_phase_label = _label(identity, "战前准备", 18, JADE)
 	_time = _label(header, "00:00.00", 32, GOLD)
-	_spacer(header)
-	_label(header, "法器构筑    /    V0.3", 19, MUTED)
+	_time.anchor_left = 0.5
+	_time.anchor_right = 0.5
+	_time.anchor_bottom = 1.0
+	_time.offset_left = -85
+	_time.offset_right = 85
+	_time.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_time.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var speeds := HBoxContainer.new()
+	speeds.anchor_left = 0.5
+	speeds.anchor_right = 1.0
+	speeds.offset_left = 110
+	speeds.offset_top = 11
+	speeds.add_theme_constant_override("separation", 12)
+	header.add_child(speeds)
+	_label(speeds, "战斗速度", 20, MUTED)
+	var captions := ["F1  半速 0.5×", "F2  正常 1×", "F3  2×"]
+	for index in SimulationClock.SPEEDS.size():
+		var speed: float = SimulationClock.SPEEDS[index]
+		var button := _button(speeds, captions[index], manager.set_speed.bind(speed))
+		button.toggle_mode = true
+		_speed_buttons[speed] = button
 	_header_separator = HSeparator.new()
 	root.add_child(_header_separator)
-	var clock_row := HBoxContainer.new()
-	root.add_child(clock_row)
-	_phase_label = _label(clock_row, "战前准备", 21, JADE)
-	_spacer(clock_row)
-	_label(clock_row, "演武木桩 · 无反击", 20, MUTED)
-	var combatants := HBoxContainer.new()
-	combatants.add_theme_constant_override("separation", 30)
-	root.add_child(combatants)
-	var party_row := HBoxContainer.new()
-	party_row.add_theme_constant_override("separation", 12)
-	combatants.add_child(party_row)
-	for index in manager.party.size():
-		var card := PartyMemberCard.new()
-		party_row.add_child(card)
-		card.configure(index, manager.party[index])
-		card.pressed.connect(manager.select_member.bind(index))
-		_cards.append(card)
-	var enemy := _column(combatants, 8)
-	enemy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var enemy_title := _label(enemy, "敌 方 · 演武木桩", 21, RED)
-	enemy_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var portrait_center := CenterContainer.new()
-	enemy.add_child(portrait_center)
-	_enemy_portrait = _portrait(portrait_center, "res://assets/guaiwu.webp", Vector2(300, 210))
 	var arena := HBoxContainer.new()
 	arena.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	arena.add_theme_constant_override("separation", 30)
 	root.add_child(arena)
-	var left := _column(arena, 16)
-	left.custom_minimum_size.x = 820
+	var left := _column(arena, 12)
+	left.custom_minimum_size.x = ALLY_WIDTH
+	var party_row := HBoxContainer.new()
+	party_row.add_theme_constant_override("separation", int(PARTY_GAP))
+	left.add_child(party_row)
+	_party_primary = _column(party_row, 0)
+	_party_primary.custom_minimum_size.x = PartyMemberCard.BASE_SIZE.x
+	_party_primary.alignment = BoxContainer.ALIGNMENT_CENTER
+	_party_previews = _column(party_row, 12)
+	for index in manager.party.size():
+		var card := PartyMemberCard.new()
+		(_party_primary if index == 0 else _party_previews).add_child(card)
+		card.configure(index, manager.party[index])
+		card.pressed.connect(manager.select_member.bind(index))
+		_cards.append(card)
 	var bag_heading := HBoxContainer.new()
 	left.add_child(bag_heading)
 	_bag_title = _label(bag_heading, "", 24, GOLD)
-	_spacer(bag_heading)
-	_bag_usage = _label(bag_heading, "", 19, MUTED)
+	bag_heading.add_theme_constant_override("separation", 18)
+	_bag_usage = _label(bag_heading, "", 16, MUTED)
 	var bag_row := HBoxContainer.new()
 	bag_row.add_theme_constant_override("separation", 18)
 	left.add_child(bag_row)
 	inventory_view = InventoryView.new()
+	inventory_view.display_side = BAG_SIDE
 	inventory_view.name = "Backpack"
 	bag_row.add_child(inventory_view)
-	var previews := _column(bag_row, 12)
+	var previews := _column(bag_row, 0)
+	previews.custom_minimum_size = Vector2(PREVIEW_SIDE, BAG_SIDE)
 	for index in 2:
-		var preview_column := _column(previews, 2)
-		var title := _label(preview_column, "", 18, INK)
-		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_preview_titles.append(title)
+		if index == 1:
+			_spacer(previews, true)
 		var preview := InventoryView.new()
 		preview.compact = true
+		preview.display_side = PREVIEW_SIDE
 		preview.name = "BackpackPreview%d" % index
-		preview_column.add_child(preview)
+		previews.add_child(preview)
+		var title := _label(preview, "", 18, INK)
+		title.anchor_right = 1
+		title.offset_top = -28
+		title.offset_bottom = 0
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_preview_titles.append(title)
 		_preview_views.append(preview)
 	var middle := _column(arena, 18)
 	middle.custom_minimum_size.x = 203
@@ -149,6 +174,11 @@ func _build_ui() -> void:
 	_spacer(middle, true)
 	var right := _column(arena, 16)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var enemy_title := _label(right, "演武木桩", 24, INK)
+	enemy_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var portrait_center := CenterContainer.new()
+	right.add_child(portrait_center)
+	_enemy_portrait = _portrait(portrait_center, "res://assets/guaiwu.webp", Vector2(360, 250))
 	_hp = _label(right, "", 21, RED)
 	_hp_bar = _bar(right, RED)
 	_status = _label(right, "等待开战", 20, GOLD)
@@ -163,18 +193,6 @@ func _build_ui() -> void:
 	_log_label.add_theme_font_size_override("normal_font_size", 18)
 	_log_label.add_theme_color_override("default_color", MUTED)
 	log_panel.add_child(_log_label)
-	var footer := HBoxContainer.new()
-	footer.add_theme_constant_override("separation", 14)
-	root.add_child(footer)
-	_label(footer, "战斗速度", 20, MUTED)
-	var captions := ["F1  半速 0.5×", "F2  正常 1×", "F3  2×"]
-	for index in SimulationClock.SPEEDS.size():
-		var speed: float = SimulationClock.SPEEDS[index]
-		var button := _button(footer, captions[index], manager.set_speed.bind(speed))
-		button.toggle_mode = true
-		_speed_buttons[speed] = button
-	_spacer(footer)
-	_label(footer, "空格  开战 / 暂停 / 恢复    ·    战斗中锁定背包", 19, MUTED)
 
 func _process(_delta: float) -> void:
 	_refresh()
@@ -214,6 +232,12 @@ func _refresh() -> void:
 func _on_member_selected(index: int) -> void:
 	inventory_view.set_member(index)
 	var preview_indices := manager.preview_member_indices()
+	for member_index in _cards.size():
+		var slot := _party_primary if member_index == index else _party_previews
+		if _cards[member_index].get_parent() != slot:
+			_cards[member_index].reparent(slot)
+	for slot_index in preview_indices.size():
+		_party_previews.move_child(_cards[preview_indices[slot_index]], slot_index)
 	for slot in preview_indices.size():
 		var member_index: int = preview_indices[slot]
 		_preview_views[slot].set_member(member_index)

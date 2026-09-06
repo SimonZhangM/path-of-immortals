@@ -29,6 +29,8 @@ func _run() -> void:
 			_check(card.stat_bars[stat].size.x == 200 and card.stat_values[stat].text == "100 / 100", "short resource bar and centered value")
 	for selected in [1, 2, 0]:
 		ui._cards[selected].pressed.emit()
+		await process_frame
+		await process_frame
 		_check(manager.selected_member_index == selected and bag.member_index == selected, "character card selects its large backpack")
 		for index in 3:
 			var expected_scale := 1.0 if index == selected else 0.66
@@ -42,6 +44,8 @@ func _run() -> void:
 	_check(manager.party[0].inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i.ZERO, "backpack layouts are independent")
 	_check(not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i(2, 0)), "cannot move another member's equipment")
 	manager.move_item(GameManager.sword_instance(1), Vector2i.ZERO)
+	await process_frame
+	await process_frame
 	if DisplayServer.get_name() == "headless":
 		var point: Vector2 = ui._cards[2].get_global_rect().get_center()
 		_mouse_motion(point)
@@ -49,6 +53,7 @@ func _run() -> void:
 		_mouse_button(point, false)
 		await process_frame
 		_check(manager.selected_member_index == 2, "native mouse selects character card")
+		await process_frame
 		point = ui._preview_views[0].get_global_rect().get_center()
 		_mouse_motion(point)
 		_mouse_button(point, true)
@@ -56,6 +61,10 @@ func _run() -> void:
 		await process_frame
 		_check(manager.selected_member_index == 0, "native mouse selects backpack thumbnail")
 	manager.select_member(0)
+	await _move_every_member(manager, bag)
+	await process_frame
+	await process_frame
+	_check_layout(ui)
 	manager._process(10)
 	_check(manager.simulation.state.time_usec == 0, "layout stage stays at time zero")
 	_check(ProjectSettings.get_setting("display/window/size/viewport_width") == 1920 and ProjectSettings.get_setting("display/window/size/viewport_height") == 1080, "1080p design resolution")
@@ -117,10 +126,12 @@ func _run() -> void:
 	manager.select_member(0)
 	_key(KEY_SPACE, true)
 	_check(manager.simulation.clock.paused, "key-repeat does not toggle pause")
-	_check(not manager.move_item(GameManager.ARMOR_INSTANCE, Vector2i.ZERO), "pause does not unlock inventory")
+	await _move_every_member(manager, bag)
+	_check(manager.simulation.state.time_usec == 3_000_000 and manager.simulation.state.activation_count == 3, "paused rearrangement preserves battle time and cooldown")
 	_key(KEY_F1)
 	_check(manager.simulation.clock.paused and manager.simulation.clock.speed_multiplier == 0.5, "speed selection preserves pause")
 	_key(KEY_SPACE)
+	_check(manager.inventory.locked and not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO), "resume locks all layouts again")
 	manager._process(2)
 	_check(not manager.simulation.clock.paused and manager.simulation.state.time_usec == 4_000_000, "second Space resumes at selected speed")
 	manager._process(52)
@@ -145,6 +156,7 @@ func _run() -> void:
 			await process_frame
 			await process_frame
 			await RenderingServer.frame_post_draw
+			_check_layout(ui)
 			var path := "res://artifacts/party_%dx%d.png" % [dimensions.x, dimensions.y]
 			_check(root.get_texture().get_image().save_png(path) == OK, "rendered screenshot " + path)
 			_check(ui.get_rect().size.x <= root.get_visible_rect().size.x + 1, "UI fits viewport width")
@@ -166,6 +178,40 @@ func _run() -> void:
 			root.get_texture().get_image().save_png("res://artifacts/party_selected_%d.png" % selected)
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
+
+func _move_every_member(manager: GameManager, bag: InventoryView) -> void:
+	for index in 3:
+		manager.select_member(index)
+		await process_frame
+		await process_frame
+		var sword_id := GameManager.sword_instance(index)
+		var armor_id := GameManager.armor_instance(index)
+		var sword_origin: Vector2i = manager.inventory.get_instance(sword_id)["cell"]
+		var armor_origin: Vector2i = manager.inventory.get_instance(armor_id)["cell"]
+		for movement in [[sword_origin, Vector2i(3, 0), sword_id], [armor_origin, Vector2i.ZERO, armor_id]]:
+			if DisplayServer.get_name() == "headless":
+				await _native_drag(bag, movement[0], movement[1])
+			else:
+				var data := bag.drag_data_at(bag.cell_center(movement[0]))
+				bag._drop_data(bag.cell_center(movement[1]), data)
+			_check(manager.inventory.get_instance(movement[2])["cell"] == movement[1], "selected member %d equipment moves in current phase" % index)
+		manager.move_item(armor_id, armor_origin)
+		manager.move_item(sword_id, sword_origin)
+	manager.select_member(0)
+
+func _check_layout(ui: Control) -> void:
+	_check(absf(ui._time.get_global_rect().get_center().x - ui.size.x / 2) < 1, "timer strictly centered on viewport")
+	var bag_rect: Rect2 = ui.inventory_view.get_global_rect()
+	var upper: Rect2 = ui._preview_views[0].get_global_rect()
+	var lower: Rect2 = ui._preview_views[1].get_global_rect()
+	var main_card: Rect2 = ui._cards[ui.manager.selected_member_index].get_global_rect()
+	var card_indices: Array[int] = ui.manager.preview_member_indices()
+	var upper_card: Rect2 = ui._cards[card_indices[0]].get_global_rect()
+	var lower_card: Rect2 = ui._cards[card_indices[1]].get_global_rect()
+	_check(absf(bag_rect.position.y - upper.position.y) < 1 and absf(bag_rect.end.y - lower.end.y) < 1, "small backpacks match main bag top and bottom")
+	_check(absf(main_card.position.x - bag_rect.position.x) < 1 and absf(upper_card.end.x - upper.end.x) < 1, "portrait group aligns with backpack outer edges")
+	_check(upper_card.end.y <= lower_card.position.y and main_card.end.x <= upper_card.position.x, "one main and two stacked portraits do not overlap")
+	_check(bag_rect.end.y <= ui.size.y, "backpacks fit viewport height")
 
 func _key(code: Key, echo_event: bool = false) -> void:
 	var event := InputEventKey.new()
