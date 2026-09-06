@@ -2,6 +2,8 @@
 
 Godot 4.7.2 / GDScript / Mobile Renderer 的 V0.1 最小可玩原型。参考《口袋修仙》的自动触发构筑方向，第一阶段仅验证底层链路，不复刻其资源或完整玩法。
 
+**接手开发先读 [项目开发进度](PROJECT_PROGRESS.md) 和 [工程规则](AGENTS.md)。** 最新阶段、已完成工作、验证结果、限制与下一步统一维护在进度文档中。
+
 ## 运行
 
 用已安装的 Godot 打开本目录 `project.godot`，按 **F5** 运行项目。主场景为 `scenes/main/main.tscn`。

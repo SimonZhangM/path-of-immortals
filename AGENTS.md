@@ -2,6 +2,8 @@
 
 Godot 4.7.2 · GDScript 2.x · Mobile renderer · Windows-first 2D cultivation/build game.
 
+- At the start of every task, read `PROJECT_PROGRESS.md` for current scope, completed work, validation, limitations and next steps. Check actual code and Git state before relying on its status.
+- Before finishing or handing off a task, update `PROJECT_PROGRESS.md` with the date, changes, validation performed (or not run), unfinished work and next steps. Keep recommendations distinct from user-approved scope; do not leave essential handoff information only in chat.
 - Use Godot 4 APIs. Do not add C#, Node.js, Electron or unnecessary dependencies.
 - Keep Data → Registry → Simulation → Game State → UI boundaries clear.
 - Gameplay simulation must run without a scene tree, UI, animations or wall-clock queries.
