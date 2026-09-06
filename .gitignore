@@ -1,0 +1,9 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Local test artifacts and exported builds
+/artifacts/
+/builds/
+*.log
+*.tmp

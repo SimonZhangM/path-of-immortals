@@ -1,0 +1,8 @@
+{
+  "id": "base.test.fire_sword",
+  "name": "测试玄火剑",
+  "type": "weapon",
+  "tags": ["weapon", "fire", "sword"],
+  "cooldown": 3.0,
+  "effects": [{"trigger": "on_activate", "effect": "damage", "value": 10}]
+}
