@@ -3,8 +3,6 @@ extends RefCounted
 
 enum Phase { PREPARATION, BATTLE, FINISHED }
 var phase: Phase = Phase.PREPARATION
-var player_hp: int = 100
-var player_max_hp: int = 100
 var time_usec: int = 0
 var enemy_id: String
 var enemy_hp: int
@@ -15,6 +13,7 @@ var activation_count: int = 0
 var damage_total: int = 0
 var defeated_at_usec: int = -1
 var revision: int = 0
+var item_runtime: Dictionary = {}
 
 func _init(item: ItemData, enemy: Dictionary) -> void:
 	item_id = item.id

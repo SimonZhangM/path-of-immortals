@@ -17,6 +17,38 @@ func _run() -> void:
 	manager.set_process(false)
 	var bag: InventoryView = ui.inventory_view
 	_check(manager.startup_error.is_empty(), "scene initializes")
+	_check(manager.party.size() == 3 and ui._cards.size() == 3, "three allied characters")
+	_check(ui.get_node("BattleBackground").texture.resource_path == "res://assets/backgroundtest.png", "supplied battle background")
+	_check(manager.registry.get_item(GameManager.ITEM_ID).icon_path == "res://assets/weapontest.webp", "supplied weapon picture")
+	for card in ui._cards:
+		for stat in ["hp", "stamina", "spirit"]:
+			_check(card.stat_bars[stat].size.x == 200 and card.stat_values[stat].text == "100 / 100", "short resource bar and centered value")
+	for selected in [1, 2, 0]:
+		ui._cards[selected].pressed.emit()
+		_check(manager.selected_member_index == selected and bag.member_index == selected, "character card selects its large backpack")
+		var expected: Array = [[1, 2], [0, 2], [0, 1]][selected]
+		_check(ui._preview_views[0].member_index == expected[0] and ui._preview_views[1].member_index == expected[1], "ordered upper and lower previews")
+	var previous_drag := bag.drag_data_at(bag.cell_center(Vector2i.ZERO))
+	manager.select_member(1)
+	_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), previous_drag), "member change invalidates drag")
+	_check(manager.move_item(GameManager.sword_instance(1), Vector2i(3, 0)), "second member moves own sword")
+	_check(manager.party[0].inventory.get_instance(GameManager.SWORD_INSTANCE)["cell"] == Vector2i.ZERO, "backpack layouts are independent")
+	_check(not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i(2, 0)), "cannot move another member's equipment")
+	manager.move_item(GameManager.sword_instance(1), Vector2i.ZERO)
+	if DisplayServer.get_name() == "headless":
+		var point: Vector2 = ui._cards[2].get_global_rect().get_center()
+		_mouse_motion(point)
+		_mouse_button(point, true)
+		_mouse_button(point, false)
+		await process_frame
+		_check(manager.selected_member_index == 2, "native mouse selects character card")
+		point = ui._preview_views[0].get_global_rect().get_center()
+		_mouse_motion(point)
+		_mouse_button(point, true)
+		_mouse_button(point, false)
+		await process_frame
+		_check(manager.selected_member_index == 0, "native mouse selects backpack thumbnail")
+	manager.select_member(0)
 	manager._process(10)
 	_check(manager.simulation.state.time_usec == 0, "layout stage stays at time zero")
 	_check(ProjectSettings.get_setting("display/window/size/viewport_width") == 1920 and ProjectSettings.get_setting("display/window/size/viewport_height") == 1080, "1080p design resolution")
@@ -53,6 +85,10 @@ func _run() -> void:
 	_check(manager.simulation.clock.speed_multiplier == 1.0, "F2 maps to normal speed")
 	_key(KEY_SPACE)
 	_check(manager.inventory.locked and manager.simulation.state.phase == GameState.Phase.BATTLE, "Space starts battle and locks layout")
+	_check(not manager.select_member(1) and bag.member_index == 0, "running battle rejects character selection")
+	_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0, "cooldown begins fully masked")
+	for member in manager.party:
+		_check(member.inventory.locked, "all backpacks lock on start")
 	_check(not manager.move_item(GameManager.SWORD_INSTANCE, Vector2i.ZERO), "cannot move during battle")
 	_check(bag.drag_data_at(bag.cell_center(Vector2i(3, 2))).is_empty(), "battle disables drag")
 	manager._process(1.0)
@@ -63,11 +99,15 @@ func _run() -> void:
 	_key(KEY_F3)
 	manager._process(0.5)
 	ui._refresh()
-	_check(manager.simulation.state.enemy_hp == 90 and ui._hp.text == "气血  90 / 100", "F3 double speed attack updates HP")
+	_check(manager.simulation.state.enemy_hp == 70 and ui._hp.text == "气血  70 / 100", "three swords attack independently at three seconds")
+	_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0, "cooldown mask resets on activation")
 	_check(ui._log_label.text.contains("造成 10 伤害"), "damage log delivered")
 	_key(KEY_SPACE)
 	manager._process(10)
 	_check(manager.simulation.clock.paused and manager.simulation.state.time_usec == 3_000_000, "Space pauses battle")
+	_check(manager.select_member(2) and ui._preview_views[0].member_index == 0 and ui._preview_views[1].member_index == 1, "pause allows ordered character selection")
+	_check(manager.simulation.state.activation_count == 3 and bag.cooldown_progress(GameManager.sword_instance(2)) == 0, "selection preserves cooldown and attacks")
+	manager.select_member(0)
 	_key(KEY_SPACE, true)
 	_check(manager.simulation.clock.paused, "key-repeat does not toggle pause")
 	_check(not manager.move_item(GameManager.ARMOR_INSTANCE, Vector2i.ZERO), "pause does not unlock inventory")
@@ -78,7 +118,7 @@ func _run() -> void:
 	_check(not manager.simulation.clock.paused and manager.simulation.state.time_usec == 4_000_000, "second Space resumes at selected speed")
 	manager._process(52)
 	ui._refresh()
-	_check(manager.simulation.state.is_finished() and ui._status.text.contains("30.00"), "victory displayed at exact time")
+	_check(manager.simulation.state.is_finished() and ui._status.text.contains("12.00"), "party victory displayed at exact time")
 	_check(ui._log_label.text.contains("试炼完成"), "defeat event displayed")
 	_press(ui, "重新布阵")
 	ui._refresh()
@@ -98,17 +138,25 @@ func _run() -> void:
 			await process_frame
 			await process_frame
 			await RenderingServer.frame_post_draw
-			var path := "res://artifacts/backpack_%dx%d.png" % [dimensions.x, dimensions.y]
+			var path := "res://artifacts/party_%dx%d.png" % [dimensions.x, dimensions.y]
 			_check(root.get_texture().get_image().save_png(path) == OK, "rendered screenshot " + path)
 			_check(ui.get_rect().size.x <= root.get_visible_rect().size.x + 1, "UI fits viewport width")
 		root.size = Vector2i(1920, 1080)
 		manager.start_battle()
-		manager._process(12.5)
+		manager._process(1.5)
 		_key(KEY_SPACE)
+		_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0.5, "halfway cooldown reveal")
+		manager._process(10)
+		_check(bag.cooldown_progress(GameManager.SWORD_INSTANCE) == 0.5, "pause freezes reveal")
 		ui._refresh()
 		await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://artifacts/backpack_battle_paused.png")
+		root.get_texture().get_image().save_png("res://artifacts/party_battle_paused.png")
+		for selected in [1, 2]:
+			manager.select_member(selected)
+			await process_frame
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png("res://artifacts/party_selected_%d.png" % selected)
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 

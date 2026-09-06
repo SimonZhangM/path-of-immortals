@@ -13,7 +13,9 @@ func consume(events: Array[Dictionary], registry: ContentRegistry) -> String:
 		if event["kind"] == "damage":
 			var item := registry.get_item(event["item_id"])
 			var target := registry.get_enemy(event["target_id"])
-			_lines.append("%s  %s发动 · 造成 %d 伤害 · %s剩余 %d" % [stamp, item.display_name, event["value"], target["name"], event["hp_after"]])
+			var owner := registry.get_character(event.get("owner_id", ""))
+			var prefix := str(owner.get("name", "")) + " · " if not owner.is_empty() else ""
+			_lines.append("%s  %s%s发动 · 造成 %d 伤害 · %s剩余 %d" % [stamp, prefix, item.display_name, event["value"], target["name"], event["hp_after"]])
 		elif event["kind"] == "defeated":
 			_lines.append("%s  %s已击破，试炼完成。" % [stamp, registry.get_enemy(event["target_id"])["name"]])
 	while _lines.size() > MAX_LINES:

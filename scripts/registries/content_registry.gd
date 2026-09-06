@@ -3,14 +3,17 @@ extends RefCounted
 
 var _items: Dictionary = {}
 var _enemies: Dictionary = {}
+var _characters: Dictionary = {}
 var errors: PackedStringArray = []
 
 func load_base_content() -> bool:
 	_items.clear()
 	_enemies.clear()
+	_characters.clear()
 	errors.clear()
-	_load_directory("res://data/items", true)
-	_load_directory("res://data/enemies", false)
+	_load_directory("res://data/items", "item")
+	_load_directory("res://data/enemies", "enemy")
+	_load_directory("res://data/characters", "character")
 	return errors.is_empty()
 
 func get_item(id: String) -> ItemData:
@@ -18,6 +21,23 @@ func get_item(id: String) -> ItemData:
 
 func get_enemy(id: String) -> Dictionary:
 	return _enemies.get(id, {}).duplicate(true)
+
+func get_character(id: String) -> Dictionary:
+	return _characters.get(id, {}).duplicate(true)
+
+func register_character(raw: Dictionary) -> bool:
+	var error := _validate_identity(raw)
+	if error.is_empty():
+		for stat in ["max_hp", "max_stamina", "max_spirit"]:
+			if not _positive_integer(raw.get(stat)):
+				error = stat + " must be a positive integer"
+		for field in ["realm", "portrait"]:
+			if not raw.get(field) is String or str(raw[field]).strip_edges().is_empty():
+				error = field + " must be a nonempty string"
+	if not error.is_empty():
+		return _reject(raw, error)
+	_characters[raw["id"]] = raw.duplicate(true)
+	return true
 
 func register_item(raw: Dictionary) -> bool:
 	var error := _validate_identity(raw)
@@ -73,7 +93,7 @@ func _validate_identity(raw: Dictionary) -> String:
 	for part in str(raw["id"]).split("."):
 		if part.is_empty() or not part.is_valid_identifier() or part != part.to_lower():
 			return "id segments must be lowercase identifiers"
-	if _items.has(raw["id"]) or _enemies.has(raw["id"]):
+	if _items.has(raw["id"]) or _enemies.has(raw["id"]) or _characters.has(raw["id"]):
 		return "duplicate content ID"
 	if not raw.get("name") is String or str(raw.get("name", "")).strip_edges().is_empty():
 		return "name must be a nonempty string"
@@ -89,7 +109,7 @@ func _reject(raw: Dictionary, message: String) -> bool:
 	errors.append("%s: %s" % [str(raw.get("id", "<missing id>")), message])
 	return false
 
-func _load_directory(path: String, is_item: bool) -> void:
+func _load_directory(path: String, kind: String) -> void:
 	if not DirAccess.dir_exists_absolute(path):
 		errors.append("Missing content directory: " + path)
 		return
@@ -110,7 +130,9 @@ func _load_directory(path: String, is_item: bool) -> void:
 		if not json.data is Dictionary:
 			errors.append("Expected JSON object: " + full_path)
 			continue
-		if is_item:
+		if kind == "item":
 			register_item(json.data)
+		elif kind == "character":
+			register_character(json.data)
 		else:
 			register_enemy(json.data)

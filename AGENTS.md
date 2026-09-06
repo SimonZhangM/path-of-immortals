@@ -13,7 +13,7 @@ Godot 4.7.2 · GDScript 2.x · Mobile renderer · Windows-first 2D cultivation/b
 - Speed scales simulation time only. Never change Engine.time_scale for battle speed.
 - Use Containers, anchors and size flags for layouts. Keep presentation independent of simulation.
 - Keep event ordering deterministic, including simultaneous events. Reject invalid content before starting simulation.
-- Current authorized scope is V0.2: a 4x4 preparation backpack, a fixed 1x2 sword, 2x2 armor, and a left/right combat view at 1920x1080. Space starts battle during preparation, then pauses/resumes during battle; F1/F2/F3 select 0.5/1/2x. Armor currently has no specified combat effect. Do not add unrelated progression or combat systems.
+- Current authorized scope is V0.3: three allies with independent 4x4 backpacks and HP/stamina/spiritual power, selected large bag plus two ordered thumbnails, selection during preparation or stopped combat, per-instance cooldown reveal, and supplied background/weapon art at 1920x1080. Space starts/pauses/resumes; F1/F2/F3 select 0.5/1/2x. Inventory editing is preparation-only. Armor has no specified combat effect; enemy party expansion and unrelated progression remain out of scope.
 - Reserve future save data for stable IDs and instance/progress state. Do not implement full saves, MOD scripting, Lua, PCK loading or Steam integration yet.
 - Document major architecture changes before implementation. Prefer simple solutions suitable for a solo developer.
 - Run the headless tests and a project startup check before completing relevant changes. See README.md for commands.

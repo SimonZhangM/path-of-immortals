@@ -4,7 +4,7 @@
   "type": "weapon",
   "tags": ["weapon", "fire", "sword"],
   "size": [1, 2],
-  "icon": "res://assets/images/items/fire_sword.svg",
+  "icon": "res://assets/weapontest.webp",
   "cooldown": 3.0,
   "effects": [{"trigger": "on_activate", "effect": "damage", "value": 10}]
 }

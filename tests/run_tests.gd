@@ -17,6 +17,7 @@ func _initialize() -> void:
 	_test_controls()
 	_test_inventory()
 	_test_preparation()
+	_test_party()
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -176,3 +177,51 @@ func _test_preparation() -> void:
 	_check(battle.state.time_usec == 30_000_000, "finished battle remains frozen")
 	var armor := BattleSimulation.new(registry.get_item(GameManager.ARMOR_ID), registry.get_enemy(GameManager.ENEMY_ID))
 	_check(not armor.start() and armor.queue.size() == 0, "passive armor cannot create zero-cooldown loop")
+
+func _test_party() -> void:
+	var sword := registry.get_item(GameManager.ITEM_ID)
+	var loadout: Array = []
+	for index in 3:
+		loadout.append({"item": sword, "instance_id": GameManager.sword_instance(index), "owner_id": GameManager.PARTY_IDS[index]})
+		loadout.append({"item": registry.get_item(GameManager.ARMOR_ID), "instance_id": GameManager.armor_instance(index), "owner_id": GameManager.PARTY_IDS[index]})
+	for speed in SimulationClock.SPEEDS:
+		for fps in [30, 60, 144]:
+			var enemy := registry.get_enemy(GameManager.ENEMY_ID)
+			enemy["max_hp"] = 10000
+			var battle := BattleSimulation.new(sword, enemy, loadout)
+			battle.start()
+			_check(battle.queue.size() == 3, "only active party weapons are scheduled")
+			battle.clock.set_speed(speed)
+			for frame in range(int(60 * fps / speed)):
+				battle.advance(1.0 / fps)
+			_check(battle.state.time_usec == 60_000_000 and battle.state.activation_count == 60 and battle.state.enemy_hp == 9400, "party timing invariant across speed and fps")
+			var events := battle.drain_events()
+			for index in events.size():
+				_check(events[index]["at_usec"] == (index / 3 + 1) * 3_000_000 and events[index]["owner_id"] == GameManager.PARTY_IDS[index % 3], "stable simultaneous order and owner attribution")
+			for index in 3:
+				_check(battle.state.item_runtime[GameManager.sword_instance(index)]["activation_count"] == 20, "per-instance attack counts")
+	var party := BattleSimulation.new(sword, registry.get_enemy(GameManager.ENEMY_ID), loadout)
+	party.start()
+	party.advance(1.5)
+	_check(party.activation_progress(GameManager.SWORD_INSTANCE) == 0.5, "cooldown halfway")
+	party.clock.paused = true
+	party.advance(100)
+	_check(party.activation_progress(GameManager.SWORD_INSTANCE) == 0.5, "paused cooldown unchanged")
+	party.clock.paused = false
+	party.advance(60)
+	_check(party.state.defeated_at_usec == 12_000_000 and party.state.activation_count == 10 and party.queue.size() == 0, "party stops exactly on tenth lethal hit")
+	_check(party.activation_progress(GameManager.SWORD_INSTANCE) == 1, "finished weapon fully visible")
+	var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/test_fire_sword.json"))
+	raw["cooldown"] = 2
+	raw["id"] = "test.weapon.fast"
+	var mixed := BattleSimulation.new(sword, {"id": "test.enemy", "max_hp": 1000}, [loadout[0], {"item": ItemData.new(raw), "instance_id": "fast", "owner_id": GameManager.PARTY_IDS[1]}])
+	mixed.start()
+	mixed.advance(1.5)
+	_check(mixed.activation_progress(GameManager.SWORD_INSTANCE) == 0.5 and mixed.activation_progress("fast") == 0.75, "independent cooldown lengths")
+	mixed.advance(4.5)
+	_check(mixed.state.item_runtime[GameManager.SWORD_INSTANCE]["activation_count"] == 2 and mixed.state.item_runtime["fast"]["activation_count"] == 3, "independent schedules")
+	var character := registry.get_character(GameManager.PARTY_IDS[0])
+	_check(character["name"] == "辰宇" and character["realm"] == "炼气初期", "protagonist definition")
+	character["max_hp"] = 0
+	_check(not ContentRegistry.new().register_character(character), "invalid character resources rejected")
+	_check(registry.get_character(GameManager.PARTY_IDS[0])["max_hp"] == 100, "character definition isolated")
