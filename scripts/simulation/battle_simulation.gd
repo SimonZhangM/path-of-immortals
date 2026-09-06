@@ -11,9 +11,17 @@ var _pending_events: Array[Dictionary] = []
 func _init(item: ItemData, enemy: Dictionary) -> void:
 	_item = item
 	state = GameState.new(item, enemy)
+
+func start() -> bool:
+	if state.phase != GameState.Phase.PREPARATION or _item.effects.is_empty():
+		return false
+	state.phase = GameState.Phase.BATTLE
 	queue.schedule(state.next_activation_usec, "activate", {"instance_id": state.item_instance_id})
+	return true
 
 func advance(real_delta: float) -> void:
+	if state.phase != GameState.Phase.BATTLE:
+		return
 	var target_usec := clock.advance(real_delta)
 	while queue.has_due(target_usec):
 		var event := queue.pop_next()
@@ -30,6 +38,9 @@ func advance(real_delta: float) -> void:
 		DebugLogger.simulation("%.3f %s activated; HP=%d" % [due_usec / 1_000_000.0, _item.id, state.enemy_hp])
 		if state.is_finished():
 			state.next_activation_usec = 0
+			state.phase = GameState.Phase.FINISHED
+			clock.time_usec = due_usec
+			target_usec = due_usec
 			queue.clear()
 			_pending_events.append({"kind": "defeated", "at_usec": due_usec, "target_id": state.enemy_id})
 		else:

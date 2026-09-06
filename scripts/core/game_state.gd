@@ -1,6 +1,10 @@
 class_name GameState
 extends RefCounted
 
+enum Phase { PREPARATION, BATTLE, FINISHED }
+var phase: Phase = Phase.PREPARATION
+var player_hp: int = 100
+var player_max_hp: int = 100
 var time_usec: int = 0
 var enemy_id: String
 var enemy_hp: int

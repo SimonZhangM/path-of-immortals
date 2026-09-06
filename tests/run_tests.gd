@@ -15,13 +15,17 @@ func _initialize() -> void:
 	_test_content()
 	_test_timing()
 	_test_controls()
+	_test_inventory()
+	_test_preparation()
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 
 func _new_battle(hp: int = 100) -> BattleSimulation:
 	var enemy := registry.get_enemy("base.test.dummy")
 	enemy["max_hp"] = hp
-	return BattleSimulation.new(registry.get_item("base.test.fire_sword"), enemy)
+	var battle := BattleSimulation.new(registry.get_item("base.test.fire_sword"), enemy)
+	battle.start()
+	return battle
 
 func _check(condition: bool, description: String) -> void:
 	checks += 1
@@ -73,8 +77,8 @@ func _test_timing() -> void:
 			battle.clock.set_speed(speed)
 			for frame in range(int(60 * fps / speed)):
 				battle.advance(1.0 / fps)
-			_check(battle.state.time_usec == 60_000_000, "%dx @%dfps time" % [speed, fps])
-			_check(battle.state.activation_count == 20, "%dx @%dfps 20 attacks in 60s" % [speed, fps])
+			_check(battle.state.time_usec == 60_000_000, "%sx @%dfps time" % [str(speed), fps])
+			_check(battle.state.activation_count == 20, "%sx @%dfps 20 attacks in 60s" % [str(speed), fps])
 			_check(battle.state.enemy_hp == 9800, "same damage across speed and frame rate")
 			var events := battle.drain_events()
 			_check(events.size() == 20, "all presentation events delivered")
@@ -112,17 +116,63 @@ func _test_controls() -> void:
 	battle.clock.paused = true
 	battle.advance(100)
 	_check(battle.state.time_usec == 1_000_000 and battle.state.activation_count == 0, "pause freezes simulation")
-	battle.clock.set_speed(8)
+	battle.clock.set_speed(2)
 	battle.advance(10)
 	_check(battle.state.time_usec == 1_000_000, "speed change while paused stays paused")
 	battle.clock.paused = false
-	battle.advance(0.25)
+	battle.advance(1.0)
 	_check(battle.state.time_usec == 3_000_000 and battle.state.enemy_hp == 90, "resume at new speed preserves cooldown")
 	battle.clock.set_speed(3)
-	_check(battle.clock.speed_multiplier == 8, "unsupported speed ignored")
+	_check(battle.clock.speed_multiplier == 2, "unsupported speed ignored")
 	battle.advance(-1)
 	battle.advance(NAN)
 	_check(battle.state.time_usec == 3_000_000, "invalid deltas ignored")
 	_check(battle.drain_events().size() == 1 and battle.drain_events().is_empty(), "presentation events drained once")
 	var fresh := _new_battle()
 	_check(fresh.state.enemy_hp == 100 and fresh.state.time_usec == 0 and fresh.clock.speed_multiplier == 1 and not fresh.clock.paused, "fresh run resets state")
+
+func _test_inventory() -> void:
+	var bag := InventoryState.new(registry)
+	_check(bag.add_item("sword", GameManager.ITEM_ID, Vector2i.ZERO), "add sword 1x2")
+	_check(bag.add_item("armor", GameManager.ARMOR_ID, Vector2i(1, 1)), "add armor 2x2")
+	_check(bag.occupied_cells() == 6, "six of sixteen cells occupied")
+	_check(bag.item_at(Vector2i(0, 1)) == "sword" and bag.item_at(Vector2i(2, 2)) == "armor", "all footprint cells identify their item")
+	_check(not bag.add_item("sword", GameManager.ITEM_ID, Vector2i(3, 0)), "duplicate instance rejected")
+	_check(not bag.move_item("sword", Vector2i(1, 1)), "overlap rejected")
+	_check(not bag.move_item("sword", Vector2i(-1, 0)), "negative cell rejected")
+	_check(not bag.move_item("sword", Vector2i(0, 3)), "sword bottom overflow rejected")
+	_check(not bag.move_item("armor", Vector2i(3, 0)), "armor right overflow rejected")
+	_check(bag.get_instance("sword")["cell"] == Vector2i.ZERO, "invalid moves preserve original position")
+	_check(bag.move_item("sword", Vector2i(0, 1)), "movement overlapping its own old footprint accepted")
+	_check(bag.move_item("sword", Vector2i(3, 2)), "sword fits bottom-right edge")
+	_check(bag.move_item("armor", Vector2i(0, 2)), "armor fits bottom-left edge")
+	_check(not bag.move_item("unknown", Vector2i.ZERO), "unknown instance rejected")
+	bag.locked = true
+	_check(not bag.move_item("sword", Vector2i.ZERO), "locked backpack rejects move")
+	_check(not bag.add_item("second", GameManager.ITEM_ID, Vector2i.ZERO), "locked backpack rejects addition")
+	bag.locked = false
+	_check(bag.add_item("second", GameManager.ITEM_ID, Vector2i.ZERO), "same definition supports distinct layout instances")
+	var copy := bag.get_instance("sword")
+	copy["cell"] = Vector2i.ZERO
+	_check(bag.get_instance("sword")["cell"] == Vector2i(3, 2), "instance reads do not mutate authoritative layout")
+	var armor_raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/iron_armor.json"))
+	_check(ContentRegistry.new().register_item(armor_raw), "passive armor definition accepted")
+	for invalid_size in [null, [], [1], [1, 2, 3], [0, 2], [2.5, 2], [5, 2], ["2", 2], [-1, 2]]:
+		var changed := armor_raw.duplicate(true)
+		changed["size"] = invalid_size
+		_check(not ContentRegistry.new().register_item(changed), "invalid footprint rejected")
+	armor_raw["cooldown"] = 3
+	_check(not ContentRegistry.new().register_item(armor_raw), "passive item cannot schedule a cooldown")
+
+func _test_preparation() -> void:
+	var battle := BattleSimulation.new(registry.get_item(GameManager.ITEM_ID), registry.get_enemy(GameManager.ENEMY_ID))
+	battle.advance(60)
+	_check(battle.state.phase == GameState.Phase.PREPARATION and battle.state.time_usec == 0 and battle.queue.size() == 0, "preparation never advances or schedules attacks")
+	_check(battle.start(), "explicit start begins battle")
+	_check(not battle.start() and battle.queue.size() == 1, "double start cannot duplicate schedule")
+	battle.advance(60)
+	_check(battle.state.phase == GameState.Phase.FINISHED and battle.state.time_usec == 30_000_000, "completion freezes at exact defeat time")
+	battle.advance(10)
+	_check(battle.state.time_usec == 30_000_000, "finished battle remains frozen")
+	var armor := BattleSimulation.new(registry.get_item(GameManager.ARMOR_ID), registry.get_enemy(GameManager.ENEMY_ID))
+	_check(not armor.start() and armor.queue.size() == 0, "passive armor cannot create zero-cooldown loop")

@@ -1,13 +1,13 @@
 class_name SimulationClock
 extends RefCounted
 
-const SPEEDS := [1, 2, 4, 8]
+const SPEEDS := [0.5, 1.0, 2.0]
 var time_usec: int = 0
-var speed_multiplier: int = 1
+var speed_multiplier: float = 1.0
 var paused: bool = false
 var _fractional_usec: float = 0.0
 
-func set_speed(speed: int) -> void:
+func set_speed(speed: float) -> void:
 	if speed in SPEEDS:
 		speed_multiplier = speed
 

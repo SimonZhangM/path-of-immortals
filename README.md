@@ -1,77 +1,81 @@
 # 修仙之路 · Path of Immortals
 
-Godot 4.7.2 / GDScript / Mobile Renderer 的 V0.1 最小可玩原型。参考《口袋修仙》的自动触发构筑方向，第一阶段仅验证底层链路，不复刻其资源或完整玩法。
+Godot 4.7.2 / GDScript / Mobile Renderer 的修仙构筑原型。当前版本 **V0.2：战前背包布阵与左右对阵界面**。
 
-**接手开发先读 [项目开发进度](PROJECT_PROGRESS.md) 和 [工程规则](AGENTS.md)。** 最新阶段、已完成工作、验证结果、限制与下一步统一维护在进度文档中。
+接手开发先读 [项目开发进度](PROJECT_PROGRESS.md) 和 [工程规则](AGENTS.md)。最新成果、验证与限制统一维护在进度文档中。
 
-## 运行
+## 运行与操作
 
-用已安装的 Godot 打开本目录 `project.godot`，按 **F5** 运行项目。主场景为 `scenes/main/main.tscn`。
+Godot 打开 `project.godot`，按 **F5**。主场景是 `scenes/main/main.tscn`。
 
-启动即自动战斗：测试玄火剑每 3 游戏秒攻击木桩，造成 10 伤害；木桩初始 100 HP，第 30 游戏秒被击破。支持 1× / 2× / 4× / 8×、暂停/继续、重新开始。重新开始会重置战斗、记录、速度与暂停状态。
+1. 启动进入布阵阶段，游戏时间为零。左侧玩家有 **4×4** 背包，右侧是测试木桩。
+2. 玄火剑固定占 **1×2** 格，铁甲占 **2×2** 格。鼠标左键拖动，绿色表示可放，红色表示越界或重叠；非法落点保留原位置。不旋转、不交换或丢弃装备。
+3. 也可点击装备选中，再点击空格，以该空格为装备左上角放置。
+4. 点击 **开始战斗** 后锁定背包，玄火剑每 3 游戏秒造成 10 伤害；木桩初始 100 HP，30 游戏秒被击破。
+5. **空格**暂停/恢复；**F1** = 0.5×，**F2** = 1×，**F3** = 2×。默认 1×，1 真实秒 = 1 游戏秒。半速每 6 真实秒攻击，正常每 3 秒攻击，2× 每 1.5 秒攻击。
+6. 暂停时仍不能移动装备。**重新布阵**保留当前布局，重置生命、时间、战斗记录及速度（1×），等待再次开战。
 
-4× 下每 0.75 真实秒攻击，8× 下每 0.375 真实秒攻击。胜利后不再攻击，游戏时钟仍可推进，以便观测 60 秒等测试窗口；胜利耗时固定显示实际击破时刻。
+结束时冻结在实际击破时刻。铁甲本轮只实现占格和摆放，没有新增防御数值；木桩不会反击。当前玩家生命显示为 100，无角色成长系统。
 
-## 目录与边界
+## 目录与架构
 
 ```text
-data/items/                 法器 JSON
-data/enemies/               敌人 JSON
-scenes/main/main.tscn       入口场景：Manager + UI
-scripts/core/              调度入口、权威状态、日志
-scripts/data/              法器定义
-scripts/registries/        内容读取、校验、稳定 ID 查询
-scripts/simulation/        时钟、稳定最小堆事件队列、战斗模拟
-scripts/systems/           通用效果执行接口（当前仅 damage）
-scripts/ui/                容器布局、状态展示、操作转发
-scripts/presentation/      事件转战斗记录（最多保留 12 行）
-tests/                     逻辑测试、场景联动及渲染验证
-docs/                      第一阶段架构审查与取舍
-artifacts/                 本地测试日志和截图（Git 忽略）
+assets/images/             原创 SVG 占位图：角色、木桩、剑、甲
+data/items/                道具 JSON（尺寸、图标、效果）
+data/enemies/              敌人 JSON
+scenes/main/main.tscn      入口场景：Manager + UI
+scripts/core/             游戏状态、背包状态、管理入口、日志
+scripts/data/             道具静态定义
+scripts/registries/       内容读取、校验、稳定 ID 查询
+scripts/simulation/       时钟、稳定事件队列、战斗模拟
+scripts/systems/          通用 damage 效果接口
+scripts/ui/               布局、原生背包拖放、背景绘制
+scripts/presentation/     有长度上限的战斗记录
+tests/                    逻辑、输入联动与渲染检查
+docs/                     设计审查和历史验证记录
+artifacts/                本地测试日志与截图（忽略，不上传）
 ```
 
-只创建本阶段实际使用的目录，后续素材、存档和 MOD 目录按需求补充。
+`JSON → ContentRegistry → BattleSimulation / InventoryState → GameState → UI`
 
-## 架构
+- 模拟与背包状态继承 `RefCounted`，不依赖场景或 UI。`GameManager` 负责时间桥接、战斗阶段和操作命令。
+- 背包保存实例 ID、内容 ID、左上角格坐标；尺寸从 Registry 读取。`InventoryView` 不持有权威布局，只负责坐标换算、预览和命令转发。
+- `PREPARATION / BATTLE / FINISHED` 明确区分布阵、战斗和完成；开始战斗才排入首个攻击事件。
+- 时钟使用整数微秒并保留换算余数，速度为浮点数，支持 0.5×。不改变 `Engine.time_scale`。
+- 最小堆按到期微秒、插入顺序排程；循环从上一次到期时间续排，长帧补算不丢事件。
+- UI 读取状态并批量消费表现事件；血量和统计按 revision 更新。图标从内容路径加载并缓存。
 
-`JSON → ContentRegistry → BattleSimulation → GameState → MainUI`
+设计取舍见 [V0.2 设计审查](docs/v0.2-design-review.md)，历史基础设计见 [V0.1 审查](docs/v0.1-design-review.md)。
 
-- 模拟类均继承 `RefCounted`，不依赖节点树、UI、系统时间或动画。`GameManager` 是现实帧时间到模拟的唯一桥梁。
-- `SimulationClock` 将真实 delta 按速度换算成整数微秒，保留不足一微秒的余数。不修改 `Engine.time_scale`。
-- `EventQueue` 按「到期微秒 + 插入序号」排序。循环事件从上一次到期时间重排，不从当前帧末尾重排，因此掉帧不会丢失攻击或累积冷却漂移。
-- `GameState` 持有生命、次数、累计实际伤害、内容 ID、实例 ID 和到期时间。静态内容从 Registry 读取。
-- `EffectSystem` 校验与分发 `on_activate / damage`。今后扩展通用处理器，不为普通法器新建脚本。
-- UI 每帧更新时钟/冷却，生命与战斗统计按状态 revision 更新；表现事件每帧批量交付，动画或日志不阻塞模拟。
-- JSON 启动时读取一次；拒绝重复 ID、未知效果、非法数值、缺失字段、错误 JSON。加载失败显示原因并停止启动战斗。
+## 数据约定
 
-详细审查见 `docs/v0.1-design-review.md`。
+- 玄火剑稳定 ID：`base.test.fire_sword`，原有 ID 保持不变。
+- 铁甲稳定 ID：`base.armor.iron_armor`。
+- 木桩稳定 ID：`base.test.dummy`。
+- 道具 `size: [宽, 高]` 两维均为 1–4 的整数；`icon` 为资源路径；`tags` 为字符串数组。
+- 主动道具：`effects` 非空，冷却范围 0.001–86400 秒，当前只支持 `on_activate / damage`，伤害为正整数。
+- 无主动效果装备：`effects: []`、`cooldown: 0`，不进入攻击队列。
+- 修改 JSON 后重新运行生效。未知效果、重复 ID、非法尺寸和数值会在启动时被拒绝。
 
-## 修改测试数据
+## 验证
 
-编辑 `data/items/test_fire_sword.json` 的 `cooldown`、`effects[].value`，或敌人 JSON 的 `max_hp`，重新运行即可生效。不要修改已有稳定 ID。
-
-当前字段约束：ID 是至少三段小写标识符；name 为非空字符串；type 非空；tags 为字符串数组；冷却范围 0.001–86400 秒；伤害与生命为 1–10 亿的整数；effects 非空且只支持 `on_activate` + `damage`。这属于 V0.1 校验契约，还不是对外发布的 MOD SDK。
-
-## 测试
-
-在项目目录的 PowerShell 执行：
+在项目根目录的 PowerShell 执行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tests\run.ps1
-# 额外使用实际 Mobile / D3D12 渲染四种窗口尺寸，并保存截图：
 powershell -ExecutionPolicy Bypass -File .\tests\run.ps1 -Render
-# 引擎位置不同可以传入：
+# 本机引擎路径不同时指定：
 powershell -ExecutionPolicy Bypass -File .\tests\run.ps1 -GodotPath 'D:\Godot\Godot.exe'
 ```
 
-脚本等待 Windows 版 Godot 退出，并同时检查退出码与错误日志。先导入全局类，再运行逻辑测试、场景按钮联动测试、主场景启动检查。无需额外插件或测试框架。
+目前通过 **484 项逻辑检查、34 项无窗口 UI 检查、39 项真实渲染场景检查**。原生鼠标拖放通过无窗口 Godot 的 `Input.parse_input_event` 路径验证，快捷键经 Viewport 输入分发验证；渲染模式检验拖放回调、键盘和画面，不操纵用户的系统鼠标。详情见 [V0.2 验证记录](docs/v0.2-validation.md)。
 
-逻辑测试覆盖 1/2/4/8×、30/60/144 FPS、精确事件时刻、同时间事件顺序、60 秒长帧补算、不均匀帧、暂停/切速/恢复、死亡停止、过量伤害截断、数据校验。高血量测试目标在 60 游戏秒内均攻击 20 次、损血 200；正式木桩只攻击 10 次。
+设计及默认窗口分辨率为 **2560×1440**，最小 1280×720，使用容器布局与 `canvas_items` 缩放。已检查 2K、720p、16:10、超宽屏和战斗暂停画面。中文使用系统字体，尚未打包可分发字体。当前使用自制矢量占位图，没有正式美术、音效或动画。
 
-界面以 1920×1080 为参考，用 Container 和锚点布局，默认窗口 1280×720，最小 960×540，支持 16:10 和超宽窗口。中文使用系统字体（Windows 微软雅黑优先），未打包商业字体；将来跨平台发行时再选择可分发字体。当前无正式美术、动画、音效。
+## 版本管理与后续范围
 
-## 版本管理与下一步
+仓库：[SimonZhangM/path-of-immortals](https://github.com/SimonZhangM/path-of-immortals)，主分支 `main`。忽略 `.godot/`、测试产物和构建目录。
 
-已初始化 Git 并忽略 `.godot/`、测试产物和构建目录。远程仓库为 [SimonZhangM/path-of-immortals](https://github.com/SimonZhangM/path-of-immortals)，主分支为 `main`。首个版本提交为 `V0.1 minimal simulation prototype`，使用已连接的 GitHub 身份及 GitHub 隐私邮箱。
+尚未实现敌方反击、铁甲防御效果、多主动法器战斗、旋转、相邻触发、成长、存档、MOD 或 Steam。下一步可讨论最小攻防规则，让铁甲参与战斗；新增规则与数值需用户确定。
 
-下一阶段建议先加入第二件数据驱动法器和多个实例，验证不同冷却、同时触发与实例状态隔离；通过后再设计背包布局和相邻触发。本次未开始第二阶段。
+尚未导出发行包。未来导出时需显式包含 `data/**/*.json`，并在导出产物中验证加载。

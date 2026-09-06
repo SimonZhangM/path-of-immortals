@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+<defs><linearGradient id="iron"><stop stop-color="#b5c6bf"/><stop offset=".5" stop-color="#526c6a"/><stop offset="1" stop-color="#283f42"/></linearGradient></defs>
+<path d="M109 53 L133 45 Q160 78 187 45 L211 53 L256 74 L283 129 L244 151 L225 121 L235 262 Q160 291 85 262 L95 121 L76 151 L37 129 L64 74Z" fill="url(#iron)" stroke="#c7b688" stroke-width="5"/>
+<path d="M109 53 L117 100 L160 124 L203 100 L211 53 M160 124 L160 259 M97 178 Q160 206 223 178 M92 210 Q160 238 228 210 M88 241 Q160 268 232 241" fill="none" stroke="#b1b8a0" stroke-width="4"/>
+<path d="M67 80 L103 72 L94 115 L54 130 M253 80 L217 72 L226 115 L266 130" fill="#69847e" stroke="#c7b688" stroke-width="3"/>
+<path d="M139 132 L160 144 L181 132 L177 165 L160 182 L143 165Z" fill="#c0a66e"/>
+<path d="M102 260 L96 285 L224 285 L218 260" fill="#3b4e4d" stroke="#a9a180" stroke-width="4"/>
+</svg>

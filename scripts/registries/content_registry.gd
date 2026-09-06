@@ -29,10 +29,25 @@ func register_item(raw: Dictionary) -> bool:
 		for tag in raw["tags"]:
 			if not tag is String:
 				error = "tags must contain strings"
-	if error.is_empty() and (not _positive_number(raw.get("cooldown")) or float(raw["cooldown"]) < 0.001 or float(raw["cooldown"]) > 86400.0):
-		error = "cooldown must be between 0.001 and 86400 seconds"
-	if error.is_empty() and (not raw.get("effects") is Array or raw["effects"].is_empty()):
-		error = "effects must be a nonempty array"
+	if error.is_empty() and not raw.get("effects") is Array:
+		error = "effects must be an array"
+	if error.is_empty():
+		var cooldown: Variant = raw.get("cooldown")
+		if raw["effects"].is_empty():
+			if not (cooldown is int or cooldown is float) or float(cooldown) != 0.0:
+				error = "passive items must use cooldown 0"
+		elif not _positive_number(cooldown) or float(cooldown) < 0.001 or float(cooldown) > 86400.0:
+			error = "active cooldown must be between 0.001 and 86400 seconds"
+	if error.is_empty():
+		var footprint: Variant = raw.get("size")
+		if not footprint is Array or footprint.size() != 2:
+			error = "size must be [width, height]"
+		else:
+			for dimension in footprint:
+				if not _positive_integer(dimension) or float(dimension) > 4.0:
+					error = "size dimensions must be integers from 1 to 4"
+	if error.is_empty() and not raw.get("icon", "") is String:
+		error = "icon must be a resource path string"
 	if error.is_empty():
 		for effect in raw["effects"]:
 			if not effect is Dictionary or not EffectSystem.validate_definition(effect):
