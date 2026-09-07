@@ -19,6 +19,7 @@ func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_format
 	_registry = registry
 	for side in 2:
 		for member in state.teams[side]:
+			member.defense_sources.clear()
 			for instance in member.inventory.get_instances():
 				assert(not _definitions.has(instance["instance_id"]), "Combat instance IDs must be unique across teams")
 				attach(member, side, instance["instance_id"], false)
@@ -26,17 +27,23 @@ func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_format
 func attach(member: PartyMemberState, side: int, id: String, inserted_during_battle: bool) -> void:
 	var entry := member.inventory.get_instance(id)
 	assert(not entry.is_empty())
+	if _owners.has(id):
+		_owners[id].defense_sources.erase(id)
 	_versions[id] = int(_versions.get(id, 0)) + 1
 	var item := _registry.get_item(entry["item_id"])
 	_definitions[id] = item
 	_owners[id] = member
 	var frozen_until := state.time_usec + insertion_cooldown_usec if inserted_during_battle else 0
-	state.item_runtime[id] = {"item_id": item.id, "owner_id": member.id, "side": side, "next_activation_usec": 0, "activation_count": 0, "frozen_until_usec": frozen_until, "ready_at_usec": frozen_until + item.cooldown_usec}
+	state.item_runtime[id] = {"item_id": item.id, "owner_id": member.id, "side": side, "next_activation_usec": 0, "activation_count": 0, "frozen_until_usec": frozen_until, "ready_at_usec": frozen_until + item.cooldown_usec, "entered": false}
 	if state.phase == GameState.Phase.BATTLE:
+		# Cooldown completion becomes authoritative before attacks at the same timestamp.
+		queue.schedule(frozen_until, "enter", {"instance_id": id, "version": _versions[id]}, -1)
 		_wake_items(state.time_usec)
 	state.revision += 1
 
 func detach(id: String) -> void:
+	if _owners.has(id):
+		_owners[id].defense_sources.erase(id)
 	_versions[id] = int(_versions.get(id, 0)) + 1
 	_definitions.erase(id)
 	_owners.erase(id)
@@ -47,6 +54,8 @@ func start() -> bool:
 	if state.phase != GameState.Phase.PREPARATION:
 		return false
 	state.phase = GameState.Phase.BATTLE
+	for id in _definitions:
+		_enter({"instance_id": id, "version": _versions[id]}, 0)
 	_wake_items(0)
 	_check_result(0)
 	return true
@@ -56,7 +65,7 @@ func _can_activate(id: String) -> bool:
 		return false
 	var owner: PartyMemberState = _owners[id]
 	var item: ItemData = _definitions[id]
-	if owner.hp <= 0 or item.effects.is_empty() or owner.stamina < item.stamina_cost:
+	if owner.hp <= 0 or item.effects_for("on_activate").is_empty() or owner.stamina < item.stamina_cost:
 		return false
 	if item.is_consumable():
 		var entry := owner.inventory.get_instance(id)
@@ -115,6 +124,8 @@ func advance(real_delta: float) -> void:
 		state.time_usec = at_usec
 		if event["kind"] == "restore":
 			_apply_restore(event["payload"], at_usec)
+		elif event["kind"] == "enter":
+			_enter(event["payload"], at_usec)
 		else:
 			_activate(event["payload"], at_usec)
 		_wake_items(at_usec)
@@ -156,12 +167,14 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 		if target == null:
 			return
 		state.activation_counts[side] += 1
-		for effect in item.effects:
+		for effect in item.effects_for("on_activate"):
 			var result := _effects.apply(effect, state, target, at_usec, source)
 			if not result.is_empty():
 				_pending_events.append(result)
 		if target.hp == 0:
 			_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": target.definition["name"], "target_id": target.id})
+		else:
+			_counterattack(target, owner, 1 - side, at_usec)
 	runtime["ready_at_usec"] = at_usec + item.cooldown_usec
 	if _can_activate(id):
 		_schedule(id, runtime["ready_at_usec"])
@@ -172,6 +185,39 @@ func _apply_restore(payload: Dictionary, at_usec: int) -> void:
 	if not result.is_empty():
 		state.revision += 1
 		_pending_events.append(result)
+
+func _enter(payload: Dictionary, at_usec: int) -> void:
+	var id: String = payload["instance_id"]
+	if not _definitions.has(id) or payload["version"] != _versions[id] or state.item_runtime[id]["entered"]:
+		return
+	var owner: PartyMemberState = _owners[id]
+	if owner.hp <= 0:
+		return
+	var item: ItemData = _definitions[id]
+	state.item_runtime[id]["entered"] = true
+	var defense := item.defense
+	for effect in item.effects_for("on_enter"):
+		defense += int(effect["value"])
+		_pending_events.append({"kind": "entered", "at_usec": at_usec, "owner_name": owner.definition["name"], "item_id": item.id, "defense": int(effect["value"])})
+	if defense > 0:
+		owner.defense_sources[id] = defense
+	state.revision += 1
+
+func _counterattack(defender: PartyMemberState, attacker: PartyMemberState, side: int, at_usec: int) -> void:
+	# A bounded reaction pass: counters do not enter this method recursively.
+	for id in _definitions:
+		if attacker.hp <= 0:
+			break
+		if _owners[id] != defender or not state.item_runtime[id]["entered"]:
+			continue
+		var item: ItemData = _definitions[id]
+		for effect in item.effects_for("on_attacked"):
+			var source := {"item_id": item.id, "instance_id": id, "owner_id": defender.id, "owner_name": defender.definition["name"], "side": side, "stamina_cost": 0}
+			var result := _effects.apply(effect, state, attacker, at_usec, source)
+			if not result.is_empty():
+				_pending_events.append(result)
+				if attacker.hp == 0:
+					_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": attacker.definition["name"], "target_id": attacker.id})
 
 func _check_result(at_usec: int) -> void:
 	if not state.has_survivor(0):

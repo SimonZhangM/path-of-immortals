@@ -4,63 +4,77 @@ extends PanelContainer
 var manager: GameManager
 var storage_id: String
 var item: ItemData
+var _entry: Dictionary
 
 func configure(game: GameManager, entry: Dictionary) -> void:
 	manager = game
 	storage_id = entry["instance_id"]
+	_entry = entry.duplicate(true)
 	item = manager.registry.get_item(entry["item_id"])
-	custom_minimum_size = Vector2(238, 245)
+	custom_minimum_size = Vector2(180, 215)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var box := StyleBoxFlat.new()
-	box.bg_color = Color("172629")
-	box.border_color = Color("586b61")
+	box.bg_color = Color("16232b")
+	box.border_color = Color("45596b")
 	box.set_border_width_all(1)
-	box.set_corner_radius_all(12)
-	box.content_margin_left = 14
-	box.content_margin_right = 14
-	box.content_margin_top = 12
-	box.content_margin_bottom = 12
+	box.set_corner_radius_all(15)
+	for edge in ["left", "right", "top", "bottom"]:
+		box.set("content_margin_" + edge, 10)
 	add_theme_stylebox_override("panel", box)
+	var highlighted := box.duplicate() as StyleBoxFlat
+	highlighted.border_color = Color("e3bd70")
+	mouse_entered.connect(func(): add_theme_stylebox_override("panel", highlighted))
+	mouse_exited.connect(func(): add_theme_stylebox_override("panel", box))
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 6)
+	layout.add_theme_constant_override("separation", 8)
 	add_child(layout)
-	var heading := HBoxContainer.new()
-	layout.add_child(heading)
+	var art := Control.new()
+	art.custom_minimum_size.y = 142
+	layout.add_child(art)
 	var title := Label.new()
-	title.text = item.display_name
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_color_override("font_color", Color("efd49a"))
-	title.add_theme_font_size_override("font_size", 21)
-	heading.add_child(title)
-	var quantity := Label.new()
-	quantity.text = "×%d" % entry["units"].size()
-	quantity.add_theme_color_override("font_color", Color("b7cfbe"))
-	heading.add_child(quantity)
+	title.text = "\n".join(item.display_name.split(""))
+	title.add_theme_font_size_override("font_size", 17)
+	title.add_theme_color_override("font_color", Color("9dc9f0"))
+	art.add_child(title)
 	var icon := TextureRect.new()
 	icon.texture = load(item.icon_path) if not item.icon_path.is_empty() else null
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.custom_minimum_size.y = 128
-	layout.add_child(icon)
-	var tags := Label.new()
-	tags.text = "%s  ·  %s  ·  %d×%d格" % [StoragePanel.CATEGORIES[item.category], item.quality, item.grid_size.x, item.grid_size.y]
-	tags.add_theme_font_size_override("font_size", 14)
-	tags.add_theme_color_override("font_color", Color("a3bcb0"))
+	icon.anchor_right = 1
+	icon.anchor_bottom = 1
+	icon.offset_left = 25
+	icon.offset_right = -6
+	icon.offset_top = 15
+	icon.offset_bottom = -8
+	art.add_child(icon)
+	var quantity := Label.new()
+	quantity.text = "×%d" % entry["units"].size()
+	quantity.anchor_top = 1
+	quantity.anchor_bottom = 1
+	quantity.offset_top = -26
+	quantity.add_theme_font_size_override("font_size", 16)
+	quantity.add_theme_color_override("font_color", Color("efd59c"))
+	art.add_child(quantity)
+	var shape := ItemFootprint.new()
+	shape.dimensions = item.grid_size
+	shape.anchor_left = 1
+	shape.anchor_right = 1
+	shape.offset_left = -26
+	shape.offset_bottom = 26
+	art.add_child(shape)
+	var tags := HBoxContainer.new()
+	tags.alignment = BoxContainer.ALIGNMENT_CENTER
+	tags.add_theme_constant_override("separation", 7)
 	layout.add_child(tags)
-	var detail := Label.new()
-	detail.add_theme_font_size_override("font_size", 14)
-	if item.is_consumable():
-		var effect: Dictionary = item.effects[0]
-		detail.text = "每瓶%d次 · %d秒回复%d%s" % [item.uses_per_unit, effect["duration"], effect["value"], {"hp": "气血", "spirit": "灵力", "stamina": "体力"}[effect["resource"]]]
-	elif item.type == "weapon":
-		detail.text = "轮转%s秒 · 伤害%d · 体力−%d" % [str(item.cooldown_usec / 1_000_000.0), item.effects[0]["value"], item.stamina_cost]
-	else:
-		detail.text = "防具 · 效果待设定"
-	layout.add_child(detail)
-	if item.is_consumable() and entry["units"][0]["uses_left"] < item.uses_per_unit:
-		detail.text = "已开瓶 · 剩余%d次" % entry["units"][0]["uses_left"]
+	tags.add_child(ItemTooltip.chip(StoragePanel.CATEGORIES[item.category]))
+	tags.add_child(ItemTooltip.chip(item.quality, Color("c6acdf")))
 	_ignore(layout)
-	tooltip_text = "右键：放入当前阵盘\n拖动：选择阵盘格位"
+	tooltip_text = item.id
+
+func _make_custom_tooltip(_for_text: String) -> Object:
+	var panel := ItemTooltip.new()
+	panel.configure(item, _entry)
+	return panel
 
 func _ignore(node: Node) -> void:
 	if node is Control:

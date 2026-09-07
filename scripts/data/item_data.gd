@@ -13,6 +13,7 @@ var icon_path: String
 var uses_per_unit: int
 var category: String
 var quality: String
+var defense: int
 
 # Registry validates input before constructing an immutable-by-convention definition.
 func _init(raw: Dictionary) -> void:
@@ -28,6 +29,10 @@ func _init(raw: Dictionary) -> void:
 	uses_per_unit = int(raw.get("uses_per_unit", 0))
 	category = raw.get("category", type)
 	quality = raw.get("quality", "凡品")
+	defense = int(raw.get("defense", 0))
 
 func is_consumable() -> bool:
 	return uses_per_unit > 0
+
+func effects_for(trigger: String) -> Array:
+	return effects.filter(func(effect: Dictionary): return effect["trigger"] == trigger)

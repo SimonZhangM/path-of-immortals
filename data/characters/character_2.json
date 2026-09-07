@@ -1,1 +1,10 @@
-{"id":"base.character.role_2","name":"角色2","realm":"炼气初期","max_hp":100,"max_stamina":100,"max_spirit":100,"portrait":"res://assets/portrait2.webp"}
+{
+  "id": "base.character.role_2",
+  "name": "角色2",
+  "realm": "炼气初期",
+  "max_hp": 100,
+  "max_stamina": 100,
+  "max_spirit": 100,
+  "portrait": "res://assets/portrait2.webp",
+  "board_layout": "base.board.roots"
+}

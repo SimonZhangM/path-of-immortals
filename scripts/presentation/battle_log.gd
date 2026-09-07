@@ -11,12 +11,18 @@ func consume(events: Array[Dictionary], registry: ContentRegistry) -> String:
 	for event in events:
 		var stamp := "[%05.2f]" % (int(event["at_usec"]) / 1_000_000.0)
 		match event["kind"]:
+			"entered":
+				_lines.append("%s %s·%s进场，防御+%d" % [stamp, event["owner_name"], registry.get_item(event["item_id"]).display_name, event["defense"]])
+			"counter_damage":
+				_lines.append("%s %s·%s反击 → %s，伤害%d（无视防御）" % [stamp, event["owner_name"], registry.get_item(event["item_id"]).display_name, event["target_name"], event["value"]])
 			"restore":
 				_lines.append("%s %s · %s +%d" % [stamp, event["target_name"], {"hp": "气血", "stamina": "体力", "spirit": "灵力"}[event["resource"]], event["value"]])
 			"pill_used":
 				_lines.append("%s %s使用%s%s" % [stamp, event["owner_name"], registry.get_item(event["item_id"]).display_name, "，消耗1瓶" if event["consumed"] else "，本瓶剩余1次"])
 			"damage":
 				_lines.append("%s %s·%s → %s，伤害%d，体力-%d" % [stamp, event["owner_name"], registry.get_item(event["item_id"]).display_name, event["target_name"], event["value"], event["stamina_cost"]])
+				if event.get("blocked", 0) > 0:
+					_lines[-1] += "（防御抵消%d）" % event["blocked"]
 			"fallen":
 				_lines.append("%s %s阵亡。" % [stamp, event["target_name"]])
 			"finished":

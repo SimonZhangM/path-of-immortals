@@ -15,5 +15,12 @@
   "icon": "res://assets/images/items/iron_armor.svg",
   "cooldown": 0,
   "stamina_cost": 0,
-  "effects": []
+  "effects": [
+    {
+      "trigger": "on_enter",
+      "effect": "defense",
+      "value": 2
+    }
+  ],
+  "defense": 2
 }

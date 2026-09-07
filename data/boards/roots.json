@@ -1,0 +1,23 @@
+{
+  "id": "base.board.roots",
+  "name": "古木阵盘",
+  "texture": "res://assets/bag-bg-2.webp",
+  "source_size": [
+    1024,
+    1024
+  ],
+  "x_lines": [
+    118,
+    314,
+    511,
+    711,
+    909
+  ],
+  "y_lines": [
+    119,
+    315,
+    512,
+    709,
+    910
+  ]
+}

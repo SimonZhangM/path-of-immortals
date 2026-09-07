@@ -1,0 +1,23 @@
+{
+  "id": "base.board.frost",
+  "name": "霜兽阵盘",
+  "texture": "res://assets/bag-bg-1.webp",
+  "source_size": [
+    1024,
+    1024
+  ],
+  "x_lines": [
+    114,
+    315,
+    512,
+    709,
+    909
+  ],
+  "y_lines": [
+    114,
+    315,
+    512,
+    709,
+    911
+  ]
+}

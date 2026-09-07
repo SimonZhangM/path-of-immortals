@@ -1,0 +1,23 @@
+{
+  "id": "base.board.leather",
+  "name": "青革阵盘",
+  "texture": "res://assets/bag-bg-3.webp",
+  "source_size": [
+    1024,
+    1024
+  ],
+  "x_lines": [
+    119,
+    315,
+    511,
+    708,
+    906
+  ],
+  "y_lines": [
+    122,
+    315,
+    511,
+    707,
+    906
+  ]
+}

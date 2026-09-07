@@ -58,7 +58,7 @@ func configure(game: GameManager) -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(scroll)
 	_grid = GridContainer.new()
-	_grid.columns = 3
+	_grid.columns = 4
 	_grid.add_theme_constant_override("h_separation", 12)
 	_grid.add_theme_constant_override("v_separation", 12)
 	scroll.add_child(_grid)

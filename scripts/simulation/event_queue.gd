@@ -5,8 +5,8 @@ extends RefCounted
 var _heap: Array[Dictionary] = []
 var _sequence: int = 0
 
-func schedule(due_usec: int, kind: String, payload: Dictionary) -> void:
-	var event := {"due_usec": due_usec, "sequence": _sequence, "kind": kind, "payload": payload.duplicate(true)}
+func schedule(due_usec: int, kind: String, payload: Dictionary, priority: int = 0) -> void:
+	var event := {"due_usec": due_usec, "priority": priority, "sequence": _sequence, "kind": kind, "payload": payload.duplicate(true)}
 	_sequence += 1
 	_heap.append(event)
 	var index := _heap.size() - 1
@@ -52,5 +52,7 @@ func size() -> int:
 
 func _before(a: Dictionary, b: Dictionary) -> bool:
 	if a["due_usec"] == b["due_usec"]:
+		if a["priority"] != b["priority"]:
+			return a["priority"] < b["priority"]
 		return a["sequence"] < b["sequence"]
 	return a["due_usec"] < b["due_usec"]

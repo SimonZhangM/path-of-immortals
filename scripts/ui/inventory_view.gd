@@ -22,6 +22,9 @@ var _drag_instance: String = ""
 var _generation: int = 0
 var _textures: Dictionary = {}
 var _last_time_usec: int = -1
+var board_layout := BoardLayout.plain()
+var board_texture: Texture2D
+var _tooltip_entry: Dictionary = {}
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(220, 220) if compact else Vector2(495, 495)
@@ -36,6 +39,11 @@ func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> voi
 	manager = game
 	member_index = index
 	enemy_side = is_enemy
+	var member: PartyMemberState = (manager.enemies if enemy_side else manager.party)[index]
+	var mapped := manager.registry.get_board(member.definition.get("board_layout", ""))
+	if mapped != null:
+		board_layout = mapped
+		board_texture = load(mapped.texture_path)
 	manager.inventory_changed.connect(queue_redraw)
 	manager.battle_restarted.connect(reset_interaction)
 	manager.battle_started.connect(reset_interaction)
@@ -70,39 +78,30 @@ func reset_interaction() -> void:
 	queue_redraw()
 
 func grid_rect() -> Rect2:
-	var side := minf(size.x, size.y) - 18.0
-	return Rect2((size - Vector2.ONE * side) * 0.5, Vector2.ONE * side)
+	return board_layout.footprint_rect(Vector2i.ZERO, InventoryState.GRID_SIZE, size)
 
 func cell_center(cell: Vector2i) -> Vector2:
-	var area := grid_rect()
-	return area.position + (Vector2(cell) + Vector2.ONE * 0.5) * area.size.x / 4.0
+	return board_layout.footprint_rect(cell, Vector2i.ONE, size).get_center()
 
 func _cell_at(point: Vector2) -> Vector2i:
-	var relative := (point - grid_rect().position) / (grid_rect().size.x / 4.0)
-	return Vector2i(floori(relative.x), floori(relative.y))
+	return board_layout.cell_at(point, size)
 
 func _draw() -> void:
 	if manager == null or inventory == null:
 		return
 	var area := grid_rect()
-	var step := area.size.x / 4.0
-	draw_rect(area.grow(7), Color("a8a579"), false, 2)
+	if board_texture != null:
+		draw_texture_rect(board_texture, board_layout.art_rect(size), false)
 	if not enemy_side and manager.adjustment_open and manager.selected_member_index == member_index:
 		draw_rect(area.grow(7), Color("f4d48e"), false, 4)
-	for y in 4:
-		for x in 4:
-			var rect := Rect2(area.position + Vector2(x, y) * step, Vector2.ONE * step).grow(-2)
-			draw_rect(rect, Color("263b3e"))
-			draw_rect(rect, Color("506160"), false, 1)
-			draw_circle(rect.get_center(), 2, Color("708079", 0.4))
 	for instance in inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])
 		if not _textures.has(item.id) and not item.icon_path.is_empty():
 			_textures[item.id] = load(item.icon_path)
-		var rect := Rect2(area.position + Vector2(instance["cell"]) * step, Vector2(item.grid_size) * step).grow(-4)
+		var rect := board_layout.footprint_rect(instance["cell"], item.grid_size, size).grow(-4)
 		var active: bool = instance["instance_id"] == selected_instance
-		draw_rect(rect, Color("394943") if item.type == "armor" else Color("4a3c30"))
-		draw_rect(rect, Color("e5c181") if active else Color("a99b71"), false, 3 if active else 2)
+		if active and manager.can_edit_inventory():
+			draw_rect(rect, Color("e5c181"), false, 2)
 		var tiny_pill := compact and item.is_consumable()
 		var caption_height := 0.0 if tiny_pill else (20.0 if compact else 30.0)
 		var icon_rect := Rect2(rect.position + Vector2(5, 4), rect.size - Vector2(10, caption_height + 6))
@@ -116,7 +115,7 @@ func _draw() -> void:
 				draw_rect(Rect2(icon_rect.position, Vector2(icon_rect.size.x, boundary_y - icon_rect.position.y)), Color(0.43, 0.45, 0.47, 0.74))
 				draw_dashed_line(Vector2(icon_rect.position.x, boundary_y), Vector2(icon_rect.end.x, boundary_y), Color("f4e5bc"), 1.5 if compact else 2.0, 4.0 if compact else 7.0)
 		if not tiny_pill:
-			draw_rect(Rect2(rect.position + Vector2(0, rect.size.y - caption_height), Vector2(rect.size.x, caption_height)), Color("101b20", 0.85))
+			draw_string_outline(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, 3, Color("18252c"))
 			draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, Color("e4d8b7"))
 		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
 		if remaining > 0:
@@ -131,7 +130,7 @@ func _draw() -> void:
 		var instance := inventory.get_instance(_drag_instance)
 		if not instance.is_empty():
 			var dimensions := manager.registry.get_item(instance["item_id"]).grid_size
-			var preview := Rect2(area.position + Vector2(_hover_cell) * step, Vector2(dimensions) * step).grow(-3)
+			var preview := board_layout.footprint_rect(_hover_cell, dimensions, size).grow(-3)
 			var tint := Color("7ed6ad") if _hover_valid else Color("ee857a")
 			draw_rect(preview, Color(tint, 0.22))
 			draw_rect(preview, tint, false, 4)
@@ -188,7 +187,7 @@ func _get_drag_data(point: Vector2) -> Variant:
 	preview.texture = _textures.get(item.id)
 	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	preview.size = Vector2(item.grid_size) * grid_rect().size.x / 4.0
+	preview.size = board_layout.footprint_rect(inventory.get_instance(data["instance_id"])["cell"], item.grid_size, size).size
 	preview.modulate.a = 0.7
 	preview.position = -Vector2(_grab_offset) * grid_rect().size.x / 4.0 - Vector2.ONE * 22
 	var holder := Control.new()
@@ -199,7 +198,8 @@ func _get_drag_data(point: Vector2) -> Variant:
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
 	if manager != null and not enemy_side and data is Dictionary and data.get("kind") == "storage" and data.get("epoch") == manager.interaction_epoch:
-		return manager.can_equip(data["storage_id"], member_index, _cell_at(point))
+		var cell := _cell_at(point)
+		return Rect2i(Vector2i.ZERO, InventoryState.GRID_SIZE).has_point(cell) and manager.can_equip(data["storage_id"], member_index, cell)
 	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("source") != get_instance_id() or data.get("generation") != _generation or data.get("member_index") != member_index:
 		return false
 	_hover_cell = _cell_at(point) - Vector2i(data["offset"])
@@ -232,7 +232,14 @@ func _get_tooltip(at_position: Vector2) -> String:
 	if entry.is_empty():
 		return ""
 	var item := manager.registry.get_item(entry["item_id"])
-	var result := item.display_name
-	if item.is_consumable():
-		result += " · %d瓶 · 当前瓶剩余%d次" % [entry["units"].size(), entry["units"][0]["uses_left"]]
-	return result
+	_tooltip_entry = entry
+	return item.id
+
+func _make_custom_tooltip(_for_text: String) -> Object:
+	if _tooltip_entry.is_empty():
+		return null
+	var item := manager.registry.get_item(_tooltip_entry["item_id"])
+	var panel := ItemTooltip.new()
+	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
+	panel.configure(item, _tooltip_entry, owner.defense, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]))
+	return panel

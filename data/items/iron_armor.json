@@ -2,9 +2,16 @@
   "id": "base.armor.iron_armor",
   "name": "铁甲",
   "type": "armor",
-  "tags": ["armor", "iron"],
-  "size": [2, 2],
+  "tags": [
+    "armor",
+    "iron"
+  ],
+  "size": [
+    2,
+    2
+  ],
   "icon": "res://assets/images/items/iron_armor.svg",
   "cooldown": 0,
-  "effects": []
+  "effects": [],
+  "defense": 1
 }

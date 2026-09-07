@@ -17,6 +17,8 @@ func _initialize() -> void:
 	_test_battle()
 	_test_timing()
 	_test_storage_and_medicine()
+	_test_defense_triggers()
+	_test_board_mapping()
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -125,7 +127,7 @@ func _test_formation() -> void:
 	front_two.state.formations[0] = FormationRules.Kind.FRONT_TWO
 	front_two.start()
 	front_two.advance(3)
-	_check(front_two.state.teams[0][0].hp == 100 and front_two.state.teams[0][1].hp == 95, "formation affects actual damage target")
+	_check(front_two.state.teams[0][0].hp == 100 and front_two.state.teams[0][1].hp == 96, "formation target receives damage after one defense")
 
 func _test_battle() -> void:
 	var battle := _fixture()
@@ -141,7 +143,7 @@ func _test_battle() -> void:
 	battle.advance(1.499999)
 	_check(battle.state.teams[1][0].hp == 100, "no early attack")
 	battle.advance(0.000001)
-	_check(battle.state.teams[1][0].hp == 70 and battle.state.teams[0][0].hp == 95, "swords and claw cause 30 and 5 damage")
+	_check(battle.state.teams[1][0].hp == 70 and battle.state.teams[0][0].hp == 96, "swords cause 30; iron armor reduces claw to four")
 	for member in battle.state.teams[0] + battle.state.teams[1]:
 		_check(member.stamina == 95, "each attacker pays five stamina")
 	_check(battle.state.teams[0][1].hp == 100 and battle.state.teams[0][2].hp == 100, "rear allies protected")
@@ -149,18 +151,18 @@ func _test_battle() -> void:
 	_check(events.size() == 4 and events[0]["owner_id"] == GameManager.PARTY_IDS[0] and events[3]["owner_id"] == GameManager.ENEMY_ID, "stable same-time ownership order")
 	battle.advance(100)
 	_check(battle.state.result == "victory" and battle.state.finished_at_usec == 12_000_000, "default battle victory at twelve seconds")
-	_check(battle.state.activation_counts == [10, 3] and battle.state.teams[0][0].hp == 85, "dead dog cannot retaliate at lethal timestamp")
+	_check(battle.state.activation_counts == [10, 3] and battle.state.teams[0][0].hp == 88, "dead dog cannot retaliate at lethal timestamp")
 	_check(battle.state.teams[0][0].stamina == 80 and battle.state.teams[1][0].stamina == 85, "only successful activations cost stamina")
 	_check(battle.queue.size() == 0 and battle.activation_progress(GameManager.SWORD_INSTANCE) == 1, "finish clears queue and reveals equipment")
 	battle.advance(100)
 	_check(battle.state.time_usec == 12_000_000, "finished time frozen")
 	var fallen := _fixture(3, 1000)
-	fallen.state.teams[0][0].hp = 5
+	fallen.state.teams[0][0].hp = 4
 	fallen.start()
 	fallen.advance(6)
-	_check(fallen.state.teams[0][0].hp == 0 and fallen.state.teams[0][1].hp == 95, "dog switches to rear after front dies")
+	_check(fallen.state.teams[0][0].hp == 0 and fallen.state.teams[0][1].hp == 96, "dog switches to rear after front dies")
 	_check(fallen.state.item_runtime[GameManager.SWORD_INSTANCE]["activation_count"] == 1, "fallen actor stops scheduled attacks")
-	var lost := _fixture(1, 100, 5)
+	var lost := _fixture(1, 100, 4)
 	lost.start()
 	lost.advance(60)
 	_check(lost.state.result == "defeat" and lost.state.time_usec == 3_000_000, "all allies dead is defeat")
@@ -197,7 +199,7 @@ func _test_timing() -> void:
 			for frame in range(int(60 * fps / speed)):
 				battle.advance(1.0 / fps)
 			_check(battle.state.time_usec == 60_000_000 and battle.state.activation_counts == [60, 20], "speed/fps invariant attack counts and time")
-			_check(battle.state.damage_totals == [600, 100] and battle.state.result == "draw", "speed/fps invariant damage and exhaustion")
+			_check(battle.state.damage_totals == [600, 80] and battle.state.result == "draw", "speed/fps invariant damage with iron armor and exhaustion")
 			var events := battle.drain_events()
 			for index in 80:
 				_check(events[index]["at_usec"] == (index / 4 + 1) * 3_000_000 and events[index]["side"] == (1 if index % 4 == 3 else 0), "exact deterministic timestamps for both teams")
@@ -341,6 +343,121 @@ func _medicine_fixture(resource: String, initial: int, bottles: int) -> BattleSi
 	sim._definitions[GameManager.CLAW_INSTANCE] = ItemData.new({"id": GameManager.CLAW_ID, "name": "测试爪", "type": "weapon", "tags": [], "size": [1, 2], "cooldown": 1000, "effects": [{"trigger": "on_activate", "effect": "damage", "value": 5}]})
 	sim.state.item_runtime[GameManager.CLAW_INSTANCE]["ready_at_usec"] = 1_000_000_000
 	return sim
+
+func _test_defense_triggers() -> void:
+	var sim := _fixture(1, 1000)
+	var hero: PartyMemberState = sim.state.teams[0][0]
+	hero.inventory.take(GameManager.ARMOR_INSTANCE)
+	sim.detach(GameManager.ARMOR_INSTANCE)
+	_add_armor(sim, 0, "base.armor.xuantie", "test.xuantie", Vector2i(0, 2))
+	_add_armor(sim, 0, "base.armor.qinglin", "test.qinglin", Vector2i(2, 2))
+	sim.start()
+	_check(hero.defense == 7, "base plus entry defense sum by equipment source")
+	var entry_events := sim.drain_events()
+	_check(entry_events.size() == 1 and entry_events[0]["kind"] == "entered", "entry triggers once before attacks")
+	sim.advance(3)
+	_check(hero.hp == 100, "defense higher than damage reduces attack to zero")
+	_check(sim.state.teams[1][0].hp == 989, "zero-damage hit still causes true counter")
+	_check(hero.stamina == 95, "counter does not cost stamina")
+	sim.detach("test.xuantie")
+	hero.inventory.take("test.xuantie")
+	_check(hero.defense == 3, "unequip removes both base and entry defense")
+	_add_armor(sim, 0, "base.armor.xuantie", "test.xuantie", Vector2i(0, 2), true)
+	_check(hero.defense == 3, "inserted armor inactive during two-second cooldown")
+	sim.advance(1)
+	sim.attach(hero, 0, "test.xuantie", true)
+	sim.advance(1)
+	_check(hero.defense == 3, "old entry event invalidated by moving armor again")
+	sim.clock.paused = true
+	sim.advance(20)
+	_check(hero.defense == 3, "paused entry cooldown does not advance")
+	sim.clock.paused = false
+	sim.advance(1)
+	_check(hero.defense == 7, "delayed entry at exact expiry adds defense once")
+	sim.advance(3)
+	_check(hero.defense == 7, "passive armor has no rotation or repeated entry bonus")
+	var duel := _fixture(1, 1000)
+	var fighter: PartyMemberState = duel.state.teams[0][0]
+	fighter.inventory.take(GameManager.ARMOR_INSTANCE)
+	duel.detach(GameManager.ARMOR_INSTANCE)
+	_add_armor(duel, 0, "base.armor.qinglin", "ally.counter", Vector2i(1, 1))
+	_add_armor(duel, 1, "base.armor.qinglin", "enemy.counter", Vector2i(2, 2))
+	duel.start()
+	duel.advance(3)
+	var reactions := duel.drain_events().filter(func(event): return event["kind"] == "counter_damage")
+	_check(reactions.size() == 2, "one counter per normal attack; no counter chain")
+	_check(fighter.hp == 97 and duel.state.teams[1][0].hp == 992, "counters ignore both sides' three defense")
+	_check(reactions[0]["blocked"] == 0 and reactions[1]["blocked"] == 0, "counter bypass recorded explicitly")
+	var lethal := _fixture(1, 1000)
+	var fragile: PartyMemberState = lethal.state.teams[0][0]
+	fragile.inventory.take(GameManager.ARMOR_INSTANCE)
+	lethal.detach(GameManager.ARMOR_INSTANCE)
+	_add_armor(lethal, 0, "base.armor.qinglin", "lethal.armor", Vector2i(1, 1))
+	fragile.hp = 2
+	lethal.start()
+	lethal.advance(3)
+	_check(lethal.state.result == "defeat" and lethal.drain_events().filter(func(e): return e["kind"] == "counter_damage").is_empty(), "lethal hit does not counterattack")
+	var finish := _fixture(1, 1)
+	var retaliator: PartyMemberState = finish.state.teams[0][0]
+	retaliator.inventory.take(GameManager.ARMOR_INSTANCE)
+	finish.detach(GameManager.ARMOR_INSTANCE)
+	_add_armor(finish, 0, "base.armor.qinglin", "final.armor", Vector2i(1, 1))
+	retaliator.stamina = 0
+	finish.start()
+	finish.advance(3)
+	_check(finish.state.result == "victory" and finish.state.finished_at_usec == 3_000_000, "counter can kill attacker and end battle deterministically")
+	var cold := _fixture(1, 1000)
+	var cold_owner: PartyMemberState = cold.state.teams[0][0]
+	cold_owner.inventory.take(GameManager.ARMOR_INSTANCE)
+	cold.detach(GameManager.ARMOR_INSTANCE)
+	cold.start()
+	cold.advance(2)
+	_add_armor(cold, 0, "base.armor.qinglin", "cold.armor", Vector2i(1, 1), true)
+	cold.advance(1)
+	_check(cold_owner.hp == 95 and cold.state.teams[1][0].hp == 990, "cooling armor neither defends nor counters")
+	cold.advance(3)
+	_check(cold_owner.hp == 93 and cold.state.teams[1][0].hp == 979, "entered armor defends and counters on next hit")
+	var exact := _fixture(1, 1000)
+	var exact_owner: PartyMemberState = exact.state.teams[0][0]
+	exact_owner.inventory.take(GameManager.ARMOR_INSTANCE)
+	exact.detach(GameManager.ARMOR_INSTANCE)
+	exact.start()
+	exact.advance(1)
+	_add_armor(exact, 0, "base.armor.xuantie", "exact.armor", Vector2i(1, 1), true)
+	exact.advance(2)
+	_check(exact_owner.defense == 4 and exact_owner.hp == 99, "cooldown expiry enters before same-timestamp normal attack")
+	var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/xuantie.json"))
+	raw["cooldown"] = 3
+	_check(not ContentRegistry.new().register_item(raw), "entry-only item rejects nonzero rotation")
+	raw["cooldown"] = 0
+	raw["effects"][0]["trigger"] = "on_attacked"
+	_check(not ContentRegistry.new().register_item(raw), "invalid trigger/effect combination rejected")
+
+func _add_armor(sim: BattleSimulation, side: int, item_id: String, id: String, cell: Vector2i, cooling: bool = false) -> void:
+	var member: PartyMemberState = sim.state.teams[side][0]
+	_check(member.inventory.add_item(id, item_id, cell), "armor fixture fits without collision")
+	sim.attach(member, side, id, cooling)
+
+func _test_board_mapping() -> void:
+	for id in ["base.board.frost", "base.board.roots", "base.board.leather"]:
+		var layout := registry.get_board(id)
+		_check(layout != null, "board configuration registered")
+		for dimensions in [Vector2(548, 548), Vector2(255, 255), Vector2(720, 540)]:
+			for y in 4:
+				for x in 4:
+					var cell := Vector2i(x, y)
+					var rect := layout.footprint_rect(cell, Vector2i.ONE, dimensions)
+					_check(layout.cell_at(rect.get_center(), dimensions) == cell, "mapped cell center hit tests at all display sizes")
+			_check(layout.cell_at(Vector2.ZERO, dimensions) == Vector2i(-100, -100), "decorative border is not inventory space")
+			var all := layout.footprint_rect(Vector2i.ZERO, Vector2i(4, 4), dimensions)
+			_check(layout.cell_at(all.end, dimensions) == Vector2i(-100, -100), "outside edge is excluded")
+	var raw := {"id": "test.board.wide", "name": "宽图", "texture": "", "source_size": [2000, 1000], "x_lines": [400, 650, 1000, 1200, 1700], "y_lines": [100, 300, 500, 700, 900]}
+	_check(BoardLayout.validate(raw), "non-square source with nonuniform grid is valid")
+	var wide := BoardLayout.new(raw)
+	var rect := wide.footprint_rect(Vector2i(1, 2), Vector2i(2, 1), Vector2(600, 600))
+	_check(rect.position.is_equal_approx(Vector2(195, 300)) and rect.size.is_equal_approx(Vector2(165, 60)), "source coordinates scale and letterbox together")
+	raw["x_lines"][2] = 600
+	_check(not BoardLayout.validate(raw), "crossing grid lines rejected")
 
 func _check(condition: bool, description: String) -> void:
 	checks += 1

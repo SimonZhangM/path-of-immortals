@@ -28,6 +28,7 @@ func _run() -> void:
 	await _layout()
 	_check(ui.storage_panel.visible and manager.can_edit_inventory(), "button opens shared storage")
 	_check(ui.storage_panel.cards.size() == 7, "seven content cards visible")
+	await _test_details_and_boards()
 	await _move_all_bags()
 	for index in 3:
 		var card: PartyMemberCard = ui.ally_panel.cards[index]
@@ -136,6 +137,51 @@ func _run() -> void:
 	_check_layout()
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
+
+func _test_details_and_boards() -> void:
+	var cards: Array = ui.storage_panel.cards.values()
+	_check(ui.storage_panel._grid.columns == 4, "storage uses four columns")
+	_check(is_equal_approx(cards[0].global_position.y, cards[3].global_position.y) and cards[4].global_position.y > cards[0].global_position.y, "four cards actually fit the first row")
+	for index in 3:
+		var bag: InventoryView = ui.ally_panel.bags[index]
+		_check(bag.board_texture.resource_path == "res://assets/bag-bg-%d.webp" % (index + 1), "correct skin bound by character")
+		_check(bag.board_texture.get_size() == bag.board_layout.source_size, "mapping reference matches source image dimensions")
+		var key := bag._get_tooltip(bag.cell_center(Vector2i(1, 1)))
+		var tooltip := bag._make_custom_tooltip(key) as ItemTooltip
+		_check(tooltip.description.contains("防御 +1"), "array hover uses actual armor definition")
+		tooltip.free()
+	var armor: StorageItemCard = ui.storage_panel.cards["run.storage.base.armor.qinglin.0"]
+	var tooltip := armor._make_custom_tooltip(armor.item.id) as ItemTooltip
+	_check(tooltip.description.contains("反击 1") and tooltip.description.contains("无视防御"), "counter tooltip explains trigger and true damage")
+	ui.add_child(tooltip)
+	tooltip.position = Vector2(650, 570)
+	await _layout()
+	_check(tooltip.get_global_rect().end.x <= ui.size.x and tooltip.get_global_rect().end.y <= ui.size.y, "detailed item panel fits viewport")
+	await _capture("v06_counter_tooltip")
+	ui.remove_child(tooltip)
+	tooltip.free()
+	var entry_card: StorageItemCard = ui.storage_panel.cards["run.storage.base.armor.xuantie.0"]
+	var entry_tip := entry_card._make_custom_tooltip(entry_card.item.id) as ItemTooltip
+	_check(entry_tip.description.contains("防御 +2") and entry_tip.description.contains("增加 2 防御"), "entry tooltip separates base and entry bonus")
+	entry_tip.free()
+	if DisplayServer.get_name() == "headless":
+		_mouse_motion(armor.get_global_rect().get_center())
+		await create_timer(0.9).timeout
+		var native_tip := _find_tooltip(root)
+		_check(native_tip != null, "native mouse hover opens custom tooltip")
+		if native_tip != null:
+			_check(native_tip.description.contains("反击"), "native tooltip is the hovered item")
+		_mouse_motion(Vector2(20, 20))
+		await _layout()
+
+func _find_tooltip(node: Node) -> ItemTooltip:
+	if node is ItemTooltip:
+		return node
+	for child in node.get_children(true):
+		var found := _find_tooltip(child)
+		if found != null:
+			return found
+	return null
 
 func _right_click(point: Vector2) -> void:
 	for pressed in [true, false]:

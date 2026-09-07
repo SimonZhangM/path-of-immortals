@@ -1,1 +1,10 @@
-{"id":"base.character.chen_yu","name":"辰宇","realm":"炼气初期","max_hp":100,"max_stamina":100,"max_spirit":100,"portrait":"res://assets/portrait1.webp"}
+{
+  "id": "base.character.chen_yu",
+  "name": "辰宇",
+  "realm": "炼气初期",
+  "max_hp": 100,
+  "max_stamina": 100,
+  "max_spirit": 100,
+  "portrait": "res://assets/portrait1.webp",
+  "board_layout": "base.board.frost"
+}
