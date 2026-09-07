@@ -94,7 +94,7 @@ func restart() -> void:
 		return
 	for member in party + enemies:
 		member.reset_resources()
-		member.inventory.locked = true
+		member.inventory.locked = member in enemies
 	adjustment_open = false
 	interaction_epoch += 1
 	simulation = BattleSimulation.new(party, enemies, registry, formation)
@@ -122,7 +122,7 @@ func move_item(member_index: int, instance_id: String, cell: Vector2i) -> bool:
 	return false
 
 func can_edit_inventory() -> bool:
-	return adjustment_open and can_adjust()
+	return can_adjust() and (simulation.state.phase == GameState.Phase.PREPARATION or adjustment_open)
 
 func can_adjust() -> bool:
 	return simulation != null and (simulation.state.phase == GameState.Phase.PREPARATION or (simulation.state.phase == GameState.Phase.BATTLE and simulation.clock.paused))
@@ -207,7 +207,9 @@ func toggle_pause() -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo():
 		return
-	if event.is_action_pressed("battle_pause"):
+	if event.is_action_pressed("ui_cancel") and adjustment_open:
+		set_adjustment(false)
+	elif event.is_action_pressed("battle_pause"):
 		if simulation != null and simulation.state.phase == GameState.Phase.PREPARATION:
 			start_battle()
 		else:

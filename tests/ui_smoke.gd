@@ -19,17 +19,24 @@ func _run() -> void:
 	_check(manager.startup_error.is_empty(), "startup succeeds")
 	_check(manager.party.size() == 3 and manager.enemies.size() == 1, "three allies and single dog")
 	_check(not ui.storage_panel.visible and not ui._log_panel.visible, "drawers initially hidden")
-	_check(not ui._bag_button.disabled and not manager.can_edit_inventory(), "prebattle adjustment available but bags locked until opened")
+	_check(not ui._bag_button.disabled and manager.can_edit_inventory(), "prebattle arrays editable without opening storage")
 	_check_layout()
 	_check(absf(ui._status.get_global_rect().get_center().x - ui.size.x / 2) < 1 and ui._status.global_position.y >= ui._time.get_global_rect().end.y, "status below centered timer")
 	_check(ui._log_button.get_global_rect().end.y > ui.size.y - 35, "log button at middle bottom")
 	await _capture("storage_default")
+	await _move_all_bags()
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(ui.storage_panel.visible and manager.can_edit_inventory(), "button opens shared storage")
 	_check(ui.storage_panel.cards.size() == 7, "seven content cards visible")
 	await _test_details_and_boards()
+	_key(KEY_ESCAPE)
+	await _layout()
+	_check(not ui.storage_panel.visible and not manager.adjustment_open and manager.can_edit_inventory(), "escape closes storage but keeps prebattle arrays editable")
+	_check(manager.simulation.state.phase == GameState.Phase.PREPARATION and manager.simulation.state.time_usec == 0, "escape preserves preparation and time")
 	await _move_all_bags()
+	ui._bag_button.pressed.emit()
+	await _layout()
 	for index in 3:
 		var card: PartyMemberCard = ui.ally_panel.cards[index]
 		var before := card.custom_minimum_size
@@ -91,6 +98,12 @@ func _run() -> void:
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(manager.simulation.clock.paused and manager.can_edit_inventory(), "paused battle permits adjustment")
+	_key(KEY_ESCAPE)
+	await _layout()
+	_check(not ui.storage_panel.visible and not manager.can_edit_inventory() and manager.simulation.clock.paused, "escape closes paused storage without resuming battle")
+	_check(not manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 0)), "paused array remains locked without adjustment panel")
+	ui._bag_button.pressed.emit()
+	await _layout()
 	_check(manager.equip(sword_id, 0, Vector2i(3, 0)), "paused insertion command")
 	_check(manager.simulation.cooling_remaining_usec(sword_id) == 2_000_000, "inserted weapon shows two seconds")
 	_check(manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 0)), "companion rearrangement during pause")
@@ -139,6 +152,7 @@ func _run() -> void:
 	quit(0 if failures == 0 else 1)
 
 func _test_details_and_boards() -> void:
+	_check(ui.enemy_panel.bags[0].board_texture.resource_path == "res://assets/bag-bg-2.webp", "dog uses roots board skin")
 	var cards: Array = ui.storage_panel.cards.values()
 	_check(ui.storage_panel._grid.columns == 4, "storage uses four columns")
 	_check(is_equal_approx(cards[0].global_position.y, cards[3].global_position.y) and cards[4].global_position.y > cards[0].global_position.y, "four cards actually fit the first row")
@@ -171,6 +185,7 @@ func _test_details_and_boards() -> void:
 		_check(native_tip != null, "native mouse hover opens custom tooltip")
 		if native_tip != null:
 			_check(native_tip.description.contains("反击"), "native tooltip is the hovered item")
+			_check(native_tip.get_parent().get_theme_stylebox("panel") is StyleBoxEmpty, "native tooltip wrapper has no outer panel")
 		_mouse_motion(Vector2(20, 20))
 		await _layout()
 
@@ -198,6 +213,7 @@ func _native_between(start: Vector2, finish: Vector2) -> void:
 	await process_frame
 	_mouse_motion(start + Vector2(32, 0), true)
 	await process_frame
+	_check_drag_preview_center(root, start + Vector2(32, 0))
 	_mouse_motion(finish, true)
 	await process_frame
 	_mouse_button(finish, false)
@@ -270,10 +286,23 @@ func _native_drag(bag: InventoryView, from: Vector2i, to: Vector2i) -> void:
 	await process_frame
 	_mouse_motion(start + Vector2(32, 0), true)
 	await process_frame
+	_check_drag_preview_center(root, start + Vector2(32, 0))
 	_mouse_motion(finish, true)
 	await process_frame
 	_mouse_button(finish, false)
 	await process_frame
+
+func _check_drag_preview_center(node: Node, pointer: Vector2) -> bool:
+	if node.name == "CenteredItemDragPreview":
+		var preview := node.get_child(0) as TextureRect
+		_check(preview.get_global_rect().get_center().distance_to(pointer) < 1, "native dragged image centered on mouse")
+		return true
+	for child in node.get_children(true):
+		if _check_drag_preview_center(child, pointer):
+			return true
+	if node == root:
+		_check(false, "native drag preview exists")
+	return false
 
 func _mouse_motion(point: Vector2, held: bool = false) -> void:
 	var event := InputEventMouseMotion.new()

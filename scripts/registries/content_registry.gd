@@ -17,7 +17,7 @@ func load_base_content() -> bool:
 	_load_directory("res://data/boards", "board")
 	_load_directory("res://data/enemies", "enemy")
 	_load_directory("res://data/characters", "character")
-	for character in _characters.values():
+	for character in _characters.values() + _enemies.values():
 		if character.has("board_layout") and not _boards.has(character["board_layout"]):
 			errors.append("Unknown board layout for " + character["id"])
 	for board in _boards.values():

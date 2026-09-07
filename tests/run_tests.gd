@@ -236,7 +236,10 @@ func _test_storage_and_medicine() -> void:
 	var game := GameManager.new()
 	game._ready()
 	_check(game.storage.entries().size() == 7, "four new equipment definitions and three pill stacks")
-	_check(not game.can_edit_inventory() and game.can_adjust(), "preparation requires opening adjustment")
+	_check(game.can_edit_inventory() and game.can_adjust(), "preparation permits direct array editing")
+	_check(game.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(3, 0)), "prebattle move without opening storage")
+	_check(game.simulation.cooling_remaining_usec(GameManager.SWORD_INSTANCE) == 0, "direct prebattle move has no insertion cooldown")
+	game.move_item(0, GameManager.SWORD_INSTANCE, Vector2i.ZERO)
 	game.set_adjustment(true)
 	var pill_key := "run.storage.base.pill.huichun.0"
 	var sword_key := "run.storage.base.weapon.qingfeng.0"

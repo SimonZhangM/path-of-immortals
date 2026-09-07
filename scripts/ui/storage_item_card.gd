@@ -97,10 +97,16 @@ func _get_drag_data(_point: Vector2) -> Variant:
 	if data.is_empty():
 		return null
 	var preview := TextureRect.new()
+	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	preview.texture = load(item.icon_path)
 	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	preview.custom_minimum_size = Vector2(90, 110)
+	preview.size = Vector2(90, 110)
+	preview.position = -preview.size * 0.5
 	preview.modulate.a = 0.8
-	set_drag_preview(preview)
+	var holder := Control.new()
+	holder.name = "CenteredItemDragPreview"
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.add_child(preview)
+	set_drag_preview(holder)
 	return data

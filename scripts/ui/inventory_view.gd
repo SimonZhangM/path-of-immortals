@@ -189,8 +189,9 @@ func _get_drag_data(point: Vector2) -> Variant:
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	preview.size = board_layout.footprint_rect(inventory.get_instance(data["instance_id"])["cell"], item.grid_size, size).size
 	preview.modulate.a = 0.7
-	preview.position = -Vector2(_grab_offset) * grid_rect().size.x / 4.0 - Vector2.ONE * 22
+	preview.position = -preview.size * 0.5
 	var holder := Control.new()
+	holder.name = "CenteredItemDragPreview"
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	holder.add_child(preview)
 	set_drag_preview(holder)

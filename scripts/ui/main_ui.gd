@@ -33,6 +33,7 @@ func _ready() -> void:
 func _build_ui() -> void:
 	var ui_theme := Theme.new()
 	ui_theme.default_font_size = 18
+	ui_theme.set_stylebox("panel", "TooltipPanel", StyleBoxEmpty.new())
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif"])
 	ui_theme.default_font = font
