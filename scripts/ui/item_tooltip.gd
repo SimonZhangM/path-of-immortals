@@ -36,7 +36,7 @@ static func effect_text(item: ItemData) -> String:
 					lines.append("轮转 %s秒  ·  对前排优先目标造成 %d 点伤害，每次消耗 %d 体力。" % [str(item.cooldown_usec / 1_000_000.0), effect["value"], item.stamina_cost])
 				else:
 					lines.append("轮转 %s秒  ·  随后 %d秒内回复自身 %d 点%s，每瓶可使用 %d次。" % [str(item.cooldown_usec / 1_000_000.0), effect["duration"], effect["value"], {"hp": "气血", "stamina": "体力", "spirit": "灵力"}[effect["resource"]], item.uses_per_unit])
-					lines.append("满值等待下一瓶；已开瓶用完，回复不超过上限。")
+					lines.append("满值等待下一瓶；已开瓶不可收回，须用完；回复不超过上限。")
 	if item.defense == 0 and item.effects.is_empty():
 		lines.append("暂无战斗效果。")
 	return "\n\n".join(lines)
@@ -106,7 +106,7 @@ func configure(item: ItemData, entry: Dictionary = {}, owner_defense: int = -1, 
 			state.text += "  ·  冷却中 %ds" % ceili(cooling_usec / 1_000_000.0)
 		column.add_child(state)
 	var hint := Label.new()
-	hint.text = "战前放入无冷却；战中调整冷却结束后进场。"
+	hint.text = "战前放入无冷却；战中从储物袋放入等待3秒。阵盘内移动保留进度。"
 	hint.add_theme_font_size_override("font_size", 14)
 	hint.add_theme_color_override("font_color", Color("8796a7"))
 	column.add_child(hint)

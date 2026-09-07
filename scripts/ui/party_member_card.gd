@@ -61,17 +61,9 @@ func configure(index: int, member: PartyMemberState) -> void:
 		label.text = labels[stat_index]
 		label.add_theme_font_size_override("font_size", 17)
 		row.add_child(label)
-		var bar := ProgressBar.new()
+		var bar := ResourceBar.new()
 		bar.custom_minimum_size = Vector2(BAR_WIDTH, 24)
-		bar.show_percentage = false
-		var base := StyleBoxFlat.new()
-		base.bg_color = Color("172124")
-		base.set_corner_radius_all(4)
-		bar.add_theme_stylebox_override("background", base)
-		var fill := StyleBoxFlat.new()
-		fill.bg_color = colors[stat_index]
-		fill.set_corner_radius_all(4)
-		bar.add_theme_stylebox_override("fill", fill)
+		bar.tint = colors[stat_index]
 		row.add_child(bar)
 		var value := Label.new()
 		value.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

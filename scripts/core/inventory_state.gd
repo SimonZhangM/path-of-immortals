@@ -94,6 +94,35 @@ func take(id: String) -> Dictionary:
 	revision += 1
 	return entry
 
+func returnable_count(id: String) -> int:
+	var entry := get_instance(id)
+	if entry.is_empty():
+		return 0
+	var item := _registry.get_item(entry["item_id"])
+	var count := 0
+	for unit in entry["units"]:
+		if not item.is_consumable() or int(unit["uses_left"]) == item.uses_per_unit:
+			count += 1
+	return count
+
+func take_returnable(id: String, single: bool = false) -> Dictionary:
+	if locked or returnable_count(id) == 0:
+		return {}
+	var item := _registry.get_item(_instances[id]["item_id"])
+	var units: Array = _instances[id]["units"]
+	var returned: Array = []
+	# Take from the tail so the current bottle and stack identity stay in place.
+	for index in range(units.size() - 1, -1, -1):
+		if not item.is_consumable() or int(units[index]["uses_left"]) == item.uses_per_unit:
+			returned.push_front(units[index])
+			units.remove_at(index)
+			if single:
+				break
+	if units.is_empty():
+		_instances.erase(id)
+	revision += 1
+	return {"instance_id": returned[0]["id"], "item_id": item.id, "units": returned}
+
 # Simulation-only mutation, independent of UI editing locks.
 func use_consumable(id: String) -> bool:
 	if not _instances.has(id):

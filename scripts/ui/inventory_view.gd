@@ -4,6 +4,10 @@ extends Control
 signal selection_changed(item_id: String)
 signal feedback(message: String)
 
+const PULSE_DURATION := 0.24
+const FLASH_SHADER := preload("res://scripts/ui/item_flash.gdshader")
+var _pulses: Dictionary = {}
+
 var manager: GameManager
 var member_index: int = 0
 var enemy_side: bool = false
@@ -50,6 +54,7 @@ func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> voi
 	manager.formation_changed.connect(reset_interaction)
 	manager.adjustment_changed.connect(reset_interaction)
 	manager.selection_changed.connect(queue_redraw)
+	manager.presentation_events.connect(_on_presentation_events)
 	for instance in inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])
 		if not item.icon_path.is_empty():
@@ -60,12 +65,46 @@ func set_member(index: int) -> void:
 	member_index = index
 	reset_interaction()
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	for id in _pulses.keys():
+		_pulses[id]["elapsed"] += delta
+		if _pulses[id]["elapsed"] >= PULSE_DURATION:
+			_pulses[id]["overlay"].queue_free()
+			_pulses.erase(id)
+		queue_redraw()
 	if manager != null and manager.simulation != null:
 		var time_usec := manager.simulation.state.time_usec
 		if time_usec != _last_time_usec:
 			_last_time_usec = time_usec
 			queue_redraw()
+
+func _on_presentation_events(events: Array[Dictionary]) -> void:
+	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
+	for event in events:
+		if event["kind"] != "item_activated" or event["owner_id"] != owner.id or event["side"] != (1 if enemy_side else 0):
+			continue
+		var entry: Dictionary = event["entry"]
+		var id: String = entry["instance_id"]
+		if _pulses.has(id):
+			_pulses[id]["overlay"].queue_free()
+		var overlay := TextureRect.new()
+		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		overlay.texture = load(manager.registry.get_item(entry["item_id"]).icon_path)
+		var flash := ShaderMaterial.new()
+		flash.shader = FLASH_SHADER
+		overlay.material = flash
+		overlay.modulate.a = 0
+		add_child(overlay)
+		_pulses[id] = {"entry": entry, "elapsed": 0.0, "overlay": overlay}
+	queue_redraw()
+
+static func pulse_scale(progress: float) -> float:
+	if progress < 0.35:
+		return lerpf(1.0, 1.08, sin(progress / 0.35 * PI * 0.5))
+	if progress < 0.75:
+		return lerpf(1.08, 0.97, smoothstep(0.35, 0.75, progress))
+	return lerpf(0.97, 1.0, smoothstep(0.75, 1.0, progress))
 
 func cooldown_progress(instance_id: String) -> float:
 	return manager.simulation.activation_progress(instance_id)
@@ -94,7 +133,11 @@ func _draw() -> void:
 		draw_texture_rect(board_texture, board_layout.art_rect(size), false)
 	if not enemy_side and manager.adjustment_open and manager.selected_member_index == member_index:
 		draw_rect(area.grow(7), Color("f4d48e"), false, 4)
-	for instance in inventory.get_instances():
+	var visible_items := inventory.get_instances()
+	for id in _pulses:
+		if inventory.get_instance(id).is_empty():
+			visible_items.append(_pulses[id]["entry"])
+	for instance in visible_items:
 		var item := manager.registry.get_item(instance["item_id"])
 		if not _textures.has(item.id) and not item.icon_path.is_empty():
 			_textures[item.id] = load(item.icon_path)
@@ -105,21 +148,31 @@ func _draw() -> void:
 		var tiny_pill := compact and item.is_consumable()
 		var caption_height := 0.0 if tiny_pill else (20.0 if compact else 30.0)
 		var icon_rect := Rect2(rect.position + Vector2(5, 4), rect.size - Vector2(10, caption_height + 6))
+		var id: String = instance["instance_id"]
+		var ghost := inventory.get_instance(id).is_empty()
 		if _textures.has(item.id):
 			var texture: Texture2D = _textures[item.id]
 			var icon_size := texture.get_size() * minf(icon_rect.size.x / texture.get_width(), icon_rect.size.y / texture.get_height())
+			if _pulses.has(id):
+				var pulse: Dictionary = _pulses[id]
+				var t: float = pulse["elapsed"] / PULSE_DURATION
+				icon_size *= pulse_scale(t)
+				pulse["overlay"].position = icon_rect.get_center() - icon_size * 0.5
+				pulse["overlay"].size = icon_size
+				pulse["overlay"].modulate.a = 0.26 * sin(PI * t)
 			draw_texture_rect(texture, Rect2(icon_rect.get_center() - icon_size * 0.5, icon_size), false)
 			var progress := cooldown_progress(instance["instance_id"])
-			if progress < 1.0:
+			if not ghost and progress < 1.0 and manager.simulation.cooling_remaining_usec(id) == 0:
 				var boundary_y := icon_rect.position.y + icon_rect.size.y * (1.0 - progress)
-				draw_rect(Rect2(icon_rect.position, Vector2(icon_rect.size.x, boundary_y - icon_rect.position.y)), Color(0.43, 0.45, 0.47, 0.74))
-				draw_dashed_line(Vector2(icon_rect.position.x, boundary_y), Vector2(icon_rect.end.x, boundary_y), Color("f4e5bc"), 1.5 if compact else 2.0, 4.0 if compact else 7.0)
+				draw_line(Vector2(icon_rect.position.x, boundary_y), Vector2(icon_rect.end.x, boundary_y), Color(1, 1, 1, 0.55), 1.5 if compact else 2.0, true)
+		if ghost:
+			continue
 		if not tiny_pill:
 			draw_string_outline(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, 3, Color("18252c"))
 			draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, Color("e4d8b7"))
 		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
 		if remaining > 0:
-			draw_rect(rect, Color(0.25, 0.27, 0.29, 0.88))
+			draw_rect(rect, Color(0.25, 0.27, 0.29, 0.42))
 			draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y + 10), "%ds" % ceili(remaining / 1_000_000.0), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 24 if compact else 34, Color.WHITE)
 		if item.is_consumable():
 			var badge_size := Vector2(19, 20) if compact else Vector2(28, 25)
@@ -145,7 +198,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		var hit := inventory.item_at(_cell_at(event.position))
 		if not hit.is_empty():
-			manager.unequip(member_index, hit)
+			manager.unequip(member_index, hit, true)
 			reset_interaction()
 		accept_event()
 		return

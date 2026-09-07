@@ -1,7 +1,7 @@
 class_name BattleSimulation
 extends RefCounted
 
-const INSERTION_COOLDOWN_USEC := 2_000_000
+const INSERTION_COOLDOWN_USEC := 3_000_000
 var insertion_cooldown_usec: int = INSERTION_COOLDOWN_USEC
 var clock := SimulationClock.new()
 var queue := EventQueue.new()
@@ -13,6 +13,7 @@ var _registry: ContentRegistry
 var _effects := EffectSystem.new()
 var _pending_events: Array[Dictionary] = []
 var _pending_restores: int = 0
+var _unit_entry_until: Dictionary = {}
 
 func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_formation: FormationRules.Kind = FormationRules.Kind.FRONT_ONE, enemy_formation: FormationRules.Kind = FormationRules.Kind.FRONT_ONE) -> void:
 	state = GameState.new(allies, enemies, ally_formation, enemy_formation)
@@ -34,12 +35,25 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 	_definitions[id] = item
 	_owners[id] = member
 	var frozen_until := state.time_usec + insertion_cooldown_usec if inserted_during_battle else 0
+	if inserted_during_battle:
+		register_inserted_units(entry["units"])
 	state.item_runtime[id] = {"item_id": item.id, "owner_id": member.id, "side": side, "next_activation_usec": 0, "activation_count": 0, "frozen_until_usec": frozen_until, "ready_at_usec": frozen_until + item.cooldown_usec, "entered": false}
 	if state.phase == GameState.Phase.BATTLE:
 		# Cooldown completion becomes authoritative before attacks at the same timestamp.
 		queue.schedule(frozen_until, "enter", {"instance_id": id, "version": _versions[id]}, -1)
 		_wake_items(state.time_usec)
 	state.revision += 1
+
+func register_inserted_units(units: Array) -> void:
+	for unit in units:
+		_unit_entry_until[unit["id"]] = state.time_usec + insertion_cooldown_usec
+
+func _entry_deadline(id: String) -> int:
+	var deadline: int = state.item_runtime[id]["frozen_until_usec"]
+	var entry: Dictionary = _owners[id].inventory.get_instance(id)
+	if not entry.is_empty():
+		deadline = maxi(deadline, int(_unit_entry_until.get(entry["units"][0]["id"], 0)))
+	return deadline
 
 func detach(id: String) -> void:
 	if _owners.has(id):
@@ -89,13 +103,14 @@ func _wake_items(at_usec: int) -> void:
 		_schedule(id, maxi(at_usec, ready))
 
 func _schedule(id: String, at_usec: int) -> void:
+	at_usec = maxi(at_usec, _entry_deadline(id) + _definitions[id].cooldown_usec)
 	state.item_runtime[id]["next_activation_usec"] = at_usec
 	queue.schedule(at_usec, "activate", {"instance_id": id, "version": _versions[id]})
 
 func cooling_remaining_usec(id: String) -> int:
 	if state.phase != GameState.Phase.BATTLE or not state.item_runtime.has(id):
 		return 0
-	return maxi(0, int(state.item_runtime[id]["frozen_until_usec"]) - state.time_usec)
+	return maxi(0, _entry_deadline(id) - state.time_usec)
 
 func activation_progress(id: String) -> float:
 	if state.phase != GameState.Phase.BATTLE or not _definitions.has(id):
@@ -149,6 +164,7 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 	runtime["activation_count"] += 1
 	state.revision += 1
 	var source := {"item_id": item.id, "instance_id": id, "owner_id": owner.id, "owner_name": owner.definition["name"], "side": side, "stamina_cost": item.stamina_cost, "stamina_after": owner.stamina}
+	_pending_events.append({"kind": "item_activated", "at_usec": at_usec, "owner_id": owner.id, "side": side, "entry": owner.inventory.get_instance(id)})
 	if item.is_consumable():
 		var effect: Dictionary = item.effects[0]
 		var duration: int = effect["duration"]

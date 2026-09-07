@@ -58,12 +58,12 @@ func configure(game: GameManager) -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(scroll)
 	_grid = GridContainer.new()
-	_grid.columns = 4
+	_grid.columns = 5
 	_grid.add_theme_constant_override("h_separation", 12)
 	_grid.add_theme_constant_override("v_separation", 12)
 	scroll.add_child(_grid)
 	_hint = Label.new()
-	_hint.text = "右键放入所选阵盘 · 拖动选择格位\n阵盘物品右键收回，或拖回此处"
+	_hint.text = "右键放入所选阵盘 · 拖动选择格位\n右键收回1件 · 拖回收回未开瓶 · 已开瓶不可收回"
 	_hint.add_theme_font_size_override("font_size", 15)
 	_hint.add_theme_color_override("font_color", Color("a3bcb0"))
 	column.add_child(_hint)
@@ -111,7 +111,7 @@ func _can_drop_data(_point: Vector2, data: Variant) -> bool:
 	if not manager.can_edit_inventory() or not data is Dictionary or data.get("kind") != "inventory" or data.get("epoch") != manager.interaction_epoch:
 		return false
 	var index: int = data.get("member_index", -1)
-	return index >= 0 and index < manager.party.size() and not manager.party[index].inventory.get_instance(data.get("instance_id", "")).is_empty()
+	return manager.can_unequip(index, data.get("instance_id", ""))
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):

@@ -105,13 +105,13 @@ func _run() -> void:
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(manager.equip(sword_id, 0, Vector2i(3, 0)), "paused insertion command")
-	_check(manager.simulation.cooling_remaining_usec(sword_id) == 2_000_000, "inserted weapon shows two seconds")
+	_check(manager.simulation.cooling_remaining_usec(sword_id) == 3_000_000, "inserted weapon shows three seconds")
 	_check(manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 0)), "companion rearrangement during pause")
 	manager._process(10)
 	_check(manager.simulation.state.time_usec == 1_000_000, "paused cooldown frozen")
-	await _capture("storage_cooldown_2s")
+	await _capture("storage_cooldown_3s")
 	_key(KEY_SPACE)
-	manager._process(1)
+	manager._process(2)
 	await _layout()
 	_check(manager.simulation.cooling_remaining_usec(sword_id) == 1_000_000, "cooldown displays one second after resume")
 	await _capture("storage_cooldown_1s")
@@ -148,14 +148,57 @@ func _run() -> void:
 	_check(manager.set_formation(FormationRules.Kind.FRONT_TWO), "future world-map formation API retained")
 	await _layout()
 	_check_layout()
+	await _test_activation_feedback()
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
+
+func _test_activation_feedback() -> void:
+	root.size = Vector2i(1920, 1080)
+	manager.restart()
+	manager.select_member(0)
+	manager.equip_random("run.storage.base.pill.yunling.0")
+	manager.party[0].spirit = 50
+	await _layout()
+	var bag: InventoryView = ui.ally_panel.bags[0]
+	var pill_id := manager.party[0].inventory.matching_stack("base.pill.yunling")
+	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
+		board.set_process(false)
+	manager.start_battle()
+	manager._process(3)
+	_check(bag._pulses.has(GameManager.SWORD_INSTANCE) and bag._pulses.has(pill_id), "weapon and medicine activations trigger visual feedback")
+	_check(ui.enemy_panel.bags[0]._pulses.has(GameManager.CLAW_INSTANCE), "enemy activation uses same feedback")
+	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
+		board._process(InventoryView.PULSE_DURATION * 0.35)
+	await _capture("v07_activation_peak")
+	await _layout()
+	var overlay: TextureRect = bag._pulses[GameManager.SWORD_INSTANCE]["overlay"]
+	var peak_width := overlay.size.x
+	_check(overlay.modulate.a > 0 and overlay.modulate.a < 0.3, "faint white overlay visible during pulse")
+	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
+		board._process(InventoryView.PULSE_DURATION * 0.4)
+	await _capture("v07_activation_recoil")
+	await _layout()
+	_check(overlay.size.x < peak_width and overlay.modulate.a > 0, "image contracts while white flash remains synchronized")
+	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
+		board._process(InventoryView.PULSE_DURATION * 0.26)
+	_check(bag._pulses.is_empty() and manager.simulation.state.time_usec == 3_000_000, "pulse ends without advancing simulation")
+	manager._process(3)
+	_check(manager.party[0].inventory.get_instance(pill_id).is_empty() and bag._pulses.has(pill_id), "last bottle keeps transient feedback after authoritative consumption")
+	bag._process(InventoryView.PULSE_DURATION * 0.35)
+	await _capture("v07_last_bottle_flash")
+	bag._process(InventoryView.PULSE_DURATION)
+	_check(bag._pulses.is_empty(), "consumed bottle ghost is removed after pulse")
 
 func _test_details_and_boards() -> void:
 	_check(ui.enemy_panel.bags[0].board_texture.resource_path == "res://assets/bag-bg-2.webp", "dog uses roots board skin")
 	var cards: Array = ui.storage_panel.cards.values()
-	_check(ui.storage_panel._grid.columns == 4, "storage uses four columns")
-	_check(is_equal_approx(cards[0].global_position.y, cards[3].global_position.y) and cards[4].global_position.y > cards[0].global_position.y, "four cards actually fit the first row")
+	_check(ui.storage_panel._grid.columns == 5, "storage uses five columns")
+	_check(is_equal_approx(cards[0].global_position.y, cards[4].global_position.y) and cards[5].global_position.y > cards[0].global_position.y, "five cards actually fit the first row")
+	for card in cards:
+		_check(card.icon.get_global_rect().get_center().distance_to(card.get_global_rect().get_center()) < 1, "item image exactly centered in card")
+		_check(absf(card.quantity.get_global_rect().end.y - card.icon.get_global_rect().end.y) < 1, "quantity aligned to image bottom")
+	for example in [[0, "00.00"], [12_340_000, "12.34"], [59_999_999, "59.99"], [60_000_000, "01:00.00"], [72_340_000, "01:12.34"]]:
+		_check(ui.format_battle_time(example[0]) == example[1], "timer precision and minute rollover")
 	for index in 3:
 		var bag: InventoryView = ui.ally_panel.bags[index]
 		_check(bag.board_texture.resource_path == "res://assets/bag-bg-%d.webp" % (index + 1), "correct skin bound by character")

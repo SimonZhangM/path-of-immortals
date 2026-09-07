@@ -8,6 +8,7 @@ const GOLD := Color("dfc28a")
 var ally_panel: TeamPanel
 var enemy_panel: TeamPanel
 var _time: Label
+var _timer_frame: PanelContainer
 var _header_separator: HSeparator
 var _status: Label
 var _bag_button: Button
@@ -60,18 +61,33 @@ func _build_ui() -> void:
 	root.add_theme_constant_override("separation", 12)
 	margin.add_child(root)
 	var header := Control.new()
-	header.custom_minimum_size.y = 72
+	header.custom_minimum_size.y = 78
 	root.add_child(header)
 	var identity := VBoxContainer.new()
 	identity.add_theme_constant_override("separation", 0)
 	header.add_child(identity)
 	_label(identity, "修仙之路", 36, GOLD)
-	_time = _label(header, "00:00.00", 32, GOLD)
-	_time.anchor_left = 0.5
-	_time.anchor_right = 0.5
-	_time.offset_bottom = 44
-	_time.offset_left = -85
-	_time.offset_right = 85
+	_timer_frame = PanelContainer.new()
+	_timer_frame.anchor_left = 0.5
+	_timer_frame.anchor_right = 0.5
+	_timer_frame.offset_left = -140
+	_timer_frame.offset_right = 140
+	_timer_frame.offset_bottom = 50
+	var timer_box := _box(Color("292119", 0.97), Color("826039"))
+	timer_box.set_corner_radius_all(12)
+	timer_box.content_margin_top = 2
+	timer_box.content_margin_bottom = 2
+	timer_box.content_margin_left = 22
+	timer_box.content_margin_right = 22
+	_timer_frame.add_theme_stylebox_override("panel", timer_box)
+	header.add_child(_timer_frame)
+	var timer_row := HBoxContainer.new()
+	timer_row.add_theme_constant_override("separation", 14)
+	_timer_frame.add_child(timer_row)
+	_timer_accent(timer_row)
+	_time = _label(timer_row, "00.00", 30, Color("f1dca6"))
+	_time.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_timer_accent(timer_row)
 	_time.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_time.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_status = _label(header, "", 17, GOLD)
@@ -79,13 +95,13 @@ func _build_ui() -> void:
 	_status.anchor_right = 0.5
 	_status.offset_left = -200
 	_status.offset_right = 200
-	_status.offset_top = 45
-	_status.offset_bottom = 72
+	_status.offset_top = 53
+	_status.offset_bottom = 78
 	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var speeds := HBoxContainer.new()
 	speeds.anchor_left = 0.5
 	speeds.anchor_right = 1.0
-	speeds.offset_left = 110
+	speeds.offset_left = 160
 	speeds.offset_top = 11
 	speeds.add_theme_constant_override("separation", 12)
 	header.add_child(speeds)
@@ -172,8 +188,7 @@ func _refresh() -> void:
 	var state := sim.state
 	var preparing := state.phase == GameState.Phase.PREPARATION
 	var fighting := state.phase == GameState.Phase.BATTLE
-	var seconds := state.time_usec / 1_000_000.0
-	_time.text = "%02d:%05.2f" % [int(seconds) / 60, fmod(seconds, 60.0)]
+	_time.text = format_battle_time(state.time_usec)
 	_bag_button.disabled = not manager.can_adjust()
 	_bag_button.text = "关闭背包" if manager.adjustment_open else "背包调整"
 	for speed in _speed_buttons:
@@ -189,6 +204,22 @@ func _on_restart() -> void:
 	_battle_log.reset()
 	_log_label.text = "布阵中。"
 	_refresh()
+
+static func format_battle_time(time_usec: int) -> String:
+	var centiseconds := time_usec / 10_000
+	var seconds := centiseconds / 100
+	var suffix := "%02d.%02d" % [seconds % 60, centiseconds % 100]
+	return "%02d:%s" % [seconds / 60, suffix] if seconds >= 60 else suffix
+
+func _timer_accent(parent: Node) -> void:
+	var accent := HSeparator.new()
+	accent.custom_minimum_size.x = 26
+	accent.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var line := StyleBoxLine.new()
+	line.color = Color("c29a58", 0.6)
+	line.thickness = 1
+	accent.add_theme_stylebox_override("separator", line)
+	parent.add_child(accent)
 
 func _on_started() -> void:
 	_log_label.text = _battle_log.consume([], manager.registry)

@@ -13,7 +13,7 @@ func get_entry(id: String) -> Dictionary:
 func put(entry: Dictionary) -> void:
 	var copy := entry.duplicate(true)
 	copy.erase("cell")
-	# Open bottles retain individual charges when returned or merged.
+	# Each returned bottle keeps its stable identity when merged.
 	for id in _entries:
 		if _entries[id]["item_id"] == copy["item_id"]:
 			_entries[id]["units"].append_array(copy["units"])

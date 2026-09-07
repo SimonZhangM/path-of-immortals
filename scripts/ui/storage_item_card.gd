@@ -5,13 +5,17 @@ var manager: GameManager
 var storage_id: String
 var item: ItemData
 var _entry: Dictionary
+var icon: TextureRect
+var quantity: Label
+var _art: Control
+var _tags: HBoxContainer
 
 func configure(game: GameManager, entry: Dictionary) -> void:
 	manager = game
 	storage_id = entry["instance_id"]
 	_entry = entry.duplicate(true)
 	item = manager.registry.get_item(entry["item_id"])
-	custom_minimum_size = Vector2(180, 215)
+	custom_minimum_size = Vector2(144, 186)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color("16232b")
@@ -25,33 +29,27 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 	highlighted.border_color = Color("e3bd70")
 	mouse_entered.connect(func(): add_theme_stylebox_override("panel", highlighted))
 	mouse_exited.connect(func(): add_theme_stylebox_override("panel", box))
-	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 8)
+	var layout := Control.new()
 	add_child(layout)
-	var art := Control.new()
-	art.custom_minimum_size.y = 142
-	layout.add_child(art)
+	var art := layout
+	_art = art
 	var title := Label.new()
 	title.text = "\n".join(item.display_name.split(""))
 	title.add_theme_font_size_override("font_size", 17)
 	title.add_theme_color_override("font_color", Color("9dc9f0"))
 	art.add_child(title)
-	var icon := TextureRect.new()
-	icon.texture = load(item.icon_path) if not item.icon_path.is_empty() else null
+	icon = TextureRect.new()
+	if not item.icon_path.is_empty():
+		var source: Texture2D = load(item.icon_path)
+		var cropped := AtlasTexture.new()
+		cropped.atlas = source
+		cropped.region = source.get_image().get_used_rect()
+		icon.texture = cropped
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.anchor_right = 1
-	icon.anchor_bottom = 1
-	icon.offset_left = 25
-	icon.offset_right = -6
-	icon.offset_top = 15
-	icon.offset_bottom = -8
 	art.add_child(icon)
-	var quantity := Label.new()
+	quantity = Label.new()
 	quantity.text = "×%d" % entry["units"].size()
-	quantity.anchor_top = 1
-	quantity.anchor_bottom = 1
-	quantity.offset_top = -26
 	quantity.add_theme_font_size_override("font_size", 16)
 	quantity.add_theme_color_override("font_color", Color("efd59c"))
 	art.add_child(quantity)
@@ -63,13 +61,29 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 	shape.offset_bottom = 26
 	art.add_child(shape)
 	var tags := HBoxContainer.new()
+	_tags = tags
 	tags.alignment = BoxContainer.ALIGNMENT_CENTER
 	tags.add_theme_constant_override("separation", 7)
 	layout.add_child(tags)
 	tags.add_child(ItemTooltip.chip(StoragePanel.CATEGORIES[item.category]))
 	tags.add_child(ItemTooltip.chip(item.quality, Color("c6acdf")))
 	_ignore(layout)
+	art.resized.connect(_layout_art)
+	_layout_art.call_deferred()
 	tooltip_text = item.id
+
+func _layout_art() -> void:
+	if icon.texture == null:
+		return
+	var available := Vector2(maxf(1, _art.size.x - 34), maxf(1, _art.size.y - 58))
+	var source := icon.texture.get_size()
+	icon.size = source * minf(available.x / source.x, available.y / source.y)
+	icon.position = (_art.size - icon.size) * 0.5
+	quantity.size = quantity.get_combined_minimum_size()
+	quantity.position = icon.position + icon.size - Vector2(-3, quantity.size.y)
+	quantity.position.x = minf(quantity.position.x, _art.size.x - quantity.size.x)
+	_tags.size = _tags.get_combined_minimum_size()
+	_tags.position = Vector2((_art.size.x - _tags.size.x) * 0.5, _art.size.y - _tags.size.y)
 
 func _make_custom_tooltip(_for_text: String) -> Object:
 	var panel := ItemTooltip.new()

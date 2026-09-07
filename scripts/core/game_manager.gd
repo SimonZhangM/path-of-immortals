@@ -113,10 +113,7 @@ func start_battle() -> void:
 func move_item(member_index: int, instance_id: String, cell: Vector2i) -> bool:
 	if not can_edit_inventory() or member_index < 0 or member_index >= party.size():
 		return false
-	var before := party[member_index].inventory.get_instance(instance_id)
 	if party[member_index].inventory.move_item(instance_id, cell):
-		if before["cell"] != cell:
-			simulation.attach(party[member_index], 0, instance_id, simulation.state.phase == GameState.Phase.BATTLE)
 		inventory_changed.emit()
 		return true
 	return false
@@ -165,6 +162,8 @@ func equip(storage_id: String, member_index: int, cell: Vector2i) -> bool:
 	storage.take_one(storage_id)
 	if not stacking:
 		simulation.attach(party[member_index], 0, placed, simulation.state.phase == GameState.Phase.BATTLE)
+	elif simulation.state.phase == GameState.Phase.BATTLE:
+		simulation.register_inserted_units(entry["units"])
 	inventory_changed.emit()
 	return true
 
@@ -183,13 +182,19 @@ func equip_random(storage_id: String) -> bool:
 		return false
 	return equip(storage_id, selected_member_index, cells[_placement_rng.randi_range(0, cells.size() - 1)])
 
-func unequip(member_index: int, id: String) -> bool:
+func can_unequip(member_index: int, id: String) -> bool:
+	return can_edit_inventory() and member_index >= 0 and member_index < party.size() and party[member_index].inventory.returnable_count(id) > 0
+
+func unequip(member_index: int, id: String, single: bool = false) -> bool:
 	if not can_edit_inventory() or member_index < 0 or member_index >= party.size():
 		return false
-	var entry := party[member_index].inventory.take(id)
+	var bag := party[member_index].inventory
+	var entry := bag.take_returnable(id, single)
 	if entry.is_empty():
+		feedback.emit("已开启的丹药需留在阵盘用完，不能收回")
 		return false
-	simulation.detach(id)
+	if bag.get_instance(id).is_empty():
+		simulation.detach(id)
 	storage.put(entry)
 	inventory_changed.emit()
 	return true
