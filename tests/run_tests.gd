@@ -16,6 +16,7 @@ func _initialize() -> void:
 	_test_formation()
 	_test_battle()
 	_test_timing()
+	_test_storage_and_medicine()
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -182,7 +183,7 @@ func _test_battle() -> void:
 	var passive := _fixture(1)
 	for team in passive.state.teams:
 		team[0].inventory = InventoryState.new(registry)
-		team[0].inventory.add_item("armor", GameManager.ARMOR_ID, Vector2i.ZERO)
+		team[0].inventory.add_item("armor." + team[0].id, GameManager.ARMOR_ID, Vector2i.ZERO)
 	passive = BattleSimulation.new(passive.state.teams[0], passive.state.teams[1], registry)
 	passive.start()
 	_check(passive.state.result == "draw" and passive.queue.size() == 0, "no active weapons ends safely")
@@ -228,6 +229,118 @@ func _test_timing() -> void:
 	mixed.advance(4.5)
 	_check(mixed.state.item_runtime[GameManager.SWORD_INSTANCE]["activation_count"] == 2 and mixed.state.item_runtime["run.fast"]["activation_count"] == 3, "independent schedules on one owner")
 	_check(mixed.state.teams[0][0].stamina == 75, "same-owner weapons share authoritative stamina")
+
+func _test_storage_and_medicine() -> void:
+	var game := GameManager.new()
+	game._ready()
+	_check(game.storage.entries().size() == 7, "four new equipment definitions and three pill stacks")
+	_check(not game.can_edit_inventory() and game.can_adjust(), "preparation requires opening adjustment")
+	game.set_adjustment(true)
+	var pill_key := "run.storage.base.pill.huichun.0"
+	var sword_key := "run.storage.base.weapon.qingfeng.0"
+	_check(game.storage.get_entry(pill_key)["units"].size() == 10, "ten bottles in storage")
+	_check(game.equip(pill_key, 0, Vector2i(3, 0)), "equip first medicine")
+	var bag := game.party[0].inventory
+	var pill_id := bag.matching_stack("base.pill.huichun")
+	for index in 3:
+		_check(game.equip_random(pill_key), "right click appends same medicine")
+	_check(bag.get_instance(pill_id)["units"].size() == 4 and game.storage.get_entry(pill_key)["units"].size() == 6, "stack transfer conserves bottle total")
+	_check(game.simulation.cooling_remaining_usec(pill_id) == 0, "prebattle medicine has no insertion cooldown")
+	_check(game.equip(sword_key, 1, Vector2i(3, 0)), "any ally equips storage weapon")
+	_check(game.storage.get_entry(sword_key).is_empty(), "equipped weapon absent from storage")
+	_check(not game.equip("missing", 0, Vector2i.ZERO), "unknown storage id rejected")
+	_check(not game.equip("run.storage.base.armor.qinglin.0", 0, Vector2i.ZERO), "occupied destination rejected")
+	_check(game.storage.get_entry("run.storage.base.armor.qinglin.0")["units"].size() == 1, "failed placement keeps item")
+	_check(game.unequip(1, sword_key), "equipment can return to storage")
+	game.start_battle()
+	_check(not game.can_adjust() and not game.set_adjustment(true), "running battle locks adjustment")
+	game.simulation.advance(1)
+	game.toggle_pause()
+	game.set_adjustment(true)
+	_check(game.move_item(1, GameManager.sword_instance(1), Vector2i(3, 0)), "paused adjustment moves equipment")
+	_check(game.simulation.cooling_remaining_usec(GameManager.sword_instance(1)) == 2_000_000, "battle move adds two-second cooldown")
+	_check(game.equip(sword_key, 1, Vector2i.ZERO), "paused battle equips new weapon")
+	var due: int = game.simulation.state.item_runtime[sword_key]["next_activation_usec"]
+	_check(due == 6_000_000, "one second insertion starts weapon at six seconds")
+	game.simulation.advance(10)
+	_check(game.simulation.state.time_usec == 1_000_000, "pause freezes new cooldown")
+	_check(game.move_item(1, sword_key, Vector2i.ZERO) and game.simulation.state.item_runtime[sword_key]["next_activation_usec"] == due, "same-cell placement preserves progress")
+	game.toggle_pause()
+	_check(not game.adjustment_open, "resume closes storage")
+	game.simulation.advance(2)
+	_check(game.simulation.state.item_runtime[GameManager.sword_instance(1)]["activation_count"] == 0, "old three-second event invalidated")
+	game.simulation.advance(3)
+	_check(game.simulation.state.item_runtime[GameManager.sword_instance(1)]["activation_count"] == 1, "moved weapon activates after cooldown plus rotation")
+	game.free()
+	for resource in ["hp", "spirit", "stamina"]:
+		for speed in [0.5, 1.0, 2.0]:
+			var sim := _medicine_fixture(resource, 50, 2)
+			var hero: PartyMemberState = sim.state.teams[0][0]
+			sim.clock.set_speed(speed)
+			sim.start()
+			for frame in 3 * 60:
+				sim.advance(1.0 / (60.0 * speed))
+			_check(hero.get(resource) == 50, "restoration starts after rotation: " + resource)
+			_check(hero.inventory.get_instance("test.pill")["units"][0]["uses_left"] == 1, "first use leaves one charge")
+			sim.advance(3.0 / speed)
+			_check(hero.get(resource) == 55, "three-second effect restores exact five: " + resource)
+			_check(hero.inventory.get_instance("test.pill")["units"].size() == 1, "second use consumes one bottle")
+			sim.advance(3.0 / speed)
+			_check(hero.get(resource) == 60, "both uses restore ten total")
+			_check(hero.inventory.get_instance("test.pill")["units"][0]["uses_left"] == 1, "next bottle continues regular rotation without insertion cooldown")
+	var full := _medicine_fixture("spirit", 100, 2)
+	full.start()
+	full.advance(6)
+	_check(full.state.teams[0][0].inventory.get_instance("test.pill")["units"][0]["uses_left"] == 2, "full resource never opens bottle")
+	var nearly := _medicine_fixture("spirit", 99, 2)
+	nearly.start()
+	nearly.advance(12)
+	var entry: Dictionary = nearly.state.teams[0][0].inventory.get_instance("test.pill")
+	_check(nearly.state.teams[0][0].spirit == 100, "restoration cannot exceed maximum")
+	_check(entry["units"].size() == 1 and entry["units"][0]["uses_left"] == 2, "opened bottle finishes even at full; next bottle waits")
+	var moved := _medicine_fixture("spirit", 50, 2)
+	moved.start()
+	moved.advance(3)
+	var member: PartyMemberState = moved.state.teams[0][0]
+	var returned := member.inventory.take("test.pill")
+	moved.detach("test.pill")
+	var stash := SharedStorage.new()
+	stash.put(returned)
+	_check(stash.peek_one("test.pill")["units"][0]["uses_left"] == 1, "return retains opened bottle charge")
+	moved.advance(3)
+	_check(member.spirit == 55, "already activated restoration survives item removal")
+	var reentry := stash.take_one("test.pill")
+	member.inventory.put(reentry, Vector2i(3, 0))
+	moved.attach(member, 0, reentry["instance_id"], true)
+	moved.advance(5)
+	_check(member.inventory.get_instance(reentry["instance_id"]).is_empty(), "reinserted partial bottle consumes on its final use")
+	var revive := _medicine_fixture("stamina", 0, 1)
+	var tired: PartyMemberState = revive.state.teams[0][0]
+	tired.inventory.add_item("tired.sword", GameManager.ITEM_ID, Vector2i.ZERO)
+	revive.attach(tired, 0, "tired.sword", false)
+	revive.start()
+	revive.advance(9)
+	_check(revive.state.activation_counts[0] > 0, "stamina restoration wakes exhausted weapon without premature draw")
+	var invalid: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/huichun.json"))
+	invalid["effects"][0]["resource"] = "mana"
+	_check(not ContentRegistry.new().register_item(invalid), "unsupported restoration resource rejected")
+
+func _medicine_fixture(resource: String, initial: int, bottles: int) -> BattleSimulation:
+	var sim := _fixture(1, 10000)
+	var hero: PartyMemberState = sim.state.teams[0][0]
+	hero.inventory.take(GameManager.SWORD_INSTANCE)
+	sim.detach(GameManager.SWORD_INSTANCE)
+	hero.set(resource, initial)
+	var item_id: String = {"hp": "base.pill.huichun", "spirit": "base.pill.yunling", "stamina": "base.pill.yiqi"}[resource]
+	var units: Array = []
+	for index in bottles:
+		units.append({"id": "test.unit.%d" % index, "uses_left": 2})
+	hero.inventory.put({"instance_id": "test.pill", "item_id": item_id, "units": units}, Vector2i(3, 0))
+	sim.attach(hero, 0, "test.pill", false)
+	# Enemy keeps a future offensive event so full-resource fixtures do not end immediately.
+	sim._definitions[GameManager.CLAW_INSTANCE] = ItemData.new({"id": GameManager.CLAW_ID, "name": "测试爪", "type": "weapon", "tags": [], "size": [1, 2], "cooldown": 1000, "effects": [{"trigger": "on_activate", "effect": "damage", "value": 5}]})
+	sim.state.item_runtime[GameManager.CLAW_INSTANCE]["ready_at_usec"] = 1_000_000_000
+	return sim
 
 func _check(condition: bool, description: String) -> void:
 	checks += 1

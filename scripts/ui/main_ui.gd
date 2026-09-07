@@ -10,11 +10,11 @@ var enemy_panel: TeamPanel
 var _time: Label
 var _header_separator: HSeparator
 var _status: Label
-var _pause: Button
-var _start: Button
-var _formation: Button
+var _bag_button: Button
+var _log_button: Button
+var _log_panel: PanelContainer
+var storage_panel: StoragePanel
 var _log_label: RichTextLabel
-var _phase_label: Label
 var _speed_buttons: Dictionary = {}
 var _battle_log := BattleLog.new()
 
@@ -65,15 +65,22 @@ func _build_ui() -> void:
 	identity.add_theme_constant_override("separation", 0)
 	header.add_child(identity)
 	_label(identity, "修仙之路", 36, GOLD)
-	_phase_label = _label(identity, "战前准备", 18, JADE)
 	_time = _label(header, "00:00.00", 32, GOLD)
 	_time.anchor_left = 0.5
 	_time.anchor_right = 0.5
-	_time.anchor_bottom = 1.0
+	_time.offset_bottom = 44
 	_time.offset_left = -85
 	_time.offset_right = 85
 	_time.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_time.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_status = _label(header, "", 17, GOLD)
+	_status.anchor_left = 0.5
+	_status.anchor_right = 0.5
+	_status.offset_left = -200
+	_status.offset_right = 200
+	_status.offset_top = 45
+	_status.offset_bottom = 72
+	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var speeds := HBoxContainer.new()
 	speeds.anchor_left = 0.5
 	speeds.anchor_right = 1.0
@@ -106,26 +113,53 @@ func _build_ui() -> void:
 	middle.add_child(spacing)
 	var duel := _label(middle, "对 阵", 27, GOLD)
 	duel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_formation = _button(middle, "", _toggle_formation)
-	_start = _button(middle, "开始战斗 [空格]", manager.start_battle)
-	_pause = _button(middle, "暂停 [空格]", manager.toggle_pause)
-	_button(middle, "重新布阵", manager.restart)
-	_status = _label(middle, "", 17, GOLD)
-	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label(middle, "战斗记录", 18, INK)
-	_log_label = RichTextLabel.new()
-	_log_label.custom_minimum_size = Vector2(182, 290)
-	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_log_label.add_theme_stylebox_override("normal", _box(Color("14242a", 0.9), Color("4a5b58")))
-	_log_label.add_theme_font_size_override("normal_font_size", 14)
-	_log_label.scroll_following = true
-	_log_label.add_theme_color_override("default_color", MUTED)
-	middle.add_child(_log_label)
+	var stretch := Control.new()
+	stretch.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stretch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	middle.add_child(stretch)
+	_bag_button = _button(middle, "背包调整", func(): manager.set_adjustment(not manager.adjustment_open))
+	_log_button = _button(middle, "战斗记录", func(): _log_panel.visible = not _log_panel.visible)
 	enemy_panel = TeamPanel.new()
 	arena.add_child(enemy_panel)
 	if manager.startup_error.is_empty():
 		enemy_panel.configure(manager, true)
+	_build_log()
+	if manager.startup_error.is_empty():
+		storage_panel = StoragePanel.new()
+		storage_panel.anchor_left = 1
+		storage_panel.anchor_right = 1
+		storage_panel.anchor_bottom = 1
+		storage_panel.offset_left = -849
+		storage_panel.offset_right = -27
+		storage_panel.offset_top = 128
+		storage_panel.offset_bottom = -27
+		add_child(storage_panel)
+		storage_panel.configure(manager)
+
+func _build_log() -> void:
+	_log_panel = PanelContainer.new()
+	_log_panel.z_index = 20
+	_log_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	_log_panel.offset_left = -365
+	_log_panel.offset_right = 365
+	_log_panel.offset_top = -330
+	_log_panel.offset_bottom = 330
+	_log_panel.add_theme_stylebox_override("panel", _box(Color("101b21", 0.98), GOLD))
+	add_child(_log_panel)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 16)
+	_log_panel.add_child(column)
+	var row := HBoxContainer.new()
+	column.add_child(row)
+	_label(row, "战斗记录", 24, GOLD).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_button(row, "关闭 ×", func(): _log_panel.hide())
+	_log_label = RichTextLabel.new()
+	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_log_label.add_theme_font_size_override("normal_font_size", 18)
+	_log_label.scroll_following = true
+	_log_label.add_theme_color_override("default_color", MUTED)
+	column.add_child(_log_label)
+	_log_panel.hide()
 
 func _process(_delta: float) -> void:
 	_refresh()
@@ -139,23 +173,16 @@ func _refresh() -> void:
 	var fighting := state.phase == GameState.Phase.BATTLE
 	var seconds := state.time_usec / 1_000_000.0
 	_time.text = "%02d:%05.2f" % [int(seconds) / 60, fmod(seconds, 60.0)]
-	_start.disabled = not preparing
-	_pause.disabled = not fighting
-	_pause.text = "继续 [空格]" if sim.clock.paused else "暂停 [空格]"
-	_formation.text = FormationRules.label(manager.party.size(), manager.formation) + (" · 切换" if manager.party.size() == 3 else "")
-	_formation.disabled = not preparing or manager.party.size() != 3
-	_phase_label.text = "战前准备 · 可整理背包" if preparing else ("战斗已暂停 · 背包锁定" if sim.clock.paused and fighting else ("战斗进行中" if fighting else "战斗结束"))
+	_bag_button.disabled = not manager.can_adjust()
+	_bag_button.text = "关闭背包" if manager.adjustment_open else "背包调整"
 	for speed in _speed_buttons:
 		_speed_buttons[speed].set_pressed_no_signal(is_equal_approx(speed, sim.clock.speed_multiplier))
 	if preparing:
-		_status.text = "准备就绪后开战"
+		_status.text = "战前准备 · 空格开始"
 	elif state.is_finished():
-		_status.text = "%s\n%.2f 游戏秒" % [{"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局 · 无法继续攻击"}[state.result], seconds]
+		_status.text = {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局 · 无法继续攻击"}[state.result]
 	else:
 		_status.text = "战斗已暂停" if sim.clock.paused else "战斗进行中"
-
-func _toggle_formation() -> void:
-	manager.set_formation(FormationRules.Kind.FRONT_TWO if manager.formation == FormationRules.Kind.FRONT_ONE else FormationRules.Kind.FRONT_ONE)
 
 func _on_restart() -> void:
 	_battle_log.reset()

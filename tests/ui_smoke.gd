@@ -17,97 +17,145 @@ func _run() -> void:
 	ui = scene.get_node("MainUI")
 	await _layout()
 	_check(manager.startup_error.is_empty(), "startup succeeds")
-	_check(manager.party.size() == 3 and manager.enemies.size() == 1, "three allies and one dog")
-	_check(ui.enemy_panel.cards[0].stat_values["spirit"].text == "0 / 0", "zero spirit displayed correctly")
-	_check(ui.enemy_panel.cards[0].portrait.texture.resource_path == "res://assets/guaiwu.webp", "dog portrait loaded")
-	_check(ui.get_node("BattleBackground").texture.resource_path == "res://assets/backgroundtest.png", "supplied background")
-	_check(manager.registry.get_item(GameManager.CLAW_ID).icon_path == "res://assets/images/items/dog_claw.svg", "claw artwork configured")
+	_check(manager.party.size() == 3 and manager.enemies.size() == 1, "three allies and single dog")
+	_check(not ui.storage_panel.visible and not ui._log_panel.visible, "drawers initially hidden")
+	_check(not ui._bag_button.disabled and not manager.can_edit_inventory(), "prebattle adjustment available but bags locked until opened")
 	_check_layout()
-	await _capture("formation_front_one")
+	_check(absf(ui._status.get_global_rect().get_center().x - ui.size.x / 2) < 1 and ui._status.global_position.y >= ui._time.get_global_rect().end.y, "status below centered timer")
+	_check(ui._log_button.get_global_rect().end.y > ui.size.y - 35, "log button at middle bottom")
+	await _capture("storage_default")
+	ui._bag_button.pressed.emit()
+	await _layout()
+	_check(ui.storage_panel.visible and manager.can_edit_inventory(), "button opens shared storage")
+	_check(ui.storage_panel.cards.size() == 7, "seven content cards visible")
+	await _move_all_bags()
 	for index in 3:
 		var card: PartyMemberCard = ui.ally_panel.cards[index]
 		var before := card.custom_minimum_size
+		card.clicked.emit(index)
+		_check(manager.selected_member_index == index and card.custom_minimum_size == before, "select character changes target without resizing")
+	manager.select_member(1)
+	var pill_key := "run.storage.base.pill.huichun.0"
+	for index in 3:
+		var card: StorageItemCard = ui.storage_panel.cards[pill_key]
 		if DisplayServer.get_name() == "headless":
 			var point := card.get_global_rect().get_center()
 			_mouse_motion(point)
-			_mouse_button(point, true)
-			_mouse_button(point, false)
-			await _layout()
-		_check(card.custom_minimum_size == before, "clicking character never changes fixed size")
-	await _move_all_bags()
+			_right_click(point)
+		else:
+			var event := InputEventMouseButton.new()
+			event.button_index = MOUSE_BUTTON_RIGHT
+			event.pressed = true
+			card._gui_input(event)
+		await _layout()
+	var pill_id := manager.party[1].inventory.matching_stack("base.pill.huichun")
+	_check(not pill_id.is_empty(), "right click equips selected companion")
+	if not pill_id.is_empty():
+		_check(manager.party[1].inventory.get_instance(pill_id)["units"].size() == 3, "right clicks stack medicine")
+	_check(manager.storage.get_entry(pill_key)["units"].size() == 7, "storage quantity decreases atomically")
+	ui.storage_panel.set_category("pill")
+	await _layout()
+	_check(ui.storage_panel.cards.size() == 3, "medicine category filters content")
+	await _capture("storage_medicines")
+	ui.storage_panel.set_category("all")
+	await _layout()
+	var sword_id := "run.storage.base.weapon.qingfeng.0"
 	var bag: InventoryView = ui.ally_panel.bags[0]
-	var stale := bag.drag_data_at(bag.cell_center(Vector2i.ZERO))
-	_check(not ui.ally_panel.bags[1]._can_drop_data(ui.ally_panel.bags[1].cell_center(Vector2i(3, 0)), stale), "cross-character drag rejected")
-	_check(manager.set_formation(FormationRules.Kind.FRONT_TWO), "formation switch in preparation")
+	var sword_card: StorageItemCard = ui.storage_panel.cards[sword_id]
+	var data := sword_card.drag_data()
+	_check(bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), data), "storage drag accepts legal grid destination")
+	if DisplayServer.get_name() == "headless":
+		await _native_between(sword_card.get_global_rect().get_center(), bag.get_global_transform() * bag.cell_center(Vector2i(3, 0)))
+	else:
+		bag._drop_data(bag.cell_center(Vector2i(3, 0)), data)
 	await _layout()
-	_check_layout()
-	_check(not ui.ally_panel.bags[0]._can_drop_data(ui.ally_panel.bags[0].cell_center(Vector2i(3, 0)), stale), "rebuild invalidates stale drag")
-	await _capture("formation_front_two")
-	manager.set_formation(FormationRules.Kind.FRONT_ONE)
+	_check(not manager.party[0].inventory.get_instance(sword_id).is_empty(), "storage drag inserts weapon")
+	_check(manager.storage.get_entry(sword_id).is_empty(), "equipped weapon disappears from storage")
+	var returning := bag.drag_data_at(bag.cell_center(Vector2i(3, 0)))
+	_check(ui.storage_panel._can_drop_data(Vector2.ZERO, returning), "storage accepts returning array item")
+	if DisplayServer.get_name() == "headless":
+		await _native_between(bag.get_global_transform() * bag.cell_center(Vector2i(3, 0)), ui.storage_panel.global_position + Vector2(300, 20))
+	else:
+		ui.storage_panel._drop_data(Vector2.ZERO, returning)
 	await _layout()
-	manager._process(20)
-	_check(manager.simulation.state.time_usec == 0, "preparation time frozen")
-	manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 2))
+	_check(not manager.storage.get_entry(sword_id).is_empty(), "dragging back returns weapon")
+	await _capture("storage_open")
 	_key(KEY_SPACE)
-	ui._refresh()
-	_check(manager.simulation.state.phase == GameState.Phase.BATTLE and ui._formation.disabled, "space starts and locks formation")
-	_check(not manager.set_formation(FormationRules.Kind.FRONT_TWO), "cannot change formation in battle")
-	for index in 3:
-		_check(ui.ally_panel.bags[index].drag_data_at(ui.ally_panel.bags[index].cell_center(Vector2i.ZERO)).is_empty(), "all allied backpacks locked in battle")
+	await _layout()
+	_check(manager.simulation.state.phase == GameState.Phase.BATTLE and not manager.adjustment_open and not ui.storage_panel.visible, "space starts and closes adjustment")
+	_check(ui._bag_button.disabled and not manager.set_adjustment(true), "running battle locks adjustment")
+	_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), data), "stale drag rejected after start")
+	manager._process(1)
+	_key(KEY_SPACE)
+	ui._bag_button.pressed.emit()
+	await _layout()
+	_check(manager.simulation.clock.paused and manager.can_edit_inventory(), "paused battle permits adjustment")
+	_check(manager.equip(sword_id, 0, Vector2i(3, 0)), "paused insertion command")
+	_check(manager.simulation.cooling_remaining_usec(sword_id) == 2_000_000, "inserted weapon shows two seconds")
+	_check(manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 0)), "companion rearrangement during pause")
+	manager._process(10)
+	_check(manager.simulation.state.time_usec == 1_000_000, "paused cooldown frozen")
+	await _capture("storage_cooldown_2s")
+	_key(KEY_SPACE)
+	manager._process(1)
+	await _layout()
+	_check(manager.simulation.cooling_remaining_usec(sword_id) == 1_000_000, "cooldown displays one second after resume")
+	await _capture("storage_cooldown_1s")
+	_key(KEY_F3)
+	manager._process(0.5)
+	_check(manager.simulation.cooling_remaining_usec(sword_id) == 0 and manager.simulation.activation_progress(sword_id) == 0, "rotation starts after insertion cooldown at double speed")
 	_key(KEY_F1)
 	manager._process(3)
-	_check(manager.simulation.state.time_usec == 1_500_000, "half speed")
+	_check(absf(manager.simulation.activation_progress(sword_id) - 0.5) < 0.001, "rotation follows half-speed simulation")
+	ui._log_button.pressed.emit()
+	await _layout()
+	_check(ui._log_panel.visible and ui._log_label.text.contains("野狗"), "log button reveals battle record")
+	await _capture("storage_log")
+	ui._log_panel.hide()
 	_key(KEY_SPACE)
-	_key(KEY_SPACE, true)
-	_key(KEY_F3)
-	manager._process(20)
-	_check(manager.simulation.clock.paused and manager.simulation.state.time_usec == 1_500_000, "pause ignores repeat and speed changes do not resume")
-	_check(not manager.move_item(1, GameManager.sword_instance(1), Vector2i(3, 0)), "paused battle cannot rearrange ally items")
-	_check(ui.ally_panel.bags[1].drag_data_at(ui.ally_panel.bags[1].cell_center(Vector2i.ZERO)).is_empty(), "paused compact bag cannot drag")
-	_check(ui.enemy_panel.bags[0].cooldown_progress(GameManager.CLAW_INSTANCE) == 0.5, "enemy cooldown frozen halfway")
-	await _capture("formation_paused")
-	_key(KEY_SPACE)
-	manager._process(0.75)
-	ui._refresh()
+	ui._bag_button.pressed.emit()
 	await _layout()
-	_check(manager.party[0].hp == 95 and manager.enemies[0].hp == 70, "both sides exchange damage at three seconds")
-	_check(ui.ally_panel.cards[0].stat_values["hp"].text == "95 / 100" and ui.enemy_panel.cards[0].stat_values["stamina"].text == "95 / 100", "HP and stamina bars reflect simulation")
-	_check(ui._log_label.text.contains("野狗") and ui._log_label.text.contains("体力-5"), "combat log includes enemy and stamina cost")
-	await _capture("formation_battle_3s")
-	_key(KEY_F2)
-	manager._process(9)
-	ui._refresh()
-	await _layout()
-	_check(manager.simulation.state.result == "victory" and ui._status.text.contains("12.00"), "victory displayed at exact time")
-	_check(manager.party[0].hp == 85 and manager.enemies[0].hp == 0, "default combat resources")
-	_check(ui.enemy_panel.cards[0].portrait.modulate.r < 1, "fallen portrait dimmed")
-	var old_bag: InventoryView = ui.ally_panel.bags[0]
-	manager.restart()
-	await _layout()
-	_check(manager.party[0].hp == 100 and manager.party[0].stamina == 100 and manager.enemies[0].hp == 100, "reprepare resets both teams")
-	_check(manager.can_edit_inventory() and manager.simulation.clock.speed_multiplier == 1 and manager.simulation.state.time_usec == 0, "reprepare unlocks allies and resets clock")
-	_check(not is_instance_valid(old_bag), "old inventory view disposed safely")
-	_check(ui._log_label.text == "布阵中。", "reprepare resets log")
-	_check(manager.party[2].inventory.get_instance(GameManager.sword_instance(2))["cell"] == Vector2i(3, 2), "reprepare preserves custom companion layout")
-	manager.move_item(2, GameManager.sword_instance(2), Vector2i.ZERO)
-	await _move_all_bags()
-	# Roster-size fixtures exercise layout support without introducing party-management gameplay.
-	var full_party: Array[PartyMemberState] = manager.party.duplicate()
-	for count in [2, 1, 3]:
-		manager.party.assign(full_party.slice(0, count))
-		manager.restart()
-		await _layout()
-		_check_layout()
-		_check(ui._formation.disabled == (count != 3), "only three-person roster offers two formations")
-		await _capture("formation_roster_%d" % count)
 	if DisplayServer.get_name() != "headless":
 		for dimensions in [Vector2i(1920, 1080), Vector2i(1280, 720), Vector2i(1280, 800), Vector2i(1720, 720)]:
 			root.size = dimensions
 			await _layout()
 			_check_layout()
-			await _capture("formation_%dx%d" % [dimensions.x, dimensions.y])
+			_check(ui.storage_panel.get_global_rect().end.x <= ui.size.x and ui.storage_panel.get_global_rect().end.y <= ui.size.y, "storage panel within viewport")
+			await _capture("storage_%dx%d" % [dimensions.x, dimensions.y])
+	# Formation is still a prebattle API, with no combat scene switch.
+	manager.set_adjustment(false)
+	var full_party: Array[PartyMemberState] = manager.party.duplicate()
+	for count in [2, 1, 3]:
+		manager.party.assign(full_party.slice(0, count))
+		manager.selected_member_index = 0
+		manager.restart()
+		await _layout()
+		_check_layout()
+	_check(manager.set_formation(FormationRules.Kind.FRONT_TWO), "future world-map formation API retained")
+	await _layout()
+	_check_layout()
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
+
+func _right_click(point: Vector2) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.position = point
+		event.global_position = point
+		event.button_index = MOUSE_BUTTON_RIGHT
+		event.pressed = pressed
+		Input.parse_input_event(event)
+
+func _native_between(start: Vector2, finish: Vector2) -> void:
+	_mouse_motion(start)
+	_mouse_button(start, true)
+	await process_frame
+	_mouse_motion(start + Vector2(32, 0), true)
+	await process_frame
+	_mouse_motion(finish, true)
+	await process_frame
+	_mouse_button(finish, false)
+	await _layout()
 
 func _move_all_bags() -> void:
 	for index in manager.party.size():
@@ -123,6 +171,7 @@ func _move_all_bags() -> void:
 		_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), invalid), "invalid footprint rejected in each bag")
 		manager.move_item(index, GameManager.armor_instance(index), Vector2i(1, 1))
 		manager.move_item(index, GameManager.sword_instance(index), Vector2i.ZERO)
+		bag.reset_interaction()
 	_check(ui.enemy_panel.bags[0].drag_data_at(ui.enemy_panel.bags[0].cell_center(Vector2i(1, 1))).is_empty(), "enemy inventory always read-only")
 
 func _check_layout() -> void:

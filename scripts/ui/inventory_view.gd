@@ -40,6 +40,8 @@ func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> voi
 	manager.battle_restarted.connect(reset_interaction)
 	manager.battle_started.connect(reset_interaction)
 	manager.formation_changed.connect(reset_interaction)
+	manager.adjustment_changed.connect(reset_interaction)
+	manager.selection_changed.connect(queue_redraw)
 	for instance in inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])
 		if not item.icon_path.is_empty():
@@ -85,6 +87,8 @@ func _draw() -> void:
 	var area := grid_rect()
 	var step := area.size.x / 4.0
 	draw_rect(area.grow(7), Color("a8a579"), false, 2)
+	if not enemy_side and manager.adjustment_open and manager.selected_member_index == member_index:
+		draw_rect(area.grow(7), Color("f4d48e"), false, 4)
 	for y in 4:
 		for x in 4:
 			var rect := Rect2(area.position + Vector2(x, y) * step, Vector2.ONE * step).grow(-2)
@@ -93,11 +97,14 @@ func _draw() -> void:
 			draw_circle(rect.get_center(), 2, Color("708079", 0.4))
 	for instance in inventory.get_instances():
 		var item := manager.registry.get_item(instance["item_id"])
+		if not _textures.has(item.id) and not item.icon_path.is_empty():
+			_textures[item.id] = load(item.icon_path)
 		var rect := Rect2(area.position + Vector2(instance["cell"]) * step, Vector2(item.grid_size) * step).grow(-4)
 		var active: bool = instance["instance_id"] == selected_instance
 		draw_rect(rect, Color("394943") if item.type == "armor" else Color("4a3c30"))
 		draw_rect(rect, Color("e5c181") if active else Color("a99b71"), false, 3 if active else 2)
-		var caption_height := 20.0 if compact else 30.0
+		var tiny_pill := compact and item.is_consumable()
+		var caption_height := 0.0 if tiny_pill else (20.0 if compact else 30.0)
 		var icon_rect := Rect2(rect.position + Vector2(5, 4), rect.size - Vector2(10, caption_height + 6))
 		if _textures.has(item.id):
 			var texture: Texture2D = _textures[item.id]
@@ -108,8 +115,18 @@ func _draw() -> void:
 				var boundary_y := icon_rect.position.y + icon_rect.size.y * (1.0 - progress)
 				draw_rect(Rect2(icon_rect.position, Vector2(icon_rect.size.x, boundary_y - icon_rect.position.y)), Color(0.43, 0.45, 0.47, 0.74))
 				draw_dashed_line(Vector2(icon_rect.position.x, boundary_y), Vector2(icon_rect.end.x, boundary_y), Color("f4e5bc"), 1.5 if compact else 2.0, 4.0 if compact else 7.0)
-		draw_rect(Rect2(rect.position + Vector2(0, rect.size.y - caption_height), Vector2(rect.size.x, caption_height)), Color("101b20", 0.85))
-		draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, Color("e4d8b7"))
+		if not tiny_pill:
+			draw_rect(Rect2(rect.position + Vector2(0, rect.size.y - caption_height), Vector2(rect.size.x, caption_height)), Color("101b20", 0.85))
+			draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, Color("e4d8b7"))
+		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
+		if remaining > 0:
+			draw_rect(rect, Color(0.25, 0.27, 0.29, 0.88))
+			draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y + 10), "%ds" % ceili(remaining / 1_000_000.0), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 24 if compact else 34, Color.WHITE)
+		if item.is_consumable():
+			var badge_size := Vector2(19, 20) if compact else Vector2(28, 25)
+			var badge := Rect2(rect.end - badge_size, badge_size)
+			draw_rect(badge, Color("152124"))
+			draw_string(get_theme_default_font(), badge.position + Vector2(0, badge_size.y - 4), str(instance["units"].size()), HORIZONTAL_ALIGNMENT_CENTER, badge_size.x, 13 if compact else 16, Color("f4d48e"))
 	if not _drag_instance.is_empty() and _hover_cell.x > -100:
 		var instance := inventory.get_instance(_drag_instance)
 		if not instance.is_empty():
@@ -122,7 +139,16 @@ func _draw() -> void:
 func _gui_input(event: InputEvent) -> void:
 	if manager == null:
 		return
+	if not enemy_side and event is InputEventMouseButton and event.pressed:
+		manager.select_member(member_index)
 	if enemy_side or inventory.locked or not manager.can_edit_inventory():
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		var hit := inventory.item_at(_cell_at(event.position))
+		if not hit.is_empty():
+			manager.unequip(member_index, hit)
+			reset_interaction()
+		accept_event()
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var cell := _cell_at(event.position)
@@ -150,7 +176,7 @@ func drag_data_at(point: Vector2) -> Dictionary:
 	_drag_instance = hit
 	_grab_offset = cell - Vector2i(instance["cell"])
 	selection_changed.emit(instance["item_id"])
-	return {"source": get_instance_id(), "generation": _generation, "member_index": member_index, "instance_id": hit, "offset": _grab_offset}
+	return {"kind": "inventory", "epoch": manager.interaction_epoch, "source": get_instance_id(), "generation": _generation, "member_index": member_index, "instance_id": hit, "offset": _grab_offset}
 
 func _get_drag_data(point: Vector2) -> Variant:
 	var data := drag_data_at(point)
@@ -172,6 +198,8 @@ func _get_drag_data(point: Vector2) -> Variant:
 	return data
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
+	if manager != null and not enemy_side and data is Dictionary and data.get("kind") == "storage" and data.get("epoch") == manager.interaction_epoch:
+		return manager.can_equip(data["storage_id"], member_index, _cell_at(point))
 	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("source") != get_instance_id() or data.get("generation") != _generation or data.get("member_index") != member_index:
 		return false
 	_hover_cell = _cell_at(point) - Vector2i(data["offset"])
@@ -182,7 +210,10 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
-		manager.move_item(member_index, data["instance_id"], _hover_cell)
+		if data.get("kind") == "storage":
+			manager.equip(data["storage_id"], member_index, _cell_at(point))
+		else:
+			manager.move_item(member_index, data["instance_id"], _hover_cell)
 		feedback.emit("已调整位置")
 	_drag_instance = ""
 	_hover_cell = Vector2i(-100, -100)
@@ -193,3 +224,15 @@ func _notification(what: int) -> void:
 		_drag_instance = ""
 		_hover_cell = Vector2i(-100, -100)
 		queue_redraw()
+
+func _get_tooltip(at_position: Vector2) -> String:
+	if inventory == null:
+		return ""
+	var entry := inventory.get_instance(inventory.item_at(_cell_at(at_position)))
+	if entry.is_empty():
+		return ""
+	var item := manager.registry.get_item(entry["item_id"])
+	var result := item.display_name
+	if item.is_consumable():
+		result += " · %d瓶 · 当前瓶剩余%d次" % [entry["units"].size(), entry["units"][0]["uses_left"]]
+	return result

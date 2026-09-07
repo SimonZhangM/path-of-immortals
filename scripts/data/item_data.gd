@@ -10,6 +10,9 @@ var stamina_cost: int
 var effects: Array
 var grid_size: Vector2i
 var icon_path: String
+var uses_per_unit: int
+var category: String
+var quality: String
 
 # Registry validates input before constructing an immutable-by-convention definition.
 func _init(raw: Dictionary) -> void:
@@ -22,3 +25,9 @@ func _init(raw: Dictionary) -> void:
 	effects = raw["effects"].duplicate(true)
 	grid_size = Vector2i(int(raw["size"][0]), int(raw["size"][1]))
 	icon_path = raw.get("icon", "")
+	uses_per_unit = int(raw.get("uses_per_unit", 0))
+	category = raw.get("category", type)
+	quality = raw.get("quality", "凡品")
+
+func is_consumable() -> bool:
+	return uses_per_unit > 0

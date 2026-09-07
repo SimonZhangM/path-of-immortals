@@ -72,11 +72,21 @@ func register_item(raw: Dictionary) -> bool:
 		error = "icon must be a resource path string"
 	if error.is_empty() and not _nonnegative_integer(raw.get("stamina_cost", 0)):
 		error = "stamina_cost must be a nonnegative integer"
+	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
+		error = "uses_per_unit must be a nonnegative integer"
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman"]:
+		error = "unsupported category"
+	if error.is_empty() and not raw.get("quality", "凡品") is String:
+		error = "quality must be a string"
 	if error.is_empty():
 		for effect in raw["effects"]:
 			if not effect is Dictionary or not EffectSystem.validate_definition(effect):
-				error = "unsupported or invalid effect (V0.1: on_activate / damage / positive integer value)"
+				error = "unsupported or invalid effect"
 				break
+			if effect.get("effect") == "restore_over_time" and (int(raw.get("uses_per_unit", 0)) <= 0 or raw["effects"].size() != 1):
+				error = "restoration requires a consumable with one effect"
+		if error.is_empty() and int(raw.get("uses_per_unit", 0)) > 0 and (raw["effects"].size() != 1 or raw["effects"][0].get("effect") != "restore_over_time"):
+			error = "current consumables must use one restoration effect"
 	if not error.is_empty():
 		return _reject(raw, error)
 	_items[raw["id"]] = ItemData.new(raw)

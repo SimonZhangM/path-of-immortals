@@ -1,0 +1,27 @@
+{
+  "id": "base.pill.yiqi",
+  "name": "益气丹",
+  "type": "pill",
+  "category": "pill",
+  "quality": "凡品",
+  "tags": [
+    "pill",
+    "stamina"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/images/items/yiqi.svg",
+  "cooldown": 3,
+  "uses_per_unit": 2,
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "restore_over_time",
+      "resource": "stamina",
+      "value": 5,
+      "duration": 3
+    }
+  ]
+}

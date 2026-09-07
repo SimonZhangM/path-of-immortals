@@ -1,6 +1,8 @@
 class_name PartyMemberCard
 extends Control
 
+signal clicked(index: int)
+
 const BAR_WIDTH := 200.0
 const BASE_SIZE := Vector2(484, 236)
 const COMPACT_SCALE := 0.66
@@ -17,7 +19,7 @@ func configure(index: int, member: PartyMemberState) -> void:
 	name = "PartyMember%d" % (index + 1)
 	custom_minimum_size = BASE_SIZE
 	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	_content = HBoxContainer.new()
 	_content.custom_minimum_size = BASE_SIZE
 	_content.size = BASE_SIZE
@@ -110,3 +112,8 @@ func _ignore_mouse(node: Node) -> void:
 		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for child in node.get_children():
 		_ignore_mouse(child)
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		clicked.emit(member_index)
+		accept_event()

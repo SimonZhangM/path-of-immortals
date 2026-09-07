@@ -56,6 +56,8 @@ func rebuild() -> void:
 		var card := PartyMemberCard.new()
 		portrait_slots[0 if primary else 1].add_child(card)
 		card.configure(index, members[index])
+		if not enemy_side:
+			card.clicked.connect(manager.select_member)
 		card.set_primary(primary)
 		cards.append(card)
 		if index > 1:
@@ -70,7 +72,7 @@ func rebuild() -> void:
 		bag.bind_game(manager, index, enemy_side)
 		bags.append(bag)
 		var caption := Label.new()
-		caption.text = "%s · 储物袋" % members[index].definition["name"] if primary else str(members[index].definition["name"])
+		caption.text = "%s · 阵盘" % members[index].definition["name"] if primary else str(members[index].definition["name"])
 		caption.add_theme_font_size_override("font_size", 18)
 		caption.anchor_right = 1
 		caption.offset_top = -28

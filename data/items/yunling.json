@@ -1,0 +1,27 @@
+{
+  "id": "base.pill.yunling",
+  "name": "蕴灵丹",
+  "type": "pill",
+  "category": "pill",
+  "quality": "凡品",
+  "tags": [
+    "pill",
+    "spirit"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/images/items/yunling.svg",
+  "cooldown": 3,
+  "uses_per_unit": 2,
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "restore_over_time",
+      "resource": "spirit",
+      "value": 5,
+      "duration": 3
+    }
+  ]
+}

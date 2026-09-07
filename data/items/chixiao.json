@@ -1,0 +1,25 @@
+{
+  "id": "base.weapon.chixiao",
+  "name": "赤霄剑",
+  "type": "weapon",
+  "category": "weapon",
+  "quality": "凡品",
+  "tags": [
+    "weapon",
+    "test"
+  ],
+  "size": [
+    1,
+    2
+  ],
+  "icon": "res://assets/weapontest.webp",
+  "cooldown": 3,
+  "stamina_cost": 5,
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 10
+    }
+  ]
+}

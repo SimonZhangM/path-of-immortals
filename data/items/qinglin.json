@@ -1,0 +1,19 @@
+{
+  "id": "base.armor.qinglin",
+  "name": "青鳞甲",
+  "type": "armor",
+  "category": "armor",
+  "quality": "凡品",
+  "tags": [
+    "armor",
+    "test"
+  ],
+  "size": [
+    2,
+    2
+  ],
+  "icon": "res://assets/images/items/iron_armor.svg",
+  "cooldown": 0,
+  "stamina_cost": 0,
+  "effects": []
+}

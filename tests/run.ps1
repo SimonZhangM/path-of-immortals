@@ -18,7 +18,12 @@ function Invoke-GodotCheck {
     $stderrPath = Join-Path $artifactPath "$Name.stderr.log"
     # Start-Process waits correctly for the Windows GUI executable as well.
     $engineArgs = @('--path', ('"' + $projectPath + '"')) + $ExtraArgs
-    $run = Start-Process -FilePath $GodotPath -ArgumentList $engineArgs -WindowStyle Hidden -PassThru -Wait -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
+    $run = Start-Process -FilePath $GodotPath -ArgumentList $engineArgs -WindowStyle Hidden -PassThru -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
+    $null = $run.Handle
+    if (-not $run.WaitForExit(60000)) {
+        Stop-Process -Id $run.Id
+        throw "$Name timed out; see $artifactPath"
+    }
     Get-Content -LiteralPath $stdoutPath -Encoding UTF8
     $errorText = Get-Content -LiteralPath $stderrPath -Encoding UTF8 -Raw
     if ($errorText) { Write-Output $errorText }

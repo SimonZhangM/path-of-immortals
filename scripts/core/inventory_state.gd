@@ -16,7 +16,7 @@ func add_item(instance_id: String, item_id: String, cell: Vector2i) -> bool:
 	var item := _registry.get_item(item_id)
 	if item == null or not _fits(cell, item.grid_size, ""):
 		return false
-	_instances[instance_id] = {"instance_id": instance_id, "item_id": item_id, "cell": cell}
+	_instances[instance_id] = {"instance_id": instance_id, "item_id": item_id, "cell": cell, "units": [{"id": instance_id, "uses_left": item.uses_per_unit}]}
 	revision += 1
 	return true
 
@@ -54,6 +54,59 @@ func occupied_cells() -> int:
 		var dimensions := _registry.get_item(instance["item_id"]).grid_size
 		count += dimensions.x * dimensions.y
 	return count
+
+func matching_stack(item_id: String) -> String:
+	if not _registry.get_item(item_id).is_consumable():
+		return ""
+	for id in _instances:
+		if _instances[id]["item_id"] == item_id:
+			return id
+	return ""
+
+func available_cells(item_id: String) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	var item := _registry.get_item(item_id)
+	if item != null and not locked:
+		for y in 4:
+			for x in 4:
+				if _fits(Vector2i(x, y), item.grid_size, ""):
+					result.append(Vector2i(x, y))
+	return result
+
+func put(entry: Dictionary, cell: Vector2i) -> String:
+	if locked or entry.is_empty():
+		return ""
+	var matching := matching_stack(entry["item_id"])
+	if not matching.is_empty():
+		_instances[matching]["units"].append_array(entry["units"].duplicate(true))
+		revision += 1
+		return matching
+	if not add_item(entry["instance_id"], entry["item_id"], cell):
+		return ""
+	_instances[entry["instance_id"]]["units"] = entry["units"].duplicate(true)
+	return entry["instance_id"]
+
+func take(id: String) -> Dictionary:
+	if locked or not _instances.has(id):
+		return {}
+	var entry := get_instance(id)
+	_instances.erase(id)
+	revision += 1
+	return entry
+
+# Simulation-only mutation, independent of UI editing locks.
+func use_consumable(id: String) -> bool:
+	if not _instances.has(id):
+		return false
+	var units: Array = _instances[id]["units"]
+	units[0]["uses_left"] -= 1
+	var consumed: bool = units[0]["uses_left"] == 0
+	if consumed:
+		units.pop_front()
+	if units.is_empty():
+		_instances.erase(id)
+	revision += 1
+	return consumed
 
 func _fits(cell: Vector2i, dimensions: Vector2i, ignore_id: String) -> bool:
 	var target := Rect2i(cell, dimensions)
