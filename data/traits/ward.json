@@ -1,0 +1,10 @@
+{
+  "id": "base.trait.ward",
+  "name": "护元",
+  "kind": "passive",
+  "cooldown": 0,
+  "element": "base.element.earth",
+  "effect": "defense",
+  "value": 1,
+  "description": "为主角提供1点防御。"
+}

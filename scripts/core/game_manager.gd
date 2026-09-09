@@ -4,11 +4,13 @@ extends Node
 signal battle_restarted
 signal battle_started
 signal inventory_changed
-signal formation_changed
 signal adjustment_changed
 signal selection_changed
 signal feedback(message: String)
 signal presentation_events(events: Array[Dictionary])
+signal inventory_interaction(kind: String)
+signal battle_review_requested
+signal battle_exit_requested
 
 const ITEM_ID := "base.test.fire_sword"
 const ENEMY_ID := "base.enemy.wild_dog"
@@ -22,7 +24,8 @@ const STORAGE_IDS := ["base.weapon.qingfeng", "base.weapon.chixiao", "base.armor
 var registry := ContentRegistry.new()
 var party: Array[PartyMemberState] = []
 var enemies: Array[PartyMemberState] = []
-var formation := FormationRules.Kind.FRONT_ONE
+var companions: Array[CompanionState] = []
+var enemy_companions: Array[CompanionState] = []
 var simulation: BattleSimulation
 var startup_error: String = ""
 var storage := SharedStorage.new()
@@ -46,11 +49,13 @@ func _ready() -> void:
 		DebugLogger.error(startup_error)
 		set_process(false)
 		return
-	for index in PARTY_IDS.size():
+	for index in 1:
 		var member := PartyMemberState.new(registry.get_character(PARTY_IDS[index]), registry)
 		member.inventory.add_item(sword_instance(index), ITEM_ID, Vector2i.ZERO)
 		member.inventory.add_item(armor_instance(index), ARMOR_ID, Vector2i(1, 1))
 		party.append(member)
+	for id in PARTY_IDS.slice(1):
+		companions.append(CompanionState.new(registry.get_character(id), registry))
 	var dog := PartyMemberState.new(registry.get_enemy(ENEMY_ID), registry)
 	dog.inventory.add_item(CLAW_INSTANCE, CLAW_ID, Vector2i(1, 1))
 	enemies.append(dog)
@@ -72,20 +77,14 @@ static func sword_instance(index: int) -> String:
 static func armor_instance(index: int) -> String:
 	return ARMOR_INSTANCE if index == 0 else "run.party.%d.armor" % index
 
-func set_formation(value: FormationRules.Kind) -> bool:
-	if simulation == null or simulation.state.phase != GameState.Phase.PREPARATION or party.size() != 3 or value not in [FormationRules.Kind.FRONT_ONE, FormationRules.Kind.FRONT_TWO]:
-		return false
-	formation = value
-	simulation.state.formations[0] = value
-	formation_changed.emit()
-	return true
-
 func _process(delta: float) -> void:
 	if simulation == null:
 		return
 	simulation.advance(delta)
 	var events := simulation.drain_events()
 	if not events.is_empty():
+		if simulation.state.is_finished():
+			set_adjustment(false)
 		presentation_events.emit(events)
 		inventory_changed.emit()
 
@@ -97,7 +96,7 @@ func restart() -> void:
 		member.inventory.locked = member in enemies
 	adjustment_open = false
 	interaction_epoch += 1
-	simulation = BattleSimulation.new(party, enemies, registry, formation)
+	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions)
 	battle_restarted.emit()
 	adjustment_changed.emit()
 
@@ -112,11 +111,15 @@ func start_battle() -> void:
 
 func move_item(member_index: int, instance_id: String, cell: Vector2i) -> bool:
 	if not can_edit_inventory() or member_index < 0 or member_index >= party.size():
-		return false
+		return _inventory_result(false)
 	if party[member_index].inventory.move_item(instance_id, cell):
 		inventory_changed.emit()
-		return true
-	return false
+		return _inventory_result(true)
+	return _inventory_result(false)
+
+func _inventory_result(success: bool) -> bool:
+	inventory_interaction.emit("place" if success else "invalid")
+	return success
 
 func can_edit_inventory() -> bool:
 	return can_adjust() and (simulation.state.phase == GameState.Phase.PREPARATION or adjustment_open)
@@ -152,34 +155,34 @@ func can_equip(storage_id: String, member_index: int, cell: Vector2i) -> bool:
 
 func equip(storage_id: String, member_index: int, cell: Vector2i) -> bool:
 	if not can_equip(storage_id, member_index, cell):
-		return false
+		return _inventory_result(false)
 	var entry := storage.peek_one(storage_id)
 	var bag := party[member_index].inventory
 	var stacking := not bag.matching_stack(entry["item_id"]).is_empty()
 	var placed := bag.put(entry, cell)
 	if placed.is_empty():
-		return false
+		return _inventory_result(false)
 	storage.take_one(storage_id)
 	if not stacking:
 		simulation.attach(party[member_index], 0, placed, simulation.state.phase == GameState.Phase.BATTLE)
 	elif simulation.state.phase == GameState.Phase.BATTLE:
 		simulation.register_inserted_units(entry["units"])
 	inventory_changed.emit()
-	return true
+	return _inventory_result(true)
 
 func equip_random(storage_id: String) -> bool:
 	if not can_edit_inventory():
-		return false
+		return _inventory_result(false)
 	var entry := storage.peek_one(storage_id)
 	if entry.is_empty():
-		return false
+		return _inventory_result(false)
 	var bag := party[selected_member_index].inventory
 	if not bag.matching_stack(entry["item_id"]).is_empty():
 		return equip(storage_id, selected_member_index, Vector2i.ZERO)
 	var cells := bag.available_cells(entry["item_id"])
 	if cells.is_empty():
 		feedback.emit("阵盘空间不足，物品仍保留在储物袋中")
-		return false
+		return _inventory_result(false)
 	return equip(storage_id, selected_member_index, cells[_placement_rng.randi_range(0, cells.size() - 1)])
 
 func can_unequip(member_index: int, id: String) -> bool:
@@ -187,21 +190,45 @@ func can_unequip(member_index: int, id: String) -> bool:
 
 func unequip(member_index: int, id: String, single: bool = false) -> bool:
 	if not can_edit_inventory() or member_index < 0 or member_index >= party.size():
-		return false
+		return _inventory_result(false)
 	var bag := party[member_index].inventory
 	var entry := bag.take_returnable(id, single)
 	if entry.is_empty():
 		feedback.emit("已开启的丹药需留在阵盘用完，不能收回")
-		return false
+		return _inventory_result(false)
 	if bag.get_instance(id).is_empty():
 		simulation.detach(id)
 	storage.put(entry)
 	inventory_changed.emit()
-	return true
+	return _inventory_result(true)
 
 func set_speed(speed: float) -> void:
 	if simulation != null:
 		simulation.clock.set_speed(speed)
+
+func play_normal() -> void:
+	if simulation == null or simulation.state.is_finished():
+		return
+	set_speed(1.0)
+	if simulation.state.phase == GameState.Phase.PREPARATION:
+		start_battle()
+	elif simulation.clock.paused:
+		toggle_pause()
+
+func pause_battle() -> void:
+	if simulation != null and simulation.state.phase == GameState.Phase.BATTLE and not simulation.clock.paused:
+		toggle_pause()
+
+func request_retreat() -> bool:
+	return simulation != null and simulation.request_retreat()
+
+func request_battle_review() -> void:
+	if simulation != null and simulation.state.result == "retreat":
+		battle_review_requested.emit()
+
+func request_battle_exit() -> void:
+	if simulation != null and simulation.state.result == "retreat":
+		battle_exit_requested.emit()
 
 func toggle_pause() -> void:
 	if simulation != null and simulation.state.phase == GameState.Phase.BATTLE:

@@ -1,0 +1,5 @@
+{
+  "id": "base.cultivation.foundation", "name": "筑基", "order": 2,
+  "portrait_frame": "res://assets/pt02.webp",
+  "portrait_window": [0.12, 0.155, 0.76, 0.72]
+}

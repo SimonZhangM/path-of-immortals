@@ -1,10 +1,10 @@
 {
   "id": "base.character.chen_yu",
   "name": "辰宇",
-  "realm": "炼气初期",
+  "cultivation_rank": "base.cultivation.qi_refining",
   "max_hp": 100,
   "max_stamina": 100,
   "max_spirit": 100,
-  "portrait": "res://assets/portrait1.webp",
+  "portrait": "res://assets/pt-a-1.webp",
   "board_layout": "base.board.frost"
 }

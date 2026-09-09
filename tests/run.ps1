@@ -36,6 +36,7 @@ Invoke-GodotCheck -Name 'import' -ExtraArgs @('--headless', '--editor', '--impor
 Invoke-GodotCheck -Name 'tests' -ExtraArgs @('--headless', '--script', 'res://tests/run_tests.gd')
 Invoke-GodotCheck -Name 'ui' -ExtraArgs @('--headless', '--script', 'res://tests/ui_smoke.gd')
 Invoke-GodotCheck -Name 'startup' -ExtraArgs @('--headless', '--quit-after', '5')
+Invoke-GodotCheck -Name 'retreat-exit' -ExtraArgs @('--headless', '--script', 'res://tests/retreat_exit_smoke.gd')
 if ($Render) {
     Invoke-GodotCheck -Name 'render' -ExtraArgs @('--script', 'res://tests/ui_smoke.gd')
 }

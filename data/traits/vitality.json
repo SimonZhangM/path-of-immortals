@@ -1,0 +1,10 @@
+{
+  "id": "base.trait.vitality",
+  "name": "培元",
+  "kind": "passive",
+  "cooldown": 0,
+  "element": "base.element.wood",
+  "effect": "max_hp",
+  "value": 20,
+  "description": "主角气血上限及初始气血增加20点。"
+}

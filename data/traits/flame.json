@@ -1,0 +1,10 @@
+{
+  "id": "base.trait.flame",
+  "name": "离火诀",
+  "kind": "active",
+  "cooldown": 4,
+  "element": "base.element.fire",
+  "effect": "damage",
+  "value": 5,
+  "description": "每4秒对敌方主角造成5点法术伤害，扣除防御；不触发反击。"
+}

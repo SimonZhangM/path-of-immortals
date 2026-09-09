@@ -13,5 +13,6 @@
   "icon": "res://assets/images/items/iron_armor.svg",
   "cooldown": 0,
   "effects": [],
-  "defense": 1
+  "defense": 1,
+  "element": "base.element.none"
 }

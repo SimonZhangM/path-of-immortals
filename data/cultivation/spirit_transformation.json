@@ -1,0 +1,5 @@
+{
+  "id": "base.cultivation.spirit_transformation", "name": "化神", "order": 5,
+  "portrait_frame": "res://assets/pt05.webp",
+  "portrait_window": [0.15, 0.185, 0.70, 0.63]
+}

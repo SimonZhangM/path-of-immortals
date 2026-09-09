@@ -1,0 +1,10 @@
+{
+  "id": "base.trait.rejuvenation",
+  "name": "回春诀",
+  "kind": "active",
+  "cooldown": 6,
+  "element": "base.element.wood",
+  "effect": "restore",
+  "value": 5,
+  "description": "每6秒为主角恢复5点气血，不超过上限；满血时照常轮转。"
+}

@@ -1,0 +1,5 @@
+{
+  "id": "base.cultivation.qi_refining", "name": "炼气", "order": 1,
+  "portrait_frame": "res://assets/pt01.webp",
+  "portrait_window": [0.12, 0.155, 0.76, 0.72]
+}

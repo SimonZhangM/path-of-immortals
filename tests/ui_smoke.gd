@@ -4,20 +4,23 @@ var failures: int = 0
 var checks: int = 0
 var ui: Control
 var manager: GameManager
+var sound_events: Array[String] = []
 
 func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	AudioServer.set_bus_mute(0, true)
 	root.size = Vector2i(1920, 1080)
 	var scene: Node = load("res://scenes/main/main.tscn").instantiate()
 	root.add_child(scene)
 	manager = scene.get_node("GameManager")
 	manager.set_process(false)
 	ui = scene.get_node("MainUI")
+	ui.game_audio.sound_played.connect(func(kind): sound_events.append(kind))
 	await _layout()
 	_check(manager.startup_error.is_empty(), "startup succeeds")
-	_check(manager.party.size() == 3 and manager.enemies.size() == 1, "three allies and single dog")
+	_check(manager.party.size() == 1 and manager.enemies.size() == 1 and manager.companions.size() == 2, "one main each plus two allied companions")
 	_check(not ui.storage_panel.visible and not ui._log_panel.visible, "drawers initially hidden")
 	_check(not ui._bag_button.disabled and manager.can_edit_inventory(), "prebattle arrays editable without opening storage")
 	_check_layout()
@@ -37,12 +40,8 @@ func _run() -> void:
 	await _move_all_bags()
 	ui._bag_button.pressed.emit()
 	await _layout()
-	for index in 3:
-		var card: PartyMemberCard = ui.ally_panel.cards[index]
-		var before := card.custom_minimum_size
-		card.clicked.emit(index)
-		_check(manager.selected_member_index == index and card.custom_minimum_size == before, "select character changes target without resizing")
-	manager.select_member(1)
+	_check(not manager.select_member(1), "companions cannot be selected as inventory targets")
+	manager.select_member(0)
 	var pill_key := "run.storage.base.pill.huichun.0"
 	for index in 3:
 		var card: StorageItemCard = ui.storage_panel.cards[pill_key]
@@ -56,11 +55,12 @@ func _run() -> void:
 			event.pressed = true
 			card._gui_input(event)
 		await _layout()
-	var pill_id := manager.party[1].inventory.matching_stack("base.pill.huichun")
-	_check(not pill_id.is_empty(), "right click equips selected companion")
+	var pill_id := manager.party[0].inventory.matching_stack("base.pill.huichun")
+	_check(not pill_id.is_empty(), "right click equips main array")
 	if not pill_id.is_empty():
-		_check(manager.party[1].inventory.get_instance(pill_id)["units"].size() == 3, "right clicks stack medicine")
+		_check(manager.party[0].inventory.get_instance(pill_id)["units"].size() == 3, "right clicks stack medicine")
 	_check(manager.storage.get_entry(pill_key)["units"].size() == 7, "storage quantity decreases atomically")
+	manager.unequip(0, pill_id)
 	ui.storage_panel.set_category("pill")
 	await _layout()
 	_check(ui.storage_panel.cards.size() == 3, "medicine category filters content")
@@ -101,12 +101,12 @@ func _run() -> void:
 	_key(KEY_ESCAPE)
 	await _layout()
 	_check(not ui.storage_panel.visible and not manager.can_edit_inventory() and manager.simulation.clock.paused, "escape closes paused storage without resuming battle")
-	_check(not manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 0)), "paused array remains locked without adjustment panel")
+	_check(not manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1)), "paused array remains locked without adjustment panel")
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(manager.equip(sword_id, 0, Vector2i(3, 0)), "paused insertion command")
 	_check(manager.simulation.cooling_remaining_usec(sword_id) == 3_000_000, "inserted weapon shows three seconds")
-	_check(manager.move_item(2, GameManager.sword_instance(2), Vector2i(3, 0)), "companion rearrangement during pause")
+	_check(manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1)), "main rearrangement during pause")
 	manager._process(10)
 	_check(manager.simulation.state.time_usec == 1_000_000, "paused cooldown frozen")
 	await _capture("storage_cooldown_3s")
@@ -136,21 +136,188 @@ func _run() -> void:
 			_check_layout()
 			_check(ui.storage_panel.get_global_rect().end.x <= ui.size.x and ui.storage_panel.get_global_rect().end.y <= ui.size.y, "storage panel within viewport")
 			await _capture("storage_%dx%d" % [dimensions.x, dimensions.y])
-	# Formation is still a prebattle API, with no combat scene switch.
 	manager.set_adjustment(false)
-	var full_party: Array[PartyMemberState] = manager.party.duplicate()
-	for count in [2, 1, 3]:
-		manager.party.assign(full_party.slice(0, count))
-		manager.selected_member_index = 0
+	var full_companions: Array[CompanionState] = manager.companions.duplicate()
+	for count in [0, 1, 2]:
+		manager.companions.assign(full_companions.slice(0, count))
 		manager.restart()
 		await _layout()
 		_check_layout()
-	_check(manager.set_formation(FormationRules.Kind.FRONT_TWO), "future world-map formation API retained")
-	await _layout()
-	_check_layout()
+		_check(ui.ally_panel.companion_cards.size() == count, "optional companion roster reflected without extra boards")
 	await _test_activation_feedback()
+	await _test_cultivation_and_feedback()
+	await _test_companion_presentation()
+	await _test_controls_and_retreat()
+	ui.game_audio.stop_all()
+	await create_timer(0.2).timeout
+	root.remove_child(scene)
+	scene.free()
+	await process_frame
 	print("UI RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
+
+func _test_companion_presentation() -> void:
+	manager.restart()
+	await _layout()
+	var healer: TraitSlot = ui.ally_panel.companion_cards[0].slots[0]
+	var caster: TraitSlot = ui.ally_panel.companion_cards[1].slots[0]
+	_check(healer.tooltip_text.contains("每6秒") and caster.tooltip_text.contains("不触发反击"), "trait details expose authored effects")
+	var tooltip := healer._make_custom_tooltip(healer.tooltip_text) as PanelContainer
+	_check(tooltip.get_child(0).text.contains("恢复5点气血"), "custom trait tooltip explains actual values")
+	tooltip.free()
+	_check(CooldownRing.tint(manager.registry, "base.element.none") == Color.WHITE and CooldownRing.tint(manager.registry, "base.element.fire") == Color("f07845"), "countdown color follows element with white default")
+	manager.start_battle()
+	manager._process(0.4)
+	_check(is_equal_approx(ui.ally_panel.bags[0].cooldown_progress(GameManager.SWORD_INSTANCE), 0.4 / 3.0), "item circle tracks independent rotation progress")
+	_check(manager.simulation.trait_remaining_usec(caster.runtime_key) == 3_600_000, "companion numeric countdown reads remaining seconds")
+	await _capture("v10_rotation")
+	manager.toggle_pause()
+	manager._process(20)
+	_check(manager.simulation.trait_remaining_usec(caster.runtime_key) == 3_600_000, "UI support countdown frozen during pause")
+	manager.toggle_pause()
+	manager._process(3.6)
+	_check(caster.pulse > 0 and manager.simulation.trait_remaining_usec(caster.runtime_key) == 4_000_000, "active support flashes and restarts its countdown at activation")
+	caster.set_process(false)
+	caster.pulse = 0.12
+	caster.queue_redraw()
+	await _capture("v10_trait_activation")
+	caster.set_process(true)
+
+func _test_controls_and_retreat() -> void:
+	root.size = Vector2i(1920, 1080)
+	manager.restart()
+	await _layout()
+	var buttons: Array = [ui._pause_button, ui._speed_buttons[0.5], ui._speed_buttons[1.0], ui._speed_buttons[2.0]]
+	for index in buttons.size():
+		var rect: Rect2 = buttons[index].get_global_rect()
+		_check(is_equal_approx(rect.size.x, rect.size.y) and is_equal_approx(rect.size.y, 48), "playback buttons enlarged square")
+		_check(buttons[index].get_theme_stylebox("normal").bg_color == Color("2d261f"), "playback button brown background")
+		if index > 0:
+			_check(rect.position.x > buttons[index - 1].get_global_rect().end.x, "playback order pause half play double")
+	_check(is_equal_approx(ui._timer_frame.size.x, 580.0 * 2.0 / 3.0) and ui._log_button.text == "日志" and ui._retreat_button.global_position.x > ui._log_button.global_position.x, "enlarged timer and log-retreat row")
+	_check(ui._retreat_button.disabled, "retreat unavailable before battle")
+	_check(ui._settings_button.disabled and ui._settings_button.global_position.x > ui._speed_buttons[2.0].get_global_rect().end.x, "future settings placeholder follows speed controls")
+	ui._speed_buttons[1.0].pressed.emit()
+	_check(manager.simulation.state.phase == GameState.Phase.BATTLE, "play icon starts battle")
+	ui._pause_button.pressed.emit()
+	ui._pause_button.pressed.emit()
+	_check(manager.simulation.clock.paused, "pause icon is idempotent")
+	ui._speed_buttons[1.0].pressed.emit()
+	_check(not manager.simulation.clock.paused and manager.simulation.clock.speed_multiplier == 1, "play icon resumes normal speed")
+	ui._retreat_button.pressed.emit()
+	await _layout()
+	_check(ui._countdown.visible and ui._countdown.number.text == "3s" and ui._retreat_button.disabled, "retreat starts central countdown and locks repeat button")
+	_check(ui._countdown.get_global_rect().get_center().is_equal_approx(ui.size * 0.5), "retreat countdown centered on whole screen")
+	await _capture("v09_retreat_3s")
+	manager._process(0.7)
+	await _layout()
+	_check(ui._countdown.display.scale.x > 1 and ui._countdown.blur.get_shader_parameter("blur_radius") > 0 and ui._countdown.display.modulate.a < 1, "countdown expands blurs and fades")
+	await _capture("v09_retreat_blur")
+	ui._pause_button.pressed.emit()
+	manager._process(10)
+	await _layout()
+	_check(is_equal_approx(ui._countdown.progress, 0.7), "countdown animation freezes with combat")
+	ui._speed_buttons[1.0].pressed.emit()
+	manager._process(0.3)
+	await _layout()
+	_check(ui._countdown.number.text == "2s" and ui._countdown.display.scale == Vector2.ONE, "new second starts crisp")
+	ui._speed_buttons[2.0].pressed.emit()
+	manager._process(0.5)
+	await _layout()
+	_check(ui._countdown.number.text == "1s", "double speed countdown")
+	ui._speed_buttons[0.5].pressed.emit()
+	manager._process(2)
+	await _layout()
+	_check(manager.simulation.state.result == "retreat" and ui._retreat_dialog.visible and not ui._countdown.visible, "success opens modal and hides countdown")
+	_check(ui._log_label.text.contains("已成功撤退") and not manager.can_edit_inventory(), "retreat logged and editing locked")
+	ui._review_button.pressed.emit()
+	_check(ui._review_note.visible and ui._retreat_dialog.visible, "review placeholder leaves exit accessible")
+	await _capture("v09_retreat_success")
+	var exits: Array = []
+	manager.battle_exit_requested.disconnect(ui._exit_battle)
+	manager.battle_exit_requested.connect(func(): exits.append(true), CONNECT_ONE_SHOT)
+	ui._exit_button.pressed.emit()
+	_check(exits.size() == 1, "exit button sends guarded exit request")
+	manager.battle_exit_requested.connect(ui._exit_battle)
+	manager.restart()
+	manager.enemies[0].hp = 1
+	manager.start_battle()
+	manager.request_retreat()
+	manager._process(3)
+	await _layout()
+	_check(manager.simulation.state.result == "victory" and not ui._retreat_dialog.visible and not ui._countdown.visible, "victory at deadline prevents retreat dialog")
+
+func _test_cultivation_and_feedback() -> void:
+	manager.restart()
+	await _layout()
+	for index in 3:
+		var card: PartyMemberCard = ui.ally_panel.cards[0] if index == 0 else ui.ally_panel.companion_cards[index - 1].portrait_card
+		_check(card.portrait_frame.texture.resource_path == ("res://assets/pt01.webp" if index == 0 else "res://assets/pt000.webp"), "main uses rank frame and companions use shared support frame")
+		_check(card._title.text.ends_with("（%s）" % ["炼气", "炼气", "筑基"][index]), "title shows authoritative cultivation name")
+		_check(card.name_label.text == ["辰宇 · 炼气", "队友 · 青璃", "队友 · 玄川"][index], "portrait nameplate shows configured name and rank")
+	var hero_card: PartyMemberCard = ui.ally_panel.cards[0]
+	_check(manager.party[0].set_cultivation_rank("base.cultivation.spirit_transformation"), "cultivation state can change without changing attributes")
+	await _layout()
+	_check(hero_card.portrait_frame.texture.resource_path == "res://assets/pt05.webp" and hero_card.name_label.text == "辰宇 · 化神", "rank change refreshes both frame and nameplate")
+	manager.party[0].set_cultivation_rank("base.cultivation.qi_refining")
+	await _layout()
+	manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i.ZERO)
+	sound_events.clear()
+	var bag: InventoryView = ui.ally_panel.bags[0]
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	click.position = bag.cell_center(Vector2i.ZERO)
+	bag._gui_input(click)
+	_check(sound_events == ["pick"], "picking array item plays pickup once")
+	sound_events.clear()
+	manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1))
+	_check(sound_events == ["place"], "successful array move plays placement once")
+	sound_events.clear()
+	manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(1, 1))
+	_check(sound_events == ["invalid"], "invalid move plays rejection once")
+	manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i.ZERO)
+	manager.set_adjustment(true)
+	await _layout()
+	var card: StorageItemCard = ui.storage_panel.cards.values()[0]
+	sound_events.clear()
+	card._gui_input(click)
+	_check(sound_events == ["pick"], "storage pickup uses same sound")
+	if DisplayServer.get_name() == "headless":
+		sound_events.clear()
+		await _native_between(card.get_global_rect().get_center(), Vector2(950, 280))
+		_check(sound_events == ["pick", "invalid"], "invalid native drag plays rejection once at release")
+	manager.set_adjustment(false)
+	manager.start_battle()
+	sound_events.clear()
+	manager._process(3)
+	var enemy_card: PartyMemberCard = ui.enemy_panel.cards[0]
+	_check(enemy_card.hit_effects.size() >= 1, "main weapon displays hit feedback")
+	_check(sound_events.count("hit") == manager.simulation.state.activation_counts[0] + manager.simulation.state.activation_counts[1], "each resolved weapon hit plays one sound")
+	var hit: HitFeedback = enemy_card.hit_effects[0]
+	for panel in [ui.ally_panel, ui.enemy_panel]:
+		for member_card in panel.cards:
+			for effect in member_card.hit_effects:
+				effect.set_process(false)
+	_check(hit.damage_label.text == "-10" and hit.damage_label.get_theme_color("font_color") == Color("af3549"), "damage text uses actual hit value and HP color")
+	var target := manager.simulation.state.target_for(1)
+	for index in manager.party.size():
+		if manager.party[index] == target:
+			_check(ui.ally_panel.cards[index].hit_effects[0].damage_label.text == "-3", "enemy hit displays armor-reduced damage on actual ally")
+	await _capture("v08_hit_start")
+	await _layout()
+	for first in enemy_card.hit_effects.size():
+		for second in range(first + 1, enemy_card.hit_effects.size()):
+			_check(not enemy_card.hit_effects[first].damage_label.get_global_rect().intersects(enemy_card.hit_effects[second].damage_label.get_global_rect()), "simultaneous damage labels do not overlap")
+	var start_position := hit.damage_label.position
+	hit._process(0.4)
+	_check(hit.damage_label.position.y > start_position.y and hit.damage_label.modulate.a < 1, "damage text descends while fading")
+	await _capture("v08_hit_fading")
+	_check(manager.simulation.state.time_usec == 3_000_000, "hit animation does not advance simulation")
+	hit._process(0.5)
+	_check(hit.is_queued_for_deletion(), "hit feedback cleans itself up")
+	for kind in GameAudio.STREAMS:
+		_check(ui.game_audio.players[kind].stream.get_length() > 0, "sound resource decodes: " + kind)
 
 func _test_activation_feedback() -> void:
 	root.size = Vector2i(1920, 1080)
@@ -199,7 +366,7 @@ func _test_details_and_boards() -> void:
 		_check(absf(card.quantity.get_global_rect().end.y - card.icon.get_global_rect().end.y) < 1, "quantity aligned to image bottom")
 	for example in [[0, "00.00"], [12_340_000, "12.34"], [59_999_999, "59.99"], [60_000_000, "01:00.00"], [72_340_000, "01:12.34"]]:
 		_check(ui.format_battle_time(example[0]) == example[1], "timer precision and minute rollover")
-	for index in 3:
+	for index in 1:
 		var bag: InventoryView = ui.ally_panel.bags[index]
 		_check(bag.board_texture.resource_path == "res://assets/bag-bg-%d.webp" % (index + 1), "correct skin bound by character")
 		_check(bag.board_texture.get_size() == bag.board_layout.source_size, "mapping reference matches source image dimensions")
@@ -280,22 +447,33 @@ func _move_all_bags() -> void:
 	_check(ui.enemy_panel.bags[0].drag_data_at(ui.enemy_panel.bags[0].cell_center(Vector2i(1, 1))).is_empty(), "enemy inventory always read-only")
 
 func _check_layout() -> void:
+	var emblem: TextureRect = ui.get_node("BattleEmblem")
+	_check(emblem.size.is_equal_approx(Vector2(240, 240)) and (emblem.position + emblem.size * 0.5).is_equal_approx(ui.size * 0.5 + Vector2(0, -20)), "battle emblem stays centered above screen midpoint")
 	_check(absf(ui._time.get_global_rect().get_center().x - ui.size.x / 2) < 1, "timer centered on viewport")
 	_check(ui.enemy_panel.get_global_rect().end.x <= ui.size.x + 1, "both teams fit width")
 	_check(ui.enemy_panel.bags[0].get_global_rect().end.y <= ui.size.y + 1, "bags fit viewport height")
 	for panel in [ui.ally_panel, ui.enemy_panel]:
-		_check(panel.cards.size() == panel.members.size() and panel.bags.size() == panel.members.size(), "no empty roster placeholders")
-		var hero: Rect2 = panel.bags[0].get_global_rect()
-		if panel.members.size() == 1:
-			_check(absf(hero.get_center().x - panel.get_global_rect().get_center().x) < 1, "single backpack centered")
-			_check(absf(panel.cards[0].get_global_rect().get_center().x - panel.get_global_rect().get_center().x) < 1, "single portrait group centered")
+		for card in panel.cards:
+			var portrait_rect: Rect2 = card._portrait_slot.get_global_rect() if card._portrait_slot != null else card.portrait.get_global_rect()
+			_check(not card._title.visible and absf(card.resources.get_global_rect().get_center().y - portrait_rect.get_center().y) < 1, "resource group vertically centered and title hidden")
+			_check(card.stat_icons.size() == 3, "resource names replaced with three icons")
+		_check(panel.cards.size() == 1 and panel.bags.size() == 1, "exactly one main and array per side")
+		var board: Rect2 = panel.bags[0].get_global_rect()
+		_check(absf(board.get_center().x - panel.get_global_rect().get_center().x) < 1, "single array centered")
+		if panel.companion_cards.is_empty():
+			_check(absf(panel.cards[0].get_global_rect().get_center().x - panel.get_global_rect().get_center().x) < 1, "solo main portrait remains centered")
 		else:
-			_check(hero.size.x > panel.bags[1].size.x and panel.cards[0].custom_minimum_size.x > panel.cards[1].custom_minimum_size.x, "hero always large and companions small")
-			var main_on_right: bool = hero.position.x > panel.bags[1].global_position.x
-			_check(main_on_right == (manager.formation == FormationRules.Kind.FRONT_ONE or panel.members.size() == 2), "ally front row toward screen center")
-			_check((panel.cards[0].global_position.x > panel.cards[1].global_position.x) == main_on_right, "portraits and bags share formation orientation")
-			if panel.members.size() == 3:
-				_check(absf(panel.bags[1].global_position.y - hero.position.y) < 1 and absf(panel.bags[2].get_global_rect().end.y - hero.end.y) < 1, "rear bags align top and bottom")
+			_check(panel.companion_cards[0].get_global_rect().end.x < panel.cards[0].global_position.x, "companions on left of main")
+			if panel.companion_cards.size() == 2:
+				_check(panel.companion_cards[1].global_position.y > panel.companion_cards[0].get_global_rect().end.y and is_equal_approx(panel.companion_cards[0].global_position.x, panel.companion_cards[1].global_position.x), "companions form a vertical column")
+		for companion in panel.companion_cards:
+			_check(companion.portrait_card.resources == null and companion.slots.size() == 2, "support portrait has two trait slots and no resource bars")
+			_check(companion.get_global_rect().end.x <= panel.get_global_rect().end.x and companion.get_global_rect().end.y <= board.position.y, "support fits above array")
+	_check(ui._speed_buttons[2.0].get_global_rect().end.x <= ui.size.x and ui._pause_button.global_position.x > ui.size.x * 0.75, "playback buttons moved to right side")
+	var item := manager.registry.get_item("base.pill.huichun")
+	var footprint: Rect2 = ui.ally_panel.bags[0].board_layout.footprint_rect(Vector2i(3, 3), Vector2i.ONE, ui.ally_panel.bags[0].size).grow(-4)
+	var ring := InventoryView.rotation_ring_center(footprint, item)
+	_check(ring.x + 23 < footprint.end.x - 28, "medicine countdown stays clear of quantity badge")
 
 func _layout() -> void:
 	for frame in 4:

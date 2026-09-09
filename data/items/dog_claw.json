@@ -2,10 +2,23 @@
   "id": "base.weapon.dog_claw",
   "name": "爪子",
   "type": "weapon",
-  "tags": ["weapon", "claw"],
-  "size": [1, 2],
+  "tags": [
+    "weapon",
+    "claw"
+  ],
+  "size": [
+    1,
+    2
+  ],
   "icon": "res://assets/images/items/dog_claw.svg",
   "cooldown": 3,
   "stamina_cost": 5,
-  "effects": [{"trigger": "on_activate", "effect": "damage", "value": 5}]
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 5
+    }
+  ],
+  "element": "base.element.none"
 }

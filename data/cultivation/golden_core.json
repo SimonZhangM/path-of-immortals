@@ -1,0 +1,5 @@
+{
+  "id": "base.cultivation.golden_core", "name": "结丹", "order": 3,
+  "portrait_frame": "res://assets/pt03.webp",
+  "portrait_window": [0.14, 0.155, 0.72, 0.71]
+}

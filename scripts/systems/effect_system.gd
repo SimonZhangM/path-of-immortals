@@ -31,7 +31,7 @@ func restore(target: PartyMemberState, resource: String, amount: int, at_usec: i
 	if target.hp <= 0:
 		return {}
 	var before: int = target.get(resource)
-	var after := mini(before + amount, int(target.definition["max_" + resource]))
+	var after := mini(before + amount, target.maximum(resource))
 	target.set(resource, after)
 	var event := source.duplicate()
 	event.merge({"kind": "restore", "at_usec": at_usec, "target_name": target.definition["name"], "resource": resource, "value": after - before})

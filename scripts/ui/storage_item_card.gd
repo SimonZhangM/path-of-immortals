@@ -9,6 +9,7 @@ var icon: TextureRect
 var quantity: Label
 var _art: Control
 var _tags: HBoxContainer
+var _native_drag_active: bool = false
 
 func configure(game: GameManager, entry: Dictionary) -> void:
 	manager = game
@@ -97,6 +98,8 @@ func _ignore(node: Node) -> void:
 		_ignore(child)
 
 func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not drag_data().is_empty():
+		manager.inventory_interaction.emit("pick")
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		manager.equip_random(storage_id)
 		accept_event()
@@ -110,6 +113,7 @@ func _get_drag_data(_point: Vector2) -> Variant:
 	var data := drag_data()
 	if data.is_empty():
 		return null
+	_native_drag_active = true
 	var preview := TextureRect.new()
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	preview.texture = load(item.icon_path)
@@ -124,3 +128,9 @@ func _get_drag_data(_point: Vector2) -> Variant:
 	holder.add_child(preview)
 	set_drag_preview(holder)
 	return data
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END and _native_drag_active:
+		_native_drag_active = false
+		if not get_viewport().gui_is_drag_successful():
+			manager.inventory_interaction.emit("invalid")

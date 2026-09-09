@@ -24,6 +24,7 @@ var _hover_cell := Vector2i(-100, -100)
 var _hover_valid: bool = false
 var _drag_instance: String = ""
 var _generation: int = 0
+var _native_drag_active: bool = false
 var _textures: Dictionary = {}
 var _last_time_usec: int = -1
 var board_layout := BoardLayout.plain()
@@ -51,7 +52,6 @@ func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> voi
 	manager.inventory_changed.connect(queue_redraw)
 	manager.battle_restarted.connect(reset_interaction)
 	manager.battle_started.connect(reset_interaction)
-	manager.formation_changed.connect(reset_interaction)
 	manager.adjustment_changed.connect(reset_interaction)
 	manager.selection_changed.connect(queue_redraw)
 	manager.presentation_events.connect(_on_presentation_events)
@@ -145,9 +145,7 @@ func _draw() -> void:
 		var active: bool = instance["instance_id"] == selected_instance
 		if active and manager.can_edit_inventory():
 			draw_rect(rect, Color("e5c181"), false, 2)
-		var tiny_pill := compact and item.is_consumable()
-		var caption_height := 0.0 if tiny_pill else (20.0 if compact else 30.0)
-		var icon_rect := Rect2(rect.position + Vector2(5, 4), rect.size - Vector2(10, caption_height + 6))
+		var icon_rect := rect.grow(-5)
 		var id: String = instance["instance_id"]
 		var ghost := inventory.get_instance(id).is_empty()
 		if _textures.has(item.id):
@@ -161,19 +159,16 @@ func _draw() -> void:
 				pulse["overlay"].size = icon_size
 				pulse["overlay"].modulate.a = 0.26 * sin(PI * t)
 			draw_texture_rect(texture, Rect2(icon_rect.get_center() - icon_size * 0.5, icon_size), false)
-			var progress := cooldown_progress(instance["instance_id"])
-			if not ghost and progress < 1.0 and manager.simulation.cooling_remaining_usec(id) == 0:
-				var boundary_y := icon_rect.position.y + icon_rect.size.y * (1.0 - progress)
-				draw_line(Vector2(icon_rect.position.x, boundary_y), Vector2(icon_rect.end.x, boundary_y), Color(1, 1, 1, 0.55), 1.5 if compact else 2.0, true)
 		if ghost:
 			continue
-		if not tiny_pill:
-			draw_string_outline(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, 3, Color("18252c"))
-			draw_string(get_theme_default_font(), rect.position + Vector2(0, rect.size.y - 6), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 12 if compact else 18, Color("e4d8b7"))
 		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
 		if remaining > 0:
 			draw_rect(rect, Color(0.25, 0.27, 0.29, 0.42))
 			draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y + 10), "%ds" % ceili(remaining / 1_000_000.0), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 24 if compact else 34, Color.WHITE)
+		if remaining == 0 and item.cooldown_usec > 0:
+			var seconds := item.cooldown_usec / 1_000_000.0
+			var left := seconds if manager.simulation.state.phase == GameState.Phase.PREPARATION else seconds * (1.0 - cooldown_progress(id))
+			CooldownRing.paint(self, rotation_ring_center(rect, item), 23, left, seconds, CooldownRing.tint(manager.registry, item.element))
 		if item.is_consumable():
 			var badge_size := Vector2(19, 20) if compact else Vector2(28, 25)
 			var badge := Rect2(rect.end - badge_size, badge_size)
@@ -207,6 +202,7 @@ func _gui_input(event: InputEvent) -> void:
 		var hit := inventory.item_at(cell)
 		if not hit.is_empty():
 			selected_instance = hit
+			manager.inventory_interaction.emit("pick")
 			var instance := inventory.get_instance(hit)
 			_grab_offset = cell - Vector2i(instance["cell"])
 			selection_changed.emit(instance["item_id"])
@@ -234,6 +230,7 @@ func _get_drag_data(point: Vector2) -> Variant:
 	var data := drag_data_at(point)
 	if data.is_empty():
 		return null
+	_native_drag_active = true
 	var item := manager.registry.get_item(inventory.get_instance(data["instance_id"])["item_id"])
 	var preview := TextureRect.new()
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -275,6 +272,10 @@ func _drop_data(point: Vector2, data: Variant) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:
+		if _native_drag_active:
+			_native_drag_active = false
+			if not get_viewport().gui_is_drag_successful():
+				manager.inventory_interaction.emit("invalid")
 		_drag_instance = ""
 		_hover_cell = Vector2i(-100, -100)
 		queue_redraw()
@@ -297,3 +298,7 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
 	panel.configure(item, _tooltip_entry, owner.defense, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]))
 	return panel
+
+static func rotation_ring_center(rect: Rect2, item: ItemData) -> Vector2:
+	# Bottom left for stacks reserves bottom right for quantity; otherwise bottom right.
+	return Vector2(rect.position.x + 24 if item.is_consumable() else rect.end.x - 24, rect.end.y - 24)

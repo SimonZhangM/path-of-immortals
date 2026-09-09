@@ -1,0 +1,5 @@
+{
+  "id": "base.cultivation.mortal", "name": "凡人", "order": 0,
+  "portrait_frame": "res://assets/pt00.webp",
+  "portrait_window": [0.0586, 0.0639, 0.8814, 0.8670]
+}

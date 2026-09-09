@@ -13,10 +13,12 @@ var icon_path: String
 var uses_per_unit: int
 var category: String
 var quality: String
+var element: String
 var defense: int
 
 # Registry validates input before constructing an immutable-by-convention definition.
 func _init(raw: Dictionary) -> void:
+	element = raw.get("element", "base.element.none")
 	id = raw["id"]
 	display_name = raw["name"]
 	type = raw["type"]

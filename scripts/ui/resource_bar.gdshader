@@ -13,13 +13,19 @@ float rounded_box(vec2 p, vec2 bounds, float radius) {
 void fragment() {
 	vec2 p = UV * bar_size;
 	float outer = rounded_box(p, bar_size, bar_size.y * 0.5);
-	vec3 color = vec3(0.085, 0.108, 0.106);
-	float width = bar_size.x * fill_ratio;
-	float filled = rounded_box(p, vec2(width, bar_size.y), min(width, bar_size.y) * 0.5);
-	float shade = 0.95 + 0.10 * (1.0 - UV.y) - 0.08 * smoothstep(0.2, 0.9, fract((p.x + p.y * 1.8) / 66.0));
-	vec3 fill_color = tint.rgb * shade + vec3(0.03 * (1.0 - UV.y));
-	float fill_alpha = (1.0 - smoothstep(-0.8, 0.4, filled)) * step(0.001, width);
-	color = mix(color, fill_color, fill_alpha);
-	color = mix(color, vec3(0.26, 0.23, 0.18), smoothstep(-1.5, -0.5, outer) * 0.45);
+	// Dark metal rim, inset track and a soft glossy upper surface.
+	vec3 color = mix(vec3(0.36, 0.33, 0.25), vec3(0.12, 0.15, 0.15), UV.y);
+	vec2 inset_size = max(bar_size - vec2(4.0), vec2(0.01));
+	vec2 inset_p = p - vec2(2.0);
+	float inner = rounded_box(inset_p, inset_size, inset_size.y * 0.5);
+	float inner_alpha = 1.0 - smoothstep(-0.6, 0.6, inner);
+	vec3 track = mix(vec3(0.035, 0.055, 0.061), vec3(0.075, 0.11, 0.12), UV.y);
+	float width = inset_size.x * fill_ratio;
+	float filled = rounded_box(inset_p, vec2(max(width, 0.001), inset_size.y), min(width, inset_size.y) * 0.5);
+	float shade = mix(1.14, 0.83, smoothstep(0.12, 0.95, UV.y));
+	float gloss = 0.10 * (1.0 - smoothstep(0.18, 0.5, UV.y));
+	vec3 fill_color = tint.rgb * shade + vec3(gloss);
+	float fill_alpha = (1.0 - smoothstep(-0.6, 0.6, filled)) * step(0.001, width);
+	color = mix(color, mix(track, fill_color, fill_alpha), inner_alpha);
 	COLOR = vec4(color, 1.0 - smoothstep(-0.8, 0.4, outer));
 }

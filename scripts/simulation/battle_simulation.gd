@@ -14,16 +14,94 @@ var _effects := EffectSystem.new()
 var _pending_events: Array[Dictionary] = []
 var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
+var configuration_error: String = ""
 
-func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_formation: FormationRules.Kind = FormationRules.Kind.FRONT_ONE, enemy_formation: FormationRules.Kind = FormationRules.Kind.FRONT_ONE) -> void:
-	state = GameState.new(allies, enemies, ally_formation, enemy_formation)
+func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = []) -> void:
+	state = GameState.new(allies, enemies, ally_companions, enemy_companions)
 	_registry = registry
+	for side in 2:
+		if state.teams[side].size() != 1 or not state.teams[side][0] is PartyMemberState or state.companions[side].size() > 2:
+			configuration_error = "Each side requires one main character and at most two companions"
+			return
+		var ids := [state.teams[side][0].id]
+		for companion in state.companions[side]:
+			if not companion is CompanionState or companion.id in ids or companion.traits.size() > 2:
+				configuration_error = "Invalid or duplicate companion"
+				return
+			ids.append(companion.id)
+			for trait_data in companion.traits:
+				if trait_data.is_empty() or registry.get_trait(trait_data.get("id", "")) != trait_data:
+					configuration_error = "Unknown or changed trait definition"
+					return
 	for side in 2:
 		for member in state.teams[side]:
 			member.defense_sources.clear()
 			for instance in member.inventory.get_instances():
 				assert(not _definitions.has(instance["instance_id"]), "Combat instance IDs must be unique across teams")
 				attach(member, side, instance["instance_id"], false)
+	_setup_traits()
+
+static func trait_key(side: int, companion_index: int, slot: int) -> String:
+	return "run.trait.%d.%d.%d" % [side, companion_index, slot]
+
+func _setup_traits() -> void:
+	for side in 2:
+		var main: PartyMemberState = state.teams[side][0]
+		# A new simulation replaces prior companion contributions, including max HP.
+		var old_bonus := main.maximum("hp") - int(main.definition["max_hp"])
+		var old_hp := main.hp
+		main.max_hp_sources.clear()
+		for index in state.companions[side].size():
+			var companion: CompanionState = state.companions[side][index]
+			for slot in companion.traits.size():
+				var trait_data: Dictionary = companion.traits[slot]
+				var key := trait_key(side, index, slot)
+				state.trait_runtime[key] = {"trait": trait_data.duplicate(true), "side": side, "order": 1 + side * 4 + index * 2 + slot, "owner_id": companion.id, "owner_name": companion.definition["name"], "next_activation_usec": 0, "activation_count": 0}
+				if trait_data["kind"] == "passive":
+					if trait_data["effect"] == "defense":
+						main.defense_sources[key] = int(trait_data["value"])
+					elif trait_data["effect"] == "max_hp":
+						main.max_hp_sources[key] = int(trait_data["value"])
+		var new_bonus := main.maximum("hp") - int(main.definition["max_hp"])
+		main.hp = clampi(old_hp + new_bonus - old_bonus, 1, main.maximum("hp")) if old_hp > 0 else 0
+
+func trait_remaining_usec(key: String) -> int:
+	var runtime: Dictionary = state.trait_runtime.get(key, {})
+	if runtime.is_empty() or runtime["trait"]["kind"] != "active":
+		return 0
+	if state.phase == GameState.Phase.PREPARATION:
+		return roundi(float(runtime["trait"]["cooldown"]) * 1_000_000)
+	return maxi(0, int(runtime["next_activation_usec"]) - state.time_usec)
+
+func _schedule_trait(key: String, at_usec: int) -> void:
+	var runtime: Dictionary = state.trait_runtime[key]
+	var due := at_usec + roundi(float(runtime["trait"]["cooldown"]) * 1_000_000)
+	runtime["next_activation_usec"] = due
+	# Items first, then support slots in roster order, then retreat.
+	queue.schedule(due, "trait", {"key": key}, runtime["order"])
+
+func _activate_trait(key: String, at_usec: int) -> void:
+	var runtime: Dictionary = state.trait_runtime[key]
+	var side: int = runtime["side"]
+	if not state.has_survivor(side) or not state.has_survivor(1 - side):
+		return
+	var trait_data: Dictionary = runtime["trait"]
+	runtime["activation_count"] += 1
+	var source := {"trait_id": trait_data["id"], "owner_id": runtime["owner_id"], "owner_name": runtime["owner_name"], "side": side, "stamina_cost": 0}
+	_pending_events.append({"kind": "trait_activated", "at_usec": at_usec, "key": key, "owner_name": runtime["owner_name"], "trait_id": trait_data["id"]})
+	var result: Dictionary
+	var target: PartyMemberState
+	if trait_data["effect"] == "damage":
+		target = state.target_for(side)
+		result = _effects.apply({"trigger": "on_activate", "effect": "damage", "value": trait_data["value"]}, state, target, at_usec, source)
+	else:
+		result = _effects.restore(state.teams[side][0], "hp", int(trait_data["value"]), at_usec, source)
+	if not result.is_empty():
+		_pending_events.append(result)
+	if target != null and target.hp == 0:
+		_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": target.definition["name"], "target_id": target.id})
+	state.revision += 1
+	_schedule_trait(key, at_usec)
 
 func attach(member: PartyMemberState, side: int, id: String, inserted_during_battle: bool) -> void:
 	var entry := member.inventory.get_instance(id)
@@ -65,12 +143,15 @@ func detach(id: String) -> void:
 	state.revision += 1
 
 func start() -> bool:
-	if state.phase != GameState.Phase.PREPARATION:
+	if not configuration_error.is_empty() or state.phase != GameState.Phase.PREPARATION:
 		return false
 	state.phase = GameState.Phase.BATTLE
 	for id in _definitions:
 		_enter({"instance_id": id, "version": _versions[id]}, 0)
 	_wake_items(0)
+	for key in state.trait_runtime:
+		if state.trait_runtime[key]["trait"]["kind"] == "active":
+			_schedule_trait(key, 0)
 	_check_result(0)
 	return true
 
@@ -87,7 +168,17 @@ func _can_activate(id: String) -> bool:
 			return false
 		var opened: bool = int(entry["units"][0]["uses_left"]) < item.uses_per_unit
 		var resource: String = item.effects[0]["resource"]
-		return opened or int(owner.get(resource)) < int(owner.definition["max_" + resource])
+		return opened or int(owner.get(resource)) < owner.maximum(resource)
+	return true
+
+func request_retreat() -> bool:
+	if state.phase != GameState.Phase.BATTLE or state.retreat_at_usec >= 0:
+		return false
+	state.retreat_at_usec = state.time_usec + 3_000_000
+	# Resolve all combat events at the deadline first, so a normal result wins.
+	queue.schedule(state.retreat_at_usec, "retreat", {}, 9)
+	state.revision += 1
+	_pending_events.append({"kind": "retreat_started", "at_usec": state.time_usec})
 	return true
 
 # Wake on commands/resource events, never poll items each rendered frame.
@@ -137,10 +228,17 @@ func advance(real_delta: float) -> void:
 		var event := queue.pop_next()
 		var at_usec: int = event["due_usec"]
 		state.time_usec = at_usec
-		if event["kind"] == "restore":
+		if event["kind"] == "retreat":
+			_check_result(at_usec)
+			if not state.is_finished():
+				_finish("retreat", at_usec)
+			break
+		elif event["kind"] == "restore":
 			_apply_restore(event["payload"], at_usec)
 		elif event["kind"] == "enter":
 			_enter(event["payload"], at_usec)
+		elif event["kind"] == "trait":
+			_activate_trait(event["payload"]["key"], at_usec)
 		else:
 			_activate(event["payload"], at_usec)
 		_wake_items(at_usec)
@@ -246,10 +344,17 @@ func _check_result(at_usec: int) -> void:
 		for id in _definitions:
 			if _can_activate(id):
 				return
+		for runtime in state.trait_runtime.values():
+			var trait_data: Dictionary = runtime["trait"]
+			if trait_data["kind"] == "active" and trait_data["effect"] == "damage":
+				var target := state.target_for(runtime["side"])
+				if target != null and int(trait_data["value"]) > target.defense:
+					return
 		_finish("draw", at_usec)
 
 func _finish(result: String, at_usec: int) -> void:
 	state.result = result
+	state.retreat_at_usec = -1
 	state.phase = GameState.Phase.FINISHED
 	state.finished_at_usec = at_usec
 	state.time_usec = at_usec
@@ -258,6 +363,8 @@ func _finish(result: String, at_usec: int) -> void:
 	queue.clear()
 	_pending_restores = 0
 	for runtime in state.item_runtime.values():
+		runtime["next_activation_usec"] = 0
+	for runtime in state.trait_runtime.values():
 		runtime["next_activation_usec"] = 0
 	_pending_events.append({"kind": "finished", "at_usec": at_usec, "result": result})
 

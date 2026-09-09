@@ -1,10 +1,14 @@
 {
   "id": "base.character.role_3",
-  "name": "角色3",
-  "realm": "炼气初期",
+  "name": "玄川",
+  "cultivation_rank": "base.cultivation.foundation",
   "max_hp": 100,
   "max_stamina": 100,
   "max_spirit": 100,
   "portrait": "res://assets/portrait3.webp",
-  "board_layout": "base.board.leather"
+  "board_layout": "base.board.leather",
+  "traits": [
+    "base.trait.flame",
+    "base.trait.vitality"
+  ]
 }

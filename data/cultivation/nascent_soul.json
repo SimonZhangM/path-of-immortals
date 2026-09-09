@@ -1,0 +1,5 @@
+{
+  "id": "base.cultivation.nascent_soul", "name": "元婴", "order": 4,
+  "portrait_frame": "res://assets/pt04.webp",
+  "portrait_window": [0.14, 0.182, 0.72, 0.685]
+}

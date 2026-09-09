@@ -23,5 +23,6 @@
       "value": 5,
       "duration": 3
     }
-  ]
+  ],
+  "element": "base.element.none"
 }

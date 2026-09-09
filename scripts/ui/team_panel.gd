@@ -1,14 +1,12 @@
 class_name TeamPanel
 extends VBoxContainer
 
-const GAP := 18.0
-const WIDTH := PartyMemberCard.BASE_SIZE.x * (1.0 + PartyMemberCard.COMPACT_SCALE) + GAP
+const WIDTH := 821.0
 const BAG_SIDE := 548.0
-const SMALL_BAG_SIDE := WIDTH - BAG_SIDE - GAP
-const PORTRAIT_HEIGHT := PartyMemberCard.BASE_SIZE.y * PartyMemberCard.COMPACT_SCALE * 2 + 12
 var manager: GameManager
 var enemy_side: bool = false
 var cards: Array[PartyMemberCard] = []
+var companion_cards: Array[CompanionCard] = []
 var bags: Array[InventoryView] = []
 var members: Array:
 	get:
@@ -18,8 +16,7 @@ func configure(game: GameManager, is_enemy: bool) -> void:
 	manager = game
 	enemy_side = is_enemy
 	custom_minimum_size.x = WIDTH
-	add_theme_constant_override("separation", 10)
-	manager.formation_changed.connect(rebuild)
+	add_theme_constant_override("separation", 8)
 	manager.battle_restarted.connect(rebuild)
 	rebuild()
 
@@ -29,74 +26,40 @@ func rebuild() -> void:
 		child.queue_free()
 	cards.clear()
 	bags.clear()
-	var portrait_margin := MarginContainer.new()
-	portrait_margin.add_theme_constant_override("margin_top", 6)
-	add_child(portrait_margin)
-	var portraits := HBoxContainer.new()
-	portraits.custom_minimum_size = Vector2(WIDTH, PORTRAIT_HEIGHT)
-	portraits.add_theme_constant_override("separation", int(GAP))
-	portrait_margin.add_child(portraits)
-	var caption_space := Control.new()
-	caption_space.custom_minimum_size.y = 26
-	caption_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(caption_space)
-	var inventory_row := HBoxContainer.new()
-	inventory_row.custom_minimum_size = Vector2(WIDTH, BAG_SIDE)
-	inventory_row.add_theme_constant_override("separation", int(GAP))
+	companion_cards.clear()
+	var actor_row := HBoxContainer.new()
+	actor_row.custom_minimum_size.y = 340
+	actor_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	actor_row.add_theme_constant_override("separation", 18)
+	add_child(actor_row)
+	var roster: Array = manager.enemy_companions if enemy_side else manager.companions
+	if not roster.is_empty():
+		var supports := VBoxContainer.new()
+		supports.alignment = BoxContainer.ALIGNMENT_CENTER
+		supports.add_theme_constant_override("separation", 18)
+		actor_row.add_child(supports)
+		for index in roster.size():
+			var companion := CompanionCard.new()
+			supports.add_child(companion)
+			companion.configure(manager, roster[index], 1 if enemy_side else 0, index)
+			companion_cards.append(companion)
+	var main_column := VBoxContainer.new()
+	main_column.custom_minimum_size.x = PartyMemberCard.BASE_SIZE.x
+	main_column.alignment = BoxContainer.ALIGNMENT_CENTER
+	main_column.add_theme_constant_override("separation", 4)
+	actor_row.add_child(main_column)
+	var card := PartyMemberCard.new()
+	main_column.add_child(card)
+	card.configure(0, members[0])
+	card.set_primary(true)
+	cards.append(card)
+	var inventory_row := CenterContainer.new()
 	add_child(inventory_row)
-	var kind: FormationRules.Kind = FormationRules.Kind.FRONT_ONE if enemy_side else manager.formation
-	var ranks := FormationRules.rows(members.size(), kind)
-	var primary_right: bool = 0 in ranks["front"]
-	if enemy_side:
-		primary_right = not primary_right
-	var portrait_slots := _slots(portraits, PartyMemberCard.BASE_SIZE.x, PartyMemberCard.BASE_SIZE.x * PartyMemberCard.COMPACT_SCALE, primary_right)
-	var bag_slots := _slots(inventory_row, BAG_SIDE, SMALL_BAG_SIDE, primary_right)
-	for index in members.size():
-		var primary := index == 0
-		var card := PartyMemberCard.new()
-		portrait_slots[0 if primary else 1].add_child(card)
-		card.configure(index, members[index])
-		if not enemy_side:
-			card.clicked.connect(manager.select_member)
-		card.set_primary(primary)
-		cards.append(card)
-		if index > 1:
-			var spacer := Control.new()
-			spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			bag_slots[1].add_child(spacer)
-		var bag := InventoryView.new()
-		bag.compact = not primary
-		bag.display_side = BAG_SIDE if primary else SMALL_BAG_SIDE
-		bag_slots[0 if primary else 1].add_child(bag)
-		bag.bind_game(manager, index, enemy_side)
-		bags.append(bag)
-		var caption := Label.new()
-		caption.text = "%s · 阵盘" % members[index].definition["name"] if primary else str(members[index].definition["name"])
-		caption.add_theme_font_size_override("font_size", 18)
-		caption.anchor_right = 1
-		caption.offset_top = -28
-		caption.offset_bottom = 0
-		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		bag.add_child(caption)
-
-func _slots(row: HBoxContainer, primary_width: float, secondary_width: float, primary_right: bool) -> Array[VBoxContainer]:
-	var primary := VBoxContainer.new()
-	primary.custom_minimum_size.x = primary_width
-	primary.alignment = BoxContainer.ALIGNMENT_CENTER
-	var secondary := VBoxContainer.new()
-	secondary.custom_minimum_size.x = secondary_width
-	secondary.alignment = BoxContainer.ALIGNMENT_CENTER
-	secondary.add_theme_constant_override("separation", 12)
-	if members.size() <= 1:
-		row.alignment = BoxContainer.ALIGNMENT_CENTER
-		row.add_child(primary)
-		secondary.free()
-		return [primary]
-	row.add_child(secondary if primary_right else primary)
-	row.add_child(primary if primary_right else secondary)
-	return [primary, secondary]
+	var bag := InventoryView.new()
+	bag.display_side = BAG_SIDE
+	inventory_row.add_child(bag)
+	bag.bind_game(manager, 0, enemy_side)
+	bags.append(bag)
 
 func _process(_delta: float) -> void:
 	for index in cards.size():

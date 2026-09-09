@@ -2,10 +2,24 @@
   "id": "base.test.fire_sword",
   "name": "玄火剑",
   "type": "weapon",
-  "tags": ["weapon", "fire", "sword"],
-  "size": [1, 2],
+  "tags": [
+    "weapon",
+    "fire",
+    "sword"
+  ],
+  "size": [
+    1,
+    2
+  ],
   "icon": "res://assets/weapontest.webp",
   "cooldown": 3.0,
   "stamina_cost": 5,
-  "effects": [{"trigger": "on_activate", "effect": "damage", "value": 10}]
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 10
+    }
+  ],
+  "element": "base.element.fire"
 }
