@@ -23,6 +23,8 @@ var _grab_offset := Vector2i.ZERO
 var _hover_cell := Vector2i(-100, -100)
 var _hover_valid: bool = false
 var _drag_instance: String = ""
+var _hover_item: ItemData
+var _drag_preview: ItemDragPreview
 var _generation: int = 0
 var _native_drag_active: bool = false
 var _textures: Dictionary = {}
@@ -113,6 +115,7 @@ func reset_interaction() -> void:
 	_generation += 1
 	selected_instance = ""
 	_drag_instance = ""
+	_hover_item = null
 	_hover_cell = Vector2i(-100, -100)
 	queue_redraw()
 
@@ -125,14 +128,33 @@ func cell_center(cell: Vector2i) -> Vector2:
 func _cell_at(point: Vector2) -> Vector2i:
 	return board_layout.cell_at(point, size)
 
+func nearest_footprint_cell(point: Vector2, dimensions: Vector2i) -> Vector2i:
+	var closest := Vector2i.ZERO
+	var distance := INF
+	for y in range(InventoryState.GRID_SIZE.y - dimensions.y + 1):
+		for x in range(InventoryState.GRID_SIZE.x - dimensions.x + 1):
+			var cell := Vector2i(x, y)
+			var candidate := board_layout.footprint_rect(cell, dimensions, size).get_center().distance_squared_to(point)
+			if candidate < distance:
+				distance = candidate
+				closest = cell
+	return closest
+
+func make_drag_preview(item: ItemData, entry: Dictionary) -> Control:
+	var holder := Control.new()
+	holder.name = "CenteredItemDragPreview"
+	holder.z_index = 30
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_drag_preview = ItemDragPreview.new()
+	holder.add_child(_drag_preview)
+	_drag_preview.configure(manager, item, entry, board_layout.footprint_rect(entry.get("cell", Vector2i.ZERO), item.grid_size, size).size)
+	return holder
+
 func _draw() -> void:
 	if manager == null or inventory == null:
 		return
-	var area := grid_rect()
 	if board_texture != null:
 		draw_texture_rect(board_texture, board_layout.art_rect(size), false)
-	if not enemy_side and manager.adjustment_open and manager.selected_member_index == member_index:
-		draw_rect(area.grow(7), Color("f4d48e"), false, 4)
 	var visible_items := inventory.get_instances()
 	for id in _pulses:
 		if inventory.get_instance(id).is_empty():
@@ -142,15 +164,12 @@ func _draw() -> void:
 		if not _textures.has(item.id) and not item.icon_path.is_empty():
 			_textures[item.id] = load(item.icon_path)
 		var rect := board_layout.footprint_rect(instance["cell"], item.grid_size, size).grow(-4)
-		var active: bool = instance["instance_id"] == selected_instance
-		if active and manager.can_edit_inventory():
-			draw_rect(rect, Color("e5c181"), false, 2)
 		var icon_rect := rect.grow(-5)
 		var id: String = instance["instance_id"]
 		var ghost := inventory.get_instance(id).is_empty()
 		if _textures.has(item.id):
 			var texture: Texture2D = _textures[item.id]
-			var icon_size := texture.get_size() * minf(icon_rect.size.x / texture.get_width(), icon_rect.size.y / texture.get_height())
+			var icon_size := ItemDragPreview.fitted_icon_rect(texture, rect.grow(4)).size
 			if _pulses.has(id):
 				var pulse: Dictionary = _pulses[id]
 				var t: float = pulse["elapsed"] / PULSE_DURATION
@@ -174,14 +193,13 @@ func _draw() -> void:
 			var badge := Rect2(rect.end - badge_size, badge_size)
 			draw_rect(badge, Color("152124"))
 			draw_string(get_theme_default_font(), badge.position + Vector2(0, badge_size.y - 4), str(instance["units"].size()), HORIZONTAL_ALIGNMENT_CENTER, badge_size.x, 13 if compact else 16, Color("f4d48e"))
-	if not _drag_instance.is_empty() and _hover_cell.x > -100:
-		var instance := inventory.get_instance(_drag_instance)
-		if not instance.is_empty():
-			var dimensions := manager.registry.get_item(instance["item_id"]).grid_size
-			var preview := board_layout.footprint_rect(_hover_cell, dimensions, size).grow(-3)
-			var tint := Color("7ed6ad") if _hover_valid else Color("ee857a")
-			draw_rect(preview, Color(tint, 0.22))
-			draw_rect(preview, tint, false, 4)
+	if _hover_item != null and _hover_cell.x > -100:
+		var tint := Color("7ed6ad") if _hover_valid else Color("ee857a")
+		for y in _hover_item.grid_size.y:
+			for x in _hover_item.grid_size.x:
+				var preview := board_layout.footprint_rect(_hover_cell + Vector2i(x, y), Vector2i.ONE, size).grow(-3)
+				draw_rect(preview, Color(tint, 0.22))
+				draw_rect(preview, tint, false, 2)
 
 func _gui_input(event: InputEvent) -> void:
 	if manager == null:
@@ -232,37 +250,43 @@ func _get_drag_data(point: Vector2) -> Variant:
 		return null
 	_native_drag_active = true
 	var item := manager.registry.get_item(inventory.get_instance(data["instance_id"])["item_id"])
-	var preview := TextureRect.new()
-	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	preview.texture = _textures.get(item.id)
-	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	preview.size = board_layout.footprint_rect(inventory.get_instance(data["instance_id"])["cell"], item.grid_size, size).size
-	preview.modulate.a = 0.7
-	preview.position = -preview.size * 0.5
-	var holder := Control.new()
-	holder.name = "CenteredItemDragPreview"
-	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	holder.add_child(preview)
-	set_drag_preview(holder)
+	set_drag_preview(make_drag_preview(item, inventory.get_instance(data["instance_id"])))
 	return data
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
-	if manager != null and not enemy_side and data is Dictionary and data.get("kind") == "storage" and data.get("epoch") == manager.interaction_epoch:
-		var cell := _cell_at(point)
-		return Rect2i(Vector2i.ZERO, InventoryState.GRID_SIZE).has_point(cell) and manager.can_equip(data["storage_id"], member_index, cell)
-	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("source") != get_instance_id() or data.get("generation") != _generation or data.get("member_index") != member_index:
-		return false
-	_hover_cell = _cell_at(point) - Vector2i(data["offset"])
-	_drag_instance = data["instance_id"]
-	_hover_valid = inventory.can_move(_drag_instance, _hover_cell)
+	_hover_cell = Vector2i(-100, -100)
+	_hover_item = null
 	queue_redraw()
+	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("epoch") != manager.interaction_epoch or not grid_rect().has_point(point):
+		return false
+	if data.get("kind") == "storage":
+		var entry := manager.storage.peek_one(data.get("storage_id", ""))
+		if entry.is_empty():
+			return false
+		_hover_item = manager.registry.get_item(entry["item_id"])
+		_hover_cell = nearest_footprint_cell(point, _hover_item.grid_size)
+		var stack := inventory.matching_stack(_hover_item.id)
+		if not stack.is_empty():
+			_hover_cell = inventory.get_instance(stack)["cell"]
+		_hover_valid = manager.can_equip(data["storage_id"], member_index, _hover_cell)
+	elif data.get("kind") == "inventory" and data.get("source") == get_instance_id() and data.get("generation") == _generation and data.get("member_index") == member_index:
+		var entry := inventory.get_instance(data.get("instance_id", ""))
+		if entry.is_empty():
+			return false
+		_hover_item = manager.registry.get_item(entry["item_id"])
+		_hover_cell = nearest_footprint_cell(point, _hover_item.grid_size)
+		_drag_instance = data["instance_id"]
+		_hover_valid = inventory.can_move(_drag_instance, _hover_cell)
+	else:
+		return false
+	if is_instance_valid(_drag_preview):
+		_drag_preview.set_footprint(board_layout.footprint_rect(_hover_cell, _hover_item.grid_size, size).size)
 	return _hover_valid
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
 		if data.get("kind") == "storage":
-			manager.equip(data["storage_id"], member_index, _cell_at(point))
+			manager.equip(data["storage_id"], member_index, _hover_cell)
 		else:
 			manager.move_item(member_index, data["instance_id"], _hover_cell)
 		feedback.emit("已调整位置")

@@ -2,6 +2,7 @@ class_name StorageItemCard
 extends PanelContainer
 
 var manager: GameManager
+var target_board: InventoryView
 var storage_id: String
 var item: ItemData
 var _entry: Dictionary
@@ -100,6 +101,10 @@ func _ignore(node: Node) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not drag_data().is_empty():
 		manager.inventory_interaction.emit("pick")
+		# Start after Godot finishes dispatching the press, avoiding native
+		# pointer-state cleanup canceling a drag created inside the same event.
+		_begin_drag.call_deferred(drag_data())
+		accept_event()
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		manager.equip_random(storage_id)
 		accept_event()
@@ -113,21 +118,25 @@ func _get_drag_data(_point: Vector2) -> Variant:
 	var data := drag_data()
 	if data.is_empty():
 		return null
+	var preview := _make_drag_preview()
+	if preview == null:
+		return null
 	_native_drag_active = true
-	var preview := TextureRect.new()
-	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	preview.texture = load(item.icon_path)
-	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	preview.size = Vector2(90, 110)
-	preview.position = -preview.size * 0.5
-	preview.modulate.a = 0.8
-	var holder := Control.new()
-	holder.name = "CenteredItemDragPreview"
-	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	holder.add_child(preview)
-	set_drag_preview(holder)
+	set_drag_preview(preview)
 	return data
+
+func _make_drag_preview() -> Control:
+	if not is_instance_valid(target_board):
+		return null
+	return target_board.make_drag_preview(item, manager.storage.peek_one(storage_id))
+
+func _begin_drag(data: Dictionary) -> void:
+	if data.get("epoch") != manager.interaction_epoch or drag_data().is_empty() or get_viewport().gui_is_dragging():
+		return
+	var preview := _make_drag_preview()
+	if preview != null:
+		_native_drag_active = true
+		force_drag(data, preview)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END and _native_drag_active:

@@ -25,13 +25,14 @@ func _run() -> void:
 	_check(not ui._bag_button.disabled and manager.can_edit_inventory(), "prebattle arrays editable without opening storage")
 	_check_layout()
 	_check(absf(ui._status.get_global_rect().get_center().x - ui.size.x / 2) < 1 and ui._status.global_position.y >= ui._time.get_global_rect().end.y, "status below centered timer")
-	_check(ui._log_button.get_global_rect().end.y > ui.size.y - 35, "log button at middle bottom")
+	_check(ui._bag_button.get_global_rect().end.y > ui.size.y - 35, "adjustment button at middle bottom")
 	await _capture("storage_default")
 	await _move_all_bags()
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(ui.storage_panel.visible and manager.can_edit_inventory(), "button opens shared storage")
 	_check(ui.storage_panel.cards.size() == 7, "seven content cards visible")
+	await _test_drag_presentation()
 	await _test_details_and_boards()
 	_key(KEY_ESCAPE)
 	await _layout()
@@ -73,7 +74,7 @@ func _run() -> void:
 	var data := sword_card.drag_data()
 	_check(bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), data), "storage drag accepts legal grid destination")
 	if DisplayServer.get_name() == "headless":
-		await _native_between(sword_card.get_global_rect().get_center(), bag.get_global_transform() * bag.cell_center(Vector2i(3, 0)))
+		await _native_between(sword_card.get_global_rect().get_center(), bag.get_global_transform() * bag.cell_center(Vector2i(3, 0)), true)
 	else:
 		bag._drop_data(bag.cell_center(Vector2i(3, 0)), data)
 	await _layout()
@@ -95,6 +96,7 @@ func _run() -> void:
 	_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), data), "stale drag rejected after start")
 	manager._process(1)
 	_key(KEY_SPACE)
+	await _layout()
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(manager.simulation.clock.paused and manager.can_edit_inventory(), "paused battle permits adjustment")
@@ -121,12 +123,13 @@ func _run() -> void:
 	_key(KEY_F1)
 	manager._process(3)
 	_check(absf(manager.simulation.activation_progress(sword_id) - 0.5) < 0.001, "rotation follows half-speed simulation")
-	ui._log_button.pressed.emit()
+	ui._log_panel.show()
 	await _layout()
-	_check(ui._log_panel.visible and ui._log_label.text.contains("野狗"), "log button reveals battle record")
+	_check(ui._log_label.text.contains("野狗"), "battle record retained without a bottom log button")
 	await _capture("storage_log")
 	ui._log_panel.hide()
 	_key(KEY_SPACE)
+	await _layout()
 	ui._bag_button.pressed.emit()
 	await _layout()
 	if DisplayServer.get_name() != "headless":
@@ -194,7 +197,32 @@ func _test_controls_and_retreat() -> void:
 		_check(buttons[index].get_theme_stylebox("normal").bg_color == Color("2d261f"), "playback button brown background")
 		if index > 0:
 			_check(rect.position.x > buttons[index - 1].get_global_rect().end.x, "playback order pause half play double")
-	_check(is_equal_approx(ui._timer_frame.size.x, 580.0 * 2.0 / 3.0) and ui._log_button.text == "日志" and ui._retreat_button.global_position.x > ui._log_button.global_position.x, "enlarged timer and log-retreat row")
+	_check(is_equal_approx(ui._timer_frame.size.x, 580.0 * 2.0 / 3.0) and ui._retreat_button.global_position.x > ui._bag_button.global_position.x, "enlarged timer and adjustment-retreat row")
+	_check(ui._battle_button.caption == "开始战斗" and ui._battle_button.action_icon == ui._battle_icon, "central button initially offers battle start")
+	sound_events.clear()
+	ui._battle_button.pressed.emit()
+	_check(manager.simulation.state.phase == GameState.Phase.BATTLE and ui._battle_button.caption == "战斗暂停" and ui._battle_button.action_icon == ui._wait_icon, "central button starts battle and offers pause")
+	_check(sound_events == ["click"] and ui._battle_button.feedback_remaining > 0, "successful central click plays sound and pulses")
+	var previous_depth: float = ui._battle_button.press_depth
+	for step in 12:
+		ui._battle_button._process(0.02)
+		_check(ui._battle_button.press_depth <= previous_depth, "released button returns monotonically without a second pulse")
+		previous_depth = ui._battle_button.press_depth
+	_check(is_zero_approx(previous_depth), "released button settles completely")
+	ui._bag_button.pressed.emit()
+	_check(not manager.adjustment_open and sound_events == ["click"], "disabled adjustment neither opens nor plays click")
+	manager.set_speed(2.0)
+	ui._battle_button.pressed.emit()
+	_check(manager.simulation.clock.paused and ui._battle_button.caption == "战斗继续" and ui._battle_button.action_icon == ui._battle_icon, "central button pauses and offers continue")
+	ui._bag_button.pressed.emit()
+	_check(manager.adjustment_open and sound_events.back() == "click" and ui._bag_button.feedback_remaining > 0, "paused adjustment opens with feedback")
+	ui._battle_button.pressed.emit()
+	_check(not manager.simulation.clock.paused and not manager.adjustment_open and manager.simulation.clock.speed_multiplier == 2.0, "central resume closes storage and preserves speed")
+	_key(KEY_SPACE)
+	await _layout()
+	_check(ui._battle_button.caption == "战斗继续", "space updates central button presentation")
+	manager.restart()
+	await _layout()
 	_check(ui._retreat_button.disabled, "retreat unavailable before battle")
 	_check(ui._settings_button.disabled and ui._settings_button.global_position.x > ui._speed_buttons[2.0].get_global_rect().end.x, "future settings placeholder follows speed controls")
 	ui._speed_buttons[1.0].pressed.emit()
@@ -205,6 +233,7 @@ func _test_controls_and_retreat() -> void:
 	ui._speed_buttons[1.0].pressed.emit()
 	_check(not manager.simulation.clock.paused and manager.simulation.clock.speed_multiplier == 1, "play icon resumes normal speed")
 	ui._retreat_button.pressed.emit()
+	_check(sound_events.back() == "click" and ui._retreat_button.feedback_remaining > 0, "retreat click has audio and visual feedback")
 	await _layout()
 	_check(ui._countdown.visible and ui._countdown.number.text == "3s" and ui._retreat_button.disabled, "retreat starts central countdown and locks repeat button")
 	_check(ui._countdown.get_global_rect().get_center().is_equal_approx(ui.size * 0.5), "retreat countdown centered on whole screen")
@@ -281,12 +310,12 @@ func _test_cultivation_and_feedback() -> void:
 	await _layout()
 	var card: StorageItemCard = ui.storage_panel.cards.values()[0]
 	sound_events.clear()
-	card._gui_input(click)
-	_check(sound_events == ["pick"], "storage pickup uses same sound")
 	if DisplayServer.get_name() == "headless":
-		sound_events.clear()
 		await _native_between(card.get_global_rect().get_center(), Vector2(950, 280))
 		_check(sound_events == ["pick", "invalid"], "invalid native drag plays rejection once at release")
+	else:
+		card._gui_input(click)
+		_check(sound_events == ["pick"], "storage pickup uses same sound")
 	manager.set_adjustment(false)
 	manager.start_battle()
 	sound_events.clear()
@@ -318,6 +347,7 @@ func _test_cultivation_and_feedback() -> void:
 	_check(hit.is_queued_for_deletion(), "hit feedback cleans itself up")
 	for kind in GameAudio.STREAMS:
 		_check(ui.game_audio.players[kind].stream.get_length() > 0, "sound resource decodes: " + kind)
+	_check(ui.game_audio.players["click"].stream.get_length() > 0, "synthesized click has playable audio")
 
 func _test_activation_feedback() -> void:
 	root.size = Vector2i(1920, 1080)
@@ -417,10 +447,38 @@ func _right_click(point: Vector2) -> void:
 		event.pressed = pressed
 		Input.parse_input_event(event)
 
-func _native_between(start: Vector2, finish: Vector2) -> void:
+func _test_drag_presentation() -> void:
+	var bag: InventoryView = ui.ally_panel.bags[0]
+	var card: StorageItemCard = ui.storage_panel.cards["run.storage.base.weapon.qingfeng.0"]
+	var data := card.drag_data()
+	var holder := card._make_drag_preview()
+	ui.add_child(holder)
+	var preview := holder.get_child(0) as ItemDragPreview
+	holder.position = ui.get_global_transform().affine_inverse() * card.get_global_rect().get_center()
+	_check(holder.z_index > ui.storage_panel.z_index, "dragged item is drawn above storage panel")
+	await _capture("storage_drag_pickup")
+	var footprint := bag.board_layout.footprint_rect(Vector2i(3, 0), card.item.grid_size, bag.size)
+	var point := footprint.get_center() + Vector2(3, 2)
+	_check(bag._can_drop_data(point, data) and bag._hover_cell == Vector2i(3, 0), "storage hover selects nearest footprint by item center")
+	_check(preview.size.is_equal_approx(footprint.size), "drag preview uses actual target board footprint size")
+	_check(preview.entry["units"].size() == 1, "storage preview carries one unit rather than entire storage stock")
+	holder.position = ui.get_global_transform().affine_inverse() * (bag.get_global_transform() * point)
+	await _capture("array_drag_valid")
+	point = bag.board_layout.footprint_rect(Vector2i(1, 1), card.item.grid_size, bag.size).get_center()
+	_check(not bag._can_drop_data(point, data) and not bag._hover_valid, "occupied nearest cells show rejection rather than jumping elsewhere")
+	holder.position = ui.get_global_transform().affine_inverse() * (bag.get_global_transform() * point)
+	await _capture("array_drag_blocked")
+	_check(ui.storage_panel.z_index > ui.enemy_panel.cards[0].stat_icons["hp"].z_index, "storage layer covers elevated enemy resource icons")
+	holder.free()
+	bag.reset_interaction()
+
+func _native_between(start: Vector2, finish: Vector2, immediate_preview: bool = false) -> void:
 	_mouse_motion(start)
 	_mouse_button(start, true)
 	await process_frame
+	if immediate_preview:
+		await process_frame
+		_check_drag_preview_center(root, start)
 	_mouse_motion(start + Vector2(32, 0), true)
 	await process_frame
 	_check_drag_preview_center(root, start + Vector2(32, 0))
@@ -437,7 +495,8 @@ func _move_all_bags() -> void:
 				await _native_drag(bag, move[0], move[1])
 			else:
 				var data := bag.drag_data_at(bag.cell_center(move[0]))
-				bag._drop_data(bag.cell_center(move[1]), data)
+				var item := manager.registry.get_item(bag.inventory.get_instance(move[2])["item_id"])
+				bag._drop_data(bag.board_layout.footprint_rect(move[1], item.grid_size, bag.size).get_center(), data)
 			_check(manager.party[index].inventory.get_instance(move[2])["cell"] == move[1], "own equipment moves directly in bag %d" % index)
 		var invalid := bag.drag_data_at(bag.cell_center(Vector2i(0, 2)))
 		_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), invalid), "invalid footprint rejected in each bag")
@@ -501,7 +560,8 @@ func _key(code: Key, echo_event: bool = false) -> void:
 
 func _native_drag(bag: InventoryView, from: Vector2i, to: Vector2i) -> void:
 	var start := bag.get_global_transform() * bag.cell_center(from)
-	var finish := bag.get_global_transform() * bag.cell_center(to)
+	var item := manager.registry.get_item(bag.inventory.get_instance(bag.inventory.item_at(from))["item_id"])
+	var finish := bag.get_global_transform() * bag.board_layout.footprint_rect(to, item.grid_size, bag.size).get_center()
 	_mouse_motion(start)
 	_mouse_button(start, true)
 	await process_frame
@@ -515,7 +575,7 @@ func _native_drag(bag: InventoryView, from: Vector2i, to: Vector2i) -> void:
 
 func _check_drag_preview_center(node: Node, pointer: Vector2) -> bool:
 	if node.name == "CenteredItemDragPreview":
-		var preview := node.get_child(0) as TextureRect
+		var preview := node.get_child(0) as ItemDragPreview
 		_check(preview.get_global_rect().get_center().distance_to(pointer) < 1, "native dragged image centered on mouse")
 		return true
 	for child in node.get_children(true):

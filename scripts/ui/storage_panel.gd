@@ -3,6 +3,7 @@ extends PanelContainer
 
 const CATEGORIES := {"all": "全部", "weapon": "法器", "armor": "防具", "pill": "丹药", "item": "道具", "talisman": "符箓"}
 var manager: GameManager
+var target_board: InventoryView
 var cards: Dictionary = {}
 var category: String = "all"
 var _grid: GridContainer
@@ -14,7 +15,7 @@ var _dirty: bool = true
 func configure(game: GameManager) -> void:
 	manager = game
 	var box := StyleBoxFlat.new()
-	box.bg_color = Color("101b21", 0.98)
+	box.bg_color = Color("101b21")
 	box.border_color = Color("9c8b61")
 	box.set_border_width_all(1)
 	box.set_corner_radius_all(16)
@@ -99,6 +100,7 @@ func rebuild() -> void:
 		if category != "all" and item.category != category:
 			continue
 		var card := StorageItemCard.new()
+		card.target_board = target_board
 		_grid.add_child(card)
 		card.configure(manager, entry)
 		cards[entry["instance_id"]] = card

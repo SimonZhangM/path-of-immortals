@@ -12,7 +12,9 @@ var _timer_frame: PanelContainer
 var _header_separator: Control
 var _status: Label
 var _bag_button: Button
-var _log_button: Button
+var _battle_button: BattleActionButton
+var _battle_icon: Texture2D
+var _wait_icon: Texture2D
 var _retreat_button: Button
 var _settings_button: Button
 var _pause_button: Button
@@ -150,13 +152,25 @@ func _build_ui() -> void:
 	stretch.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stretch.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	middle.add_child(stretch)
-	_bag_button = _button(middle, "背包调整", func(): manager.set_adjustment(not manager.adjustment_open))
+	var footer := Control.new()
+	footer.custom_minimum_size.y = 120
+	middle.add_child(footer)
+	var footer_column := VBoxContainer.new()
+	footer_column.anchor_left = 0.5
+	footer_column.anchor_right = 0.5
+	footer_column.offset_left = -130
+	footer_column.offset_right = 130
+	footer_column.add_theme_constant_override("separation", 8)
+	footer.add_child(footer_column)
+	_battle_icon = BattleActionButton.trimmed_art("res://assets/icon-battle.webp")
+	_wait_icon = BattleActionButton.trimmed_art("res://assets/icon-wait.webp")
+	_battle_button = _action_button(footer_column, "res://assets/bt-button.webp", Vector2(260, 68), _toggle_battle)
 	var bottom_actions := HBoxContainer.new()
 	bottom_actions.add_theme_constant_override("separation", 8)
-	middle.add_child(bottom_actions)
-	_log_button = _button(bottom_actions, "日志", func(): _log_panel.visible = not _log_panel.visible)
-	_retreat_button = _button(bottom_actions, "撤退", manager.request_retreat)
-	_log_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	footer_column.add_child(bottom_actions)
+	_bag_button = _action_button(bottom_actions, "res://assets/bt-zhihuan.webp", Vector2(126, 44), func(): manager.set_adjustment(not manager.adjustment_open))
+	_retreat_button = _action_button(bottom_actions, "res://assets/bt-chetui.webp", Vector2(126, 44), manager.request_retreat)
+	_bag_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_retreat_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	enemy_panel = TeamPanel.new()
 	arena.add_child(enemy_panel)
@@ -165,6 +179,8 @@ func _build_ui() -> void:
 	_build_log()
 	if manager.startup_error.is_empty():
 		storage_panel = StoragePanel.new()
+		storage_panel.z_index = 10
+		storage_panel.target_board = ally_panel.bags[0]
 		storage_panel.anchor_left = 1
 		storage_panel.anchor_right = 1
 		storage_panel.anchor_bottom = 1
@@ -178,6 +194,28 @@ func _build_ui() -> void:
 	_countdown.theme = ui_theme
 	add_child(_countdown)
 	_build_retreat_dialog()
+
+func _action_button(parent: Node, path: String, minimum: Vector2, action: Callable) -> BattleActionButton:
+	var button := BattleActionButton.new()
+	button.configure(path, minimum)
+	parent.add_child(button)
+	button.pressed.connect(func():
+		if button.disabled:
+			return
+		if game_audio != null:
+			game_audio.play("click")
+		action.call()
+		_refresh()
+	)
+	return button
+
+func _toggle_battle() -> void:
+	if manager.simulation == null:
+		return
+	if manager.simulation.state.phase == GameState.Phase.PREPARATION:
+		manager.start_battle()
+	else:
+		manager.toggle_pause()
 
 func _playback_button(parent: Node, symbol: String, caption: String, action: Callable) -> Button:
 	var button := PlaybackButton.new()
@@ -283,7 +321,9 @@ func _refresh() -> void:
 	var fighting := state.phase == GameState.Phase.BATTLE
 	_time.text = format_battle_time(state.time_usec)
 	_bag_button.disabled = not manager.can_adjust()
-	_bag_button.text = "关闭背包" if manager.adjustment_open else "背包调整"
+	_battle_button.disabled = state.is_finished()
+	_battle_button.caption = "开始战斗" if preparing else ("战斗结束" if state.is_finished() else ("战斗继续" if sim.clock.paused else "战斗暂停"))
+	_battle_button.action_icon = _wait_icon if fighting and not sim.clock.paused else _battle_icon
 	for speed in _speed_buttons:
 		_speed_buttons[speed].disabled = state.is_finished()
 		_speed_buttons[speed].set_pressed_no_signal(not sim.clock.paused and is_equal_approx(speed, sim.clock.speed_multiplier))
@@ -300,6 +340,8 @@ func _refresh() -> void:
 		_status.text = "战斗已暂停" if sim.clock.paused else "战斗进行中"
 
 func _on_restart() -> void:
+	if storage_panel != null and not ally_panel.bags.is_empty():
+		storage_panel.target_board = ally_panel.bags[0]
 	_battle_log.reset()
 	_review_note.hide()
 	_log_label.text = "布阵中。"
