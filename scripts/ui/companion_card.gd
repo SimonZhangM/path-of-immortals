@@ -31,7 +31,3 @@ func configure(manager: GameManager, member: CompanionState, side: int, index: i
 
 func _process(_delta: float) -> void:
 	portrait_card.refresh(companion)
-	queue_redraw()
-
-func _draw() -> void:
-	draw_texture_rect(preload("res://scripts/ui/portrait_backdrop.tres"), Rect2(70, 4, size.x - 46, size.y - 8), false)

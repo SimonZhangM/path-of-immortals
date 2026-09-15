@@ -1,0 +1,1258 @@
+[gd_scene load_steps=76 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/gamemap-qingshihewan.webp" id="1_bg"]
+[ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="2_dot"]
+[ext_resource type="Script" path="res://scripts/map/map_route_point.gd" id="3_point"]
+[ext_resource type="Script" path="res://scripts/map/map_route.gd" id="4_route"]
+
+[ext_resource type="Texture2D" path="res://assets/mapdot1.webp" id="5_sign"]
+[ext_resource type="Texture2D" path="res://assets/mapdot2.webp" id="6_sign"]
+[ext_resource type="Texture2D" path="res://assets/mapdot3.webp" id="7_sign"]
+[ext_resource type="Texture2D" path="res://assets/mapdot4.webp" id="8_sign"]
+[ext_resource type="Texture2D" path="res://assets/mapdot5.webp" id="9_sign"]
+
+[ext_resource type="Texture2D" path="res://assets/map-enemy-1.webp" id="10_enemy_icon"]
+
+[ext_resource type="Texture2D" path="res://assets/map-cunzhen.webp" id="11_town"]
+[ext_resource type="Texture2D" path="res://assets/map-yiji.webp" id="12_ruins"]
+
+[ext_resource type="Texture2D" path="res://assets/map-xiux-shiwai.webp" id="14_outdoor"]
+[ext_resource type="Texture2D" path="res://assets/map-xiuxi-shinei.webp" id="15_indoor"]
+[ext_resource type="Texture2D" path="res://assets/map-xiuxi-water.webp" id="16_water"]
+
+[ext_resource type="Texture2D" path="res://assets/map-zhiwu.webp" id="17_plant"]
+[ext_resource type="Texture2D" path="res://assets/map-kuangshi.webp" id="18_ore"]
+[ext_resource type="Texture2D" path="res://assets/map-baoxiang.webp" id="19_chest"]
+
+[ext_resource type="Texture2D" path="res://assets/map-juqing.webp" id="13_story"]
+
+[sub_resource type="AtlasTexture" id="Atlas_story"]
+atlas = ExtResource("13_story")
+region = Rect2(62, 8, 178, 284)
+
+[sub_resource type="AtlasTexture" id="Atlas_plant"]
+atlas = ExtResource("17_plant")
+region = Rect2(12, 13, 280, 274)
+
+[sub_resource type="AtlasTexture" id="Atlas_ore"]
+atlas = ExtResource("18_ore")
+region = Rect2(19, 8, 258, 284)
+
+[sub_resource type="AtlasTexture" id="Atlas_chest"]
+atlas = ExtResource("19_chest")
+region = Rect2(5, 57, 289, 225)
+
+[sub_resource type="AtlasTexture" id="Atlas_outdoor"]
+atlas = ExtResource("14_outdoor")
+region = Rect2(22, 10, 258, 283)
+
+[sub_resource type="AtlasTexture" id="Atlas_indoor"]
+atlas = ExtResource("15_indoor")
+region = Rect2(20, 17, 262, 271)
+
+[sub_resource type="AtlasTexture" id="Atlas_water"]
+atlas = ExtResource("16_water")
+region = Rect2(8, 23, 288, 250)
+
+[sub_resource type="AtlasTexture" id="Atlas_town"]
+atlas = ExtResource("11_town")
+region = Rect2(6, 17, 288, 266)
+
+[sub_resource type="AtlasTexture" id="Atlas_ruins"]
+atlas = ExtResource("12_ruins")
+region = Rect2(10, 64, 601, 503)
+
+[sub_resource type="AtlasTexture" id="Atlas_enemy_icon"]
+atlas = ExtResource("10_enemy_icon")
+region = Rect2(23, 15, 254, 283)
+
+[sub_resource type="AtlasTexture" id="Atlas_sign_1"]
+atlas = ExtResource("5_sign")
+region = Rect2(11, 16, 346, 341)
+
+[sub_resource type="AtlasTexture" id="Atlas_sign_2"]
+atlas = ExtResource("6_sign")
+region = Rect2(31, 19, 302, 330)
+
+[sub_resource type="AtlasTexture" id="Atlas_sign_3"]
+atlas = ExtResource("7_sign")
+region = Rect2(28, 32, 316, 311)
+
+[sub_resource type="AtlasTexture" id="Atlas_sign_4"]
+atlas = ExtResource("8_sign")
+region = Rect2(31, 28, 309, 317)
+
+[sub_resource type="AtlasTexture" id="Atlas_sign_5"]
+atlas = ExtResource("9_sign")
+region = Rect2(37, 44, 288, 280)
+
+[sub_resource type="Curve2D" id="Curve_1"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 2.86, 6.6, 392, 230, -7.26, -13.64, 7.26, 13.64, 418, 290, -8.8, -13.86, 8.8, 13.86, 458, 354, -9.68, -10.78, 9.68, 10.78, 498, 416, -9.46, -3.3, 9.46, 3.3, 546, 452, -8.36, 3.96, 8.36, -3.96, 584, 446, -4.18, 3.3, 0, 0, 622, 416)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_2"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 5.06, 7.26, 622, 416, -12.54, -9.02, 12.54, 9.02, 668, 482, -14.08, -3.3, 14.08, 3.3, 736, 498, -16.06, -9.9, 16.06, 9.9, 796, 512, -17.82, -12.1, 17.82, 12.1, 882, 588, -8.36, -3.74, 0, 0, 958, 622)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_3"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 3.74, -3.52, 958, 622, -9.68, 6.82, 9.68, -6.82, 992, 590, -9.68, 6.16, 9.68, -6.16, 1046, 560, -7.04, 6.16, 7.04, -6.16, 1080, 534, -3.3, 3.3, 0, 0, 1110, 504)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_4"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -0.88, -5.06, 1110, 504, 2.86, 8.8, -2.86, -8.8, 1102, 458, 5.72, 7.26, -5.72, -7.26, 1084, 424, 3.74, 3.52, 0, 0, 1050, 392)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_5"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 10.12, -1.98, 1110, 504, -19.14, 2.86, 19.14, -2.86, 1202, 486, -15.62, 3.08, 15.62, -3.08, 1284, 478, -9.02, 7.26, 9.02, -7.26, 1344, 458, -1.1, 10.34, 1.1, -10.34, 1366, 412, 2.2, 10.56, -2.2, -10.56, 1354, 364, -1.54, 10.34, 1.54, -10.34, 1346, 316, -2.42, 5.06, 0, 0, 1368, 270)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_6"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -7.48, -3.96, 1368, 270, 14.08, 7.04, -14.08, -7.04, 1300, 234, 11.88, 7.04, -11.88, -7.04, 1240, 206, 11.66, 6.16, -11.66, -6.16, 1192, 170, 6.38, 2.2, 0, 0, 1134, 150)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_7"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 10.78, 2.86, 1368, 270, -17.82, -5.06, 17.82, 5.06, 1466, 296, -17.16, -2.42, 17.16, 2.42, 1530, 316, -18.04, -0.44, 18.04, 0.44, 1622, 318, -14.08, -0.88, 14.08, 0.88, 1694, 320, -11.88, -4.84, 11.88, 4.84, 1750, 326, -11.66, -6.71, 11.66, 6.71, 1802, 364, -5.94, -2.53, 0, 0, 1856, 387)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_8"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 6.6, 2.64, 1738, 112, -13.42, -6.82, 13.42, 6.82, 1798, 136, -16.06, -6.38, 16.06, 6.38, 1860, 174, -20.24, -3.08, 20.24, 3.08, 1944, 194, -19.8, -0.66, 19.8, 0.66, 2044, 202, -13.64, -2.86, 13.64, 2.86, 2124, 200, -4.84, -3.08, 0, 0, 2168, 228)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_9"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 5.72, -4.07, 1856, 387, -12.76, 7.37, 12.76, -7.37, 1908, 350, -12.32, 2.2, 12.32, -2.2, 1972, 320, -10.56, 2.86, 10.56, -2.86, 2020, 330, -11, 8.8, 11, -8.8, 2068, 294, -11, 7.26, 11, -7.26, 2120, 250, -5.28, 2.42, 0, 0, 2168, 228)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_10"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 8.8, -3.08, 2168, 228, -16.5, 6.38, 16.5, -6.38, 2248, 200, -12.32, 6.6, 12.32, -6.6, 2318, 170, -4.62, 3.3, 0, 0, 2360, 140)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_11"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 7.04, 4.62, 2360, 140, -14.52, -9.02, 14.52, 9.02, 2424, 182, -14.3, -10.56, 14.3, 10.56, 2492, 222, -9.46, -10.12, 9.46, 10.12, 2554, 278, -2.64, -3.96, 0, 0, 2578, 314)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_12"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 7.92, 0.66, 2578, 314, -14.96, -5.94, 14.96, 5.94, 2650, 320, -12.54, -8.58, 12.54, 8.58, 2714, 368, -8.36, -9.24, 8.36, 9.24, 2764, 398, -9.9, -11, 9.9, 11, 2790, 452, -7.04, -5.06, 0, 0, 2854, 498)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_13"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 4.62, -3.08, 2854, 498, -6.16, 5.5, 6.16, -5.5, 2896, 470, -1.98, 7.48, 1.98, -7.48, 2910, 448, -0.44, 5.06, 0, 0, 2914, 402)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_14"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 3.08, 5.94, 2854, 498, -3.52, -11, 3.52, 11, 2882, 552, 1.32, -11.66, -1.32, 11.66, 2886, 598, 1.32, -15.4, -1.32, 15.4, 2870, 658, -3.3, -19.14, 3.3, 19.14, 2874, 738, -2.86, -10.34, 0, 0, 2900, 832)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_15"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 3.74, 7.26, 2900, 832, -8.8, -16.28, 8.8, 16.28, 2934, 898, -7.04, -15.84, 7.04, 15.84, 2980, 980, 0.22, -15.62, -0.22, 15.62, 2998, 1042, 2.2, -8.8, 0, 0, 2978, 1122)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_16"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -7.7, 0, 2900, 832, 20.02, -0.88, -20.02, 0.88, 2830, 832, 24.42, -3.3, -24.42, 3.3, 2718, 840, 25.52, -4.84, -25.52, 4.84, 2608, 862, 13.42, -2.42, 0, 0, 2486, 884)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_17"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 10.56, -0.22, 2900, 832, -17.6, 0.66, 17.6, -0.66, 2996, 830, -13.2, 1.32, 13.2, -1.32, 3060, 826, -6.16, 0.88, 0, 0, 3116, 818)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_18"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -8.8, 0, 2486, 884, 16.28, -0.44, -16.28, 0.44, 2406, 884, 13.86, -3.08, -13.86, 3.08, 2338, 888, 13.42, -6.82, -13.42, 6.82, 2280, 912, 15.18, -5.06, -15.18, 5.06, 2216, 950, 14.74, -0.44, -14.74, 0.44, 2142, 958, 6.6, 0.44, 0, 0, 2082, 954)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_19"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 2.2, -7.7, 2082, 954, 0.22, 10.12, -0.22, -10.12, 2102, 884, 7.92, 7.92, -7.92, -7.92, 2080, 862, 10.78, 8.8, -10.78, -8.8, 2030, 812, 8.58, 11.66, -8.58, -11.66, 1982, 782, 6.38, 14.08, -6.38, -14.08, 1952, 706, 3.08, 5.72, 0, 0, 1924, 654)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_20"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -5.28, -8.58, 1924, 654, 9.02, 12.32, -9.02, -12.32, 1876, 576, 8.58, 8.36, -8.58, -8.36, 1842, 542, 5.28, 10.34, -5.28, -10.34, 1798, 500, -2.2, 9.46, 2.2, -9.46, 1794, 448, -6.82, 6.71, 6.82, -6.71, 1818, 414, -4.18, 2.97, 0, 0, 1856, 387)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_21"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -7.26, -0.22, 2082, 954, 13.42, 3.08, -13.42, -3.08, 2016, 952, 12.54, 7.92, -12.54, -7.92, 1960, 926, 12.1, 10.78, -12.1, -10.78, 1902, 880, 5.72, 5.72, 0, 0, 1850, 828)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_22"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 1.54, 11.44, 2082, 954, -5.94, -20.24, 5.94, 20.24, 2096, 1058, -8.58, -13.2, 8.58, 13.2, 2136, 1138, -9.68, -7.92, 9.68, 7.92, 2174, 1178, -5.5, -3.52, 0, 0, 2224, 1210)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_23"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 9.46, 4.84, 2224, 1210, -19.14, -9.02, 19.14, 9.02, 2310, 1254, -14.52, -6.82, 14.52, 6.82, 2398, 1292, -4.84, -2.64, 0, 0, 2442, 1316)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_24"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 8.8, 3.08, 2442, 1316, -15.4, -3.96, 15.4, 3.96, 2522, 1344, -13.2, 0.44, 13.2, -0.44, 2582, 1352, -10.78, 2.42, 10.78, -2.42, 2642, 1340, -4.18, 1.1, 0, 0, 2680, 1330)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_25"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -8.36, 7.26, 2978, 1122, 16.72, -13.64, -16.72, 13.64, 2902, 1188, 15.84, -11, -15.84, 11, 2826, 1246, 11.66, -5.72, -11.66, 5.72, 2758, 1288, 5.94, -3.3, -5.94, 3.3, 2720, 1298, 4.4, -3.52, -4.4, 3.52, 2704, 1318, 2.64, -1.32, 0, 0, 2680, 1330)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_26"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 12.54, 2.2, 2680, 1330, -21.12, -5.5, 21.12, 5.5, 2794, 1350, -11.66, -7.92, 11.66, 7.92, 2872, 1380, -4.62, -8.58, 4.62, 8.58, 2900, 1422, 0.88, -9.68, -0.88, 9.68, 2914, 1458, 2.42, -5.72, 0, 0, 2892, 1510)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_27"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -9.68, 5.06, 2892, 1510, 25.52, -9.46, -25.52, 9.46, 2804, 1556, 26.4, -7.26, -26.4, 7.26, 2660, 1596, 16.72, -0.66, -16.72, 0.66, 2564, 1622, 6.16, 2.2, 0, 0, 2508, 1602)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_28"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -10.56, -2.42, 2508, 1602, 23.76, 2.64, -23.76, -2.64, 2412, 1580, 21.56, 0.44, -21.56, -0.44, 2292, 1578, 13.2, 2.64, -13.2, -2.64, 2216, 1576, 4.84, 2.42, 0, 0, 2172, 1554)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_29"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -7.48, -6.6, 2172, 1554, 14.3, 10.34, -14.3, -10.34, 2104, 1494, 15.4, 5.06, -15.4, -5.06, 2042, 1460, 15.62, 5.72, -15.62, -5.72, 1964, 1448, 15.4, 8.58, -15.4, -8.58, 1900, 1408, 8.36, 4.18, 0, 0, 1824, 1370)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_30"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -5.06, -5.5, 1824, 1370, 6.82, 12.54, -6.82, -12.54, 1778, 1320, 9.9, 14.52, -9.9, -14.52, 1762, 1256, 7.04, 12.32, -7.04, -12.32, 1688, 1188, -1.1, 4.84, 0, 0, 1698, 1144)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_31"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 7.26, -7.04, 1698, 1144, -14.08, 11.22, 14.08, -11.22, 1764, 1080, -15.62, 7.04, 15.62, -7.04, 1826, 1042, -17.6, 5.06, 17.6, -5.06, 1906, 1016, -16.72, 5.5, 16.72, -5.5, 1986, 996, -10.56, 4.62, 10.56, -4.62, 2058, 966, -2.64, 1.32, 0, 0, 2082, 954)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_32"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -7.92, -2.64, 1698, 1144, 14.08, 7.04, -14.08, -7.04, 1626, 1120, 13.2, 6.38, -13.2, -6.38, 1570, 1080, 16.06, 5.28, -16.06, -5.28, 1506, 1062, 9.02, 3.3, 0, 0, 1424, 1032)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_33"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -6.16, 0.44, 1424, 1032, 13.64, -0.88, -13.64, 0.88, 1368, 1036, 15.62, 1.76, -15.62, -1.76, 1300, 1040, 11.22, 4.4, -11.22, -4.4, 1226, 1020, 5.5, 5.06, -5.5, -5.06, 1198, 1000, 2.42, 2.86, 0, 0, 1176, 974)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_34"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -0.88, -4.4, 1176, 974, 5.94, 10.12, -5.94, -10.12, 1168, 934, 2.42, 12.32, -2.42, -12.32, 1122, 882, -0.22, 12.1, 0.22, -12.1, 1146, 822, 2.42, 5.5, 0, 0, 1124, 772)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_35"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -4.62, -3.74, 1124, 772, 12.98, 8.58, -12.98, -8.58, 1082, 738, 11.22, 7.92, -11.22, -7.92, 1006, 694, 5.28, 7.92, -5.28, -7.92, 980, 666, 2.42, 4.84, 0, 0, 958, 622)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_36"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -6.82, 2.86, 958, 622, 12.1, -8.36, -12.1, 8.36, 896, 648, 8.58, -9.68, -8.58, 9.68, 848, 698, 4.18, -10.12, -4.18, 10.12, 818, 736, -3.96, -10.12, 3.96, 10.12, 810, 790, -9.24, -7.92, 9.24, 7.92, 854, 828, -4.4, -3.74, 0, 0, 894, 862)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_37"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 0.44, 6.38, 1176, 974, -5.06, -12.54, 5.06, 12.54, 1180, 1032, -10.12, -10.78, 10.12, 10.78, 1222, 1088, -3.52, -11.44, 3.52, 11.44, 1272, 1130, 5.28, -13.2, -5.28, 13.2, 1254, 1192, 3.96, -13.42, -3.96, 13.42, 1224, 1250, 3.08, -12.76, -3.08, 12.76, 1218, 1314, 2.42, -5.72, 0, 0, 1196, 1366)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_38"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -5.94, 4.18, 1196, 1366, 10.78, -12.98, -10.78, 12.98, 1142, 1404, 11.66, -19.8, -11.66, 19.8, 1098, 1484, 12.32, -12.76, -12.32, 12.76, 1036, 1584, 12.1, 0.88, -12.1, -0.88, 986, 1600, 9.46, 5.5, -9.46, -5.5, 926, 1576, 2.86, 2.86, 0, 0, 900, 1550)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_39"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -7.26, -7.26, 900, 1550, 14.52, 11.22, -14.52, -11.22, 834, 1484, 15.84, 12.1, -15.84, -12.1, 768, 1448, 14.74, 11.22, -14.74, -11.22, 690, 1374, 11.88, 8.36, -11.88, -8.36, 634, 1346, 5.72, 5.28, 0, 0, 582, 1298)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_40"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 3.96, -10.34, 582, 1298, -5.28, 15.62, 5.28, -15.62, 618, 1204, 3.74, 13.86, -3.74, -13.86, 630, 1156, 9.24, 12.54, -9.24, -12.54, 584, 1078, 4.84, 8.58, -4.84, -8.58, 546, 1042, -0.66, 8.14, 0.66, -8.14, 540, 1000, -5.94, 6.82, 5.94, -6.82, 552, 968, -7.26, 6.16, 7.26, -6.16, 594, 938, -2.64, 2.86, 0, 0, 618, 912)
+}
+point_count = 9
+
+[sub_resource type="Curve2D" id="Curve_41"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -10.12, -5.28, 582, 1298, 17.6, 9.02, -17.6, -9.02, 490, 1250, 16.28, 6.16, -16.28, -6.16, 422, 1216, 17.38, 6.38, -17.38, -6.38, 342, 1194, 12.54, 11, -12.54, -11, 264, 1158, 8.36, 12.32, -8.36, -12.32, 228, 1094, 10.12, 9.02, -10.12, -9.02, 188, 1046, 5.72, 3.74, 0, 0, 136, 1012)
+}
+point_count = 8
+
+[node name="MapContent" type="Node2D"]
+
+[node name="Background" type="Sprite2D" parent="."]
+texture = ExtResource("1_bg")
+centered = false
+metadata/_edit_lock_ = true
+
+[node name="Routes" type="Node2D" parent="."]
+
+[node name="R01_N01_N02" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_1")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r01"
+start_point = NodePath("../../Points/N01")
+end_point = NodePath("../../Points/N02")
+
+[node name="R02_N02_N03" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_2")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r02"
+start_point = NodePath("../../Points/N02")
+end_point = NodePath("../../Points/N03")
+
+[node name="R03_N03_N05" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_3")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r03"
+start_point = NodePath("../../Points/N03")
+end_point = NodePath("../../Points/N05")
+
+[node name="R04_N05_N04" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_4")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r04"
+start_point = NodePath("../../Points/N05")
+end_point = NodePath("../../Points/N04")
+
+[node name="R05_N05_N07" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_5")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r05"
+start_point = NodePath("../../Points/N05")
+end_point = NodePath("../../Points/N07")
+
+[node name="R06_N07_N06" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_6")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r06"
+start_point = NodePath("../../Points/N07")
+end_point = NodePath("../../Points/N06")
+
+[node name="R07_N07_N09" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_7")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r07"
+start_point = NodePath("../../Points/N07")
+end_point = NodePath("../../Points/N09")
+
+[node name="R08_N08_N10" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_8")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r08"
+start_point = NodePath("../../Points/N08")
+end_point = NodePath("../../Points/N10")
+
+[node name="R09_N09_N10" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_9")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r09"
+start_point = NodePath("../../Points/N09")
+end_point = NodePath("../../Points/N10")
+
+[node name="R10_N10_N11" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_10")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r10"
+start_point = NodePath("../../Points/N10")
+end_point = NodePath("../../Points/N11")
+
+[node name="R11_N11_N12" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_11")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r11"
+start_point = NodePath("../../Points/N11")
+end_point = NodePath("../../Points/N12")
+
+[node name="R12_N12_N14" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_12")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r12"
+start_point = NodePath("../../Points/N12")
+end_point = NodePath("../../Points/N14")
+
+[node name="R13_N14_N13" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_13")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r13"
+start_point = NodePath("../../Points/N14")
+end_point = NodePath("../../Points/N13")
+
+[node name="R14_N14_N15" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_14")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r14"
+start_point = NodePath("../../Points/N14")
+end_point = NodePath("../../Points/N15")
+
+[node name="R15_N15_N16" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_15")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r15"
+start_point = NodePath("../../Points/N15")
+end_point = NodePath("../../Points/N16")
+
+[node name="R16_N15_N37" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_16")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r16"
+start_point = NodePath("../../Points/N15")
+end_point = NodePath("../../Points/N37")
+
+[node name="R17_N15_EastExit" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_17")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r17"
+start_point = NodePath("../../Points/N15")
+end_point = NodePath("../../Points/EastExit")
+
+[node name="R18_N37_N20" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_18")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r18"
+start_point = NodePath("../../Points/N37")
+end_point = NodePath("../../Points/N20")
+
+[node name="R19_N20_N21" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_19")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r19"
+start_point = NodePath("../../Points/N20")
+end_point = NodePath("../../Points/N21")
+
+[node name="R20_N21_N09" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_20")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r20"
+start_point = NodePath("../../Points/N21")
+end_point = NodePath("../../Points/N09")
+
+[node name="R21_N20_N22" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_21")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r21"
+start_point = NodePath("../../Points/N20")
+end_point = NodePath("../../Points/N22")
+
+[node name="R22_N20_N19" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_22")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r22"
+start_point = NodePath("../../Points/N20")
+end_point = NodePath("../../Points/N19")
+
+[node name="R23_N19_N18" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_23")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r23"
+start_point = NodePath("../../Points/N19")
+end_point = NodePath("../../Points/N18")
+
+[node name="R24_N18_N17" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_24")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r24"
+start_point = NodePath("../../Points/N18")
+end_point = NodePath("../../Points/N17")
+
+[node name="R25_N16_N17" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_25")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r25"
+start_point = NodePath("../../Points/N16")
+end_point = NodePath("../../Points/N17")
+
+[node name="R26_N17_N27" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_26")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r26"
+start_point = NodePath("../../Points/N17")
+end_point = NodePath("../../Points/N27")
+
+[node name="R27_N27_N26" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_27")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r27"
+start_point = NodePath("../../Points/N27")
+end_point = NodePath("../../Points/N26")
+
+[node name="R28_N26_N25" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_28")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r28"
+start_point = NodePath("../../Points/N26")
+end_point = NodePath("../../Points/N25")
+
+[node name="R29_N25_N24" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_29")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r29"
+start_point = NodePath("../../Points/N25")
+end_point = NodePath("../../Points/N24")
+
+[node name="R30_N24_N23" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_30")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r30"
+start_point = NodePath("../../Points/N24")
+end_point = NodePath("../../Points/N23")
+
+[node name="R31_N23_N20" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_31")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r31"
+start_point = NodePath("../../Points/N23")
+end_point = NodePath("../../Points/N20")
+
+[node name="R32_N23_N28" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_32")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r32"
+start_point = NodePath("../../Points/N23")
+end_point = NodePath("../../Points/N28")
+
+[node name="R33_N28_N29" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_33")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r33"
+start_point = NodePath("../../Points/N28")
+end_point = NodePath("../../Points/N29")
+
+[node name="R34_N29_N30" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_34")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r34"
+start_point = NodePath("../../Points/N29")
+end_point = NodePath("../../Points/N30")
+
+[node name="R35_N30_N03" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_35")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r35"
+start_point = NodePath("../../Points/N30")
+end_point = NodePath("../../Points/N03")
+
+[node name="R36_N03_N31" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_36")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r36"
+start_point = NodePath("../../Points/N03")
+end_point = NodePath("../../Points/N31")
+
+[node name="R37_N29_N36" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_37")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r37"
+start_point = NodePath("../../Points/N29")
+end_point = NodePath("../../Points/N36")
+
+[node name="R38_N36_N35" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_38")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r38"
+start_point = NodePath("../../Points/N36")
+end_point = NodePath("../../Points/N35")
+
+[node name="R39_N35_N33" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_39")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r39"
+start_point = NodePath("../../Points/N35")
+end_point = NodePath("../../Points/N33")
+
+[node name="R40_N33_N32" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_40")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r40"
+start_point = NodePath("../../Points/N33")
+end_point = NodePath("../../Points/N32")
+
+[node name="R41_N33_N34" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_41")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r41"
+start_point = NodePath("../../Points/N33")
+end_point = NodePath("../../Points/N34")
+
+[node name="Points" type="Node2D" parent="."]
+z_index = 2
+
+[node name="N01" type="Sprite2D" parent="Points"]
+position = Vector2(392, 230)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n01"
+location_note = "西北山道"
+
+[node name="N02" type="Sprite2D" parent="Points"]
+position = Vector2(622, 416)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n02"
+location_note = "西侧山门"
+
+[node name="N03" type="Sprite2D" parent="Points"]
+position = Vector2(958, 622)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n03"
+location_note = "西桥岔路"
+
+[node name="N04" type="Sprite2D" parent="Points"]
+position = Vector2(1050, 392)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n04"
+location_note = "林间支路"
+
+[node name="N05" type="Sprite2D" parent="Points"]
+position = Vector2(1110, 504)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n05"
+location_note = "北林岔路"
+
+[node name="N06" type="Sprite2D" parent="Points"]
+position = Vector2(1134, 150)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n06"
+location_note = "西北水道尽头"
+
+[node name="N07" type="Sprite2D" parent="Points"]
+position = Vector2(1368, 270)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n07"
+location_note = "北水道岔口"
+
+[node name="N08" type="Sprite2D" parent="Points"]
+position = Vector2(1738, 112)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n08"
+location_note = "北岸石阶"
+
+[node name="N09" type="Sprite2D" parent="Points"]
+position = Vector2(1856, 387)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n09"
+location_note = "北中水岸岔口"
+
+[node name="N10" type="Sprite2D" parent="Points"]
+position = Vector2(2168, 228)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n10"
+location_note = "东北岸岔路"
+
+[node name="N11" type="Sprite2D" parent="Points"]
+position = Vector2(2360, 140)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n11"
+location_note = "东北山口"
+
+[node name="N12" type="Sprite2D" parent="Points"]
+position = Vector2(2578, 314)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n12"
+location_note = "东北林道"
+
+[node name="N13" type="Sprite2D" parent="Points"]
+position = Vector2(2914, 402)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n13"
+location_note = "东北小屋"
+
+[node name="N14" type="Sprite2D" parent="Points"]
+position = Vector2(2854, 498)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n14"
+location_note = "东侧山道岔口"
+
+[node name="N15" type="Sprite2D" parent="Points"]
+position = Vector2(2900, 832)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n15"
+location_note = "东桥岔口"
+
+[node name="N16" type="Sprite2D" parent="Points"]
+position = Vector2(2978, 1122)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n16"
+location_note = "东南田边"
+
+[node name="N17" type="Sprite2D" parent="Points"]
+position = Vector2(2680, 1330)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n17"
+location_note = "水车东侧岔口"
+
+[node name="N18" type="Sprite2D" parent="Points"]
+position = Vector2(2442, 1316)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n18"
+location_note = "水车西侧"
+
+[node name="N19" type="Sprite2D" parent="Points"]
+position = Vector2(2224, 1210)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n19"
+location_note = "中央东南水岸"
+
+[node name="N20" type="Sprite2D" parent="Points"]
+position = Vector2(2082, 954)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n20"
+location_note = "中央小屋岔口"
+
+[node name="N21" type="Sprite2D" parent="Points"]
+position = Vector2(1924, 654)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n21"
+location_note = "中央北侧林道"
+
+[node name="N22" type="Sprite2D" parent="Points"]
+position = Vector2(1850, 828)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n22"
+location_note = "中央小屋支路"
+
+[node name="N23" type="Sprite2D" parent="Points"]
+position = Vector2(1698, 1144)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n23"
+location_note = "中央南侧岔口"
+
+[node name="N24" type="Sprite2D" parent="Points"]
+position = Vector2(1824, 1370)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n24"
+location_note = "南部北岸"
+
+[node name="N25" type="Sprite2D" parent="Points"]
+position = Vector2(2172, 1554)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n25"
+location_note = "东南水道"
+
+[node name="N26" type="Sprite2D" parent="Points"]
+position = Vector2(2508, 1602)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n26"
+location_note = "东南林地"
+
+[node name="N27" type="Sprite2D" parent="Points"]
+position = Vector2(2892, 1510)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n27"
+location_note = "东南山脚"
+
+[node name="N28" type="Sprite2D" parent="Points"]
+position = Vector2(1424, 1032)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n28"
+location_note = "中央西侧小径"
+
+[node name="N29" type="Sprite2D" parent="Points"]
+position = Vector2(1176, 974)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n29"
+location_note = "西南石阶岔口"
+
+[node name="N30" type="Sprite2D" parent="Points"]
+position = Vector2(1124, 772)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n30"
+location_note = "西部林道"
+
+[node name="N31" type="Sprite2D" parent="Points"]
+position = Vector2(894, 862)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n31"
+location_note = "西桥下支路"
+
+[node name="N32" type="Sprite2D" parent="Points"]
+position = Vector2(618, 912)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n32"
+location_note = "西瀑下支路"
+
+[node name="N33" type="Sprite2D" parent="Points"]
+position = Vector2(582, 1298)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n33"
+location_note = "西南水道岔口"
+
+[node name="N34" type="Sprite2D" parent="Points"]
+position = Vector2(136, 1012)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n34"
+location_note = "西部孤岛尽头"
+
+[node name="N35" type="Sprite2D" parent="Points"]
+position = Vector2(900, 1550)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n35"
+location_note = "西南小岛"
+
+[node name="N36" type="Sprite2D" parent="Points"]
+position = Vector2(1196, 1366)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n36"
+location_note = "西南石阶水岸"
+
+[node name="N37" type="Sprite2D" parent="Points"]
+position = Vector2(2486, 884)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n37"
+location_note = "大桥西端"
+
+[node name="EastExit" type="Sprite2D" parent="Points"]
+position = Vector2(3116, 818)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.east_exit"
+location_note = "东侧道路末端"
+
+[node name="Sign" type="Sprite2D" parent="Points/N01"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N07"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N10"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N12"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N21"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N30"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N28"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N33"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N24"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N17"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N26"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_sign_1")
+
+[node name="Sign" type="Sprite2D" parent="Points/N06"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N08"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N04"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N14"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N31"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N22"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N34"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N36"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N19"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N27"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_sign_2")
+
+[node name="Sign" type="Sprite2D" parent="Points/N05"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.861276987, 0.861276987)
+texture = SubResource("Atlas_sign_3")
+
+[node name="Sign" type="Sprite2D" parent="Points/N13"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.861276987, 0.861276987)
+texture = SubResource("Atlas_sign_3")
+
+[node name="Sign" type="Sprite2D" parent="Points/N32"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.861276987, 0.861276987)
+texture = SubResource("Atlas_sign_3")
+
+[node name="Sign" type="Sprite2D" parent="Points/N03"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.84497521, 0.84497521)
+texture = SubResource("Atlas_sign_4")
+
+[node name="Sign" type="Sprite2D" parent="Points/N20"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.84497521, 0.84497521)
+texture = SubResource("Atlas_sign_4")
+
+[node name="Sign" type="Sprite2D" parent="Points/N37"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.84497521, 0.84497521)
+texture = SubResource("Atlas_sign_4")
+
+[node name="Sign" type="Sprite2D" parent="Points/N16"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.84497521, 0.84497521)
+texture = SubResource("Atlas_sign_4")
+
+[node name="Sign" type="Sprite2D" parent="Points/N02"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.95663265, 0.95663265)
+texture = SubResource("Atlas_sign_5")
+
+[node name="Sign" type="Sprite2D" parent="Points/EastExit"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.95663265, 0.95663265)
+texture = SubResource("Atlas_sign_5")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N01/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N07/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N10/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N12/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N21/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N30/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N28/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N33/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N24/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N17/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N26/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy_icon")
+
+[node name="LocationIcon" type="Sprite2D" parent="Points/EastExit/Sign"]
+scale = Vector2(0.763888889, 0.763888889)
+texture = SubResource("Atlas_town")
+
+[node name="LocationIcon" type="Sprite2D" parent="Points/N02/Sign"]
+scale = Vector2(0.366056572, 0.366056572)
+texture = SubResource("Atlas_ruins")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N06/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N08/Sign"]
+scale = Vector2(0.628771324, 0.628771324)
+texture = SubResource("Atlas_ore")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N04/Sign"]
+scale = Vector2(0.714051873, 0.714051873)
+texture = SubResource("Atlas_plant")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N14/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N31/Sign"]
+scale = Vector2(0.714051873, 0.714051873)
+texture = SubResource("Atlas_plant")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N22/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N34/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N36/Sign"]
+scale = Vector2(0.628771324, 0.628771324)
+texture = SubResource("Atlas_ore")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N19/Sign"]
+scale = Vector2(0.628771324, 0.628771324)
+texture = SubResource("Atlas_ore")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N27/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="RestIcon" type="Sprite2D" parent="Points/N05/Sign"]
+scale = Vector2(0.688291799, 0.688291799)
+texture = SubResource("Atlas_outdoor")
+
+[node name="RestIcon" type="Sprite2D" parent="Points/N13/Sign"]
+scale = Vector2(0.773024277, 0.773024277)
+texture = SubResource("Atlas_indoor")
+
+[node name="RestIcon" type="Sprite2D" parent="Points/N32/Sign"]
+scale = Vector2(0.739284467, 0.739284467)
+texture = SubResource("Atlas_water")
+
+[node name="StoryIcon" type="Sprite2D" parent="Points/N03/Sign"]
+scale = Vector2(0.715186134, 0.715186134)
+texture = SubResource("Atlas_story")
+
+[node name="StoryIcon" type="Sprite2D" parent="Points/N20/Sign"]
+scale = Vector2(0.715186134, 0.715186134)
+texture = SubResource("Atlas_story")
+
+[node name="StoryIcon" type="Sprite2D" parent="Points/N37/Sign"]
+scale = Vector2(0.715186134, 0.715186134)
+texture = SubResource("Atlas_story")
+
+[node name="StoryIcon" type="Sprite2D" parent="Points/N16/Sign"]
+scale = Vector2(0.715186134, 0.715186134)
+texture = SubResource("Atlas_story")

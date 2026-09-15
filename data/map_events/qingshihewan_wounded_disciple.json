@@ -1,0 +1,75 @@
+{
+  "id": "base.map_event.qingshihewan.wounded_disciple",
+  "type": "dialogue",
+  "point_id": "base.map.qingshihewan.point.n20",
+  "requires_completed": ["base.map_event.qingshihewan.bridge_traces"],
+  "speaker_id": "base.npc.qinglan.outer_disciple",
+  "speakers": {
+    "base.npc.qinglan.outer_disciple": {
+      "portrait": "res://assets/npc-xuetu-qlz.webp",
+      "portrait_region": [8, 5, 689, 684]
+    },
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/zhujue-m1.webp",
+      "portrait_region": [8, 6, 455, 464]
+    }
+  },
+  "presentation": {
+    "background": "res://assets/map-dialogue.webp",
+    "background_region": [25, 53, 1930, 371],
+    "portrait": "res://assets/npc-xuetu-qlz.webp",
+    "portrait_region": [8, 5, 689, 684],
+    "portrait_slot": [69, 30, 298, 308],
+    "portrait_max_size": 280,
+    "text_rect": [430, 76, 1400, 205],
+    "illustration": {
+      "frame": "res://assets/map-event-frame.webp",
+      "image": "res://assets/map-event-1-1.webp",
+      "image_slot": [86, 120, 1276, 672]
+    }
+  },
+  "line_speakers": [
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu",
+    "base.npc.qinglan.outer_disciple",
+    "base.map_player.chen_yu"
+  ],
+  "lines": [
+    "等等，先别过来，附近还有山兽。",
+    "你伤得不轻。（你注意到他的衣服标识）你是青岚宗的人？",
+    "嗯。青岚宗外门弟子。你是青石镇的？",
+    "镇上药铺的。你这伤口还在流血，我先帮你看看。",
+    "我伤了经脉，凡药恐怕没什么用。",
+    "经脉我不会治。先把血止住总没错。",
+    "（他低头看了一眼自己的衣服）好，麻烦你了。",
+    "（开始处理伤口）你们青岚宗的人怎么会跑到河湾来了？",
+    "最近这一带的山兽一直往外围跑，宗里让我下来查查。追进去以后碰上一群受惊的野兽，又赶上落石，就成这样了。",
+    "查到它们为什么往外跑了吗？",
+    "还没有。只知道不太正常。",
+    "（看着他的伤势）这附近有止血草和青藤根。我去找一点回来，应该能把伤口稳住。",
+    "你一个人去？",
+    "嗯，这里我熟。",
+    "（想了想，从身上取出小法器）那这个先借你。",
+    "这是……法器？",
+    "最普通的恢复法器，里面存着些灵力。你还没修炼，也能用。遇到野兽的时候至少多一层保障。",
+    "那你怎么办？",
+    "我现在伤的是经脉，它帮不上多少忙。你回来时再还给我就行。",
+    "行。那我先去了，你好好休息。"
+  ]
+}

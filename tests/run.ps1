@@ -35,9 +35,21 @@ function Invoke-GodotCheck {
 Invoke-GodotCheck -Name 'import' -ExtraArgs @('--headless', '--editor', '--import', '--quit')
 Invoke-GodotCheck -Name 'tests' -ExtraArgs @('--headless', '--script', 'res://tests/run_tests.gd')
 Invoke-GodotCheck -Name 'ui' -ExtraArgs @('--headless', '--script', 'res://tests/ui_smoke.gd')
+Invoke-GodotCheck -Name 'map' -ExtraArgs @('--headless', '--script', 'res://tests/map_smoke.gd')
+Invoke-GodotCheck -Name 'map-travel' -ExtraArgs @('--headless', '--script', 'res://tests/map_travel_tests.gd')
+Invoke-GodotCheck -Name 'map-player' -ExtraArgs @('--headless', '--script', 'res://tests/map_player_smoke.gd')
+Invoke-GodotCheck -Name 'map-events' -ExtraArgs @('--headless', '--script', 'res://tests/map_event_tests.gd')
+Invoke-GodotCheck -Name 'map-dialogue' -ExtraArgs @('--headless', '--script', 'res://tests/map_dialogue_smoke.gd')
+Invoke-GodotCheck -Name 'map-illustrated-dialogue' -ExtraArgs @('--headless', '--script', 'res://tests/map_illustrated_dialogue_smoke.gd')
 Invoke-GodotCheck -Name 'startup' -ExtraArgs @('--headless', '--quit-after', '5')
+Invoke-GodotCheck -Name 'battle-startup' -ExtraArgs @('--headless', 'res://scenes/main/main.tscn', '--quit-after', '5')
 Invoke-GodotCheck -Name 'retreat-exit' -ExtraArgs @('--headless', '--script', 'res://tests/retreat_exit_smoke.gd')
 if ($Render) {
+    Invoke-GodotCheck -Name 'map-editor' -ExtraArgs @('--editor', 'res://scenes/maps/qingshihewan_layout.tscn', '--quit-after', '120')
     Invoke-GodotCheck -Name 'render' -ExtraArgs @('--script', 'res://tests/ui_smoke.gd')
+    Invoke-GodotCheck -Name 'map-render' -ExtraArgs @('--script', 'res://tests/map_smoke.gd')
+    Invoke-GodotCheck -Name 'map-player-render' -ExtraArgs @('--script', 'res://tests/map_player_smoke.gd')
+    Invoke-GodotCheck -Name 'map-dialogue-render' -ExtraArgs @('--script', 'res://tests/map_dialogue_smoke.gd')
+    Invoke-GodotCheck -Name 'map-illustrated-dialogue-render' -ExtraArgs @('--script', 'res://tests/map_illustrated_dialogue_smoke.gd')
 }
 Write-Output 'All Godot checks passed.'

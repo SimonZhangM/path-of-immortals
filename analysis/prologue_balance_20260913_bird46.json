@@ -1,0 +1,1425 @@
+{
+  "scope": "Independent design-test fixtures only; trial IDs are not production content IDs.",
+  "source_attachment": "f2cf4592-ea52-4ad4-8dd3-ee743740855f",
+  "latest_confirmation": "2026-09-13",
+  "candidate_restore_parameters": true,
+  "player": {
+    "hp": 50,
+    "stamina": 50,
+    "spirit": 0
+  },
+  "default_bottles_per_type": 3,
+  "damage_multipliers": {
+    "none": {
+      "pierce": "1.05",
+      "slash": "1.20",
+      "blunt": "1.00",
+      "spell": "1.10"
+    },
+    "light": {
+      "pierce": "1.20",
+      "slash": "1.05",
+      "blunt": "1.00",
+      "spell": "1.00"
+    },
+    "heavy": {
+      "pierce": "0.80",
+      "slash": "0.80",
+      "blunt": "1.20",
+      "spell": "1.00"
+    },
+    "spiritual": {
+      "pierce": "1.00",
+      "slash": "1.00",
+      "blunt": "1.00",
+      "spell": "1.20"
+    }
+  },
+  "items": {
+    "trial.sword": {
+      "name": "青石短剑",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 3500,
+      "damage": 7,
+      "attack_type": "slash",
+      "stamina_cost": 3
+    },
+    "trial.bow": {
+      "name": "猎弓",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 4500,
+      "damage": 9,
+      "attack_type": "pierce",
+      "stamina_cost": 5
+    },
+    "trial.hammer": {
+      "name": "短柄铁锤",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 4000,
+      "damage": 8,
+      "attack_type": "blunt",
+      "stamina_cost": 4
+    },
+    "trial.cloth": {
+      "name": "粗布甲",
+      "kind": "armor",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 4000,
+      "armor_cap": 7,
+      "armor_gain": 3,
+      "initial_armor": 0,
+      "armor_type": "light"
+    },
+    "trial.helmet": {
+      "name": "旧铁盔",
+      "kind": "armor",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 5000,
+      "armor_cap": 2,
+      "armor_gain": 1,
+      "initial_armor": 0
+    },
+    "trial.shield": {
+      "name": "木圆盾",
+      "kind": "armor",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 5000,
+      "armor_cap": 2,
+      "armor_gain": 3,
+      "initial_armor": 0
+    },
+    "trial.relic": {
+      "name": "恢复法器（试值）",
+      "kind": "relic",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 4000,
+      "hp_gain": 4,
+      "stamina_gain": 6,
+      "cap_ratio": "2/3"
+    },
+    "trial.hp": {
+      "name": "止血丹（试值）",
+      "kind": "pill",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 6500,
+      "resource": "hp",
+      "tick_gain": 2,
+      "tick_ms": 2000,
+      "tick_count": 3
+    },
+    "trial.stamina": {
+      "name": "强筋丸（试值）",
+      "kind": "pill",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 7500,
+      "resource": "stamina",
+      "tick_gain": 4,
+      "tick_ms": 2000,
+      "tick_count": 3
+    },
+    "trial.antidote": {
+      "name": "消毒散",
+      "kind": "antidote",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 5500,
+      "duration_ms": 15000
+    },
+    "trial.wolf.claw": {
+      "name": "双狼爪",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 2500,
+      "damage": 4,
+      "attack_type": "slash",
+      "stamina_cost": 2
+    },
+    "trial.wolf.fang": {
+      "name": "山狼尖牙",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 4000,
+      "damage": 6,
+      "attack_type": "pierce",
+      "stamina_cost": 3
+    },
+    "trial.turtle.shell": {
+      "name": "青壳",
+      "kind": "armor",
+      "area": 4,
+      "shape": [
+        2,
+        2
+      ],
+      "cd_ms": 6500,
+      "armor_cap": 7,
+      "armor_gain": 3,
+      "initial_armor": 4,
+      "armor_type": "heavy"
+    },
+    "trial.turtle.beak": {
+      "name": "尖喙",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 3500,
+      "damage": 5,
+      "attack_type": "pierce",
+      "stamina_cost": 2
+    },
+    "trial.turtle.tail": {
+      "name": "粗尾横扫",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 4500,
+      "damage": 6,
+      "attack_type": "blunt",
+      "stamina_cost": 3
+    },
+    "trial.bird.feather": {
+      "name": "青翎羽衣",
+      "kind": "armor",
+      "area": 4,
+      "shape": [
+        2,
+        2
+      ],
+      "cd_ms": 5500,
+      "armor_cap": 5,
+      "armor_gain": 2,
+      "initial_armor": 0,
+      "armor_type": "light"
+    },
+    "trial.bird.beak": {
+      "name": "岩雉硬喙",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 3000,
+      "damage": 5,
+      "attack_type": "pierce",
+      "stamina_cost": 2
+    },
+    "trial.bird.claw": {
+      "name": "钩爪",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 3500,
+      "damage": 5,
+      "attack_type": "slash",
+      "stamina_cost": 2
+    },
+    "trial.boar.skin": {
+      "name": "厚实鬃皮",
+      "kind": "armor",
+      "area": 4,
+      "shape": [
+        2,
+        2
+      ],
+      "cd_ms": 6000,
+      "armor_cap": 6,
+      "armor_gain": 2,
+      "initial_armor": 0,
+      "armor_type": "light"
+    },
+    "trial.boar.tusk": {
+      "name": "巨型獠牙",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 5000,
+      "damage": 7,
+      "attack_type": "pierce",
+      "stamina_cost": 5
+    },
+    "trial.boar.hoof": {
+      "name": "铁蹄",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 3000,
+      "damage": 3,
+      "attack_type": "blunt",
+      "stamina_cost": 3
+    },
+    "trial.boar.buff": {
+      "name": "冲势",
+      "kind": "buff",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 7500,
+      "stamina_cost": 2,
+      "target": "trial.boar.tusk",
+      "bonus": 3
+    },
+    "trial.rat.tooth": {
+      "name": "硬门齿",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 3500,
+      "damage": 4,
+      "attack_type": "pierce",
+      "stamina_cost": 2
+    },
+    "trial.rat.claw": {
+      "name": "前爪",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 3000,
+      "damage": 3,
+      "attack_type": "slash",
+      "stamina_cost": 2
+    },
+    "trial.rat.tail": {
+      "name": "粗尾横扫",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 4500,
+      "damage": 5,
+      "attack_type": "blunt",
+      "stamina_cost": 2
+    },
+    "trial.bat.tooth": {
+      "name": "蝠齿",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 2500,
+      "damage": 4,
+      "attack_type": "pierce",
+      "stamina_cost": 2
+    },
+    "trial.bat.claw": {
+      "name": "翼爪",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 3500,
+      "damage": 4,
+      "attack_type": "slash",
+      "stamina_cost": 2
+    },
+    "trial.bat.control": {
+      "name": "震鸣囊",
+      "kind": "control",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 6500,
+      "stamina_cost": 3,
+      "target_mode": "soonest_attack",
+      "delay_ms": 500
+    },
+    "trial.gray.shell": {
+      "name": "灰质甲壳",
+      "kind": "armor",
+      "area": 4,
+      "shape": [
+        2,
+        2
+      ],
+      "cd_ms": 5500,
+      "armor_cap": 4,
+      "armor_gain": 2,
+      "initial_armor": 0,
+      "armor_type": "light"
+    },
+    "trial.gray.fang": {
+      "name": "灰蛛螯牙",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 3000,
+      "damage": 4,
+      "attack_type": "pierce",
+      "stamina_cost": 2
+    },
+    "trial.gray.foot": {
+      "name": "前足撕扯",
+      "kind": "attack",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 3500,
+      "damage": 4,
+      "attack_type": "slash",
+      "stamina_cost": 2
+    },
+    "trial.gray.control": {
+      "name": "粘丝囊",
+      "kind": "control",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 6000,
+      "stamina_cost": 3,
+      "target_mode": "all_attacks",
+      "delay_ms": 400
+    },
+    "trial.spider.shell": {
+      "name": "岩腹甲壳",
+      "kind": "armor",
+      "area": 4,
+      "shape": [
+        2,
+        2
+      ],
+      "cd_ms": 6500,
+      "armor_cap": 9,
+      "armor_gain": 3,
+      "initial_armor": 5,
+      "armor_type": "heavy"
+    },
+    "trial.spider.fang": {
+      "name": "岩腹螯牙",
+      "kind": "attack",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 3000,
+      "damage": 5,
+      "attack_type": "pierce",
+      "stamina_cost": 3
+    },
+    "trial.spider.poison": {
+      "name": "腐毒囊",
+      "kind": "poison",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 6000,
+      "stamina_cost": 3,
+      "tick_damage": 2,
+      "tick_ms": 1000,
+      "duration_ms": 4000
+    },
+    "trial.spider.control": {
+      "name": "大蛛丝囊",
+      "kind": "control",
+      "area": 2,
+      "shape": [
+        1,
+        2
+      ],
+      "cd_ms": 7000,
+      "stamina_cost": 3,
+      "target_mode": "all_items",
+      "delay_ms": 500
+    },
+    "trial.boss.stamina_relic": {
+      "name": "Boss回体法器（试算）",
+      "kind": "relic",
+      "area": 1,
+      "shape": [
+        1,
+        1
+      ],
+      "cd_ms": 2000,
+      "stamina_gain": 2,
+      "threshold_ratio": "2/3",
+      "conditional_stamina": true,
+      "stamina_cost": 0,
+      "test_assumptions": "One-cell zero-cost item; threshold is exact, no rounding. Shared 2s restoration priority; no cooldown while disabled."
+    }
+  },
+  "enemies": {
+    "wolf": {
+      "name": "灰脊山狼",
+      "hp": 45,
+      "stamina": 42,
+      "spirit": 0,
+      "items": [
+        "trial.wolf.claw",
+        "trial.wolf.fang"
+      ]
+    },
+    "turtle": {
+      "name": "青壳河鼋",
+      "hp": 51,
+      "stamina": 45,
+      "spirit": 0,
+      "items": [
+        "trial.turtle.shell",
+        "trial.turtle.beak",
+        "trial.turtle.tail"
+      ]
+    },
+    "bird": {
+      "name": "青翎岩雉",
+      "hp": 46,
+      "stamina": 45,
+      "spirit": 0,
+      "items": [
+        "trial.bird.feather",
+        "trial.bird.beak",
+        "trial.bird.claw"
+      ]
+    },
+    "boar": {
+      "name": "赤鬃獠猪",
+      "hp": 96,
+      "stamina": 98,
+      "spirit": 0,
+      "items": [
+        "trial.boar.skin",
+        "trial.boar.tusk",
+        "trial.boar.hoof",
+        "trial.boar.buff",
+        "trial.boss.stamina_relic"
+      ]
+    },
+    "rat": {
+      "name": "黑尾祠鼠",
+      "hp": 39,
+      "stamina": 36,
+      "spirit": 0,
+      "items": [
+        "trial.rat.tooth",
+        "trial.rat.claw",
+        "trial.rat.tail"
+      ]
+    },
+    "bat": {
+      "name": "灰翼蝠",
+      "hp": 42,
+      "stamina": 39,
+      "spirit": 0,
+      "items": [
+        "trial.bat.tooth",
+        "trial.bat.claw",
+        "trial.bat.control"
+      ]
+    },
+    "gray_spider": {
+      "name": "穴居灰蛛",
+      "hp": 57,
+      "stamina": 61,
+      "spirit": 0,
+      "items": [
+        "trial.gray.shell",
+        "trial.gray.fang",
+        "trial.gray.foot",
+        "trial.gray.control"
+      ]
+    },
+    "boss_spider": {
+      "name": "岩腹毒蛛",
+      "hp": 102,
+      "stamina": 105,
+      "spirit": 0,
+      "items": [
+        "trial.spider.shell",
+        "trial.spider.fang",
+        "trial.spider.poison",
+        "trial.spider.control",
+        "trial.boss.stamina_relic"
+      ]
+    }
+  },
+  "builds": {
+    "sword_guard": {
+      "name": "单剑防御",
+      "items": [
+        "trial.sword",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ]
+    },
+    "bow_guard": {
+      "name": "单弓防御",
+      "items": [
+        "trial.bow",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ]
+    },
+    "hammer_guard": {
+      "name": "单锤防御",
+      "items": [
+        "trial.hammer",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ]
+    },
+    "hammer_antidote": {
+      "name": "单锤解毒",
+      "items": [
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ]
+    },
+    "dual_sword_bow": {
+      "name": "剑弓布甲",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.cloth",
+        "trial.relic"
+      ]
+    },
+    "dual_sword_hammer": {
+      "name": "剑锤布甲",
+      "items": [
+        "trial.sword",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic"
+      ]
+    },
+    "dual_bow_hammer": {
+      "name": "弓锤布甲",
+      "items": [
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic"
+      ]
+    },
+    "triple_guard": {
+      "name": "三武器带盔回血",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ]
+    },
+    "triple_antidote": {
+      "name": "三武器回血解毒",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ]
+    },
+    "triple_stamina": {
+      "name": "三武器补体解毒",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.relic",
+        "trial.stamina",
+        "trial.antidote"
+      ]
+    },
+    "triple_helm_stamina": {
+      "name": "三武器带盔补体",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.helmet",
+        "trial.relic",
+        "trial.stamina"
+      ]
+    },
+    "two_swords": {
+      "name": "双剑布甲",
+      "items": [
+        "trial.sword",
+        "trial.sword",
+        "trial.cloth",
+        "trial.relic"
+      ]
+    },
+    "three_swords": {
+      "name": "三剑带盔回血",
+      "items": [
+        "trial.sword",
+        "trial.sword",
+        "trial.sword",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ]
+    },
+    "three_bows": {
+      "name": "三弓回血解毒",
+      "items": [
+        "trial.bow",
+        "trial.bow",
+        "trial.bow",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ]
+    },
+    "three_hammers": {
+      "name": "三锤回血解毒",
+      "items": [
+        "trial.hammer",
+        "trial.hammer",
+        "trial.hammer",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ]
+    },
+    "single_sword_full": {
+      "name": "单剑全药防御",
+      "items": [
+        "trial.sword",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp",
+        "trial.stamina",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "single_sword_shield": {
+      "name": "单剑盾甲",
+      "items": [
+        "trial.sword",
+        "trial.cloth",
+        "trial.shield",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "single_bow_full": {
+      "name": "单弓全药防御",
+      "items": [
+        "trial.bow",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp",
+        "trial.stamina",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "single_bow_shield": {
+      "name": "单弓盾甲",
+      "items": [
+        "trial.bow",
+        "trial.cloth",
+        "trial.shield",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "single_hammer_full": {
+      "name": "单锤全药防御",
+      "items": [
+        "trial.hammer",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp",
+        "trial.stamina",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "single_hammer_shield": {
+      "name": "单锤盾甲",
+      "items": [
+        "trial.hammer",
+        "trial.cloth",
+        "trial.shield",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "dual_sword_bow_balanced": {
+      "name": "剑弓布甲均衡",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "dual_sword_bow_antidote": {
+      "name": "剑弓布甲回血解毒",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.cloth",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "dual_sword_bow_stamina": {
+      "name": "剑弓布甲补体解毒",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.cloth",
+        "trial.relic",
+        "trial.stamina",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "dual_sword_hammer_balanced": {
+      "name": "剑锤布甲均衡",
+      "items": [
+        "trial.sword",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "dual_sword_hammer_antidote": {
+      "name": "剑锤布甲回血解毒",
+      "items": [
+        "trial.sword",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "dual_sword_hammer_stamina": {
+      "name": "剑锤布甲补体解毒",
+      "items": [
+        "trial.sword",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic",
+        "trial.stamina",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "dual_bow_hammer_balanced": {
+      "name": "弓锤布甲均衡",
+      "items": [
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "dual_bow_hammer_antidote": {
+      "name": "弓锤布甲回血解毒",
+      "items": [
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic",
+        "trial.hp",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "dual_bow_hammer_stamina": {
+      "name": "弓锤布甲补体解毒",
+      "items": [
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic",
+        "trial.stamina",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "triple_cloth_relic": {
+      "name": "三武器布甲法器",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.relic"
+      ],
+      "new_full_profile": true
+    },
+    "triple_cloth_hp": {
+      "name": "三武器布甲血药",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    },
+    "triple_cloth_stamina": {
+      "name": "三武器布甲体药",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.stamina"
+      ],
+      "new_full_profile": true
+    },
+    "triple_cloth_antidote": {
+      "name": "三武器布甲解毒",
+      "items": [
+        "trial.sword",
+        "trial.bow",
+        "trial.hammer",
+        "trial.cloth",
+        "trial.antidote"
+      ],
+      "new_full_profile": true
+    },
+    "two_swords_full": {
+      "name": "双剑布甲均衡",
+      "items": [
+        "trial.sword",
+        "trial.sword",
+        "trial.cloth",
+        "trial.helmet",
+        "trial.relic",
+        "trial.hp"
+      ],
+      "new_full_profile": true
+    }
+  },
+  "revision": "2026-09-13-matrix-bow9-v6",
+  "cd_revision_rule": "Explicit user values win; all other rotation CDs move to the strictly next 500 ms multiple, exactly once. Effect ticks, durations and delay amounts unchanged.",
+  "based_on": "prologue_balance_20260913_boss_recovery.json",
+  "relic_parameters_user_confirmed": true,
+  "hp_revision_rule": "Every current enemy HP is multiplied by 1.5 once and rounded upward; earlier turtle 50/70 HP probes were not adopted.",
+  "current_revision_changes": {
+    "bow_damage": [
+      11,
+      9
+    ],
+    "damage_multipliers_before": {
+      "none": {
+        "pierce": "1.10",
+        "slash": "1.20",
+        "blunt": "0.85",
+        "spell": "1.00"
+      },
+      "light": {
+        "pierce": "1.20",
+        "slash": "1.10",
+        "blunt": "1.10",
+        "spell": "1.05"
+      },
+      "heavy": {
+        "pierce": "0.85",
+        "slash": "0.85",
+        "blunt": "1.15",
+        "spell": "1.10"
+      },
+      "spiritual": {
+        "pierce": "1.00",
+        "slash": "1.00",
+        "blunt": "1.00",
+        "spell": "1.15"
+      }
+    },
+    "damage_multipliers_after": {
+      "none": {
+        "pierce": "1.05",
+        "slash": "1.20",
+        "blunt": "1.00",
+        "spell": "1.10"
+      },
+      "light": {
+        "pierce": "1.20",
+        "slash": "1.05",
+        "blunt": "1.00",
+        "spell": "1.00"
+      },
+      "heavy": {
+        "pierce": "0.80",
+        "slash": "0.80",
+        "blunt": "1.20",
+        "spell": "1.00"
+      },
+      "spiritual": {
+        "pierce": "1.00",
+        "slash": "1.00",
+        "blunt": "1.00",
+        "spell": "1.20"
+      }
+    }
+  },
+  "previous_cd_changes": [
+    {
+      "id": "trial.sword",
+      "name": "青石短剑",
+      "old_cd_ms": 2400,
+      "new_cd_ms": 3000,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.bow",
+      "name": "猎弓",
+      "old_cd_ms": 3500,
+      "new_cd_ms": 5000,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.hammer",
+      "name": "短柄铁锤",
+      "old_cd_ms": 3000,
+      "new_cd_ms": 4000,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.cloth",
+      "name": "粗布甲",
+      "old_cd_ms": 5000,
+      "new_cd_ms": 4000,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.helmet",
+      "name": "旧铁盔",
+      "old_cd_ms": 4000,
+      "new_cd_ms": 5000,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.shield",
+      "name": "木圆盾",
+      "old_cd_ms": 4500,
+      "new_cd_ms": 5000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.relic",
+      "name": "恢复法器（试值）",
+      "old_cd_ms": 4000,
+      "new_cd_ms": 4500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.hp",
+      "name": "止血丹（试值）",
+      "old_cd_ms": 6000,
+      "new_cd_ms": 6500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.stamina",
+      "name": "强筋丸（试值）",
+      "old_cd_ms": 7000,
+      "new_cd_ms": 7500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.antidote",
+      "name": "消毒散",
+      "old_cd_ms": 5000,
+      "new_cd_ms": 5500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.wolf.claw",
+      "name": "双狼爪",
+      "old_cd_ms": 2100,
+      "new_cd_ms": 2500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.wolf.fang",
+      "name": "山狼尖牙",
+      "old_cd_ms": 3500,
+      "new_cd_ms": 4000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.turtle.shell",
+      "name": "青壳",
+      "old_cd_ms": 6000,
+      "new_cd_ms": 6500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.turtle.beak",
+      "name": "尖喙",
+      "old_cd_ms": 3200,
+      "new_cd_ms": 3500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.turtle.tail",
+      "name": "粗尾横扫",
+      "old_cd_ms": 4400,
+      "new_cd_ms": 4500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.bird.feather",
+      "name": "青翎羽衣",
+      "old_cd_ms": 5000,
+      "new_cd_ms": 5500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.bird.beak",
+      "name": "岩雉硬喙",
+      "old_cd_ms": 2600,
+      "new_cd_ms": 3000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.bird.claw",
+      "name": "钩爪",
+      "old_cd_ms": 3400,
+      "new_cd_ms": 3500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.boar.skin",
+      "name": "厚实鬃皮",
+      "old_cd_ms": 5500,
+      "new_cd_ms": 6000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.boar.tusk",
+      "name": "巨型獠牙",
+      "old_cd_ms": 4800,
+      "new_cd_ms": 5000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.boar.hoof",
+      "name": "铁蹄",
+      "old_cd_ms": 2800,
+      "new_cd_ms": 3000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.boar.buff",
+      "name": "冲势",
+      "old_cd_ms": 7200,
+      "new_cd_ms": 7500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.rat.tooth",
+      "name": "硬门齿",
+      "old_cd_ms": 1900,
+      "new_cd_ms": 3500,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.rat.claw",
+      "name": "前爪",
+      "old_cd_ms": 2500,
+      "new_cd_ms": 3000,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.rat.tail",
+      "name": "粗尾横扫",
+      "old_cd_ms": 4200,
+      "new_cd_ms": 4500,
+      "reason": "explicit"
+    },
+    {
+      "id": "trial.bat.tooth",
+      "name": "蝠齿",
+      "old_cd_ms": 2200,
+      "new_cd_ms": 2500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.bat.claw",
+      "name": "翼爪",
+      "old_cd_ms": 3000,
+      "new_cd_ms": 3500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.bat.control",
+      "name": "震鸣囊",
+      "old_cd_ms": 6000,
+      "new_cd_ms": 6500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.gray.shell",
+      "name": "灰质甲壳",
+      "old_cd_ms": 5200,
+      "new_cd_ms": 5500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.gray.fang",
+      "name": "灰蛛螯牙",
+      "old_cd_ms": 2500,
+      "new_cd_ms": 3000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.gray.foot",
+      "name": "前足撕扯",
+      "old_cd_ms": 3200,
+      "new_cd_ms": 3500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.gray.control",
+      "name": "粘丝囊",
+      "old_cd_ms": 5800,
+      "new_cd_ms": 6000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.spider.shell",
+      "name": "岩腹甲壳",
+      "old_cd_ms": 6000,
+      "new_cd_ms": 6500,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.spider.fang",
+      "name": "岩腹螯牙",
+      "old_cd_ms": 2600,
+      "new_cd_ms": 3000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.spider.poison",
+      "name": "腐毒囊",
+      "old_cd_ms": 5800,
+      "new_cd_ms": 6000,
+      "reason": "strict_next_half_second"
+    },
+    {
+      "id": "trial.spider.control",
+      "name": "大蛛丝囊",
+      "old_cd_ms": 6800,
+      "new_cd_ms": 7000,
+      "reason": "strict_next_half_second"
+    }
+  ],
+  "stamina_revision_rule": "Each current enemy stamina is multiplied by 1.5 once; continue the user's upward integer rounding convention (boar 65 -> 98). Only enemy initial/max stamina changes.",
+  "previous_revision_changes": {
+    "gray_spider_stamina": {
+      "before": 51,
+      "after": 61
+    },
+    "weapon_cd_ms": {
+      "trial.sword": [
+        3000,
+        3500
+      ],
+      "trial.hammer": [
+        4000,
+        4000
+      ],
+      "trial.bow": [
+        5000,
+        4500
+      ]
+    },
+    "bosses": [
+      "boar",
+      "boss_spider"
+    ],
+    "boss_relic": "trial.boss.stamina_relic",
+    "coefficient_changes": [
+      {
+        "attack": "pierce",
+        "armor": "light",
+        "before": "1.15",
+        "after": "1.20"
+      },
+      {
+        "attack": "pierce",
+        "armor": "spiritual",
+        "before": "1.05",
+        "after": "1.00"
+      },
+      {
+        "attack": "slash",
+        "armor": "none",
+        "before": "1.15",
+        "after": "1.20"
+      },
+      {
+        "attack": "slash",
+        "armor": "light",
+        "before": "1.00",
+        "after": "1.10"
+      },
+      {
+        "attack": "slash",
+        "armor": "spiritual",
+        "before": "1.05",
+        "after": "1.00"
+      },
+      {
+        "attack": "blunt",
+        "armor": "none",
+        "before": "1.05",
+        "after": "0.85"
+      },
+      {
+        "attack": "blunt",
+        "armor": "light",
+        "before": "0.90",
+        "after": "1.10"
+      },
+      {
+        "attack": "blunt",
+        "armor": "spiritual",
+        "before": "1.05",
+        "after": "1.00"
+      },
+      {
+        "attack": "spell",
+        "armor": "heavy",
+        "before": "1.15",
+        "after": "1.10"
+      },
+      {
+        "attack": "spell",
+        "armor": "spiritual",
+        "before": "0.85",
+        "after": "1.15"
+      }
+    ]
+  },
+  "boss_recovery_confirmation": "Enabled at stamina <= exact 2/3 of normal max, starts full 2s CD on each re-enable, restores 2 up to normal max and may cross 2/3; stops and clears CD above threshold. Spending while active preserves current CD. No prewarming while inactive.",
+  "blunt_confirmation": "User corrected 盾击 to 钝击. Matrix changes apply to both sides; other entries preserved."
+}

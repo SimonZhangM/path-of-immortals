@@ -47,6 +47,9 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var color := CooldownRing.tint(manager.registry, trait_data.get("element", "base.element.none"))
 	var center := Vector2(size.x / 2, size.y / 2 + circle_offset_y)
+	# A shallow shadow hugs each rim; no shared shaded panel between skills.
+	for layer in 5:
+		draw_circle(center + Vector2(0, 1.5), 44.0 - layer * 2.0, Color(0.04, 0.05, 0.06, 0.015 + layer * 0.022), true, -1, true)
 	draw_circle(center, 34, Color("080f13", 0.92))
 	draw_arc(center, 33, 0, TAU, 64, Color("b7985b"), 2, true)
 	draw_arc(center, 29, 0, TAU, 64, Color(color, 0.24), 1, true)

@@ -1,0 +1,22 @@
+{
+  "id": "base.map_event.qingshihewan.bridge_traces",
+  "type": "dialogue",
+  "point_id": "base.map.qingshihewan.point.n37",
+  "speaker_id": "base.map_player.chen_yu",
+  "presentation": {
+    "background": "res://assets/map-dialogue.webp",
+    "background_region": [25, 53, 1930, 371],
+    "portrait": "res://assets/zhujue-m1.webp",
+    "portrait_region": [8, 6, 455, 464],
+    "portrait_slot": [69, 30, 298, 308],
+    "portrait_max_size": 280,
+    "text_rect": [430, 76, 1400, 205]
+  },
+  "lines": [
+    "河水最近又浅了不少。",
+    "以前这几块石头应该都在水下面。",
+    "岸边怎么这么多脚印。",
+    "难道最近山里的野兽确实都往外面来了？",
+    "不好！有血……"
+  ]
+}

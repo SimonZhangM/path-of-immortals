@@ -171,7 +171,8 @@ func _layout_nameplate() -> void:
 
 func _draw() -> void:
 	if resources != null:
-		draw_texture_rect(preload("res://scripts/ui/portrait_backdrop.tres"), Rect2(110, 16, _content.size.x - 78, 204), false)
+		# Tight vertical padding with a fade only at the right end.
+		draw_texture_rect(preload("res://scripts/ui/resource_strip.tres"), Rect2(110, 64, _content.size.x - 102, 108), false)
 
 func set_primary(primary: bool) -> void:
 	var display_scale := 1.0 if primary else COMPACT_SCALE

@@ -1,0 +1,15 @@
+{
+  "id": "base.map_player.chen_yu",
+  "start_point": "base.map.qingshihewan.point.east_exit",
+  "initial_facing": "left",
+  "walk_speed": 200.0,
+  "run_speed": 360.0,
+  "display_scale": 1.0,
+  "frame_size": [128, 128],
+  "feet_offset": [0, -56],
+  "animations": {
+    "idle": {"texture": "res://assets/fr-idle.webp", "frames": 4, "fps": 3.0, "frame_size": [543, 724], "feet_offset": [0, -300]},
+    "walk": {"texture": "res://assets/fr-walk.webp", "frames": 8, "sheet_frames": 5, "frame_order": [3, 4, 5, 4, 3, 2, 1, 2], "fps": 8.0, "frame_regions": [[59, 35, 310, 561], [379, 35, 310, 561], [687, 35, 310, 561], [994, 35, 310, 561], [1310, 35, 310, 561]], "feet_offset": [0, -217.5], "display_frame_height": 133.3},
+    "run": {"texture": "res://assets/fr-run.webp", "frames": 12, "sheet_frames": 7, "frame_order": [4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 2, 3], "fps": 12.0, "frame_regions": [[37, 0, 360, 724], [419, 0, 360, 724], [766, 0, 360, 724], [1086, 0, 360, 724], [1422, 0, 360, 724], [1787, 0, 360, 724], [2141, 0, 360, 724]], "feet_offset": [0, -224], "display_frame_height": 170}
+  }
+}

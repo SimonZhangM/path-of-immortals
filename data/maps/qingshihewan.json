@@ -1,0 +1,12 @@
+{
+  "id": "base.map.qingshihewan",
+  "name": "青石河湾",
+  "background": "res://assets/gamemap-qingshihewan.webp",
+  "marker": "res://assets/mapdot.webp",
+  "source_size": [3220, 1830],
+  "layout_scene": "res://scenes/maps/qingshihewan_layout.tscn",
+  "event_files": [
+    "res://data/map_events/qingshihewan_bridge_dialogue.json",
+    "res://data/map_events/qingshihewan_wounded_disciple.json"
+  ]
+}
