@@ -16,15 +16,17 @@
 
 ## 桥西端对话测试与微调
 
+2026-09-16圆框参数：新map-dialogue源图1835×470，background_region=[10,33,1807,409]；portrait_slot=[62,20.5,368,368]、portrait_max_size=368、text_rect=[475,95,1250,220]，均为裁切后坐标。主角player-1-1使用portrait_region=[22,18,448,448]，青岚宗弟子npc-qlzdz-1使用[27,27,664,664]。每张头像先按实际有效圆心裁去透明留白，再等比填满窗口、裁圆，头像先画在圆框金边下方；不能对不同尺寸头像套相同原图裁切。更换新头像时，校准portrait_region使圆孔边缘对应的像素不透明，并保留约4源像素的金边覆盖量，避免漏图。不要直接拉伸横纵比例。
+
 目前大桥西端N37和中央小屋旁N20配置互动。从最右侧起点点击N37，等主角走到并停稳后，再点同一路径节点才显示第一句。对话打开后任意位置左键单击进入下一句，显示第5句后再点一次关闭并完成。完成N37后才可触发N20：到达停稳再点击节点，先显示事件框和插画，再点一次显示第一句，20句按说话者切换头像，末句后再点一次完成。期间不能移动角色、拖图或缩放；关闭点击不会穿透。完成后仅对应节点的Sign和StoryIcon一起隐藏，节点和路线保留，其他路标不受影响。同次运行重新进入地图也不重复；F8→F5重启可重新测试，没有写入存档。
 
-事件配置：`data/map_events/qingshihewan_bridge_dialogue.json`及`qingshihewan_wounded_disciple.json`，由地图JSON的event_files引用。lines为逐段文本；presentation为背景、头像及区域参数；speakers和line_speakers指定各句头像，requires_completed指定前置完成事件。对话背景按可见区域等比显示，中心为屏幕宽50%、高75%，美术整体在旧版“宽88%窗口/高不超过34%”基准上再等比乘2/3；文字字号仍按旧版基准计算，1920×1080时为32px。portrait_slot和text_rect以裁切后的背景原图坐标为准，portrait_max_size控制圆头像最大边，保持头像原始比例和方框中心。更换图尺寸或边距后须核对这些区域。
+事件配置：`data/map_events/qingshihewan_bridge_dialogue.json`及`qingshihewan_wounded_disciple.json`，由地图JSON的event_files引用。lines为逐段文本；presentation为背景、头像及区域参数；speakers和line_speakers指定各句头像，requires_completed指定前置完成事件。对话背景按可见区域等比显示，中心为屏幕宽50%、高75%，美术整体在旧版“宽88%窗口/高不超过34%”基准上再等比乘2/3；文字使用系统楷体KaiTi，字号按旧版基准计算后减1，1920×1080时为31px。portrait_slot和text_rect以裁切后的背景原图坐标为准，portrait_max_size控制圆头像最大边，保持头像原始比例和圆框中心。更换图尺寸或边距后须核对这些区域。
 
-N20的presentation.illustration配置事件框、插画及image_slot内窗。实际框素材名为map-event-frame.webp；插画为map-event-1-1.webp，等比覆盖内窗并少量裁边。`scripts/map/map_event_picture.gd`的layout_for控制顶部30%和距对话框16逻辑像素的间距，自动缩小事件框以避免重叠；`scripts/map/map_dialogue.gd`控制对话中心75%。两者均使用屏幕坐标，不随地图缩放。1080p事件框约582×361.74，对话框1126.4×216.53。后续微调这两处布局参数即可，不必修改源图。通用结构见`docs/map-interaction-design.md`；其他事件类型等待后续开发。
+N20的presentation.illustration配置事件框、插画及image_slot内窗。实际框素材名为map-event-frame.webp；插画为map-event-1-1.webp，等比覆盖内窗并少量裁边。`scripts/map/map_event_picture.gd`的layout_for先计算旧版顶部30%及距对话框16逻辑像素的基准尺寸，再以旧底边中心为锚点将框和内图等比放大5/3（先乘4/3，再乘1.25），向上扩展，保持底边及对话间距；`scripts/map/map_dialogue.gd`控制对话中心75%。两者均使用屏幕坐标，不随地图缩放。新版对话框按原始比例显示为1126.4×254.95，边界约y682.52～937.48；事件图相应适配为918.47×570.87，顶部约95.65、底部约666.52，保持16px间隔。后续微调这两处布局参数即可，不必修改源图。通用结构见`docs/map-interaction-design.md`；其他事件类型等待后续开发。
 
 ## 玩家移动与动画
 
-最新run素材（2026-09-15）：fr-run.webp为2600×724，7个不等距源姿势；从左起4→5→6→7→6→5→4→3→2→1→2→3循环，12fps，每轮1秒。复用frame_regions，7个360×724区域的x分别为37/419/766/1086/1422/1787/2141，y均0，不平均切图。display_frame_height=170，feet_offset=(0,-224)，以第4姿势脚底y586为地面参考，保留奔跑中自然腾空。源图不改；idle/walk、移动速度及3节点起跑规则保持。
+最新run素材（2026-09-15）：fr-run.webp为2600×724，7个不等距源姿势；从左起4→5→6→7→6→5→4→3→2→1→2→3循环，16fps，每轮0.75秒。复用frame_regions，7个360×724区域的x分别为37/419/766/1086/1422/1787/2141，y均0，不平均切图。display_frame_height=170，feet_offset=(0,-224)，以第4姿势脚底y586为地面参考，保留奔跑中自然腾空。源图不改；idle/walk、移动速度及3节点起跑规则保持。
 
 **覆盖动作图片后没有更新：**回到Godot等待文件扫描/导入完成，F8停止旧预览，再F5运行；如果仍未更新，选中assets/fr-walk.webp，在“导入”面板点击“重新导入”。本轮已发现源图1683×600而缓存仍1644×561，并通过重新导入修复。仅改像素且布局不变一般不需改参数；若画布尺寸或人物位置变化，应重新校准frame_regions。旧导出exe需要重新导出。
 
@@ -40,7 +42,7 @@ N20的presentation.illustration配置事件框、插画及image_slot内窗。实
 - walk为200原图像素/秒、run为360；缩放只影响显示。重新运行从右侧末端开始，目前不保存位置。
 - 快速验证：从EastExit出发，点N15为1节点walk；点N14为2节点walk；点N12为3节点run。节点方位见下表。
 
-`data/maps/player.json` 可调整起点稳定ID、walk_speed/run_speed、display_scale、脚底偏移及动画帧率。新版idle使用fr-idle.webp的4个543×724帧，新版walk为5个源姿势，按上述独立区域切分并组成8步循环，新版run为7个360×724独立切片，按上述12步顺序播放，帧率为3/8/12（idle已减慢一半），每组循环。默认display_scale=1.0，地图角色显示尺寸为旧版2倍，并与地图一起缩放。每种动画可以单独设置frame_size和feet_offset；不同分辨率会统一显示帧高，idle脚底偏移为(0,-300)，walk为(0,-217.5)，使用frame_regions指定切片、display_frame_height=133.3匹配站立主体高度，run为(0,-224)，run另外用display_frame_height=170补偿透明留白，动作切换时脚底位置保持。图片仍是原始横向精灵表，运行时分帧，不修改源图。改参数保存后重新F5生效。
+`data/maps/player.json` 可调整起点稳定ID、walk_speed/run_speed、display_scale、脚底偏移及动画帧率。新版idle使用fr-idle.webp的4个543×724帧，新版walk为5个源姿势，按上述独立区域切分并组成8步循环，新版run为7个360×724独立切片，按上述12步顺序播放，帧率为3/8/16（idle已减慢一半），每组循环。默认display_scale=1.0，地图角色显示尺寸为旧版2倍，并与地图一起缩放。每种动画可以单独设置frame_size和feet_offset；不同分辨率会统一显示帧高，idle脚底偏移为(0,-300)，walk为(0,-217.5)，使用frame_regions指定切片、display_frame_height=133.3匹配站立主体高度，run为(0,-224)，run另外用display_frame_height=170补偿透明留白，动作切换时脚底位置保持。图片仍是原始横向精灵表，运行时分帧，不修改源图。改参数保存后重新F5生效。
 
 ## 调整标记位置（Godot 2D编辑器）
 

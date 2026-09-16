@@ -35,11 +35,11 @@ func _run() -> void:
 		var panel_rect := overlay.background.get_rect()
 		_check(panel_rect.get_center().is_equal_approx(Vector2(screen.size.x * 0.5, screen.size.y * 0.75)), "dialogue center is screen 50/75 percent")
 		_check(Rect2(Vector2.ZERO, screen.size).encloses(panel_rect), "whole panel fits viewport")
-		var factor := panel_rect.size.x / 1930.0
-		var slot := Rect2(panel_rect.position + Vector2(69, 30) * factor, Vector2(298, 308) * factor)
-		_check(slot.encloses(overlay.portrait.get_rect()), "portrait stays inside authored square")
-		_check(overlay.portrait.get_rect().get_center().is_equal_approx(slot.get_center()), "portrait centered in square")
-		_check(is_equal_approx(overlay.portrait.size.x / overlay.portrait.size.y, 455.0 / 464.0), "portrait original aspect preserved")
+		var factor := panel_rect.size.x / 1807.0
+		var slot := Rect2(panel_rect.position + Vector2(62, 20.5) * factor, Vector2(368, 368) * factor)
+		_check(slot.grow(0.01).encloses(overlay.portrait.get_rect()), "portrait stays inside authored circular window")
+		_check(overlay.portrait.get_rect().get_center().is_equal_approx(slot.get_center()), "portrait centered in circular aperture")
+		_check(is_equal_approx(overlay.portrait.size.x / overlay.portrait.size.y, 1.0), "portrait original aspect preserved")
 		_check(panel_rect.encloses(overlay.text_label.get_rect()) and overlay.text_label.size.y >= overlay.text_label.get_minimum_size().y, "text fits right panel: panel=%s text=%s min=%s" % [panel_rect, overlay.text_label.get_rect(), overlay.text_label.get_minimum_size()])
 		if DisplayServer.get_name() != "headless":
 			await RenderingServer.frame_post_draw

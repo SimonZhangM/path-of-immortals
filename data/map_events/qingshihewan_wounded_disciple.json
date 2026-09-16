@@ -2,30 +2,67 @@
   "id": "base.map_event.qingshihewan.wounded_disciple",
   "type": "dialogue",
   "point_id": "base.map.qingshihewan.point.n20",
-  "requires_completed": ["base.map_event.qingshihewan.bridge_traces"],
+  "requires_completed": [
+    "base.map_event.qingshihewan.bridge_traces"
+  ],
   "speaker_id": "base.npc.qinglan.outer_disciple",
   "speakers": {
     "base.npc.qinglan.outer_disciple": {
-      "portrait": "res://assets/npc-xuetu-qlz.webp",
-      "portrait_region": [8, 5, 689, 684]
+      "portrait": "res://assets/npc-qlzdz-1.webp",
+      "portrait_region": [
+        27,
+        27,
+        664,
+        664
+      ]
     },
     "base.map_player.chen_yu": {
-      "portrait": "res://assets/zhujue-m1.webp",
-      "portrait_region": [8, 6, 455, 464]
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
     }
   },
   "presentation": {
     "background": "res://assets/map-dialogue.webp",
-    "background_region": [25, 53, 1930, 371],
-    "portrait": "res://assets/npc-xuetu-qlz.webp",
-    "portrait_region": [8, 5, 689, 684],
-    "portrait_slot": [69, 30, 298, 308],
-    "portrait_max_size": 280,
-    "text_rect": [430, 76, 1400, 205],
+    "background_region": [
+      10,
+      33,
+      1807,
+      409
+    ],
+    "portrait": "res://assets/npc-qlzdz-1.webp",
+    "portrait_region": [
+      27,
+      27,
+      664,
+      664
+    ],
+    "portrait_slot": [
+      62,
+      20.5,
+      368,
+      368
+    ],
+    "portrait_max_size": 368,
+    "text_rect": [
+      475,
+      95,
+      1250,
+      220
+    ],
     "illustration": {
       "frame": "res://assets/map-event-frame.webp",
       "image": "res://assets/map-event-1-1.webp",
-      "image_slot": [86, 120, 1276, 672]
+      "image_slot": [
+        86,
+        120,
+        1276,
+        672
+      ]
     }
   },
   "line_speakers": [

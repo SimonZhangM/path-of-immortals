@@ -54,7 +54,8 @@ func _run() -> void:
 		await _settle()
 		var panel := dialogue.background.get_rect()
 		_check(panel.get_center().is_equal_approx(Vector2(screen.size.x*0.5,screen.size.y*0.75)), "dialogue centered at 75 percent")
-		_check(is_equal_approx(picture.position.y,screen.size.y*0.3) and is_equal_approx(picture.get_rect().get_center().x,screen.size.x*0.5), "illustration top at 30 percent and horizontally centered")
+		var old_height: float = minf(panel.size.x * 900.0 / 1448.0, panel.position.y - 16.0 * screen.size.x / 1920.0 - screen.size.y * 0.3)
+		_check(is_equal_approx(picture.get_rect().end.y, screen.size.y * 0.3 + old_height) and is_equal_approx(picture.size.y, old_height * 5.0 / 3.0) and is_equal_approx(picture.get_rect().get_center().x,screen.size.x*0.5), "illustration grows another quarter upward with bottom center fixed")
 		_check(not picture.get_rect().intersects(panel) and picture.get_rect().end.y <= panel.position.y - 15.9 * screen.size.x/1920.0, "illustration leaves gap above dialogue")
 		_check(picture.size.x <= panel.size.x and Rect2(Vector2.ZERO,screen.size).encloses(picture.get_rect()), "smaller illustration fits screen")
 		_check(is_equal_approx(picture.size.x/picture.size.y,1448.0/900.0), "event frame keeps source aspect")
@@ -66,14 +67,17 @@ func _run() -> void:
 		await _settle()
 		_check(dialogue.text_label.text == event.lines[i] and screen.event_state.line_index == i, "paragraph text %d" % (i+1))
 		var portrait_texture := dialogue.portrait.texture as AtlasTexture
-		var expected_path := "res://assets/npc-xuetu-qlz.webp" if i % 2 == 0 else "res://assets/zhujue-m1.webp"
+		var expected_path := "res://assets/npc-qlzdz-1.webp" if i % 2 == 0 else "res://assets/player-1-1.webp"
 		_check(portrait_texture.atlas.resource_path == expected_path, "matching speaker portrait %d" % (i+1))
+		if i < 2:
+			_check(_portrait_covers_aperture(portrait_texture), "speaker has opaque coverage to the circular rim")
+			_check(dialogue.portrait.get_index() < dialogue.background.get_index() and dialogue.portrait.material is ShaderMaterial, "portrait is circle masked beneath the decorative rim")
 		var panel := dialogue.background.get_rect()
 		_check(panel.encloses(dialogue.text_label.get_rect()) and dialogue.text_label.size.y >= dialogue.text_label.get_minimum_size().y, "whole paragraph fits at preserved font size %d" % (i+1))
-		_check(dialogue.text_label.get_theme_font_size("font_size") == 32, "1080p text size unchanged")
-		var factor := panel.size.x/1930.0
-		var slot := Rect2(panel.position+Vector2(69,30)*factor,Vector2(298,308)*factor)
-		_check(slot.encloses(dialogue.portrait.get_rect()) and dialogue.portrait.get_rect().get_center().is_equal_approx(slot.get_center()), "changing portraits remain centered inside square")
+		_check(dialogue.text_label.get_theme_font_size("font_size") == 31, "1080p text reduced by one to 31")
+		var factor := panel.size.x/1807.0
+		var slot := Rect2(panel.position+Vector2(62,20.5)*factor,Vector2(368,368)*factor)
+		_check(slot.grow(0.01).encloses(dialogue.portrait.get_rect()) and dialogue.portrait.get_rect().get_center().is_equal_approx(slot.get_center()), "changing portraits remain centered inside circular aperture")
 		if i in [1,8,16,19]:
 			await _capture("illustration_paragraph_%02d" % (i+1))
 		_click(Vector2(80,80))
@@ -140,3 +144,14 @@ func _check(ok: bool,message: String) -> void:
 	if not ok:
 		failures += 1
 		push_error("FAIL: "+message)
+
+func _portrait_covers_aperture(texture: AtlasTexture) -> bool:
+	var pixels := texture.atlas.get_image()
+	var center := texture.region.get_center()
+	# Aperture radius is at most181 source px; portrait radius184 overlaps its rim.
+	var radius := texture.region.size.x * 0.5 * 181.0 / 184.0
+	for degrees in 360:
+		var sample := center + Vector2.from_angle(deg_to_rad(degrees)) * radius
+		if pixels.get_pixel(roundi(sample.x), roundi(sample.y)).a < 0.95:
+			return false
+	return true

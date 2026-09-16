@@ -40,8 +40,11 @@ func layout_for(view_size: Vector2, dialogue_rect: Rect2) -> void:
 	var top := view_size.y * 0.3
 	var available_height := maxf(1.0, dialogue_rect.position.y - gap - top)
 	var factor := minf(dialogue_rect.size.x / frame.texture.get_width(), available_height / frame.texture.get_height())
+	var previous_height := frame.texture.get_height() * factor
+	# Enlarge around the previous bottom center, preserving the dialogue gap.
+	factor *= (4.0 / 3.0) * 1.25
 	size = frame.texture.get_size() * factor
-	position = Vector2((view_size.x - size.x) * 0.5, top)
+	position = Vector2((view_size.x - size.x) * 0.5, top + previous_height - size.y)
 	frame.size = size
 	window.position = _slot.position * factor
 	window.size = _slot.size * factor

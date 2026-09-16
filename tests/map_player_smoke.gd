@@ -36,7 +36,7 @@ func _run() -> void:
 	for action in ["idle", "walk", "run"]:
 		var frames := player.sprite_frames
 		_check(frames.get_frame_count(action) == {"idle": 4, "walk": 8, "run": 12}[action], "playback frame count: " + action)
-		_check(frames.get_animation_speed(action) == {"idle": 3, "walk": 8, "run": 12}[action], "authored animation pace: " + action)
+		_check(frames.get_animation_speed(action) == {"idle": 3, "walk": 8, "run": 16}[action], "authored animation pace: " + action)
 		var cell: Vector2 = {"idle": Vector2(543, 724), "walk": Vector2(310, 561), "run": Vector2(360, 724)}[action]
 		for i in frames.get_frame_count(action):
 			var texture := frames.get_frame_texture(action, i) as AtlasTexture

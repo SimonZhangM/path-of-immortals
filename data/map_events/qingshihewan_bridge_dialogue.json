@@ -5,12 +5,32 @@
   "speaker_id": "base.map_player.chen_yu",
   "presentation": {
     "background": "res://assets/map-dialogue.webp",
-    "background_region": [25, 53, 1930, 371],
-    "portrait": "res://assets/zhujue-m1.webp",
-    "portrait_region": [8, 6, 455, 464],
-    "portrait_slot": [69, 30, 298, 308],
-    "portrait_max_size": 280,
-    "text_rect": [430, 76, 1400, 205]
+    "background_region": [
+      10,
+      33,
+      1807,
+      409
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      62,
+      20.5,
+      368,
+      368
+    ],
+    "portrait_max_size": 368,
+    "text_rect": [
+      475,
+      95,
+      1250,
+      220
+    ]
   },
   "lines": [
     "河水最近又浅了不少。",

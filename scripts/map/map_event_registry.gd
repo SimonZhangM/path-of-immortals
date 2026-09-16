@@ -72,7 +72,7 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			if not Rect2(Vector2.ZERO, background_size).encloses(Rect2(rect[0], rect[1], rect[2], rect[3])):
 				return "地图对话内容超出背景：" + key
 		if art.portrait_max_size > minf(art.portrait_slot[2], art.portrait_slot[3]):
-			return "地图对话头像超出方框。"
+			return "地图对话头像超出配置窗口。"
 		loaded[raw.id] = raw.duplicate(true)
 		point_index[raw.point_id] = raw.id
 	for event: Dictionary in loaded.values():

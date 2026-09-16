@@ -20,8 +20,13 @@ func _init() -> void:
 	visible = false
 	picture = MapEventPicture.new()
 	add_child(picture)
-	background = _image("DialogueBackground")
 	portrait = _image("SpeakerPortrait")
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	var portrait_mask := ShaderMaterial.new()
+	portrait_mask.shader = preload("res://scripts/ui/portrait_mask.gdshader")
+	portrait.material = portrait_mask
+	# The portrait overlaps the aperture slightly; draw the rim on top.
+	background = _image("DialogueBackground")
 	text_label = Label.new()
 	text_label.name = "DialogueText"
 	text_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -29,7 +34,7 @@ func _init() -> void:
 	text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_label.add_theme_color_override("font_color", Color("f0dfba"))
 	var font := SystemFont.new()
-	font.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "sans-serif"])
+	font.font_names = PackedStringArray(["KaiTi", "楷体", "STKaiti", "Kaiti SC", "serif"])
 	text_label.add_theme_font_override("font", font)
 	add_child(text_label)
 	resized.connect(_layout)
@@ -118,9 +123,9 @@ func _layout() -> void:
 	if _art.is_empty() or size.x <= 0 or size.y <= 0:
 		return
 	var source_size := background.texture.get_size()
-	# Artwork shrinks to two thirds; retain the preceding responsive text size.
-	var text_factor := minf(size.x * 0.88 / source_size.x, size.y * 0.34 / source_size.y)
-	var factor := text_factor * 2.0 / 3.0
+	# Artwork shrinks to two thirds; text uses its own responsive size.
+	var text_factor := minf(size.x * 0.88 / 1930.0, size.y * 0.34 / 371.0)
+	var factor := minf(size.x * 0.88 / source_size.x, size.y * 0.34 / source_size.y) * 2.0 / 3.0
 	background.size = source_size * factor
 	background.position = Vector2(size.x * 0.5, size.y * 0.75) - background.size * 0.5
 	if picture.visible:
@@ -131,9 +136,10 @@ func _layout() -> void:
 	portrait_size *= float(_art.portrait_max_size) / maxf(portrait_size.x, portrait_size.y)
 	portrait.size = portrait_size * factor
 	portrait.position = background.position + center * factor - portrait.size * 0.5
+	portrait.material.set_shader_parameter("portrait_size", portrait.size)
 	var text_rect: Array = _art.text_rect
 	text_label.position = background.position + Vector2(text_rect[0], text_rect[1]) * factor
-	text_label.add_theme_font_size_override("font_size", maxi(16, roundi(36.0 * text_factor)))
+	text_label.add_theme_font_size_override("font_size", maxi(15, roundi(36.0 * text_factor) - 1))
 	var text_size := Vector2(text_rect[2], text_rect[3]) * factor
 	text_label.size = text_size
 	# Label updates its wrapped minimum height after the new width/font is shaped.
