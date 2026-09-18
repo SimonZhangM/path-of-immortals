@@ -2,7 +2,7 @@ extends SceneTree
 
 var failures: int = 0
 var checks: int = 0
-var registry := ContentRegistry.new()
+var registry := LegacyCombatFixture.registry()
 
 func _initialize() -> void:
 	_check(registry.load_base_content(), "base content loads")
@@ -13,6 +13,7 @@ func _initialize() -> void:
 	_test_queue()
 	_test_content()
 	_test_cultivation()
+	_test_map_status()
 	_test_inventory()
 	_test_formation()
 	_test_battle()
@@ -29,6 +30,9 @@ func _fixture(count: int = 1, enemy_hp: int = 100, ally_hp: int = 100, stamina: 
 	var allies: Array = []
 	for index in count:
 		var raw := registry.get_character(GameManager.PARTY_IDS[index])
+		# Historical combat-mechanics fixtures retain their authored 4x4 capacity.
+		# Live GameManager and UI tests separately exercise the current 3x3 board.
+		raw["board_layout"] = "base.board.frost"
 		raw["max_hp"] = ally_hp
 		raw["max_stamina"] = stamina
 		var member := PartyMemberState.new(raw, registry)
@@ -36,11 +40,12 @@ func _fixture(count: int = 1, enemy_hp: int = 100, ally_hp: int = 100, stamina: 
 		member.inventory.add_item(GameManager.armor_instance(index), GameManager.ARMOR_ID, Vector2i(1, 1))
 		allies.append(member)
 	var dog_raw := registry.get_enemy(GameManager.ENEMY_ID)
+	dog_raw["board_layout"] = "base.board.roots"
 	dog_raw["max_hp"] = enemy_hp
 	dog_raw["max_stamina"] = stamina
 	var dog := PartyMemberState.new(dog_raw, registry)
 	dog.inventory.add_item(GameManager.CLAW_INSTANCE, GameManager.CLAW_ID, Vector2i(1, 1))
-	return BattleSimulation.new(allies, [dog], registry)
+	return LegacyCombatFixture.battle(allies, [dog], registry)
 
 func _test_retreat() -> void:
 	for speed in SimulationClock.SPEEDS:
@@ -132,7 +137,7 @@ func _test_cultivation() -> void:
 		var id: String = "base.cultivation." + ids[index]
 		_check(hero.set_cultivation_rank(id), "registered cultivation can be assigned")
 		_check(hero.cultivation["name"] == names[index] and hero.cultivation["portrait_frame"] == "res://assets/pt0%d.webp" % index, "rank resolves correct name and frame")
-		_check(hero.hp == 100 and hero.stamina == 100 and hero.spirit == 100, "rank currently changes no resource attributes")
+		_check(hero.hp == 50 and hero.stamina == 50 and hero.spirit == 0, "rank currently changes no resource attributes")
 	var before := hero.cultivation_rank_id
 	_check(not hero.set_cultivation_rank("missing.rank.id") and hero.cultivation_rank_id == before, "unknown rank rejected without changing state")
 	var raw := registry.get_cultivation("base.cultivation.mortal")
@@ -141,6 +146,18 @@ func _test_cultivation() -> void:
 	raw = registry.get_cultivation("base.cultivation.mortal")
 	raw["portrait_frame"] = "res://assets/missing-frame.webp"
 	_check(not ContentRegistry.new().register_cultivation(raw), "missing cultivation frame rejected")
+
+func _test_map_status() -> void:
+	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json"))
+	# A stale UI override must never mask the actual player definition again.
+	config["cultivation_rank"] = "base.cultivation.qi_refining"
+	config["cultivation_stage"] = "一层"
+	var status := MapPlayerStatus.new()
+	_check(status.configure(registry, config).is_empty(), "map player initializes from actual character")
+	_check(status.rank_name == "凡人" and status.resources == {"hp": 50, "stamina": 50, "spirit": 0}, "map ignores stale presentation rank and shares actual base resources")
+	_check(status.cultivation_progress == 0 and status.cultivation_required == 100 and status.experience == 0, "mortal starts at zero cultivation and experience with 100 cultivation capacity")
+	status.set_resource("spirit", 5)
+	_check(status.resources.spirit == 0 and status.maxima.spirit == 0, "mortal cannot restore spirit beyond zero capacity")
 
 func _test_inventory() -> void:
 	var bag := InventoryState.new(registry)
@@ -171,7 +188,7 @@ func _test_inventory() -> void:
 func _test_formation() -> void:
 	var battle := _fixture()
 	_check(battle.state.teams[0].size() == 1 and battle.state.target_for(1) == battle.state.teams[0][0], "only main can be targeted")
-	var invalid := BattleSimulation.new([battle.state.teams[0][0], battle.state.teams[0][0]], battle.state.teams[1], registry)
+	var invalid := LegacyCombatFixture.battle([battle.state.teams[0][0], battle.state.teams[0][0]], battle.state.teams[1], registry)
 	_check(not invalid.start() and not invalid.configuration_error.is_empty(), "multi-main rosters rejected before combat")
 	_test_companions()
 
@@ -180,21 +197,21 @@ func _companions() -> Array:
 
 func _support_fixture() -> BattleSimulation:
 	var base := _fixture(1, 1000, 1000)
-	return BattleSimulation.new(base.state.teams[0], base.state.teams[1], registry, _companions())
+	return LegacyCombatFixture.battle(base.state.teams[0], base.state.teams[1], registry, _companions())
 
 func _test_companions() -> void:
-	var default_game := GameManager.new()
+	var default_game := LegacyCombatFixture.game()
 	default_game._ready()
 	default_game.start_battle()
 	default_game.simulation.advance(60)
-	_check(default_game.simulation.state.result == "victory" and default_game.simulation.state.time_usec == 24_000_000 and default_game.party[0].hp == 114, "default one-main support roster wins at 24 seconds with 114 HP")
+	_check(default_game.simulation.state.result == "victory" and default_game.simulation.state.time_usec == 24_000_000 and default_game.party[0].hp == 64, "default mortal with support roster wins at 24 seconds with 64 HP")
 	default_game.free()
 	var battle := _support_fixture()
 	var hero: PartyMemberState = battle.state.teams[0][0]
 	_check(hero.hp == 1020 and hero.maximum("hp") == 1020 and hero.defense == 1, "passives apply before combat")
 	_check(battle.state.companions[0].size() == 2 and battle.state.companions[1].is_empty(), "support rosters separate from mains")
 	_check(battle.state.companions[0][0].get("inventory") == null and battle.state.companions[0][0].get("hp") == null, "companions have no inventory or resource state")
-	battle = BattleSimulation.new(battle.state.teams[0], battle.state.teams[1], registry, _companions())
+	battle = LegacyCombatFixture.battle(battle.state.teams[0], battle.state.teams[1], registry, _companions())
 	_check(hero.hp == 1020 and hero.maximum("hp") == 1020 and hero.defense == 1, "recreating simulation does not stack passives")
 	battle.start()
 	_check(hero.defense == 2, "passive and armor defense add")
@@ -227,7 +244,7 @@ func _test_companions() -> void:
 		var raw := registry.get_character(GameManager.PARTY_IDS[1])
 		raw["traits"] = combo.map(func(id): return "base.trait." + id)
 		var base := _fixture(1, 1000)
-		var mixed := BattleSimulation.new(base.state.teams[0], base.state.teams[1], registry, [CompanionState.new(raw, registry)])
+		var mixed := LegacyCombatFixture.battle(base.state.teams[0], base.state.teams[1], registry, [CompanionState.new(raw, registry)])
 		_check(mixed.start() and mixed.state.trait_runtime.size() == combo.size(), "arbitrary trait slot combination accepted")
 		mixed.advance(4)
 		if combo == ["flame", "flame"]:
@@ -235,7 +252,7 @@ func _test_companions() -> void:
 	var companions := _companions()
 	var base := _fixture()
 	for roster in [[companions[0], companions[1], companions[0]], [companions[0], companions[0]]]:
-		var invalid := BattleSimulation.new(base.state.teams[0], base.state.teams[1], registry, roster)
+		var invalid := LegacyCombatFixture.battle(base.state.teams[0], base.state.teams[1], registry, roster)
 		_check(not invalid.start(), "oversize or duplicate support roster rejected")
 	var overflow := registry.get_character(GameManager.PARTY_IDS[1])
 	overflow["id"] = "test.character.overflow"
@@ -264,19 +281,19 @@ func _test_companions() -> void:
 	_check(assisted.state.result == "defeat" and assisted.queue.size() == 0, "main death defeats side with living companions")
 	_check(assisted.trait_remaining_usec(BattleSimulation.trait_key(0, 1, 0)) == 0, "finish clears trait countdown")
 	var peaceful_base := _fixture(1, 100, 100, 0)
-	var peaceful := BattleSimulation.new(peaceful_base.state.teams[0], peaceful_base.state.teams[1], registry, [companions[0]])
+	var peaceful := LegacyCombatFixture.battle(peaceful_base.state.teams[0], peaceful_base.state.teams[1], registry, [companions[0]])
 	peaceful.start()
 	_check(peaceful.state.result == "draw", "heal-only support does not create endless idle battle")
 	var hostile_base := _fixture(1, 1000, 1000)
-	var hostile := BattleSimulation.new(hostile_base.state.teams[0], hostile_base.state.teams[1], registry, [], [companions[1]])
+	var hostile := LegacyCombatFixture.battle(hostile_base.state.teams[0], hostile_base.state.teams[1], registry, [], [companions[1]])
 	hostile.start()
 	hostile.advance(4)
 	_check(hostile.state.teams[0][0].hp == 992 and hostile.state.teams[1][0].maximum("hp") == 1020, "enemy support attacks opposing main and buffs own main")
 	var fragile := _support_fixture()
 	fragile.state.teams[0][0].hp = 5
-	fragile = BattleSimulation.new(fragile.state.teams[0], fragile.state.teams[1], registry, _companions())
+	fragile = LegacyCombatFixture.battle(fragile.state.teams[0], fragile.state.teams[1], registry, _companions())
 	_check(fragile.state.teams[0][0].hp == 5, "rebuilding low-HP main preserves current HP with identical passives")
-	var unbuffed := BattleSimulation.new(fragile.state.teams[0], fragile.state.teams[1], registry)
+	var unbuffed := LegacyCombatFixture.battle(fragile.state.teams[0], fragile.state.teams[1], registry)
 	_check(unbuffed.state.teams[0][0].maximum("hp") == 1000 and unbuffed.state.teams[0][0].defense == 0 and unbuffed.state.teams[0][0].hp > 0, "roster replacement removes source bonuses without killing main")
 	var capped := _support_fixture()
 	capped.state.teams[1][0].stamina = 0
@@ -286,7 +303,7 @@ func _test_companions() -> void:
 	var raw := registry.get_character(GameManager.PARTY_IDS[1])
 	raw["traits"] = ["base.trait.flame", "base.trait.rejuvenation"]
 	var ordered_base := _fixture(1, 1000, 1000)
-	var ordered := BattleSimulation.new(ordered_base.state.teams[0], ordered_base.state.teams[1], registry, [CompanionState.new(raw, registry)])
+	var ordered := LegacyCombatFixture.battle(ordered_base.state.teams[0], ordered_base.state.teams[1], registry, [CompanionState.new(raw, registry)])
 	ordered.start()
 	ordered.advance(12)
 	var ordered_events := ordered.drain_events().filter(func(e): return e["kind"] == "trait_activated" and e["at_usec"] == 12_000_000)
@@ -300,7 +317,7 @@ func _test_companions() -> void:
 		sliced.advance(delta)
 	_check(whole.drain_events() == sliced.drain_events(), "support and item events invariant under frame partitioning")
 	var retreat_base := _fixture(1, 1000)
-	var retreat_spell := BattleSimulation.new(retreat_base.state.teams[0], retreat_base.state.teams[1], registry, [companions[1]])
+	var retreat_spell := LegacyCombatFixture.battle(retreat_base.state.teams[0], retreat_base.state.teams[1], registry, [companions[1]])
 	retreat_spell.start()
 	retreat_spell.advance(1)
 	retreat_spell.request_retreat()
@@ -310,7 +327,7 @@ func _test_companions() -> void:
 	var counter_base := _fixture(1, 1000)
 	var dog: PartyMemberState = counter_base.state.teams[1][0]
 	dog.inventory.add_item("test.dog.counter", "base.armor.qinglin", Vector2i(2, 2))
-	var counter_spell := BattleSimulation.new(counter_base.state.teams[0], counter_base.state.teams[1], registry, [companions[1]])
+	var counter_spell := LegacyCombatFixture.battle(counter_base.state.teams[0], counter_base.state.teams[1], registry, [companions[1]])
 	counter_spell.start()
 	counter_spell.advance(3)
 	counter_spell.drain_events()
@@ -376,7 +393,7 @@ func _test_battle() -> void:
 	for team in passive.state.teams:
 		team[0].inventory = InventoryState.new(registry)
 		team[0].inventory.add_item("armor." + team[0].id, GameManager.ARMOR_ID, Vector2i.ZERO)
-	passive = BattleSimulation.new(passive.state.teams[0], passive.state.teams[1], registry)
+	passive = LegacyCombatFixture.battle(passive.state.teams[0], passive.state.teams[1], registry)
 	passive.start()
 	_check(passive.state.result == "draw" and passive.queue.size() == 0, "no active weapons ends safely")
 
@@ -414,7 +431,7 @@ func _test_timing() -> void:
 	_check(registry.register_item(raw), "second cooldown definition accepted")
 	var template := _fixture(1, 1000, 1000)
 	template.state.teams[0][0].inventory.add_item("run.fast", "test.weapon.fast", Vector2i(3, 0))
-	var mixed := BattleSimulation.new(template.state.teams[0], template.state.teams[1], registry)
+	var mixed := LegacyCombatFixture.battle(template.state.teams[0], template.state.teams[1], registry)
 	mixed.start()
 	mixed.advance(1.5)
 	_check(mixed.activation_progress(GameManager.SWORD_INSTANCE) == 0.5 and mixed.activation_progress("run.fast") == 0.75, "different weapon cooldowns remain independent")
@@ -423,25 +440,27 @@ func _test_timing() -> void:
 	_check(mixed.state.teams[0][0].stamina == 75, "same-owner weapons share authoritative stamina")
 
 func _test_storage_and_medicine() -> void:
-	var game := GameManager.new()
+	var game := LegacyCombatFixture.game()
 	game._ready()
 	_check(game.storage.entries().size() == 7, "four new equipment definitions and three pill stacks")
 	_check(game.can_edit_inventory() and game.can_adjust(), "preparation permits direct array editing")
-	_check(game.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(3, 0)), "prebattle move without opening storage")
+	_check(game.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1)), "prebattle move without opening storage")
 	_check(game.simulation.cooling_remaining_usec(GameManager.SWORD_INSTANCE) == 0, "direct prebattle move has no insertion cooldown")
 	game.move_item(0, GameManager.SWORD_INSTANCE, Vector2i.ZERO)
 	game.set_adjustment(true)
 	var pill_key := "run.storage.base.pill.huichun.0"
 	var sword_key := "run.storage.base.weapon.qingfeng.0"
 	_check(game.storage.get_entry(pill_key)["units"].size() == 10, "ten bottles in storage")
-	_check(game.equip(pill_key, 0, Vector2i(3, 0)), "equip first medicine")
+	_check(game.equip(pill_key, 0, Vector2i(2, 0)), "equip first medicine")
 	var bag := game.party[0].inventory
 	var pill_id := bag.matching_stack("base.pill.huichun")
 	for index in 3:
 		_check(game.equip_random(pill_key), "right click appends same medicine")
 	_check(bag.get_instance(pill_id)["units"].size() == 4 and game.storage.get_entry(pill_key)["units"].size() == 6, "stack transfer conserves bottle total")
 	_check(game.simulation.cooling_remaining_usec(pill_id) == 0, "prebattle medicine has no insertion cooldown")
-	_check(game.equip(sword_key, 0, Vector2i(3, 1)), "main equips storage weapon")
+	_check(not game.can_equip(sword_key, 0, Vector2i(1, 1)), "3x3 cannot hold two vertical swords alongside 2x2 armor")
+	_check(game.unequip(0, GameManager.ARMOR_INSTANCE), "make room for second weapon in smaller array")
+	_check(game.equip(sword_key, 0, Vector2i(1, 1)), "main equips storage weapon")
 	_check(game.storage.get_entry(sword_key).is_empty(), "equipped weapon absent from storage")
 	_check(not game.equip("missing", 0, Vector2i.ZERO), "unknown storage id rejected")
 	_check(not game.equip("run.storage.base.armor.qinglin.0", 0, Vector2i.ZERO), "occupied destination rejected")
@@ -454,12 +473,12 @@ func _test_storage_and_medicine() -> void:
 	game.set_adjustment(true)
 	_check(game.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1)), "paused adjustment moves equipment")
 	_check(game.simulation.cooling_remaining_usec(GameManager.SWORD_INSTANCE) == 0, "battle move preserves rotation without insertion cooldown")
-	_check(game.equip(sword_key, 0, Vector2i(3, 1)), "paused battle equips new weapon")
+	_check(game.equip(sword_key, 0, Vector2i(1, 1)), "paused battle equips new weapon")
 	var due: int = game.simulation.state.item_runtime[sword_key]["next_activation_usec"]
 	_check(due == 7_000_000, "one second insertion starts weapon at seven seconds")
 	game.simulation.advance(10)
 	_check(game.simulation.state.time_usec == 1_000_000, "pause freezes new cooldown")
-	_check(game.move_item(0, sword_key, Vector2i(3, 1)) and game.simulation.state.item_runtime[sword_key]["next_activation_usec"] == due, "same-cell placement preserves progress")
+	_check(game.move_item(0, sword_key, Vector2i(1, 1)) and game.simulation.state.item_runtime[sword_key]["next_activation_usec"] == due, "same-cell placement preserves progress")
 	game.toggle_pause()
 	_check(not game.adjustment_open, "resume closes storage")
 	game.simulation.advance(2)
@@ -521,7 +540,7 @@ func _test_storage_and_medicine() -> void:
 	_check(not ContentRegistry.new().register_item(invalid), "unsupported restoration resource rejected")
 
 func _test_transfer_rules() -> void:
-	var game := GameManager.new()
+	var game := LegacyCombatFixture.game()
 	game._ready()
 	game.enemies[0].hp = 10000
 	game.start_battle()
@@ -532,8 +551,9 @@ func _test_transfer_rules() -> void:
 	var sword := GameManager.SWORD_INSTANCE
 	var armor := GameManager.ARMOR_INSTANCE
 	var before: Dictionary = sim.state.item_runtime[sword].duplicate(true)
-	_check(game.move_item(0, sword, Vector2i(3, 0)) and sim.state.item_runtime[sword] == before, "different-cell move preserves every runtime field")
-	_check(game.move_item(0, armor, Vector2i(1, 2)) and game.party[0].defense == 2, "armor move retains defense without reentry")
+	_check(game.move_item(0, sword, Vector2i(0, 1)) and sim.state.item_runtime[sword] == before, "different-cell move preserves every runtime field")
+	_check(game.move_item(0, armor, Vector2i(1, 0)) and game.party[0].defense == 2, "armor move retains defense without reentry")
+	_check(game.unequip(0, armor) and game.move_item(0, sword, Vector2i(2, 0)), "release enough space for another vertical weapon")
 	var inserted := "run.storage.base.weapon.qingfeng.0"
 	_check(game.equip(inserted, 0, Vector2i.ZERO), "insert fresh sword at one second")
 	_check(sim.cooling_remaining_usec(inserted) == 3_000_000, "default entry cooldown is three seconds")
@@ -555,7 +575,7 @@ func _test_transfer_rules() -> void:
 	game.free()
 	# Exercise the same public commands used by right-click and drag-to-storage.
 	var medicine := _medicine_fixture("spirit", 50, 3)
-	game = GameManager.new()
+	game = LegacyCombatFixture.game()
 	game.registry = registry
 	game.party.assign(medicine.state.teams[0])
 	game.enemies.assign(medicine.state.teams[1])
@@ -595,6 +615,8 @@ func _test_transfer_rules() -> void:
 func _medicine_fixture(resource: String, initial: int, bottles: int) -> BattleSimulation:
 	var sim := _fixture(1, 10000)
 	var hero: PartyMemberState = sim.state.teams[0][0]
+	# Medicine mechanics fixture deliberately has a nonzero capacity for every resource.
+	hero.definition["max_" + resource] = 100
 	hero.inventory.take(GameManager.SWORD_INSTANCE)
 	sim.detach(GameManager.SWORD_INSTANCE)
 	hero.set(resource, initial)
@@ -703,18 +725,28 @@ func _add_armor(sim: BattleSimulation, side: int, item_id: String, id: String, c
 	sim.attach(member, side, id, cooling)
 
 func _test_board_mapping() -> void:
-	for id in ["base.board.frost", "base.board.roots", "base.board.leather"]:
+	for id in ["base.board.frost", "base.board.roots", "base.board.leather", "base.board.bag"]:
 		var layout := registry.get_board(id)
 		_check(layout != null, "board configuration registered")
 		for dimensions in [Vector2(548, 548), Vector2(255, 255), Vector2(720, 540)]:
-			for y in 4:
-				for x in 4:
+			for y in layout.grid_size.y:
+				for x in layout.grid_size.x:
 					var cell := Vector2i(x, y)
 					var rect := layout.footprint_rect(cell, Vector2i.ONE, dimensions)
 					_check(layout.cell_at(rect.get_center(), dimensions) == cell, "mapped cell center hit tests at all display sizes")
 			_check(layout.cell_at(Vector2.ZERO, dimensions) == Vector2i(-100, -100), "decorative border is not inventory space")
-			var all := layout.footprint_rect(Vector2i.ZERO, Vector2i(4, 4), dimensions)
+			var all := layout.footprint_rect(Vector2i.ZERO, layout.grid_size, dimensions)
 			_check(layout.cell_at(all.end, dimensions) == Vector2i(-100, -100), "outside edge is excluded")
+	var current := LegacyCombatFixture.game()
+	current._ready()
+	for actor: PartyMemberState in [current.party[0], current.enemies[0]]:
+		_check(actor.inventory.grid_size == Vector2i(3, 3), "live allies and enemies both use 3x3 authoritative inventory")
+		_check(not actor.inventory.add_item("out", GameManager.ITEM_ID, Vector2i(3, 0)), "invisible fourth column rejected")
+		_check(not actor.inventory.add_item("out", GameManager.ITEM_ID, Vector2i(0, 3)), "invisible fourth row rejected")
+		for cell in actor.inventory.available_cells("base.pill.huichun"):
+			_check(cell.x < 3 and cell.y < 3, "random placement candidates stay in 3x3")
+	_check(current.party[0].inventory.occupied_cells() == 6, "initial sword and armor both fit without dropping equipment")
+	current.free()
 	var raw := {"id": "test.board.wide", "name": "宽图", "texture": "", "source_size": [2000, 1000], "x_lines": [400, 650, 1000, 1200, 1700], "y_lines": [100, 300, 500, 700, 900]}
 	_check(BoardLayout.validate(raw), "non-square source with nonuniform grid is valid")
 	var wide := BoardLayout.new(raw)

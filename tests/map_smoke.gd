@@ -9,6 +9,7 @@ func _initialize() -> void:
 func _run() -> void:
 	root.size = Vector2i(1920, 1080)
 	var screen: Control = load("res://scenes/maps/qingshihewan.tscn").instantiate()
+	screen.inventory_save_path = ""
 	root.add_child(screen)
 	await _settle()
 	_check(screen.startup_error.is_empty(), "map definition loads")
@@ -76,17 +77,17 @@ func _run() -> void:
 	_motion(center, Vector2(-80, -50), 0)
 	_check(content.position.is_equal_approx(initial_position + Vector2(80, 50)), "released pointer no longer drags")
 	var anchor := center + Vector2(50, -40)
-	var anchored_point := (anchor - content.position) / content.scale
+	var anchored_point: Vector2 = (anchor - screen.map_viewport.position - content.position) / content.scale
 	_button(MOUSE_BUTTON_WHEEL_UP, true, anchor)
 	_check(screen.zoom_factor > 1.25, "wheel up enlarges map")
-	_check(((anchor - content.position) / content.scale).is_equal_approx(anchored_point), "zoom preserves location beneath pointer away from edges")
+	_check(((anchor - screen.map_viewport.position - content.position) / content.scale).is_equal_approx(anchored_point), "zoom preserves location beneath pointer away from edges")
 	_button(MOUSE_BUTTON_WHEEL_DOWN, true, anchor)
 	_check(is_equal_approx(screen.zoom_factor, 1.25), "wheel down shrinks map")
 	_button(MOUSE_BUTTON_LEFT, true, center)
 	_motion(center + Vector2.ONE, Vector2(10000, 10000), MOUSE_BUTTON_MASK_LEFT)
 	_check(content.position.is_equal_approx(Vector2.ZERO), "panning clamps at top left edge")
 	_motion(center, Vector2(-20000, -20000), MOUSE_BUTTON_MASK_LEFT)
-	_check(content.position.is_equal_approx(screen.size - Vector2(3220, 1830) * content.scale), "panning clamps at bottom right edge")
+	_check(content.position.is_equal_approx(screen.map_viewport.size - Vector2(3220, 1830) * content.scale), "panning clamps at bottom right edge")
 	_button(MOUSE_BUTTON_LEFT, false, center)
 	for step in 20:
 		_button(MOUSE_BUTTON_WHEEL_DOWN, true, center)
@@ -107,14 +108,14 @@ func _run() -> void:
 	_button(MOUSE_BUTTON_LEFT, false, center)
 	# Restore the authored opening view for visual captures at every aspect ratio.
 	screen._zoom_at(1.25, center)
-	content.position = center - Vector2(3220, 1830) * content.scale * 0.5
+	content.position = screen.map_viewport.size * 0.5 - Vector2(3220, 1830) * content.scale * 0.5
 	for dimensions in [Vector2i(1920, 1080), Vector2i(1280, 720), Vector2i(1280, 800), Vector2i(1720, 720)]:
 		root.size = dimensions
 		await _settle()
 		var shown := Rect2(content.position, Vector2(3220, 1830) * content.scale)
 		var fit := screen.size.x / 3220.0
 		_check(is_equal_approx(content.scale.x, fit * 1.25), "opening view keeps 125 percent magnification across aspect ratios")
-		_check(shown.get_center().is_equal_approx(screen.size * 0.5), "map stays centered")
+		_check(shown.get_center().is_equal_approx(screen.map_viewport.size * 0.5), "map stays centered")
 		_check(is_equal_approx(content.scale.x, content.scale.y), "map geometry scales uniformly")
 		if DisplayServer.get_name() != "headless":
 			await RenderingServer.frame_post_draw
@@ -131,12 +132,12 @@ func _run() -> void:
 		screen._zoom_at(1.75, screen.size * 0.5)
 		_check(is_equal_approx(content.scale.x * 3220.0, screen.size.x * 1.75), "maximum is 175 percent of screen width")
 		screen._zoom_at(1.25, screen.size * 0.5)
-		content.position = screen.size * 0.5 - Vector2(3220, 1830) * content.scale * 0.5
+		content.position = screen.map_viewport.size * 0.5 - Vector2(3220, 1830) * content.scale * 0.5
 	if DisplayServer.get_name() != "headless":
 		root.size = Vector2i(1920, 1080)
 		await _settle()
 		screen._zoom_at(1.75, screen.size * 0.5)
-		content.position = screen.size * 0.5 - east_exit.position * content.scale
+		content.position = screen.map_viewport.size * 0.5 - east_exit.position * content.scale
 		screen._clamp_position()
 		await _settle()
 		await RenderingServer.frame_post_draw

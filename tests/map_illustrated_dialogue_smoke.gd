@@ -116,6 +116,7 @@ func _capture(label: String) -> void:
 
 func _load_map() -> void:
 	screen = load("res://scenes/maps/qingshihewan.tscn").instantiate()
+	screen.inventory_save_path = ""
 	root.add_child(screen)
 	await _settle()
 	screen.set_process(false)
@@ -125,7 +126,7 @@ func _settle() -> void:
 		await process_frame
 
 func _point(node_name: String) -> Vector2:
-	return screen.content.position + screen.content.get_node("Points/"+node_name).position * screen.content.scale
+	return screen.map_to_screen(screen.content.get_node("Points/"+node_name).position)
 
 func _click(position: Vector2) -> void:
 	_button(MOUSE_BUTTON_LEFT,true,position)

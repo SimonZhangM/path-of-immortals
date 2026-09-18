@@ -22,6 +22,10 @@ static func chip(text: String, color := Color("a7b8c5")) -> Label:
 
 static func effect_text(item: ItemData) -> String:
 	var lines: PackedStringArray = []
+	if item.armor_capacity > 0:
+		lines.append("基础属性  ·  护甲上限 +%d" % item.armor_capacity)
+	if not item.armor_type.is_empty():
+		lines.append("甲型  ·  " + item.armor_type)
 	if item.defense > 0:
 		lines.append("基础属性  ·  防御 +%d" % item.defense)
 	for effect in item.effects:
@@ -34,6 +38,8 @@ static func effect_text(item: ItemData) -> String:
 			"on_activate":
 				if effect["effect"] == "damage":
 					lines.append("轮转 %s秒  ·  对敌方主角造成 %d 点伤害，每次消耗 %d 体力。" % [str(item.cooldown_usec / 1_000_000.0), effect["value"], item.stamina_cost])
+				elif effect["effect"] == "restore_armor":
+					lines.append("轮转 %s秒  ·  获得 %d 点护甲，不超过护甲上限。" % [str(item.cooldown_usec / 1_000_000.0), effect["value"]])
 				else:
 					lines.append("轮转 %s秒  ·  随后 %d秒内回复自身 %d 点%s，每瓶可使用 %d次。" % [str(item.cooldown_usec / 1_000_000.0), effect["duration"], effect["value"], {"hp": "气血", "stamina": "体力", "spirit": "灵力"}[effect["resource"]], item.uses_per_unit])
 					lines.append("满值等待下一瓶；已开瓶不可收回，须用完；回复不超过上限。")

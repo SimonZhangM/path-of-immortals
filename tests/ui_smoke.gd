@@ -13,6 +13,7 @@ func _run() -> void:
 	AudioServer.set_bus_mute(0, true)
 	root.size = Vector2i(1920, 1080)
 	var scene: Node = load("res://scenes/main/main.tscn").instantiate()
+	LegacyCombatFixture.configure(scene.get_node("GameManager"))
 	root.add_child(scene)
 	manager = scene.get_node("GameManager")
 	manager.set_process(false)
@@ -42,6 +43,7 @@ func _run() -> void:
 	ui._bag_button.pressed.emit()
 	await _layout()
 	_check(not manager.select_member(1), "companions cannot be selected as inventory targets")
+	_check(manager.unequip(0, GameManager.ARMOR_INSTANCE), "free room for multiple weapons in current 3x3 array")
 	manager.select_member(0)
 	var pill_key := "run.storage.base.pill.huichun.0"
 	for index in 3:
@@ -72,18 +74,18 @@ func _run() -> void:
 	var bag: InventoryView = ui.ally_panel.bags[0]
 	var sword_card: StorageItemCard = ui.storage_panel.cards[sword_id]
 	var data := sword_card.drag_data()
-	_check(bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), data), "storage drag accepts legal grid destination")
+	_check(bag._can_drop_data(bag.cell_center(Vector2i(2, 0)), data), "storage drag accepts legal grid destination")
 	if DisplayServer.get_name() == "headless":
-		await _native_between(sword_card.get_global_rect().get_center(), bag.get_global_transform() * bag.cell_center(Vector2i(3, 0)), true)
+		await _native_between(sword_card.get_global_rect().get_center(), bag.get_global_transform() * bag.cell_center(Vector2i(2, 0)), true)
 	else:
-		bag._drop_data(bag.cell_center(Vector2i(3, 0)), data)
+		bag._drop_data(bag.cell_center(Vector2i(2, 0)), data)
 	await _layout()
 	_check(not manager.party[0].inventory.get_instance(sword_id).is_empty(), "storage drag inserts weapon")
 	_check(manager.storage.get_entry(sword_id).is_empty(), "equipped weapon disappears from storage")
-	var returning := bag.drag_data_at(bag.cell_center(Vector2i(3, 0)))
+	var returning := bag.drag_data_at(bag.cell_center(Vector2i(2, 0)))
 	_check(ui.storage_panel._can_drop_data(Vector2.ZERO, returning), "storage accepts returning array item")
 	if DisplayServer.get_name() == "headless":
-		await _native_between(bag.get_global_transform() * bag.cell_center(Vector2i(3, 0)), ui.storage_panel.global_position + Vector2(300, 20))
+		await _native_between(bag.get_global_transform() * bag.cell_center(Vector2i(2, 0)), ui.storage_panel.global_position + Vector2(300, 20))
 	else:
 		ui.storage_panel._drop_data(Vector2.ZERO, returning)
 	await _layout()
@@ -93,7 +95,7 @@ func _run() -> void:
 	await _layout()
 	_check(manager.simulation.state.phase == GameState.Phase.BATTLE and not manager.adjustment_open and not ui.storage_panel.visible, "space starts and closes adjustment")
 	_check(ui._bag_button.disabled and not manager.set_adjustment(true), "running battle locks adjustment")
-	_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 0)), data), "stale drag rejected after start")
+	_check(not bag._can_drop_data(bag.cell_center(Vector2i(2, 0)), data), "stale drag rejected after start")
 	manager._process(1)
 	_key(KEY_SPACE)
 	await _layout()
@@ -106,7 +108,7 @@ func _run() -> void:
 	_check(not manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1)), "paused array remains locked without adjustment panel")
 	ui._bag_button.pressed.emit()
 	await _layout()
-	_check(manager.equip(sword_id, 0, Vector2i(3, 0)), "paused insertion command")
+	_check(manager.equip(sword_id, 0, Vector2i(2, 0)), "paused insertion command")
 	_check(manager.simulation.cooling_remaining_usec(sword_id) == 3_000_000, "inserted weapon shows three seconds")
 	_check(manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i(0, 1)), "main rearrangement during pause")
 	manager._process(10)
@@ -141,6 +143,10 @@ func _run() -> void:
 			await _capture("storage_%dx%d" % [dimensions.x, dimensions.y])
 	manager.set_adjustment(false)
 	var full_companions: Array[CompanionState] = manager.companions.duplicate()
+	manager.restart()
+	manager.unequip(0, sword_id)
+	manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i.ZERO)
+	_check(manager.equip(GameManager.ARMOR_INSTANCE, 0, Vector2i(1, 1)), "restore default armor before combat feedback checks")
 	for count in [0, 1, 2]:
 		manager.companions.assign(full_companions.slice(0, count))
 		manager.restart()
@@ -281,13 +287,13 @@ func _test_cultivation_and_feedback() -> void:
 	await _layout()
 	for index in 3:
 		var card: PartyMemberCard = ui.ally_panel.cards[0] if index == 0 else ui.ally_panel.companion_cards[index - 1].portrait_card
-		_check(card.portrait_frame.texture.resource_path == ("res://assets/pt01.webp" if index == 0 else "res://assets/pt000.webp"), "main uses rank frame and companions use shared support frame")
-		_check(card._title.text.ends_with("（%s）" % ["炼气", "炼气", "筑基"][index]), "title shows authoritative cultivation name")
-		_check(card.name_label.text == ["辰宇 · 炼气", "队友 · 青璃", "队友 · 玄川"][index], "portrait nameplate shows configured name and rank")
+		_check(card.portrait_frame.texture.resource_path == ("res://assets/pt00.webp" if index == 0 else "res://assets/pt000.webp"), "main uses rank frame and companions use shared support frame")
+		_check(card._title.text.ends_with("（%s）" % ["凡人", "炼气", "筑基"][index]), "title shows authoritative cultivation name")
+		_check(card.name_label.text == ["张辰宇 · 凡人", "队友 · 青璃", "队友 · 玄川"][index], "portrait nameplate shows configured name and rank")
 	var hero_card: PartyMemberCard = ui.ally_panel.cards[0]
 	_check(manager.party[0].set_cultivation_rank("base.cultivation.spirit_transformation"), "cultivation state can change without changing attributes")
 	await _layout()
-	_check(hero_card.portrait_frame.texture.resource_path == "res://assets/pt05.webp" and hero_card.name_label.text == "辰宇 · 化神", "rank change refreshes both frame and nameplate")
+	_check(hero_card.portrait_frame.texture.resource_path == "res://assets/pt05.webp" and hero_card.name_label.text == "张辰宇 · 化神", "rank change refreshes both frame and nameplate")
 	manager.party[0].set_cultivation_rank("base.cultivation.qi_refining")
 	await _layout()
 	manager.move_item(0, GameManager.SWORD_INSTANCE, Vector2i.ZERO)
@@ -354,6 +360,9 @@ func _test_activation_feedback() -> void:
 	manager.restart()
 	manager.select_member(0)
 	manager.equip_random("run.storage.base.pill.yunling.0")
+	# This visual test needs a spirit-using character, unlike the default mortal.
+	var original_spirit_cap: int = manager.party[0].definition["max_spirit"]
+	manager.party[0].definition["max_spirit"] = 100
 	manager.party[0].spirit = 50
 	await _layout()
 	var bag: InventoryView = ui.ally_panel.bags[0]
@@ -381,13 +390,15 @@ func _test_activation_feedback() -> void:
 	_check(bag._pulses.is_empty() and manager.simulation.state.time_usec == 3_000_000, "pulse ends without advancing simulation")
 	manager._process(3)
 	_check(manager.party[0].inventory.get_instance(pill_id).is_empty() and bag._pulses.has(pill_id), "last bottle keeps transient feedback after authoritative consumption")
+	manager.party[0].definition["max_spirit"] = original_spirit_cap
+	manager.party[0].spirit = 0
 	bag._process(InventoryView.PULSE_DURATION * 0.35)
 	await _capture("v07_last_bottle_flash")
 	bag._process(InventoryView.PULSE_DURATION)
 	_check(bag._pulses.is_empty(), "consumed bottle ghost is removed after pulse")
 
 func _test_details_and_boards() -> void:
-	_check(ui.enemy_panel.bags[0].board_texture.resource_path == "res://assets/bag-bg-2.webp", "dog uses roots board skin")
+	_check(ui.enemy_panel.bags[0].board_texture.resource_path == "res://assets/zhenpan-bag.webp", "dog uses new 3x3 bag board")
 	var cards: Array = ui.storage_panel.cards.values()
 	_check(ui.storage_panel._grid.columns == 5, "storage uses five columns")
 	_check(is_equal_approx(cards[0].global_position.y, cards[4].global_position.y) and cards[5].global_position.y > cards[0].global_position.y, "five cards actually fit the first row")
@@ -398,7 +409,7 @@ func _test_details_and_boards() -> void:
 		_check(ui.format_battle_time(example[0]) == example[1], "timer precision and minute rollover")
 	for index in 1:
 		var bag: InventoryView = ui.ally_panel.bags[index]
-		_check(bag.board_texture.resource_path == "res://assets/bag-bg-%d.webp" % (index + 1), "correct skin bound by character")
+		_check(bag.board_texture.resource_path == "res://assets/zhenpan-bag.webp", "correct skin bound by character")
 		_check(bag.board_texture.get_size() == bag.board_layout.source_size, "mapping reference matches source image dimensions")
 		var key := bag._get_tooltip(bag.cell_center(Vector2i(1, 1)))
 		var tooltip := bag._make_custom_tooltip(key) as ItemTooltip
@@ -449,6 +460,8 @@ func _right_click(point: Vector2) -> void:
 
 func _test_drag_presentation() -> void:
 	var bag: InventoryView = ui.ally_panel.bags[0]
+	manager.unequip(0, GameManager.ARMOR_INSTANCE)
+	await _layout()
 	var card: StorageItemCard = ui.storage_panel.cards["run.storage.base.weapon.qingfeng.0"]
 	var data := card.drag_data()
 	var holder := card._make_drag_preview()
@@ -457,20 +470,22 @@ func _test_drag_presentation() -> void:
 	holder.position = ui.get_global_transform().affine_inverse() * card.get_global_rect().get_center()
 	_check(holder.z_index > ui.storage_panel.z_index, "dragged item is drawn above storage panel")
 	await _capture("storage_drag_pickup")
-	var footprint := bag.board_layout.footprint_rect(Vector2i(3, 0), card.item.grid_size, bag.size)
+	var footprint := bag.board_layout.footprint_rect(Vector2i(2, 0), card.item.grid_size, bag.size)
 	var point := footprint.get_center() + Vector2(3, 2)
-	_check(bag._can_drop_data(point, data) and bag._hover_cell == Vector2i(3, 0), "storage hover selects nearest footprint by item center")
+	_check(bag._can_drop_data(point, data) and bag._hover_cell == Vector2i(2, 0), "storage hover selects nearest footprint by item center")
 	_check(preview.size.is_equal_approx(footprint.size), "drag preview uses actual target board footprint size")
 	_check(preview.entry["units"].size() == 1, "storage preview carries one unit rather than entire storage stock")
 	holder.position = ui.get_global_transform().affine_inverse() * (bag.get_global_transform() * point)
 	await _capture("array_drag_valid")
-	point = bag.board_layout.footprint_rect(Vector2i(1, 1), card.item.grid_size, bag.size).get_center()
+	point = bag.board_layout.footprint_rect(Vector2i.ZERO, card.item.grid_size, bag.size).get_center()
 	_check(not bag._can_drop_data(point, data) and not bag._hover_valid, "occupied nearest cells show rejection rather than jumping elsewhere")
 	holder.position = ui.get_global_transform().affine_inverse() * (bag.get_global_transform() * point)
 	await _capture("array_drag_blocked")
 	_check(ui.storage_panel.z_index > ui.enemy_panel.cards[0].stat_icons["hp"].z_index, "storage layer covers elevated enemy resource icons")
 	holder.free()
+	_check(manager.equip(GameManager.ARMOR_INSTANCE, 0, Vector2i(1, 1)), "restore armor after isolated drag preview")
 	bag.reset_interaction()
+	await _layout()
 
 func _native_between(start: Vector2, finish: Vector2, immediate_preview: bool = false) -> void:
 	_mouse_motion(start)
@@ -490,7 +505,7 @@ func _native_between(start: Vector2, finish: Vector2, immediate_preview: bool = 
 func _move_all_bags() -> void:
 	for index in manager.party.size():
 		var bag: InventoryView = ui.ally_panel.bags[index]
-		for move in [[Vector2i.ZERO, Vector2i(3, 2), GameManager.sword_instance(index)], [Vector2i(1, 1), Vector2i(0, 2), GameManager.armor_instance(index)]]:
+		for move in [[Vector2i.ZERO, Vector2i(0, 1), GameManager.sword_instance(index)], [Vector2i(1, 1), Vector2i(1, 0), GameManager.armor_instance(index)]]:
 			if DisplayServer.get_name() == "headless":
 				await _native_drag(bag, move[0], move[1])
 			else:
@@ -498,7 +513,7 @@ func _move_all_bags() -> void:
 				var item := manager.registry.get_item(bag.inventory.get_instance(move[2])["item_id"])
 				bag._drop_data(bag.board_layout.footprint_rect(move[1], item.grid_size, bag.size).get_center(), data)
 			_check(manager.party[index].inventory.get_instance(move[2])["cell"] == move[1], "own equipment moves directly in bag %d" % index)
-		var invalid := bag.drag_data_at(bag.cell_center(Vector2i(0, 2)))
+		var invalid := bag.drag_data_at(bag.cell_center(Vector2i(1, 0)))
 		_check(not bag._can_drop_data(bag.cell_center(Vector2i(3, 3)), invalid), "invalid footprint rejected in each bag")
 		manager.move_item(index, GameManager.armor_instance(index), Vector2i(1, 1))
 		manager.move_item(index, GameManager.sword_instance(index), Vector2i.ZERO)
@@ -530,7 +545,7 @@ func _check_layout() -> void:
 			_check(companion.get_global_rect().end.x <= panel.get_global_rect().end.x and companion.get_global_rect().end.y <= board.position.y, "support fits above array")
 	_check(ui._speed_buttons[2.0].get_global_rect().end.x <= ui.size.x and ui._pause_button.global_position.x > ui.size.x * 0.75, "playback buttons moved to right side")
 	var item := manager.registry.get_item("base.pill.huichun")
-	var footprint: Rect2 = ui.ally_panel.bags[0].board_layout.footprint_rect(Vector2i(3, 3), Vector2i.ONE, ui.ally_panel.bags[0].size).grow(-4)
+	var footprint: Rect2 = ui.ally_panel.bags[0].board_layout.footprint_rect(Vector2i(2, 2), Vector2i.ONE, ui.ally_panel.bags[0].size).grow(-4)
 	var ring := InventoryView.rotation_ring_center(footprint, item)
 	_check(ring.x + 23 < footprint.end.x - 28, "medicine countdown stays clear of quantity badge")
 

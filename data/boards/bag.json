@@ -1,0 +1,8 @@
+{
+  "id": "base.board.bag",
+  "name": "普通行囊",
+  "texture": "res://assets/zhenpan-bag.webp",
+  "source_size": [1230, 1278],
+  "x_lines": [184, 470, 766, 1052],
+  "y_lines": [280, 548, 826, 1104]
+}

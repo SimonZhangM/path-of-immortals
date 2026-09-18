@@ -1,0 +1,20 @@
+{
+  "faction_caption": "",
+  "bag_caption": "属性加成",
+  "motto": "天地灵物，纳于一袋",
+  "categories": {
+    "all": "全部",
+    "weapon": "武器",
+    "armor": "防具",
+    "manual": "功法",
+    "pill": "丹药",
+    "chest": "宝箱",
+    "formation": "阵法",
+    "talisman": "符箓",
+    "throwable": "投掷物",
+    "material": "灵材",
+    "item": "道具"
+  },
+  "collections": {"all": "全部", "favorite": "收藏", "common": "常用", "material": "灵材"},
+  "formation_placeholders": ["修炼阵", "炼丹阵", "攻击阵"]
+}

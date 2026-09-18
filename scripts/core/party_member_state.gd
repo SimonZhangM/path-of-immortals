@@ -7,6 +7,12 @@ var inventory: InventoryState
 var hp: int
 var stamina: int
 var spirit: int
+var armor: int = 0
+var armor_capacity_sources: Dictionary = {}
+var armor_type_sources: Dictionary = {}
+var armor_type: String:
+	get:
+		return "无甲" if armor_type_sources.is_empty() else String(armor_type_sources.values()[0])
 var cultivation_rank_id: String = ""
 var _registry: ContentRegistry
 var cultivation: Dictionary:
@@ -26,7 +32,8 @@ func _init(raw: Dictionary, registry: ContentRegistry) -> void:
 	definition = raw.duplicate(true)
 	cultivation_rank_id = raw.get("cultivation_rank", "")
 	id = raw["id"]
-	inventory = InventoryState.new(registry)
+	var board := registry.get_board(raw.get("board_layout", ""))
+	inventory = InventoryState.new(registry, board.grid_size if board != null else BoardLayout.plain().grid_size)
 	reset_resources()
 
 func set_cultivation_rank(rank_id: String) -> bool:
@@ -36,6 +43,11 @@ func set_cultivation_rank(rank_id: String) -> bool:
 	return true
 
 func maximum(resource: String) -> int:
+	if resource == "armor":
+		var total := 0
+		for bonus in armor_capacity_sources.values():
+			total += int(bonus)
+		return total
 	var value := int(definition["max_" + resource])
 	if resource == "hp":
 		for bonus in max_hp_sources.values():
@@ -45,6 +57,14 @@ func maximum(resource: String) -> int:
 func reset_resources() -> void:
 	max_hp_sources.clear()
 	defense_sources.clear()
+	armor_capacity_sources.clear()
+	armor_type_sources.clear()
+	armor = 0
 	hp = int(definition["max_hp"])
 	stamina = int(definition["max_stamina"])
 	spirit = int(definition["max_spirit"])
+
+func remove_armor_source(source_id: String) -> void:
+	armor_capacity_sources.erase(source_id)
+	armor_type_sources.erase(source_id)
+	armor = mini(armor, maximum("armor"))

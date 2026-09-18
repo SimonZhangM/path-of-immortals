@@ -1,14 +1,16 @@
 class_name InventoryState
 extends RefCounted
 
-const GRID_SIZE := Vector2i(4, 4)
+# Standalone legacy fixtures use four cells; live actors pass their board dimensions.
+var grid_size: Vector2i
 var locked: bool = false
 var revision: int = 0
 var _registry: ContentRegistry
 var _instances: Dictionary = {}
 
-func _init(registry: ContentRegistry) -> void:
+func _init(registry: ContentRegistry, dimensions: Vector2i = Vector2i(4, 4)) -> void:
 	_registry = registry
+	grid_size = dimensions
 
 func add_item(instance_id: String, item_id: String, cell: Vector2i) -> bool:
 	if locked or instance_id.is_empty() or _instances.has(instance_id):
@@ -67,8 +69,8 @@ func available_cells(item_id: String) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	var item := _registry.get_item(item_id)
 	if item != null and not locked:
-		for y in 4:
-			for x in 4:
+		for y in grid_size.y:
+			for x in grid_size.x:
 				if _fits(Vector2i(x, y), item.grid_size, ""):
 					result.append(Vector2i(x, y))
 	return result
@@ -139,7 +141,7 @@ func use_consumable(id: String) -> bool:
 
 func _fits(cell: Vector2i, dimensions: Vector2i, ignore_id: String) -> bool:
 	var target := Rect2i(cell, dimensions)
-	if not Rect2i(Vector2i.ZERO, GRID_SIZE).encloses(target):
+	if not Rect2i(Vector2i.ZERO, grid_size).encloses(target):
 		return false
 	for instance_id in _instances:
 		if instance_id == ignore_id:

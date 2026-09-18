@@ -1,0 +1,174 @@
+class_name MapInventoryCatalog
+extends RefCounted
+
+signal changed
+
+var category_names: Dictionary = {}
+var collection_names: Dictionary = {}
+var collection := "all"
+var category := "all"
+var quality := ""
+var search_text := ""
+var newest_first := true
+var sort_key := "acquired_at"
+var level_descending := true
+var _entries: Array[Dictionary] = []
+
+func configure(config: Dictionary) -> void:
+	category_names = config.categories.duplicate()
+	collection_names = config.collections.duplicate()
+
+func replace_entries(records: Array) -> String:
+	var validated: Array[Dictionary] = []
+	var ids := {}
+	for raw: Variant in records:
+		if not raw is Dictionary:
+			return "物品记录必须为对象。"
+		for key in ["id", "name", "category", "quality"]:
+			if not raw.get(key) is String or raw[key].strip_edges().is_empty():
+				return "物品字段无效：" + key
+		if ids.has(raw.id) or raw.category == "all" or not category_names.has(raw.category):
+			return "物品ID重复或类别无效。"
+		if raw.has("subcategory"):
+			if not raw.subcategory is String or raw.subcategory.strip_edges().is_empty():
+				return "物品细分类须为非空文字。"
+		if not ContentRegistry._nonnegative_integer(raw.get("enhancement_level", 0)):
+			return "强化等级须为非负整数。"
+		for key in ["acquired_at", "quantity"]:
+			var value: Variant = raw.get(key)
+			if not (value is int or value is float) or not is_finite(float(value)) or value < 0 or float(value) != floorf(float(value)):
+				return "物品数值无效：" + key
+		if raw.quantity == 0:
+			return "物品数量须大于零。"
+		for key in ["favorite", "common"]:
+			if not raw.get(key, false) is bool:
+				return "物品标签须为布尔值。"
+		if not raw.get("icon", "") is String:
+			return "物品图片须为资源路径。"
+		if not raw.get("card_frame", "") is String:
+			return "物品底框须为资源路径。"
+		if raw.has("footprint_rows") or raw.has("footprint_columns"):
+			for key in ["footprint_rows", "footprint_columns"]:
+				if not ContentRegistry._positive_integer(raw.get(key)):
+					return "物品占格须包含正整数行数和列数。"
+		if raw.has("damage_type"):
+			if raw.damage_type not in ["斩击", "穿刺", "钝击"]:
+				return "未知的武器攻击类型。"
+			for key in ["base_damage", "base_stamina_cost"]:
+				if not ContentRegistry._nonnegative_integer(raw.get(key)):
+					return "基础伤害及耗体须为非负整数。"
+			if not ContentRegistry._positive_number(raw.get("cooldown")):
+				return "轮转CD须大于零。"
+		if raw.category == "armor" and (raw.has("armor_gain") or raw.has("armor_capacity") or raw.has("armor_type")):
+			if raw.get("subcategory") not in ["衣甲", "头盔", "盾"]:
+				return "未知的防具部位。"
+			if not ContentRegistry._positive_number(raw.get("cooldown")):
+				return "防具轮转CD须大于零。"
+			for key in ["armor_gain", "armor_capacity"]:
+				if not ContentRegistry._nonnegative_integer(raw.get(key)):
+					return "护甲恢复和上限须为非负整数。"
+			if raw.has("armor_type") and (raw.subcategory != "衣甲" or raw.armor_type not in ["轻甲", "重甲", "灵甲"]):
+				return "只有衣甲可以设置甲型。"
+		ids[raw.id] = true
+		validated.append(raw.duplicate(true))
+	_entries = validated
+	if quality not in qualities():
+		quality = ""
+	changed.emit()
+	return ""
+
+func load_entries(path: String) -> String:
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if not raw is Array:
+		return "储物袋物品数据必须为数组。"
+	return replace_entries(raw)
+
+func set_filter(key: String, value: String) -> void:
+	match key:
+		"collection":
+			if not collection_names.has(value):
+				return
+			collection = value
+		"category":
+			if not category_names.has(value):
+				return
+			category = value
+		"quality":
+			if not value.is_empty() and value not in qualities():
+				return
+			quality = value
+		"search":
+			search_text = value
+		_:
+			return
+	changed.emit()
+
+func set_newest_first(value: bool) -> void:
+	newest_first = value
+	sort_key = "acquired_at"
+	changed.emit()
+
+func set_level_descending(value: bool) -> void:
+	level_descending = value
+	sort_key = "enhancement_level"
+	changed.emit()
+
+func reset_filters() -> void:
+	collection = "all"
+	category = "all"
+	quality = ""
+	search_text = ""
+	newest_first = true
+	sort_key = "acquired_at"
+	level_descending = true
+	changed.emit()
+
+func total_count() -> int:
+	return _entries.size()
+
+func qualities() -> Array[String]:
+	var values: Array[String] = []
+	for entry in _entries:
+		if entry.quality not in values:
+			values.append(entry.quality)
+	values.sort()
+	return values
+
+func _in_collection(entry: Dictionary, key: String) -> bool:
+	match key:
+		"favorite", "common":
+			return entry.get(key, false)
+		"material":
+			return entry.category == "material"
+	return true
+
+func collection_count(key: String) -> int:
+	var count := 0
+	for entry in _entries:
+		if _in_collection(entry, key):
+			count += 1
+	return count
+
+func visible_entries() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entry in _entries:
+		if not _in_collection(entry, collection):
+			continue
+		if category != "all" and entry.category != category:
+			continue
+		if not quality.is_empty() and entry.quality != quality:
+			continue
+		if not search_text.strip_edges().is_empty() and not search_text.strip_edges().to_lower() in String(entry.name).to_lower():
+			continue
+		result.append(entry.duplicate(true))
+	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if sort_key == "enhancement_level":
+			var a_level: int = a.get("enhancement_level", 0)
+			var b_level: int = b.get("enhancement_level", 0)
+			if a_level != b_level:
+				return a_level > b_level if level_descending else a_level < b_level
+		if a.acquired_at == b.acquired_at:
+			return String(a.id) < String(b.id)
+		return a.acquired_at > b.acquired_at if newest_first else a.acquired_at < b.acquired_at
+	)
+	return result

@@ -16,8 +16,9 @@ var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
 var configuration_error: String = ""
 
-func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = []) -> void:
+func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = [], legacy_fixed_defense: bool = false) -> void:
 	state = GameState.new(allies, enemies, ally_companions, enemy_companions)
+	state.legacy_fixed_defense = legacy_fixed_defense
 	_registry = registry
 	for side in 2:
 		if state.teams[side].size() != 1 or not state.teams[side][0] is PartyMemberState or state.companions[side].size() > 2:
@@ -36,6 +37,9 @@ func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_compan
 	for side in 2:
 		for member in state.teams[side]:
 			member.defense_sources.clear()
+			member.armor_capacity_sources.clear()
+			member.armor_type_sources.clear()
+			member.armor = 0
 			for instance in member.inventory.get_instances():
 				assert(not _definitions.has(instance["instance_id"]), "Combat instance IDs must be unique across teams")
 				attach(member, side, instance["instance_id"], false)
@@ -58,7 +62,7 @@ func _setup_traits() -> void:
 				var key := trait_key(side, index, slot)
 				state.trait_runtime[key] = {"trait": trait_data.duplicate(true), "side": side, "order": 1 + side * 4 + index * 2 + slot, "owner_id": companion.id, "owner_name": companion.definition["name"], "next_activation_usec": 0, "activation_count": 0}
 				if trait_data["kind"] == "passive":
-					if trait_data["effect"] == "defense":
+					if trait_data["effect"] == "defense" and state.legacy_fixed_defense:
 						main.defense_sources[key] = int(trait_data["value"])
 					elif trait_data["effect"] == "max_hp":
 						main.max_hp_sources[key] = int(trait_data["value"])
@@ -94,6 +98,8 @@ func _activate_trait(key: String, at_usec: int) -> void:
 	if trait_data["effect"] == "damage":
 		target = state.target_for(side)
 		result = _effects.apply({"trigger": "on_activate", "effect": "damage", "value": trait_data["value"]}, state, target, at_usec, source)
+	elif trait_data["effect"] == "restore_armor":
+		result = _effects.restore(state.teams[side][0], "armor", int(trait_data["value"]), at_usec, source)
 	else:
 		result = _effects.restore(state.teams[side][0], "hp", int(trait_data["value"]), at_usec, source)
 	if not result.is_empty():
@@ -108,10 +114,15 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 	assert(not entry.is_empty())
 	if _owners.has(id):
 		_owners[id].defense_sources.erase(id)
+		_owners[id].remove_armor_source(id)
 	_versions[id] = int(_versions.get(id, 0)) + 1
 	var item := _registry.get_item(entry["item_id"])
 	_definitions[id] = item
 	_owners[id] = member
+	if item.armor_capacity > 0:
+		member.armor_capacity_sources[id] = item.armor_capacity
+	if not item.armor_type.is_empty():
+		member.armor_type_sources[id] = item.armor_type
 	var frozen_until := state.time_usec + insertion_cooldown_usec if inserted_during_battle else 0
 	if inserted_during_battle:
 		register_inserted_units(entry["units"])
@@ -136,6 +147,7 @@ func _entry_deadline(id: String) -> int:
 func detach(id: String) -> void:
 	if _owners.has(id):
 		_owners[id].defense_sources.erase(id)
+		_owners[id].remove_armor_source(id)
 	_versions[id] = int(_versions.get(id, 0)) + 1
 	_definitions.erase(id)
 	_owners.erase(id)
@@ -276,6 +288,10 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 		if owner.inventory.get_instance(id).is_empty():
 			detach(id)
 			return
+	elif item.category == "armor":
+		for effect in item.effects_for("on_activate"):
+			if effect["effect"] == "restore_armor":
+				_pending_events.append(_effects.restore(owner, "armor", int(effect["value"]), at_usec, source))
 	else:
 		var target := state.target_for(side)
 		if target == null:
@@ -309,6 +325,9 @@ func _enter(payload: Dictionary, at_usec: int) -> void:
 		return
 	var item: ItemData = _definitions[id]
 	state.item_runtime[id]["entered"] = true
+	if not state.legacy_fixed_defense:
+		state.revision += 1
+		return
 	var defense := item.defense
 	for effect in item.effects_for("on_enter"):
 		defense += int(effect["value"])
@@ -343,12 +362,13 @@ func _check_result(at_usec: int) -> void:
 			return
 		for id in _definitions:
 			if _can_activate(id):
-				return
+				if state.legacy_fixed_defense or _definitions[id].is_consumable() or not _definitions[id].effects_for("on_activate").filter(func(effect: Dictionary): return effect["effect"] == "damage").is_empty():
+					return
 		for runtime in state.trait_runtime.values():
 			var trait_data: Dictionary = runtime["trait"]
 			if trait_data["kind"] == "active" and trait_data["effect"] == "damage":
 				var target := state.target_for(runtime["side"])
-				if target != null and int(trait_data["value"]) > target.defense:
+				if target != null and int(trait_data["value"]) > (target.defense if state.legacy_fixed_defense else 0):
 					return
 		_finish("draw", at_usec)
 

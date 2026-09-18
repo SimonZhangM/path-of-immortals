@@ -1,10 +1,10 @@
 {
   "id": "base.character.chen_yu",
-  "name": "辰宇",
-  "cultivation_rank": "base.cultivation.qi_refining",
-  "max_hp": 100,
-  "max_stamina": 100,
-  "max_spirit": 100,
+  "name": "张辰宇",
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 50,
+  "max_stamina": 50,
+  "max_spirit": 0,
   "portrait": "res://assets/pt-a-1.webp",
-  "board_layout": "base.board.frost"
+  "board_layout": "base.board.bag"
 }

@@ -10,6 +10,7 @@ func _initialize() -> void:
 func _run() -> void:
 	root.size = Vector2i(1920, 1080)
 	screen = load("res://scenes/maps/qingshihewan.tscn").instantiate()
+	screen.inventory_save_path = ""
 	root.add_child(screen)
 	for frame in 4:
 		await process_frame
@@ -113,7 +114,7 @@ func _run() -> void:
 			elif action == "idle":
 				travel.advance(1000)
 			player.present(travel)
-			screen.content.position = screen.size * 0.5 - player.position * screen.content.scale
+			screen.content.position = screen.map_viewport.size * 0.5 - player.position * screen.content.scale
 			screen._clamp_position()
 			await create_timer(0.2).timeout
 			await RenderingServer.frame_post_draw
@@ -125,7 +126,7 @@ func _run() -> void:
 
 func _screen_point(name: String) -> Vector2:
 	var point: Node2D = screen.content.get_node("Points/" + name)
-	return screen.content.position + point.position * screen.content.scale
+	return screen.map_to_screen(point.position)
 
 func _click(position: Vector2) -> void:
 	_button(true, position)

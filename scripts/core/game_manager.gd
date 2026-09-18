@@ -33,6 +33,9 @@ var adjustment_open: bool = false
 var selected_member_index: int = 0
 var interaction_epoch: int = 0
 var _placement_rng := RandomNumberGenerator.new()
+@export var use_saved_loadout := false
+var legacy_fixed_defense := false
+@export var loadout_save_path := MapLoadoutStore.DEFAULT_PATH
 
 func _ready() -> void:
 	if not registry.load_base_content():
@@ -59,7 +62,22 @@ func _ready() -> void:
 	var dog := PartyMemberState.new(registry.get_enemy(ENEMY_ID), registry)
 	dog.inventory.add_item(CLAW_INSTANCE, CLAW_ID, Vector2i(1, 1))
 	enemies.append(dog)
-	_seed_storage()
+	if use_saved_loadout:
+		loadout_save_path = MapLoadoutStore.session_path(loadout_save_path)
+		var created := MapLoadoutStore.create_state(registry, registry.get_board(party[0].definition.board_layout))
+		startup_error = created.error
+		if startup_error.is_empty():
+			var loadout: MapLoadoutState = created.state
+			startup_error = MapLoadoutStore.load_into(loadout, loadout_save_path)
+			if startup_error.is_empty():
+				party[0].inventory = loadout.inventory
+				storage = loadout.storage
+		if not startup_error.is_empty():
+			DebugLogger.error(startup_error)
+			set_process(false)
+			return
+	else:
+		_seed_storage()
 	_placement_rng.randomize()
 	restart()
 
@@ -96,7 +114,7 @@ func restart() -> void:
 		member.inventory.locked = member in enemies
 	adjustment_open = false
 	interaction_epoch += 1
-	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions)
+	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense)
 	battle_restarted.emit()
 	adjustment_changed.emit()
 

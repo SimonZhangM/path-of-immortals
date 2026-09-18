@@ -120,7 +120,7 @@ func reset_interaction() -> void:
 	queue_redraw()
 
 func grid_rect() -> Rect2:
-	return board_layout.footprint_rect(Vector2i.ZERO, InventoryState.GRID_SIZE, size)
+	return board_layout.footprint_rect(Vector2i.ZERO, inventory.grid_size, size)
 
 func cell_center(cell: Vector2i) -> Vector2:
 	return board_layout.footprint_rect(cell, Vector2i.ONE, size).get_center()
@@ -131,8 +131,8 @@ func _cell_at(point: Vector2) -> Vector2i:
 func nearest_footprint_cell(point: Vector2, dimensions: Vector2i) -> Vector2i:
 	var closest := Vector2i.ZERO
 	var distance := INF
-	for y in range(InventoryState.GRID_SIZE.y - dimensions.y + 1):
-		for x in range(InventoryState.GRID_SIZE.x - dimensions.x + 1):
+	for y in range(inventory.grid_size.y - dimensions.y + 1):
+		for x in range(inventory.grid_size.x - dimensions.x + 1):
 			var cell := Vector2i(x, y)
 			var candidate := board_layout.footprint_rect(cell, dimensions, size).get_center().distance_squared_to(point)
 			if candidate < distance:
@@ -320,7 +320,7 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 	var item := manager.registry.get_item(_tooltip_entry["item_id"])
 	var panel := ItemTooltip.new()
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
-	panel.configure(item, _tooltip_entry, owner.defense, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]))
+	panel.configure(item, _tooltip_entry, owner.defense if manager.simulation.state.legacy_fixed_defense else -1, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]))
 	return panel
 
 static func rotation_ring_center(rect: Rect2, item: ItemData) -> Vector2:

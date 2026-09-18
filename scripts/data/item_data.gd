@@ -15,6 +15,9 @@ var category: String
 var quality: String
 var element: String
 var defense: int
+var armor_capacity: int
+var armor_type: String
+var armor_slot: String
 
 # Registry validates input before constructing an immutable-by-convention definition.
 func _init(raw: Dictionary) -> void:
@@ -32,6 +35,9 @@ func _init(raw: Dictionary) -> void:
 	category = raw.get("category", type)
 	quality = raw.get("quality", "凡品")
 	defense = int(raw.get("defense", 0))
+	armor_capacity = int(raw.get("armor_capacity", 0))
+	armor_type = raw.get("armor_type", "")
+	armor_slot = raw.get("armor_slot", "")
 
 func is_consumable() -> bool:
 	return uses_per_unit > 0

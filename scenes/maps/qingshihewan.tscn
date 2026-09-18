@@ -22,4 +22,9 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.035, 0.065, 0.065, 1)
 
-[node name="MapContent" parent="." instance=ExtResource("2_layout")]
+[node name="MapViewport" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+clip_contents = true
+
+[node name="MapContent" parent="MapViewport" instance=ExtResource("2_layout")]

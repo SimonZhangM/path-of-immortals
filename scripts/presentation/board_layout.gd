@@ -2,13 +2,18 @@ class_name BoardLayout
 extends RefCounted
 
 var id: String
+var display_name: String
 var texture_path: String
 var source_size: Vector2
 var x_lines: Array
 var y_lines: Array
+var grid_size: Vector2i:
+	get:
+		return Vector2i(x_lines.size() - 1, y_lines.size() - 1)
 
 func _init(raw: Dictionary) -> void:
 	id = raw["id"]
+	display_name = raw.get("name", "行囊")
 	texture_path = raw.get("texture", "")
 	source_size = Vector2(raw["source_size"][0], raw["source_size"][1])
 	x_lines = raw["x_lines"].duplicate()
@@ -25,7 +30,7 @@ static func validate(raw: Dictionary) -> bool:
 		return false
 	for axis in 2:
 		var lines: Variant = raw.get("x_lines" if axis == 0 else "y_lines")
-		if not lines is Array or lines.size() != 5:
+		if not lines is Array or lines.size() < 2:
 			return false
 		var previous := -1.0
 		for value in lines:
@@ -62,7 +67,7 @@ func cell_at(point: Vector2, view_size: Vector2) -> Vector2i:
 	return Vector2i(x, y) if x >= 0 and y >= 0 else Vector2i(-100, -100)
 
 func _interval(lines: Array, value: float) -> int:
-	for index in 4:
+	for index in lines.size() - 1:
 		if value >= float(lines[index]) and value < float(lines[index + 1]):
 			return index
 	return -1
@@ -70,6 +75,7 @@ func _interval(lines: Array, value: float) -> int:
 func _line(lines: Array, index: int) -> float:
 	if index < 0:
 		return float(lines[0]) + index * (float(lines[1]) - float(lines[0]))
-	if index > 4:
-		return float(lines[4]) + (index - 4) * (float(lines[4]) - float(lines[3]))
+	var last := lines.size() - 1
+	if index > last:
+		return float(lines[last]) + (index - last) * (float(lines[last]) - float(lines[last - 1]))
 	return float(lines[index])

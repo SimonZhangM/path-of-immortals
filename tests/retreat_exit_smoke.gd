@@ -6,6 +6,7 @@ func _initialize() -> void:
 func _run() -> void:
 	AudioServer.set_bus_mute(0, true)
 	var scene: Node = load("res://scenes/main/main.tscn").instantiate()
+	LegacyCombatFixture.configure(scene.get_node("GameManager"))
 	root.add_child(scene)
 	var manager: GameManager = scene.get_node("GameManager")
 	manager.set_process(false)

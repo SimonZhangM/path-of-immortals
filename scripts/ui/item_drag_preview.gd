@@ -1,6 +1,8 @@
 class_name ItemDragPreview
 extends Control
 
+const BOARD_ICON_SCALE := 0.9
+
 var manager: GameManager
 var item: ItemData
 var entry: Dictionary
@@ -19,8 +21,13 @@ func set_footprint(footprint: Vector2) -> void:
 	position = -size * 0.5
 	queue_redraw()
 
-static func fitted_icon_rect(texture_value: Texture2D, footprint: Rect2) -> Rect2:
+static func artwork_rect(footprint: Rect2) -> Rect2:
 	var interior := footprint.grow(-9)
+	var dimensions := interior.size * BOARD_ICON_SCALE
+	return Rect2(interior.get_center() - dimensions * 0.5, dimensions)
+
+static func fitted_icon_rect(texture_value: Texture2D, footprint: Rect2) -> Rect2:
+	var interior := artwork_rect(footprint)
 	var dimensions := texture_value.get_size() * minf(interior.size.x / texture_value.get_width(), interior.size.y / texture_value.get_height())
 	return Rect2(interior.get_center() - dimensions * 0.5, dimensions)
 

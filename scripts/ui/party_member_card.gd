@@ -11,6 +11,7 @@ var stat_bars: Dictionary = {}
 var stat_values: Dictionary = {}
 var stat_icons: Dictionary = {}
 var resources: VBoxContainer
+var armor_status: Label
 var _title: Label
 var portrait: TextureRect
 var portrait_frame: TextureRect
@@ -203,6 +204,16 @@ func refresh(member: RefCounted) -> void:
 				_layout_portrait()
 	if member is CompanionState:
 		return
+	if armor_status == null:
+		armor_status = Label.new()
+		armor_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		armor_status.add_theme_font_size_override("font_size", 16)
+		armor_status.add_theme_color_override("font_color", Color("dec995"))
+		resources.add_child(armor_status)
+	armor_status.visible = member.maximum("armor") > 0
+	armor_status.text = "护甲 %d / %d" % [member.armor, member.maximum("armor")]
+	if member.armor_type != "无甲":
+		armor_status.text += " · " + member.armor_type
 	var values := [member.hp, member.stamina, member.spirit, member.maximum("hp")]
 	if values == _last_values:
 		return

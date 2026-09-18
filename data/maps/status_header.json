@@ -1,0 +1,11 @@
+{
+  "character_id": "base.character.chen_yu",
+  "age": 15,
+  "lifespan": 80,
+  "spirit_stones": 0,
+  "experience": 0,
+  "portrait": "res://assets/player-1-1.webp",
+  "portrait_region": [22, 18, 448, 448],
+  "cultivation_progress": 0,
+  "cultivation_required": 100
+}

@@ -59,7 +59,7 @@ func register_trait(raw: Dictionary) -> bool:
 	var active: bool = raw.get("kind") == "active"
 	if error.is_empty() and raw.get("kind") not in ["active", "passive"]:
 		error = "trait kind must be active or passive"
-	if error.is_empty() and raw.get("effect") not in (["damage", "restore"] if active else ["defense", "max_hp"]):
+	if error.is_empty() and raw.get("effect") not in (["damage", "restore", "restore_armor"] if active else ["defense", "max_hp"]):
 		error = "unsupported trait effect for this kind"
 	if error.is_empty() and not _positive_integer(raw.get("value")):
 		error = "trait value must be positive integer"
@@ -183,6 +183,14 @@ func register_item(raw: Dictionary) -> bool:
 		error = "stamina_cost must be a nonnegative integer"
 	if error.is_empty() and not _nonnegative_integer(raw.get("defense", 0)):
 		error = "defense must be a nonnegative integer"
+	if error.is_empty() and not _nonnegative_integer(raw.get("armor_capacity", 0)):
+		error = "armor capacity must be a nonnegative integer"
+	if error.is_empty() and raw.get("armor_slot", "") not in ["", "衣甲", "头盔", "盾"]:
+		error = "invalid armor slot"
+	if error.is_empty() and raw.get("armor_type", "") not in ["", "轻甲", "重甲", "灵甲"]:
+		error = "invalid armor type"
+	if error.is_empty() and raw.get("armor_type", "") != "" and raw.get("armor_slot", "") != "衣甲":
+		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
 	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman"]:

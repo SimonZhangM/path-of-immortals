@@ -6,6 +6,9 @@ const MAX_ZOOM := 1.75
 const ZOOM_STEP := 1.1
 
 @export_file("*.json") var definition_path := "res://data/maps/qingshihewan.json"
+@export var inventory_save_path := MapLoadoutStore.DEFAULT_PATH
+var loadout: MapLoadoutState
+var _saved_loadout_revision := -1
 var definition: Dictionary = {}
 var startup_error: String = ""
 var zoom_factor := 1.25
@@ -20,8 +23,13 @@ var player: MapPlayer
 var event_registry: MapEventRegistry
 var event_state: MapEventState
 var dialogue: MapDialogue
+var player_status: MapPlayerStatus
+var status_header: MapStatusHeader
+var inventory_screen: MapInventoryScreen
+var inventory_catalog: MapInventoryCatalog
 var _last_view_size := Vector2.ZERO
-@onready var content: Node2D = $MapContent
+@onready var map_viewport: Control = $MapViewport
+@onready var content: Node2D = $MapViewport/MapContent
 
 func _ready() -> void:
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
@@ -39,6 +47,115 @@ func _ready() -> void:
 		_setup_player()
 		if startup_error.is_empty():
 			_setup_events()
+		if startup_error.is_empty():
+			_setup_status_header()
+
+func _setup_status_header() -> void:
+	var registry := ContentRegistry.new()
+	if not registry.load_base_content():
+		startup_error = "地图玩家状态配置无效：" + "; ".join(registry.errors)
+		push_error(startup_error)
+		return
+	var config: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json"))
+	if not config is Dictionary:
+		startup_error = "地图顶部栏配置无效。"
+		push_error(startup_error)
+		return
+	player_status = MapPlayerStatus.new()
+	startup_error = player_status.configure(registry, config)
+	if not startup_error.is_empty():
+		push_error(startup_error)
+		return
+	status_header = MapStatusHeader.new()
+	startup_error = status_header.configure(player_status, config)
+	if not startup_error.is_empty():
+		push_error(startup_error)
+		status_header.free()
+		status_header = null
+		return
+	add_child(status_header)
+	status_header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	_setup_inventory(registry)
+
+func _setup_inventory(registry: ContentRegistry) -> void:
+	inventory_save_path = MapLoadoutStore.session_path(inventory_save_path)
+	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_inventory.json"))
+	var character := registry.get_character(player_status.character_id)
+	inventory_catalog = MapInventoryCatalog.new()
+	inventory_catalog.configure(config)
+	var created := MapLoadoutStore.create_state(registry, registry.get_board(character.board_layout))
+	startup_error = created.error
+	if not startup_error.is_empty():
+		push_error(startup_error)
+		return
+	loadout = created.state
+	startup_error = MapLoadoutStore.load_into(loadout, inventory_save_path)
+	if not startup_error.is_empty():
+		loadout = null
+		push_error(startup_error)
+		return
+	inventory_catalog.replace_entries(loadout.storage_records())
+	inventory_screen = MapInventoryScreen.new()
+	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout)
+	add_child(inventory_screen)
+	inventory_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	inventory_screen.close_requested.connect(func(): set_inventory_open(false))
+
+func is_inventory_open() -> bool:
+	return inventory_screen != null and inventory_screen.visible
+
+func set_inventory_open(open: bool) -> void:
+	if inventory_screen == null or (open and event_state != null and event_state.is_active()):
+		return
+	if is_inventory_open() == open:
+		return
+	if not open:
+		inventory_screen.cancel_item_drag()
+		var save_error := _save_loadout()
+		if not save_error.is_empty():
+			var notice := AcceptDialog.new()
+			notice.dialog_text = save_error
+			add_child(notice)
+			notice.confirmed.connect(notice.queue_free)
+			notice.popup_centered()
+			return
+	inventory_screen.visible = open
+	status_header.map_title.visible = not open
+	_end_drag()
+	_clear_hover()
+	if open:
+		player.pause()
+	else:
+		inventory_screen.search.release_focus()
+		player.play()
+
+func _save_loadout() -> String:
+	if Engine.is_editor_hint() or loadout == null or _saved_loadout_revision == loadout.revision:
+		return ""
+	var error := MapLoadoutStore.save(loadout, inventory_save_path)
+	if error.is_empty():
+		_saved_loadout_revision = loadout.revision
+	return error
+
+func _exit_tree() -> void:
+	var error := _save_loadout()
+	if not error.is_empty():
+		push_error(error)
+
+func _input(event: InputEvent) -> void:
+	if Engine.is_editor_hint() or not event is InputEventKey or not event.pressed or event.echo:
+		return
+	if event_state != null and event_state.is_active():
+		return
+	if is_inventory_open() and event.keycode == KEY_ESCAPE:
+		set_inventory_open(false)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("map_inventory"):
+		# Typing I in a search field must not close the interface.
+		if is_inventory_open() and get_viewport().gui_get_focus_owner() is LineEdit:
+			return
+		set_inventory_open(not is_inventory_open())
+		get_viewport().set_input_as_handled()
 
 func _setup_events() -> void:
 	var files: Variant = definition.get("event_files", [])
@@ -117,17 +234,19 @@ func _setup_player() -> void:
 	content.add_child(player)
 	player.position = travel.map_position
 	# Start with the player visible. Subsequent camera movement stays manual.
-	content.position = size * 0.5 - player.position * content.scale
+	content.position = map_viewport.size * 0.5 - player.position * content.scale
 	_clamp_position()
 
 func _process(delta: float) -> void:
+	if is_inventory_open():
+		return
 	if travel != null and player != null:
 		if event_state == null or not event_state.is_active():
 			travel.advance(delta)
 		player.present(travel)
 
 func _select_destination(pointer: Vector2) -> void:
-	if travel == null or (event_state != null and event_state.is_active()):
+	if travel == null or is_inventory_open() or (event_state != null and event_state.is_active()):
 		return
 	var closest_id := _node_at(pointer)
 	if not closest_id.is_empty():
@@ -140,14 +259,14 @@ func _select_destination(pointer: Vector2) -> void:
 		player.present(travel)
 
 func _node_at(pointer: Vector2) -> String:
-	if not is_instance_valid(content) or not Rect2(Vector2.ZERO, size).has_point(pointer):
+	if not is_instance_valid(content) or not map_viewport.get_rect().has_point(pointer):
 		return ""
 	var closest_id := ""
 	var closest_distance := INF
 	# Constant minimum hit target, expanding with the drawn marker when zoomed.
 	var radius := maxf(18.0, 22.4 * content.scale.x + 4.0)
 	for point: MapRoutePoint in content.get_node("Points").get_children():
-		var screen_position := content.position + content.to_local(point.global_position) * content.scale
+		var screen_position := map_to_screen(content.to_local(point.global_position))
 		var distance := pointer.distance_to(screen_position)
 		if distance <= radius and distance < closest_distance:
 			closest_id = point.point_id
@@ -155,7 +274,7 @@ func _node_at(pointer: Vector2) -> String:
 	return closest_id
 
 func _refresh_cursor() -> void:
-	if event_state != null and event_state.is_active():
+	if is_inventory_open() or (event_state != null and event_state.is_active()):
 		mouse_default_cursor_shape = Control.CURSOR_ARROW
 	elif _dragging:
 		mouse_default_cursor_shape = Control.CURSOR_MOVE
@@ -173,40 +292,52 @@ func _fit_scale() -> float:
 	# 100% means the image width exactly fills the viewport.
 	return size.x / _source_size().x
 
+func map_to_screen(point: Vector2) -> Vector2:
+	return map_viewport.position + content.position + point * content.scale
+
 func _fit_map() -> void:
 	if definition.is_empty() or size.x <= 0 or size.y <= 0:
 		return
 	var focus := _source_size() * 0.5
 	if _last_view_size != Vector2.ZERO:
 		focus = (_last_view_size * 0.5 - content.position) / content.scale
+	var header_height := 0.0 if Engine.is_editor_hint() else MapStatusHeader.height_for_width(size.x)
+	map_viewport.position = Vector2(0, header_height)
+	map_viewport.size = Vector2(size.x, maxf(1.0, size.y - header_height))
 	content.scale = Vector2.ONE * _fit_scale() * zoom_factor
-	content.position = size * 0.5 - focus * content.scale
-	_last_view_size = size
+	content.position = map_viewport.size * 0.5 - focus * content.scale
+	_last_view_size = map_viewport.size
 	_clamp_position()
 
 func _clamp_position() -> void:
 	var extent := _source_size() * content.scale
 	for axis in 2:
-		if extent[axis] <= size[axis]:
-			content.position[axis] = (size[axis] - extent[axis]) * 0.5
+		if extent[axis] <= map_viewport.size[axis]:
+			content.position[axis] = 0.0 if axis == 1 else (map_viewport.size[axis] - extent[axis]) * 0.5
 		else:
-			content.position[axis] = clampf(content.position[axis], size[axis] - extent[axis], 0.0)
+			content.position[axis] = clampf(content.position[axis], map_viewport.size[axis] - extent[axis], 0.0)
 	_refresh_cursor()
 
 func _zoom_at(factor: float, anchor: Vector2) -> void:
 	var next_zoom := clampf(factor, MIN_ZOOM, MAX_ZOOM)
 	if is_equal_approx(next_zoom, zoom_factor):
 		return
-	var map_position := (anchor - content.position) / content.scale
+	var local_anchor := anchor - map_viewport.position
+	var map_position := (local_anchor - content.position) / content.scale
 	zoom_factor = next_zoom
 	content.scale = Vector2.ONE * _fit_scale() * zoom_factor
-	content.position = anchor - map_position * content.scale
+	content.position = local_anchor - map_position * content.scale
 	_clamp_position()
 
 func _gui_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or definition.is_empty():
 		return
-	if event_state != null and event_state.is_active():
+	if is_inventory_open() or (event_state != null and event_state.is_active()):
+		accept_event()
+		return
+	if event is InputEventMouse and not map_viewport.get_rect().has_point(event.position):
+		_end_drag()
+		_clear_hover()
 		accept_event()
 		return
 	if event is InputEventMouse:
@@ -250,6 +381,8 @@ func _gui_input(event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+		if inventory_screen != null:
+			inventory_screen.cancel_item_drag()
 		_end_drag()
 		_clear_hover()
 

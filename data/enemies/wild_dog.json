@@ -5,5 +5,5 @@
   "max_stamina": 100,
   "max_spirit": 0,
   "portrait": "res://assets/guaiwu.webp",
-  "board_layout": "base.board.roots"
+  "board_layout": "base.board.bag"
 }

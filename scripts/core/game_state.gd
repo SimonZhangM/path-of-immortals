@@ -3,6 +3,8 @@ extends RefCounted
 
 enum Phase { PREPARATION, BATTLE, FINISHED }
 var phase: Phase = Phase.PREPARATION
+# Only explicitly selected historical regression fixtures use this old rule.
+var legacy_fixed_defense := false
 var time_usec: int = 0
 var finished_at_usec: int = -1
 var result: String = ""
