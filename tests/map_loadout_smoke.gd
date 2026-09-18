@@ -90,7 +90,7 @@ func _run() -> void:
 	_check(preview != null, "full item preview exists")
 	if preview != null:
 		var art: TextureRect = preview.get_child(0)
-		_check(art.get_global_rect().get_center().distance_to(finish) < 2 and art.texture is AtlasTexture and art.has_node("ItemGlow"), "whole icon and halo centered on pointer")
+		_check(art.get_global_rect().get_center().distance_to(finish) < 2 and art.texture is AtlasTexture and art.has_node("ItemGlow"), "whole icon and halo centered on pointer (expected %s, actual %s, mouse %s, window %s)" % [finish, art.get_global_rect().get_center(), root.get_mouse_position(), root.size])
 	_check(board._hover_valid and board._hover_dimensions == Vector2i(1, 2), "nearest two vertical cells preview legal placement")
 	await _capture("map_loadout_drag_valid")
 	_mouse(finish, MOUSE_BUTTON_LEFT, false)
@@ -114,12 +114,19 @@ func _run() -> void:
 	_check(panel.grid.get_child_count() == 5, "failed drop leaves source untouched")
 	await _drag(_board_center(board, Vector2i(1, 1)), panel.storage_panel.get_global_rect().get_center() + Vector2(0, 250))
 	_check(screen.loadout.inventory.get_instances().is_empty() and panel.grid.get_child_count() == 6 and panel.board_capacity.text == "0/9", "dragging to storage returns weapon and clears occupied capacity")
-	var random_card: Control = panel.grid.get_child(0)
+	var random_card: MapInventoryItemCard
+	for card: MapInventoryItemCard in panel.grid.get_children():
+		if card.entry.name == "猎弓":
+			random_card = card
+			break
 	_mouse(random_card.get_global_rect().get_center(), MOUSE_BUTTON_RIGHT, true)
 	_mouse(random_card.get_global_rect().get_center(), MOUSE_BUTTON_RIGHT, false)
 	await _settle()
 	_check(screen.loadout.inventory.get_instances().size() == 1, "storage right click equips in a legal random cell")
 	var random_entry: Dictionary = screen.loadout.inventory.get_instances()[0]
+	var equipped_bow: MapItemArtwork = board._items[random_entry.instance_id]
+	_check(equipped_bow.has_node("ItemOutline") and equipped_bow.get_node("ItemOutline").z_index == 0, "equipped hunting bow keeps its outline above the board background")
+	await _capture("map_loadout_bow_outline")
 	var random_center := _board_center(board, random_entry.cell)
 	_mouse(random_center, MOUSE_BUTTON_RIGHT, true)
 	_mouse(random_center, MOUSE_BUTTON_RIGHT, false)

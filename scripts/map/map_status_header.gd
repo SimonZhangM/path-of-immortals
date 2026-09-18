@@ -12,6 +12,8 @@ const LEFT_ORIGIN := Vector2(-35.32, -19.12)
 const CONNECTION_Y := LEFT_ORIGIN.y + LEFT_TIP.y * LEFT_SCALE
 const RIGHT_TIP_Y := 89.92 + 1.0
 const LINE_OVERLAP := 3.0
+const LINE_COLOR := Color("d9bb72")
+const LINE_WIDTH := 1.2
 var state: MapPlayerStatus
 var bars: Dictionary = {}
 var values: Dictionary = {}
@@ -30,6 +32,7 @@ var map_title: TextureRect
 var content: Control
 var left_art: TextureRect
 var right_art: TextureRect
+var background_art: TextureRect
 var connection: Line2D
 var fill: Polygon2D
 var outline: PackedVector2Array
@@ -49,9 +52,14 @@ func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	paint.set_shader_parameter("left_join_x", LEFT_ORIGIN.x + LEFT_REGION.size.x * LEFT_SCALE)
 	fill.material = paint
 	content.add_child(fill)
+	var background_texture: Texture2D = load("res://assets/map-head.webp")
+	background_art = _image("res://assets/map-head.webp", background_texture.get_image().get_used_rect())
+	background_art.name = "HeaderBackgroundArtwork"
+	background_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background_art.self_modulate.a = 0.3
 	connection = Line2D.new()
-	connection.default_color = Color("d9bb72")
-	connection.width = 1.2
+	connection.default_color = LINE_COLOR
+	connection.width = LINE_WIDTH
 	connection.antialiased = true
 	connection.gradient = Gradient.new()
 	# Keep the hanging cord behind head3; the plaque stays fixed with the header.
@@ -211,6 +219,8 @@ func _layout() -> void:
 	var left_scale := LEFT_SCALE
 	left_art.position = LEFT_ORIGIN
 	left_art.size = LEFT_REGION.size * left_scale
+	background_art.position = Vector2(left_art.get_rect().end.x, 0)
+	background_art.size = Vector2(BASE_WIDTH - background_art.position.x, CONNECTION_Y)
 	var start := left_art.position + LEFT_TIP * left_scale
 	var right_scale := 43.0 / RIGHT_REGION.size.y
 	right_art.size = RIGHT_REGION.size * right_scale

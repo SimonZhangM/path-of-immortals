@@ -43,10 +43,20 @@ func replace_entries(records: Array) -> String:
 		for key in ["favorite", "common"]:
 			if not raw.get(key, false) is bool:
 				return "物品标签须为布尔值。"
-		if not raw.get("icon", "") is String:
-			return "物品图片须为资源路径。"
+		var icon_path: Variant = raw.get("icon", "")
+		if not icon_path is String:
+			return "物品图片须为有效资源路径。"
+		var icon_path_text := String(icon_path)
+		if icon_path_text.strip_edges().is_empty() or not ResourceLoader.exists(icon_path_text, "Texture2D"):
+			return "物品图片须为有效资源路径。"
+		var icon_texture := load(icon_path_text) as Texture2D
+		var icon_image := icon_texture.get_image() if icon_texture != null else null
+		if icon_image == null or not icon_image.has_mipmaps():
+			return "物品图片必须启用mipmap。"
 		if not raw.get("card_frame", "") is String:
 			return "物品底框须为资源路径。"
+		if raw.has("art_outline_px") and not ContentRegistry._positive_integer(raw.art_outline_px):
+			return "物品图片描边须为正整数。"
 		if raw.has("footprint_rows") or raw.has("footprint_columns"):
 			for key in ["footprint_rows", "footprint_columns"]:
 				if not ContentRegistry._positive_integer(raw.get(key)):

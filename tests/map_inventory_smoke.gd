@@ -3,16 +3,17 @@ extends SceneTree
 var checks := 0
 var failures := 0
 var screen: Control
+const MIPMAPPED_TEST_ICON := "res://assets/weapon-qsdj.webp"
 
 func _initialize() -> void:
 	call_deferred("_run")
 
 func _fixtures() -> Array:
 	return [
-		{"id": "test.a", "name": "回春丹", "category": "pill", "quality": "凡品", "acquired_at": 10, "quantity": 2, "favorite": true},
-		{"id": "test.b", "name": "测试灵药", "category": "pill", "quality": "灵品", "acquired_at": 30, "quantity": 1, "common": true, "enhancement_level": 2},
-		{"id": "test.c", "name": "测试铁甲", "category": "armor", "quality": "凡品", "acquired_at": 30, "quantity": 1, "enhancement_level": 10},
-		{"id": "test.d", "name": "测试草药", "category": "material", "quality": "凡品", "acquired_at": 20, "quantity": 3, "favorite": true, "enhancement_level": 2}
+		{"id": "test.a", "name": "回春丹", "category": "pill", "quality": "凡品", "acquired_at": 10, "quantity": 2, "favorite": true, "icon": MIPMAPPED_TEST_ICON},
+		{"id": "test.b", "name": "测试灵药", "category": "pill", "quality": "灵品", "acquired_at": 30, "quantity": 1, "common": true, "enhancement_level": 2, "icon": MIPMAPPED_TEST_ICON},
+		{"id": "test.c", "name": "测试铁甲", "category": "armor", "quality": "凡品", "acquired_at": 30, "quantity": 1, "enhancement_level": 10, "icon": MIPMAPPED_TEST_ICON},
+		{"id": "test.d", "name": "测试草药", "category": "material", "quality": "凡品", "acquired_at": 20, "quantity": 3, "favorite": true, "enhancement_level": 2, "icon": MIPMAPPED_TEST_ICON}
 	]
 
 func _ids(model: MapInventoryCatalog) -> Array:
@@ -58,6 +59,12 @@ func _check_catalog() -> void:
 		var invalid_entries := _fixtures()
 		invalid_entries[0].enhancement_level = invalid_level
 		_check(not model.replace_entries(invalid_entries).is_empty() and model.total_count() == 4, "invalid enhancement level rejected without replacing contents")
+	var invalid_outline := _fixtures()
+	invalid_outline[0].art_outline_px = 0
+	_check(not model.replace_entries(invalid_outline).is_empty() and model.total_count() == 4, "artwork outline must be a positive integer")
+	var missing_mipmap := _fixtures()
+	missing_mipmap[0].icon = "res://assets/level-fanpin.webp"
+	_check(not model.replace_entries(missing_mipmap).is_empty() and model.total_count() == 4, "future item artwork without mipmaps is rejected")
 	model.reset_filters()
 	model.set_filter("category", "not_a_category")
 	_check(model.category == "all", "unknown filter rejected")
@@ -90,6 +97,10 @@ func _run() -> void:
 	_check(panel.grid.get_child_count() == 6 and not panel.empty_state.visible, "three weapons and three armor pieces appear in storage")
 	var expected := {"青石短剑": ["斩击", 7, 3.5, 3], "猎弓": ["穿刺", 9, 4.5, 5], "短柄铁锤": ["钝击", 8, 4.0, 4]}
 	for card: MapInventoryItemCard in panel.grid.get_children():
+		var art := card.canvas.get_node("ItemArtwork") as TextureRect
+		var outline := art.get_node_or_null("ItemOutline")
+		_check(FileAccess.file_exists(card.entry.icon) and art.texture is AtlasTexture and art.texture.atlas.resource_path == card.entry.icon and art.texture.atlas.get_image().has_mipmaps() and art.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED and art.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, "item source exists, has mipmaps, preserves source aspect and uses linear mipmap filtering")
+		_check(card.entry.art_outline_px == 1 and outline != null and outline.get_child_count() == 16 and outline.z_index == 0 and (outline.get_child(0) as TextureRect).self_modulate == MapItemArtwork.OUTLINE_COLOR, "all six items use the shared softened one-pixel outline above static backgrounds")
 		if card.entry.category == "armor":
 			var armor_values: Array = {"粗布甲": [2, 4.0, 3, 7], "旧铁盔": [1, 5.0, 1, 2], "木圆盾": [2, 5.0, 3, 2]}[card.entry.name]
 			_check(card.entry.quality == "下品" and card.entry.footprint_columns == 1 and card.entry.footprint_rows == armor_values[0] and card.entry.cooldown == armor_values[1] and card.entry.armor_gain == armor_values[2] and card.entry.armor_capacity == armor_values[3], "armor dimensions and effects match authored values")
@@ -99,8 +110,10 @@ func _run() -> void:
 		var values: Array = expected[card.entry.name]
 		_check(card.entry.damage_type == values[0] and int(card.entry.base_damage) == values[1] and is_equal_approx(card.entry.cooldown, values[2]) and int(card.entry.base_stamina_cost) == values[3], "authored weapon values match user table")
 		_check(card.frame.resource_path == "res://assets/level-fanpin.webp" and card.entry.quality == "下品" and card.tooltip_text.contains("品质：下品"), "each weapon has lower quality while retaining current frame asset")
-		var art := card.canvas.get_node("ItemArtwork") as TextureRect
-		_check(FileAccess.file_exists(card.entry.icon) and art.texture is AtlasTexture and art.texture.atlas.resource_path == card.entry.icon and art.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED, "new weapon source exists, is attached and preserves source aspect")
+		var tags: Array[String] = []
+		for tag: Label in card.canvas.get_node("CategoryTags").get_children():
+			tags.append(tag.text)
+		_check(tags == ["武器", card.entry.subcategory, card.entry.damage_type], "weapon card shows category, weapon kind and damage type as three labels")
 		_check(card.footprint_cells.size() == 2 and card.footprint_cells[0].position.x == card.footprint_cells[1].position.x and card.footprint_cells[0].position.y < card.footprint_cells[1].position.y and card.tooltip_text.contains("占格：1列 × 2行"), "one column two rows shown vertically at top right")
 		_check(card.tooltip_text.contains("基础伤害") and card.tooltip_text.contains("轮转CD") and card.tooltip_text.contains("基础耗体"), "all weapon attributes available on hover")
 	var position_before: Vector2 = screen.travel.map_position
@@ -142,6 +155,7 @@ func _run() -> void:
 	_check(panel.board_panel.position.x == 0.0 and is_equal_approx(panel.board_panel.global_position.x, 252.0), "bag left edge retains its 1920 design position")
 	_check(panel.board_panel.size.is_equal_approx(Vector2(718, 718)) and is_equal_approx(panel.formation_panel.size.x, 718.0), "bag is 718 square and formation follows its width")
 	_check(is_equal_approx(panel.storage_panel.global_position.x, 990.0) and is_equal_approx(panel.storage_panel.get_global_rect().end.x, 1896.0), "storage gains the released 62 pixels on its left edge")
+	_check(panel.board_capacity_caption.get_theme_font("font") == panel.board_capacity.get_theme_font("font") and panel.board_capacity_caption.get_theme_color("font_color") == Color("c5d0d2"), "capacity caption and value share one font while the Chinese caption stays clearly brighter")
 	var first_card: Control = panel.grid.get_child(0)
 	var fifth_card: Control = panel.grid.get_child(4)
 	var sixth_card: Control = panel.grid.get_child(5)

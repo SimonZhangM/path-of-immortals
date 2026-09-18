@@ -75,6 +75,8 @@ func configure(record: Dictionary, category_name: String) -> void:
 	var subcategory: String = entry.get("subcategory", "")
 	if not subcategory.is_empty():
 		categories.append(subcategory)
+	if entry.category == "weapon" and entry.has("damage_type"):
+		categories.append(entry.damage_type)
 	if entry.has("armor_type"):
 		categories.append(entry.armor_type)
 	for caption: String in categories:

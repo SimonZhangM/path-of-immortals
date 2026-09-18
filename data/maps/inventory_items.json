@@ -4,6 +4,7 @@
     "category": "weapon", "subcategory": "剑", "quality": "下品", "quantity": 1, "acquired_at": 1,
     "enhancement_level": 0,
     "icon": "res://assets/weapon-qsdj.webp", "card_frame": "res://assets/level-fanpin.webp",
+    "art_outline_px": 1,
     "footprint_rows": 2, "footprint_columns": 1,
     "damage_type": "斩击", "base_damage": 7, "cooldown": 3.5, "base_stamina_cost": 3
   },
@@ -12,6 +13,7 @@
     "category": "weapon", "subcategory": "弓", "quality": "下品", "quantity": 1, "acquired_at": 2,
     "enhancement_level": 0,
     "icon": "res://assets/weapon-lg.webp", "card_frame": "res://assets/level-fanpin.webp",
+    "art_outline_px": 1,
     "footprint_rows": 2, "footprint_columns": 1,
     "damage_type": "穿刺", "base_damage": 9, "cooldown": 4.5, "base_stamina_cost": 5
   },
@@ -20,6 +22,7 @@
     "category": "weapon", "subcategory": "锤", "quality": "下品", "quantity": 1, "acquired_at": 3,
     "enhancement_level": 0,
     "icon": "res://assets/weapon-dbtc.webp", "card_frame": "res://assets/level-fanpin.webp",
+    "art_outline_px": 1,
     "footprint_rows": 2, "footprint_columns": 1,
     "damage_type": "钝击", "base_damage": 8, "cooldown": 4.0, "base_stamina_cost": 4
   },
@@ -28,6 +31,7 @@
     "category": "armor", "subcategory": "衣甲", "armor_type": "轻甲",
     "quality": "下品", "quantity": 1, "acquired_at": 4, "enhancement_level": 0,
     "icon": "res://assets/armor-cby.webp", "card_frame": "res://assets/level-fanpin.webp",
+    "art_outline_px": 1,
     "footprint_columns": 1, "footprint_rows": 2,
     "cooldown": 4.0, "armor_gain": 3, "armor_capacity": 7
   },
@@ -36,6 +40,7 @@
     "category": "armor", "subcategory": "头盔",
     "quality": "下品", "quantity": 1, "acquired_at": 5, "enhancement_level": 0,
     "icon": "res://assets/armor-jtk.webp", "card_frame": "res://assets/level-fanpin.webp",
+    "art_outline_px": 1,
     "footprint_columns": 1, "footprint_rows": 1,
     "cooldown": 5.0, "armor_gain": 1, "armor_capacity": 2
   },
@@ -44,6 +49,7 @@
     "category": "armor", "subcategory": "盾",
     "quality": "下品", "quantity": 1, "acquired_at": 6, "enhancement_level": 0,
     "icon": "res://assets/armor-myd.webp", "card_frame": "res://assets/level-fanpin.webp",
+    "art_outline_px": 1,
     "footprint_columns": 1, "footprint_rows": 2,
     "cooldown": 5.0, "armor_gain": 3, "armor_capacity": 2
   }

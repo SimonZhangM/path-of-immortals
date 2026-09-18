@@ -19,10 +19,10 @@ var body: HBoxContainer
 var sidebar_spacer: Control
 var sidebar: PanelContainer
 var sidebar_art: TextureRect
-var sidebar_border: Panel
 var faction_slot: Control
 var bag_caption: Label
 var board_panel: PanelContainer
+var board_capacity_caption: Label
 var board_capacity: Label
 var _board_total_cells := 0
 var formation_panel: PanelContainer
@@ -239,13 +239,16 @@ func _build_sidebar() -> void:
 	sidebar = _panel(left_column, "InformationPanel")
 	sidebar.add_theme_stylebox_override("panel", _box(Color("0d1c26"), Color.TRANSPARENT, 18, 22))
 	sidebar.custom_minimum_size.x = 208
-	sidebar.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
 	# A non-Control holder keeps the background out of PanelContainer layout.
 	var art_layer := Node2D.new()
 	art_layer.name = "SidebarBackground"
 	sidebar.add_child(art_layer)
 	sidebar_art = TextureRect.new()
 	sidebar_art.texture = load("res://assets/inventory-sidepic.webp")
+	sidebar_art.self_modulate.a = 0.25
+	var sidebar_fade := ShaderMaterial.new()
+	sidebar_fade.shader = preload("res://scripts/map/map_inventory_panel_art.gdshader")
+	sidebar_art.material = sidebar_fade
 	sidebar_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	sidebar_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	sidebar_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -290,15 +293,7 @@ func _build_sidebar() -> void:
 	reserved.name = "BagPropertiesReserved"
 	reserved.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(reserved)
-	# Draw the rim above the illustration so the image cannot cover its gold edge.
-	var rim_layer := Node2D.new()
-	sidebar.add_child(rim_layer)
-	sidebar_border = Panel.new()
-	sidebar_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var rim := _box(Color.TRANSPARENT, Color("c9ac7059"), 18, 0)
-	rim.draw_center = false
-	sidebar_border.add_theme_stylebox_override("panel", rim)
-	rim_layer.add_child(sidebar_border)
+	_add_panel_border(sidebar, 18.0)
 	_layout_sidebar_art()
 
 func _layout_sidebar_art() -> void:
@@ -307,12 +302,64 @@ func _layout_sidebar_art() -> void:
 	var dimensions := sidebar_art.texture.get_size()
 	sidebar_art.size = dimensions * (sidebar.size.x / dimensions.x)
 	sidebar_art.position = Vector2(0, sidebar.size.y - sidebar_art.size.y)
-	if sidebar_border != null:
-		sidebar_border.position = Vector2.ONE
-		sidebar_border.size = sidebar.size - Vector2.ONE * 2
+	(sidebar_art.material as ShaderMaterial).set_shader_parameter("top_fade_fraction", minf(1.0, 64.0 / maxf(1.0, sidebar_art.size.y)))
+	_layout_panel_art(sidebar_art, sidebar, 18.0)
+
+func _layout_panel_art(art: TextureRect, panel: Control, radius: float) -> void:
+	var material := art.material as ShaderMaterial
+	material.set_shader_parameter("panel_size", panel.size)
+	material.set_shader_parameter("art_size", art.size)
+	material.set_shader_parameter("art_position", art.position)
+	material.set_shader_parameter("corner_radius", radius)
+	if art.texture is AtlasTexture:
+		var atlas := art.texture as AtlasTexture
+		material.set_shader_parameter("uv_origin", atlas.region.position / atlas.atlas.get_size())
+		material.set_shader_parameter("uv_size", atlas.region.size / atlas.atlas.get_size())
 
 func _build_board(parent: Node, board: BoardLayout) -> void:
 	board_panel = _panel(parent, "BoardPanel")
+	var panel_source: Texture2D = load("res://assets/inv-zhenpan.webp")
+	var used := Rect2(panel_source.get_image().get_used_rect())
+	var square := Vector2.ONE * maxf(used.size.x, used.size.y)
+	var panel_texture := AtlasTexture.new()
+	panel_texture.atlas = panel_source
+	# Keep the complete painted rim and its aspect within the square panel.
+	panel_texture.region = Rect2(used.get_center() - square * 0.5, square)
+	var panel_style := _box(Color("0d1c26"), Color.TRANSPARENT, 18, 22)
+	panel_style.set_border_width_all(0)
+	board_panel.add_theme_stylebox_override("panel", panel_style)
+	# Keep the original container/backing; the enlarged picture is a separate
+	# layer above its fill and below the heading and interactive bag.
+	var backdrop_layer := Node2D.new()
+	board_panel.add_child(backdrop_layer)
+	var backdrop := TextureRect.new()
+	backdrop.name = "BoardPanelBackground"
+	backdrop.texture = panel_texture
+	backdrop.self_modulate.a = 0.25
+	var backdrop_mask := ShaderMaterial.new()
+	backdrop_mask.shader = preload("res://scripts/map/map_inventory_panel_art.gdshader")
+	backdrop.material = backdrop_mask
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_SCALE
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop_layer.add_child(backdrop)
+	board_panel.resized.connect(func():
+		var previous_size := board_panel.size * 1.03
+		var shifted_origin := (board_panel.size - previous_size) * 0.5 + Vector2(2, 0)
+		var growth := previous_size * 0.01
+		backdrop.size = previous_size + growth
+		backdrop.position = shifted_origin - Vector2(growth.x, growth.y * 0.5)
+		var vertical_growth := backdrop.size.y * 0.01
+		backdrop.size.y += vertical_growth
+		backdrop.position.y -= vertical_growth * 0.5
+		# Extend only the bottom edge; top/left/right remain at their current positions.
+		backdrop.size.y += 3.0
+		# Enlarge the current artwork around its own center by another3%.
+		var centered_growth := backdrop.size * 0.03
+		backdrop.position -= centered_growth * 0.5
+		backdrop.size += centered_growth
+		_layout_panel_art(backdrop, board_panel, 18.0)
+	)
 	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var column := _column(board_panel, 10)
 	var row := _section_heading(column, "行囊")
@@ -321,10 +368,11 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	capacity_row.add_theme_constant_override("separation", 8)
 	capacity_row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(capacity_row)
-	_label(capacity_row, "容量", 16, MUTED)
+	board_capacity_caption = _label(capacity_row, "容量", 16, Color("c5d0d2"))
 	board_capacity = _label(capacity_row, "", 17, Color("fff0bd"))
 	var numbers := SystemFont.new()
 	numbers.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "sans-serif"])
+	board_capacity_caption.add_theme_font_override("font", numbers)
 	board_capacity.add_theme_font_override("font", numbers)
 	_board_total_cells = board.grid_size.x * board.grid_size.y
 	_refresh_board_capacity()
@@ -341,6 +389,36 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	board_art.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_art.mouse_filter = Control.MOUSE_FILTER_STOP if loadout != null else Control.MOUSE_FILTER_IGNORE
 	column.add_child(board_art)
+	_add_panel_border(board_panel, 18.0)
+
+func _add_panel_border(panel: PanelContainer, radius: float) -> void:
+	var fill := panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	fill.set_border_width_all(0)
+	fill.corner_detail = 16
+	fill.anti_aliasing = true
+	panel.add_theme_stylebox_override("panel", fill)
+	# Analytic coverage avoids segmented Line2D joins along subpixel-width curves.
+	# A Node2D keeps this overlay out of PanelContainer's content layout.
+	var rim_layer := Node2D.new()
+	rim_layer.z_index = 1
+	panel.add_child(rim_layer)
+	var rim := ColorRect.new()
+	rim.name = str(panel.name) + "Border"
+	rim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var paint := ShaderMaterial.new()
+	paint.shader = preload("res://scripts/map/map_panel_border.gdshader")
+	paint.set_shader_parameter("corner_radius", radius)
+	paint.set_shader_parameter("line_width", MapStatusHeader.LINE_WIDTH)
+	paint.set_shader_parameter("line_color", MapStatusHeader.LINE_COLOR)
+	rim.material = paint
+	rim_layer.add_child(rim)
+	panel.resized.connect(_layout_panel_border.bind(panel, rim))
+	_layout_panel_border(panel, rim)
+
+func _layout_panel_border(panel: Control, rim: ColorRect) -> void:
+	rim.position = -Vector2.ONE * 2.0
+	rim.size = panel.size + Vector2.ONE * 4.0
+	(rim.material as ShaderMaterial).set_shader_parameter("panel_size", panel.size)
 
 func _refresh_board_capacity() -> void:
 	var occupied := loadout.inventory.occupied_cells() if loadout != null else 0
@@ -359,11 +437,13 @@ func _build_formations(parent: Node) -> void:
 		var button := _button(row, caption)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.disabled = true
+	_add_panel_border(formation_panel, 18.0)
 
 func _build_storage() -> void:
 	storage_panel = _panel(body, "StoragePanel")
 	storage_panel.theme = _storage_theme()
 	storage_panel.add_theme_stylebox_override("panel", _box(Color("0a1822"), Color("40565d"), 14, 14))
+	_add_panel_border(storage_panel, 14.0)
 	storage_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var column := _column(storage_panel, 8)
 	storage_toolbar = _column(column, 6)

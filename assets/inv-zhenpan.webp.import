@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dsqbotxwbm3l7"
-path="res://.godot/imported/weapon-qsdj.webp-63a7ed89a59468c3295d771eb2c6bcac.ctex"
+uid="uid://byxhs8irfkqvq"
+path="res://.godot/imported/inv-zhenpan.webp-c45ec4af9133f5a9a05df18bdcd94551.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/weapon-qsdj.webp"
-dest_files=["res://.godot/imported/weapon-qsdj.webp-63a7ed89a59468c3295d771eb2c6bcac.ctex"]
+source_file="res://assets/inv-zhenpan.webp"
+dest_files=["res://.godot/imported/inv-zhenpan.webp-c45ec4af9133f5a9a05df18bdcd94551.ctex"]
 
 [params]
 
@@ -23,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
