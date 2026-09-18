@@ -95,13 +95,13 @@ func _run() -> void:
 	await _capture("map_loadout_drag_valid")
 	_mouse(finish, MOUSE_BUTTON_LEFT, false)
 	await _settle()
-	_check(screen.loadout.inventory.get_instances().size() == 1 and panel.grid.get_child_count() == 5, "actual drag moves item out of storage into board")
+	_check(screen.loadout.inventory.get_instances().size() == 1 and panel.grid.get_child_count() == 5 and panel.board_capacity.text == "2/9", "actual drag equips one two-cell item and updates occupied capacity")
 	if screen.loadout.inventory.get_instances().is_empty():
 		quit(1)
 		return
 	var sword: Dictionary = screen.loadout.inventory.get_instances()[0]
 	await _drag(finish, _board_center(board, Vector2i(1, 1)))
-	_check(screen.loadout.inventory.get_instance(sword.instance_id).cell == Vector2i(1, 1), "board item can move to another legal cell")
+	_check(screen.loadout.inventory.get_instance(sword.instance_id).cell == Vector2i(1, 1) and panel.board_capacity.text == "2/9", "board move keeps occupied capacity")
 	var blocked_card: Control = panel.grid.get_child(0)
 	_mouse(blocked_card.get_global_rect().get_center(), MOUSE_BUTTON_LEFT, true)
 	await _settle()
@@ -113,7 +113,7 @@ func _run() -> void:
 	await _settle()
 	_check(panel.grid.get_child_count() == 5, "failed drop leaves source untouched")
 	await _drag(_board_center(board, Vector2i(1, 1)), panel.storage_panel.get_global_rect().get_center() + Vector2(0, 250))
-	_check(screen.loadout.inventory.get_instances().is_empty() and panel.grid.get_child_count() == 6, "dragging to storage returns the whole weapon")
+	_check(screen.loadout.inventory.get_instances().is_empty() and panel.grid.get_child_count() == 6 and panel.board_capacity.text == "0/9", "dragging to storage returns weapon and clears occupied capacity")
 	var random_card: Control = panel.grid.get_child(0)
 	_mouse(random_card.get_global_rect().get_center(), MOUSE_BUTTON_RIGHT, true)
 	_mouse(random_card.get_global_rect().get_center(), MOUSE_BUTTON_RIGHT, false)
@@ -156,7 +156,7 @@ func _run() -> void:
 		if card.entry.name == "粗布甲":
 			await _drag(card.get_global_rect().get_center(), _board_center(board, Vector2i.ZERO))
 			break
-	_check(screen.loadout.inventory.get_instances().size() == 2, "armor uses same real drag and saved loadout flow as weapons")
+	_check(screen.loadout.inventory.get_instances().size() == 2 and panel.board_capacity.text == "4/9", "armor and weapon capacity counts cells rather than item count")
 	await _capture("map_loadout_equipped")
 	var saved: Dictionary = screen.loadout.snapshot()
 	screen.set_inventory_open(false)

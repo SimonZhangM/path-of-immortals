@@ -5,6 +5,10 @@ signal close_requested
 
 const GOLD := Color("dec995")
 const MUTED := Color("85989f")
+const BODY_HEIGHT := 910.0
+const FORMATION_HEIGHT := 174.0
+const MIDDLE_GAP := 18.0
+const MIDDLE_WIDTH := BODY_HEIGHT - FORMATION_HEIGHT - MIDDLE_GAP
 var catalog: MapInventoryCatalog
 var loadout: MapLoadoutState
 var loadout_board: MapLoadoutBoard
@@ -12,12 +16,15 @@ var config: Dictionary
 var stage: Control
 var background_art: TextureRect
 var body: HBoxContainer
+var sidebar_spacer: Control
 var sidebar: PanelContainer
 var sidebar_art: TextureRect
 var sidebar_border: Panel
 var faction_slot: Control
 var bag_caption: Label
 var board_panel: PanelContainer
+var board_capacity: Label
+var _board_total_cells := 0
 var formation_panel: PanelContainer
 var storage_panel: PanelContainer
 var board_art: TextureRect
@@ -64,10 +71,13 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 	body = HBoxContainer.new()
 	body.add_theme_constant_override("separation", 20)
 	stage.add_child(body)
-	_build_sidebar(board)
+	_build_sidebar()
+	sidebar_spacer = Control.new()
+	sidebar_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sidebar.get_parent().add_child(sidebar_spacer)
 	var middle := VBoxContainer.new()
-	middle.custom_minimum_size.x = 780
-	middle.add_theme_constant_override("separation", 18)
+	middle.custom_minimum_size.x = MIDDLE_WIDTH
+	middle.add_theme_constant_override("separation", int(MIDDLE_GAP))
 	body.add_child(middle)
 	_build_board(middle, board)
 	_build_formations(middle)
@@ -78,6 +88,7 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 	_layout()
 	if loadout != null:
 		loadout.changed.connect(func(): catalog.replace_entries(loadout.storage_records()))
+		loadout.changed.connect(_refresh_board_capacity)
 		var sounds := {}
 		for kind in ["pick", "place", "invalid"]:
 			var player := AudioStreamPlayer.new()
@@ -151,6 +162,23 @@ func _heading(parent: Node, caption: String) -> Label:
 	label.add_theme_font_override("font", font)
 	return label
 
+func _section_heading(parent: Node, caption: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.custom_minimum_size.y = 36
+	row.add_theme_constant_override("separation", 10)
+	parent.add_child(row)
+	var accent := ColorRect.new()
+	accent.color = Color("fff0bd")
+	accent.custom_minimum_size = Vector2(3, 23)
+	accent.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	accent.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(accent)
+	var title := _heading(row, caption)
+	title.add_theme_font_size_override("font_size", 26)
+	title.add_theme_color_override("font_color", Color("fff0bd"))
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return row
+
 func _rule(parent: Node) -> void:
 	var rule := HSeparator.new()
 	var style := StyleBoxLine.new()
@@ -204,8 +232,11 @@ func _compact_button(parent: Node, caption: String, height: float = 28) -> Butto
 	button.custom_minimum_size.y = height
 	return button
 
-func _build_sidebar(board: BoardLayout) -> void:
-	sidebar = _panel(body, "InformationPanel")
+func _build_sidebar() -> void:
+	var left_column := HBoxContainer.new()
+	left_column.add_theme_constant_override("separation", 0)
+	body.add_child(left_column)
+	sidebar = _panel(left_column, "InformationPanel")
 	sidebar.add_theme_stylebox_override("panel", _box(Color("0d1c26"), Color.TRANSPARENT, 18, 22))
 	sidebar.custom_minimum_size.x = 208
 	sidebar.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
@@ -224,7 +255,16 @@ func _build_sidebar(board: BoardLayout) -> void:
 	var image_button := BattleActionButton.new()
 	image_button.configure("res://assets/button-return.webp", Vector2(0, 56))
 	return_button = image_button
-	column.add_child(return_button)
+	var return_slot := Control.new()
+	return_slot.custom_minimum_size.y = 56
+	column.add_child(return_slot)
+	return_slot.add_child(return_button)
+	# A second 20% enlargement: 1.2 * 1.2 = 1.44 of the original width.
+	# Grow both axes around the same center to preserve the artwork's aspect.
+	return_button.anchor_left = -0.22
+	return_button.anchor_right = 1.22
+	return_button.anchor_top = -0.1
+	return_button.anchor_bottom = 1.1
 	return_button.name = "ReturnToMap"
 	return_button.pressed.connect(func(): close_requested.emit())
 	var gap := Control.new()
@@ -235,18 +275,14 @@ func _build_sidebar(board: BoardLayout) -> void:
 	faction_slot.custom_minimum_size.y = 40
 	column.add_child(faction_slot)
 	var faction := _heading(faction_slot, config.faction_caption)
+	faction.add_theme_color_override("font_color", Color("fff0bd"))
 	faction.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bag_caption = _label(column, board.display_name + "\n" + String(config.bag_caption), 24, GOLD)
-	bag_caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var song := SystemFont.new()
-	song.font_names = PackedStringArray(["FangSong", "仿宋", "STFangsong", "serif"])
-	var bold_song := FontVariation.new()
-	bold_song.base_font = song
-	bold_song.variation_embolden = 0.6
-	bag_caption.add_theme_font_override("font", bold_song)
+	bag_caption = _heading(column, config.bag_caption)
+	bag_caption.add_theme_font_size_override("font_size", 26)
+	bag_caption.add_theme_color_override("font_color", Color("fff0bd"))
 	var motto_group := _column(column, 6)
 	_rule(motto_group)
-	var motto := _label(motto_group, config.motto, 17, GOLD)
+	var motto := _label(motto_group, config.motto, 17, Color("fff0bd"))
 	var kai := SystemFont.new()
 	kai.font_names = PackedStringArray(["KaiTi", "楷体", "STKaiti", "serif"])
 	motto.add_theme_font_override("font", kai)
@@ -279,12 +315,19 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	board_panel = _panel(parent, "BoardPanel")
 	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var column := _column(board_panel, 10)
-	var row := HBoxContainer.new()
-	column.add_child(row)
-	_heading(row, "行囊").size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var capacity := _label(row, "%d × %d" % [board.grid_size.y, board.grid_size.x], 21, MUTED)
-	capacity.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_rule(column)
+	var row := _section_heading(column, "行囊")
+	var capacity_row := HBoxContainer.new()
+	capacity_row.name = "BoardCapacity"
+	capacity_row.add_theme_constant_override("separation", 8)
+	capacity_row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(capacity_row)
+	_label(capacity_row, "容量", 16, MUTED)
+	board_capacity = _label(capacity_row, "", 17, Color("fff0bd"))
+	var numbers := SystemFont.new()
+	numbers.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "sans-serif"])
+	board_capacity.add_theme_font_override("font", numbers)
+	_board_total_cells = board.grid_size.x * board.grid_size.y
+	_refresh_board_capacity()
 	board_art = TextureRect.new()
 	if loadout != null:
 		board_art.free()
@@ -299,11 +342,15 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	board_art.mouse_filter = Control.MOUSE_FILTER_STOP if loadout != null else Control.MOUSE_FILTER_IGNORE
 	column.add_child(board_art)
 
+func _refresh_board_capacity() -> void:
+	var occupied := loadout.inventory.occupied_cells() if loadout != null else 0
+	board_capacity.text = "%d/%d" % [occupied, _board_total_cells]
+
 func _build_formations(parent: Node) -> void:
 	formation_panel = _panel(parent, "FormationPanel")
-	formation_panel.custom_minimum_size.y = 174
+	formation_panel.custom_minimum_size.y = FORMATION_HEIGHT
 	var column := _column(formation_panel, 18)
-	_heading(column, "阵型配置")
+	_section_heading(column, "阵型配置")
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 12)
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -321,19 +368,7 @@ func _build_storage() -> void:
 	var column := _column(storage_panel, 8)
 	storage_toolbar = _column(column, 6)
 	storage_toolbar.name = "StorageToolbar"
-	var heading := HBoxContainer.new()
-	heading.custom_minimum_size.y = 36
-	heading.add_theme_constant_override("separation", 10)
-	storage_toolbar.add_child(heading)
-	var accent := ColorRect.new()
-	accent.color = GOLD
-	accent.custom_minimum_size = Vector2(3, 23)
-	accent.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	accent.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	heading.add_child(accent)
-	var title := _heading(heading, "储物袋")
-	title.add_theme_font_size_override("font_size", 26)
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var heading := _section_heading(storage_toolbar, "储物袋")
 	search = LineEdit.new()
 	search.name = "ItemSearch"
 	search.placeholder_text = "搜索物品名称…"
@@ -411,16 +446,17 @@ func _build_storage() -> void:
 	var content_stack := Control.new()
 	well.add_child(content_stack)
 	var scroll := ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	content_stack.add_child(scroll)
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	grid = GridContainer.new()
-	grid.columns = 4
+	grid.columns = 5
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 12)
-	grid.add_theme_constant_override("v_separation", 12)
+	grid.add_theme_constant_override("h_separation", 6)
+	grid.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(grid)
 	grid.resized.connect(_size_item_cards)
+	scroll.resized.connect(_size_item_cards)
 	var center := CenterContainer.new()
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content_stack.add_child(center)
@@ -502,9 +538,17 @@ func _add_item_card(entry: Dictionary) -> void:
 	_label(column, "%s · %s  ×%d" % [catalog.category_names[entry.category], entry.quality, entry.quantity], 14, MUTED)
 
 func _size_item_cards() -> void:
-	if grid == null or grid.size.x <= 0:
+	if grid == null:
 		return
-	var width := floorf((grid.size.x - 12.0 * (grid.columns - 1)) / grid.columns)
+	# Measure the visible viewport, not the grid's content minimum, which can
+	# retain the previous wider cards and push the fifth column offscreen.
+	var scroll := grid.get_parent() as ScrollContainer
+	var available := (scroll.get_parent() as Control).size.x
+	if scroll.get_v_scroll_bar().visible:
+		available -= scroll.get_v_scroll_bar().size.x
+	if available <= 0:
+		return
+	var width := floorf((available - grid.get_theme_constant("h_separation") * (grid.columns - 1)) / grid.columns)
 	for card in grid.get_children():
 		if card is MapInventoryItemCard:
 			card.set_card_width(width)
@@ -522,8 +566,13 @@ func _layout() -> void:
 	stage.scale = Vector2.ONE * factor
 	stage.size = Vector2(1920, 1080)
 	stage.position = Vector2((size.x - 1920.0 * factor) * 0.5, head_height - base_head * factor + (size.y - head_height - (1080.0 - base_head) * factor) * 0.5)
-	body.position = Vector2(24, 146)
-	body.size = Vector2(1872, 910)
+	# At 16:9 all three outer margins are 24px. On wider windows, use the
+	# spare sides for the sidebar and storage while keeping the middle in place.
+	var extra_width := maxf(0, size.x / factor - 1920.0)
+	sidebar_spacer.visible = extra_width > 0
+	sidebar_spacer.custom_minimum_size.x = extra_width * 0.5
+	body.position = Vector2(24 - extra_width * 0.5, 146)
+	body.size = Vector2(1872 + extra_width, BODY_HEIGHT)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouse:

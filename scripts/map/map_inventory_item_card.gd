@@ -2,7 +2,7 @@ class_name MapInventoryItemCard
 extends Control
 
 const DESIGN_WIDTH := 190.0
-const CARD_SCALE := 0.92
+const CARD_SCALE := 0.98
 var entry: Dictionary
 var frame: Texture2D
 var canvas: Control
@@ -53,7 +53,7 @@ func configure(record: Dictionary, category_name: String) -> void:
 	art.name = "ItemArtwork"
 	art.position = Vector2(42, 44)
 	art.size = Vector2(106, 99)
-	art.configure(entry)
+	art.configure(entry, true)
 	canvas.add_child(art)
 	var title := _label(entry.name, Rect2(16, 151, 158, 28), 20, Color("eee1bd"))
 	title.name = "ItemName"
