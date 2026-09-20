@@ -1,10 +1,16 @@
 class_name MapInventoryItemCard
 extends Control
 
+const TextureMetrics = preload("res://scripts/map/map_texture_metrics.gd")
+
 const DESIGN_WIDTH := 190.0
-const CARD_SCALE := 0.98
+# Optical bounds of the straight metal sides, excluding the dark outer halo.
+# Source alpha bounds include that halo and do not represent perceived spacing.
+const FRAME_SIDE_BOUNDS := {"res://assets/level-fanpin.webp": Vector2(27.0, 517.0)}
+static var _name_font: FontVariation
 var entry: Dictionary
 var frame: Texture2D
+var frame_visible_rect: Rect2
 var canvas: Control
 var footprint_cells: Array[Rect2] = []
 var loadout: MapLoadoutState
@@ -14,6 +20,7 @@ var _drag_active := false
 func bind_loadout(model: MapLoadoutState, board: MapLoadoutBoard) -> void:
 	loadout = model
 	target_board = board
+	tooltip_text = entry.name
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 func _gui_input(event: InputEvent) -> void:
@@ -25,6 +32,13 @@ func _gui_input(event: InputEvent) -> void:
 	elif event.button_index == MOUSE_BUTTON_LEFT:
 		_begin_drag.call_deferred(loadout.drag_data("storage", entry.get("storage_id", "")))
 		accept_event()
+
+func _make_custom_tooltip(_for_text: String) -> Object:
+	if loadout == null:
+		return null
+	var tooltip := ItemTooltip.new()
+	tooltip.configure(loadout.registry.get_item(entry.id))
+	return tooltip
 
 func _begin_drag(data: Dictionary) -> void:
 	if not is_visible_in_tree() or not loadout.valid_drag(data) or get_viewport().gui_is_dragging():
@@ -45,6 +59,12 @@ func configure(record: Dictionary, category_name: String) -> void:
 	entry = record.duplicate(true)
 	name = "Item_" + String(entry.id).get_file()
 	frame = load(entry.card_frame)
+	frame_visible_rect = Rect2(TextureMetrics.inspect(frame).used_rect)
+	if FRAME_SIDE_BOUNDS.has(entry.card_frame):
+		var sides: Vector2 = FRAME_SIDE_BOUNDS[entry.card_frame]
+		frame_visible_rect.position.x = sides.x
+		frame_visible_rect.size.x = sides.y - sides.x
+	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	custom_minimum_size = Vector2(DESIGN_WIDTH, DESIGN_WIDTH * frame.get_height() / frame.get_width())
 	canvas = Control.new()
 	canvas.mouse_filter = MOUSE_FILTER_IGNORE
@@ -55,15 +75,16 @@ func configure(record: Dictionary, category_name: String) -> void:
 	art.size = Vector2(106, 99)
 	art.configure(entry, true)
 	canvas.add_child(art)
-	var title := _label(entry.name, Rect2(16, 151, 158, 28), 20, Color("eee1bd"))
+	var title := _label(entry.name, Rect2(16, 151, 158, 28), 20, Color("ffd700"))
 	title.name = "ItemName"
-	var song := SystemFont.new()
-	song.font_names = PackedStringArray(["SimSun", "宋体", "Noto Serif SC", "serif"])
-	song.font_weight = 700
-	var bold_song := FontVariation.new()
-	bold_song.base_font = song
-	bold_song.variation_embolden = 0.5
-	title.add_theme_font_override("font", bold_song)
+	if _name_font == null:
+		var song := SystemFont.new()
+		song.font_names = PackedStringArray(["SimSun", "宋体", "Noto Serif SC", "serif"])
+		song.font_weight = 700
+		_name_font = FontVariation.new()
+		_name_font.base_font = song
+		_name_font.variation_embolden = 0.5
+	title.add_theme_font_override("font", _name_font)
 	var tags := HBoxContainer.new()
 	tags.name = "CategoryTags"
 	tags.add_theme_constant_override("separation", 7)
@@ -104,14 +125,7 @@ func configure(record: Dictionary, category_name: String) -> void:
 	for row in rows:
 		for column in columns:
 			footprint_cells.append(Rect2(168 - columns * 13 + column * 13, 24 + row * 13, 10, 10))
-	tooltip_text = "%s\n品质：%s\n类别：%s\n占格：%d列 × %d行" % [entry.name, entry.quality, " · ".join(categories), columns, rows]
-	tooltip_text += "\n强化等级：%d级" % entry.get("enhancement_level", 0)
-	if entry.has("damage_type"):
-		tooltip_text += "\n伤害类型：%s\n基础伤害：%d\n轮转CD：%.1f秒\n基础耗体：%d" % [entry.damage_type, entry.base_damage, entry.cooldown, entry.base_stamina_cost]
-	if entry.category == "armor":
-		tooltip_text += "\n轮转CD：%.1f秒\n每轮获得%d护甲\n护甲上限 +%d" % [entry.cooldown, entry.armor_gain, entry.armor_capacity]
-		if entry.has("armor_type"):
-			tooltip_text += "\n甲型：" + String(entry.armor_type)
+	tooltip_text = entry.name
 	resized.connect(_layout)
 	_layout()
 
@@ -129,11 +143,12 @@ func _label(text: String, rect: Rect2, font_size: int, color: Color) -> Label:
 	return label
 
 func set_card_width(width: float) -> void:
-	custom_minimum_size = Vector2(width, width * CARD_SCALE * frame.get_height() / frame.get_width())
+	custom_minimum_size = Vector2(width, width * frame_visible_rect.size.y / frame_visible_rect.size.x)
 
 func artwork_rect() -> Rect2:
-	var width := size.x * CARD_SCALE
-	return Rect2(Vector2((size.x - width) * 0.5, 0), Vector2(width, width * frame.get_height() / frame.get_width()))
+	# Fit the metal sides, excluding source transparency AND the dark outer halo.
+	var factor := size.x / frame_visible_rect.size.x
+	return Rect2(-frame_visible_rect.position * factor, frame.get_size() * factor)
 
 func _layout() -> void:
 	if canvas != null:

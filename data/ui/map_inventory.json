@@ -1,20 +1,42 @@
 {
   "faction_caption": "",
-  "bag_caption": "行囊属性加成",
-  "motto": "天地灵物，纳于一袋",
+  "bag_caption": "属性加成",
+  "motto": "天地灵物，纳于一盘",
   "categories": {
     "all": "全部",
     "weapon": "武器",
     "armor": "防具",
-    "manual": "功法",
-    "pill": "丹药",
-    "chest": "宝箱",
-    "formation": "阵法",
+    "artifact": "法器",
+    "board": "阵盘",
     "talisman": "符箓",
-    "throwable": "投掷物",
-    "material": "灵材",
-    "item": "道具"
+    "pill": "丹药",
+    "throwable": "掷具",
+    "bait": "诱饵",
+    "food": "食物",
+    "plant": "草木",
+    "beast": "兽材",
+    "mineral": "矿材",
+    "exotic": "异材",
+    "pill_recipe": "丹方",
+    "artifact_recipe": "器方",
+    "talisman_recipe": "符方",
+    "bait_recipe": "饵方",
+    "key": "关键",
+    "misc": "杂物"
   },
-  "collections": {"all": "全部", "favorite": "收藏", "common": "常用", "material": "灵材"},
-  "formation_placeholders": ["修炼阵", "炼丹阵", "攻击阵"]
+  "collections": {"all": "全部", "favorite": "收藏", "equipment": "器物", "consumable": "消耗", "material": "灵材", "blueprint": "蓝图", "key": "关键", "misc": "杂物"},
+  "category_groups": {
+    "equipment": ["weapon", "armor", "artifact", "board", "talisman"],
+    "consumable": ["pill", "throwable", "bait", "food"],
+    "material": ["plant", "beast", "mineral", "exotic"],
+    "blueprint": ["pill_recipe", "artifact_recipe", "talisman_recipe", "bait_recipe"]
+  },
+  "formation_icons": [
+    {"name": "攻击", "icon": "res://assets/zhen-zhandou.webp"},
+    {"name": "防御", "icon": "res://assets/zhen-fangyu.webp"},
+    {"name": "平衡", "icon": "res://assets/zhen-pingheng.webp"},
+    {"name": "修炼", "icon": "res://assets/zhen-xiulian.webp"},
+    {"name": "炼丹", "icon": "res://assets/zhen-liandan.webp"},
+    {"name": "炼器", "icon": "res://assets/zhen-lianqi.webp"}
+  ]
 }

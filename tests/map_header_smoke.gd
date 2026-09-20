@@ -17,13 +17,26 @@ func _run() -> void:
 	screen.set_process(false)
 	_check(screen.startup_error.is_empty(), "map header initializes without starting battle")
 	var header: MapStatusHeader = screen.status_header
+	var board: BoardLayout = screen.loadout.registry.get_board("base.board.bag")
+	var character: Dictionary = screen.loadout.registry.get_character("base.character.chen_yu")
+	_check(character.max_hp == 50 and character.max_stamina == 50 and board.resource_bonus("hp") == 5 and board.resource_bonus("stamina") == 5 and board.resource_bonus("spirit") == 0, "board bonuses do not rewrite character base attributes")
+	var actor := PartyMemberState.new(character, screen.loadout.registry)
+	actor.hp = 1
+	actor.reset_resources()
+	actor.reset_resources()
+	_check(actor.hp == 55 and actor.stamina == 55 and actor.spirit == 0 and actor.maximum("hp") == 55, "battle initialization and repeated resets apply board bonuses once")
+	var board_raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/boards/bag.json"))
+	board_raw.resource_bonuses.hp = -1
+	_check(not BoardLayout.validate(board_raw), "board rejects invalid bonus amounts")
+	board_raw.erase("resource_bonuses")
+	_check(BoardLayout.validate(board_raw) and BoardLayout.new(board_raw).resource_bonus("hp") == 0, "older boards without bonuses remain valid and default to zero")
 	_check(header.get_parent() == screen and header.is_visible_in_tree(), "header is persistent outside map transform")
 	_check(header.hero_name.text == "张辰宇" and header.hero_rank.text == "凡人", "map identity uses actual character cultivation rank")
 	_check(header.hero_age.text == "年龄 15岁  |  寿元 80年", "prologue age and lifespan come from map state")
 	_check(header.spirit_stones.text == "灵石" and header.experience.text == "历练" and header.spirit_stones_value.text == "0" and header.experience_value.text == "0", "currency and experience display configured zero values")
 	_check(header.find_children("SettingsPlaceholder", "", true, false).is_empty(), "map settings glyph is removed")
 	for key in ["hp", "stamina", "spirit"]:
-		_check(header.values[key].text == ("0/0" if key == "spirit" else "50/50"), "initial resource from character definition: " + key)
+		_check(header.values[key].text == ("0/0" if key == "spirit" else "55/55"), "initial resource from character plus equipped board: " + key)
 	screen.player_status.set_resource("spirit", 5)
 	_check(header.values.spirit.text == "0/0" and header.bars.spirit.ratio == 0, "mortal zero spirit cap remains empty even after attempted restoration")
 	_check(header.values.cultivation.text == "0/100" and header.bars.cultivation.value == 0, "authored cultivation preview has no automatic progress")
@@ -34,9 +47,9 @@ func _run() -> void:
 	screen.player_status.cultivation_progress = 0
 	screen.player_status.changed.emit()
 	screen.player_status.set_resource("hp", 23)
-	_check(header.values.hp.text == "23/50" and header.bars.hp.value == 23, "state changes refresh label and fill together")
+	_check(header.values.hp.text == "23/55" and header.bars.hp.value == 23, "state changes refresh label and fill together")
 	screen.player_status.set_resource("hp", 200)
-	_check(header.values.hp.text == "50/50", "resource updates respect authoritative maximum")
+	_check(header.values.hp.text == "55/55", "resource updates respect authoritative maximum")
 	var original_camera: Vector2 = screen.content.position
 	var original_zoom: float = screen.zoom_factor
 	var original_destination: String = screen.travel.destination_id

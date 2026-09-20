@@ -36,22 +36,17 @@ func _run() -> void:
 	_check(travel.mode == "idle", "cancelled press does not move player")
 	for action in ["idle", "walk", "run"]:
 		var frames := player.sprite_frames
-		_check(frames.get_frame_count(action) == {"idle": 4, "walk": 8, "run": 12}[action], "playback frame count: " + action)
-		_check(frames.get_animation_speed(action) == {"idle": 3, "walk": 8, "run": 16}[action], "authored animation pace: " + action)
-		var cell: Vector2 = {"idle": Vector2(543, 724), "walk": Vector2(310, 561), "run": Vector2(360, 724)}[action]
+		_check(frames.get_frame_count(action) == {"idle": 16, "walk": 26, "run": 16}[action], "playback frame count: " + action)
+		_check(is_equal_approx(frames.get_animation_speed(action), {"idle": 12.0, "walk": 26.0, "run": 16.0 / 0.75}[action]), "authored animation pace: " + action)
+		var cell := Vector2(360, 360)
 		for i in frames.get_frame_count(action):
 			var texture := frames.get_frame_texture(action, i) as AtlasTexture
-			var expected := Rect2(Vector2(i * cell.x, 0), cell)
-			if action == "walk":
-				var source_index: int = [2, 3, 4, 3, 2, 1, 0, 1][i]
-				expected = Rect2([59, 379, 687, 994, 1310][source_index], 35, 310, 561)
-			elif action == "run":
-				var source_index: int = [3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 1, 2][i]
-				expected = Rect2([37, 419, 766, 1086, 1422, 1787, 2141][source_index], 0, 360, 724)
+			var columns := 6 if action == "walk" else 4
+			var expected := Rect2(Vector2((i % columns) * 360, (i / columns) * 360), cell)
 			_check(texture.region == expected, "exact source cell in authored playback order")
 		player.play(action)
-		_check(is_equal_approx(cell.y * player.scale.y, {"idle": 128.0, "walk": 133.3, "run": 170.0}[action]), "animation padding compensated to retain actor size")
-		var feet_y: float = {"idle": 662.0, "walk": 498.0, "run": 586.0}[action]
+		_check(is_equal_approx(cell.y * player.scale.y, 144.0), "animation padding compensated to retain actor size")
+		var feet_y: float = {"idle": 316.0, "walk": 314.0, "run": 315.0}[action]
 		_check(is_zero_approx((feet_y - cell.y * 0.5 + player.offset.y) * player.scale.y), "feet remain anchored across sheet resolutions")
 		var changes := [0]
 		var count_change := func() -> void: changes[0] += 1

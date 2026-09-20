@@ -4,10 +4,16 @@ extends RefCounted
 var id: String
 var definition: Dictionary
 var inventory: InventoryState
-var hp: int
+var board: BoardLayout
+var hp: float
 var stamina: int
 var spirit: int
-var armor: int = 0
+var armor: float = 0.0
+var toxin_stacks: int = 0
+var toxin_immune_until_usec: int = 0
+var toxin_next_tick_usec: int = 0
+var toxin_version: int = 0
+var toxin_source: Dictionary = {}
 var armor_capacity_sources: Dictionary = {}
 var armor_type_sources: Dictionary = {}
 var armor_type: String:
@@ -32,7 +38,7 @@ func _init(raw: Dictionary, registry: ContentRegistry) -> void:
 	definition = raw.duplicate(true)
 	cultivation_rank_id = raw.get("cultivation_rank", "")
 	id = raw["id"]
-	var board := registry.get_board(raw.get("board_layout", ""))
+	board = registry.get_board(raw.get("board_layout", ""))
 	inventory = InventoryState.new(registry, board.grid_size if board != null else BoardLayout.plain().grid_size)
 	reset_resources()
 
@@ -48,23 +54,47 @@ func maximum(resource: String) -> int:
 		for bonus in armor_capacity_sources.values():
 			total += int(bonus)
 		return total
-	var value := int(definition["max_" + resource])
+	var value := int(definition["max_" + resource]) + (board.resource_bonus(resource) if board != null else 0)
 	if resource == "hp":
 		for bonus in max_hp_sources.values():
 			value += int(bonus)
 	return value
 
 func reset_resources() -> void:
+	toxin_stacks = 0
+	toxin_immune_until_usec = 0
+	toxin_next_tick_usec = 0
+	toxin_version += 1
+	toxin_source.clear()
 	max_hp_sources.clear()
 	defense_sources.clear()
 	armor_capacity_sources.clear()
 	armor_type_sources.clear()
 	armor = 0
-	hp = int(definition["max_hp"])
-	stamina = int(definition["max_stamina"])
-	spirit = int(definition["max_spirit"])
+	hp = maximum("hp")
+	stamina = maximum("stamina")
+	spirit = maximum("spirit")
 
 func remove_armor_source(source_id: String) -> void:
 	armor_capacity_sources.erase(source_id)
 	armor_type_sources.erase(source_id)
-	armor = mini(armor, maximum("armor"))
+	armor = minf(armor, maximum("armor"))
+
+# 毒蚀 applications go through this gate; immunity uses combat time, not wall time.
+func apply_toxin(stacks: int, at_usec: int, source: Dictionary = {}) -> bool:
+	if stacks <= 0 or hp <= 0 or at_usec < toxin_immune_until_usec:
+		return false
+	if toxin_stacks == 0:
+		toxin_version += 1
+		toxin_next_tick_usec = at_usec + 2_000_000
+	toxin_stacks += stacks
+	if not source.is_empty():
+		toxin_source = source.duplicate()
+	return true
+
+func cleanse_toxin(at_usec: int, immunity_usec: int) -> void:
+	toxin_stacks = 0
+	toxin_next_tick_usec = 0
+	toxin_version += 1
+	toxin_source.clear()
+	toxin_immune_until_usec = maxi(toxin_immune_until_usec, at_usec + immunity_usec)

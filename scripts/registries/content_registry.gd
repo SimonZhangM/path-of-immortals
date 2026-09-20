@@ -95,6 +95,8 @@ func get_cultivation(id: String) -> Dictionary:
 
 func register_cultivation(raw: Dictionary) -> bool:
 	var error := _validate_identity(raw)
+	if error.is_empty() and not preload("res://scripts/map/map_buff_bonuses.gd").valid(raw.get("buff_bonuses", {})):
+		error = "invalid cultivation buff bonuses"
 	if error.is_empty() and not _nonnegative_integer(raw.get("order")):
 		error = "cultivation order must be a nonnegative integer"
 	var frame: Variant = raw.get("portrait_frame")
@@ -193,7 +195,7 @@ func register_item(raw: Dictionary) -> bool:
 		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
-	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman"]:
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact"]:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"
@@ -204,8 +206,8 @@ func register_item(raw: Dictionary) -> bool:
 				break
 			if effect.get("effect") == "restore_over_time" and (int(raw.get("uses_per_unit", 0)) <= 0 or raw["effects"].size() != 1):
 				error = "restoration requires a consumable with one effect"
-		if error.is_empty() and int(raw.get("uses_per_unit", 0)) > 0 and (raw["effects"].size() != 1 or raw["effects"][0].get("effect") != "restore_over_time"):
-			error = "current consumables must use one restoration effect"
+		if error.is_empty() and int(raw.get("uses_per_unit", 0)) > 0 and (raw["effects"].size() != 1 or raw["effects"][0].get("effect") not in ["restore_over_time", "restore_ticks", "cleanse_toxin"]):
+			error = "consumables require one supported recovery or cleansing effect"
 	if not error.is_empty():
 		return _reject(raw, error)
 	if raw.get("element", "base.element.none") != "base.element.none" and not _elements.has(raw.get("element")):

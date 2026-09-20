@@ -1,6 +1,7 @@
 {
   "id": "base.board.bag",
   "name": "普通行囊",
+  "resource_bonuses": {"hp": 5, "stamina": 5, "spirit": 0},
   "texture": "res://assets/zhenpan-bag.webp",
   "source_size": [1230, 1278],
   "x_lines": [184, 470, 766, 1052],

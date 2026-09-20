@@ -1,0 +1,11 @@
+[
+  {"id": "armor", "name": "护甲", "icon": "hujia", "description": "角色的基础防御层，用于承受并减免伤害，位于生命之前，但承受武器伤害系数。"},
+  {"id": "shield", "name": "护盾", "icon": "hudun", "description": "角色的额外防护层，优先承受伤害，高于护甲与生命，不受武器伤害系数。"},
+  {"id": "counter", "name": "反锋", "icon": "jin", "description": "每层积累1点反弹伤害，受到实际物理伤害时一次性全额反弹并清零。"},
+  {"id": "vitality", "name": "生机", "icon": "mu", "description": "2秒后开始每秒按当前层数恢复气血，每次恢复后减少1层。"},
+  {"id": "moisture", "name": "润脉", "icon": "shui", "description": "2秒后开始每秒按当前层数同时恢复灵力和体力，每次恢复后减少1层。"},
+  {"id": "flame", "name": "附炎", "icon": "huo", "description": "每层储存1点火属性伤害，下一次主动攻击全部附加并一次性消耗。"},
+  {"id": "tenacity", "name": "坚韧", "icon": "tu", "description": "每层提供1%抗暴击概率，成功抵挡一次暴击后全部清零。"},
+  {"id": "agility", "name": "轻灵", "icon": "feng", "description": "每层提供1%闪避率，成功闪避一次攻击后全部清零。"},
+  {"id": "thunder", "name": "雷蕴", "icon": "lei", "description": "每累计10层转化为一次雷盾值，并加入当前雷盾池。"}
+]

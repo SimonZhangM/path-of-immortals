@@ -7,6 +7,8 @@ var _items: Dictionary = {}
 var _hover_cell := Vector2i(-1, -1)
 var _hover_dimensions := Vector2i.ZERO
 var _hover_valid := false
+var _hover_swap := false
+const SWAP_COLOR := Color(0.55, 0.8, 1.0, 0.32)
 var _drag_active := false
 
 func configure(model: MapLoadoutState) -> void:
@@ -70,10 +72,20 @@ func make_preview(data: Dictionary) -> Control:
 	holder.add_child(art)
 	return holder
 
+func _get_tooltip(at_position: Vector2) -> String:
+	if state == null:
+		return ""
+	return state.inventory.item_at(layout.cell_at(at_position, size))
+
+func _make_custom_tooltip(for_text: String) -> Object:
+	var entry := state.inventory.get_instance(for_text)
+	if entry.is_empty():
+		return null
+	var tooltip := ItemTooltip.new()
+	tooltip.configure(state.registry.get_item(entry.item_id), entry)
+	return tooltip
+
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		var entry := state.inventory.get_instance(state.inventory.item_at(layout.cell_at(event.position, size)))
-		tooltip_text = "" if entry.is_empty() else String(state.records[entry.item_id].name)
 	if not event is InputEventMouseButton or not event.pressed:
 		return
 	var id := state.inventory.item_at(layout.cell_at(event.position, size))
@@ -97,13 +109,17 @@ func _begin_drag(data: Dictionary) -> void:
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
 	_hover_dimensions = Vector2i.ZERO
+	_hover_valid = false
+	_hover_swap = false
 	var entry := state.drag_entry(data)
 	if entry.is_empty() or not layout.footprint_rect(Vector2i.ZERO, state.inventory.grid_size, size).has_point(point):
 		queue_redraw()
 		return false
 	_hover_dimensions = state.registry.get_item(entry.item_id).grid_size
 	_hover_cell = nearest_cell(point, _hover_dimensions)
-	_hover_valid = state.can_place(data, _hover_cell)
+	var kind := state.placement_kind(data, _hover_cell)
+	_hover_valid = kind != "invalid"
+	_hover_swap = kind == "swap"
 	queue_redraw()
 	return _hover_valid
 
@@ -130,5 +146,7 @@ func _draw() -> void:
 		for x in _hover_dimensions.x:
 			var rect := layout.footprint_rect(_hover_cell + Vector2i(x, y), Vector2i.ONE, size).grow(-3)
 			var color := Color(0.3, 0.85, 0.55, 0.25) if _hover_valid else Color(0.9, 0.25, 0.3, 0.3)
+			if _hover_swap:
+				color = SWAP_COLOR
 			draw_rect(rect, color)
 			draw_rect(rect, Color(color, 0.7), false, 1.0)

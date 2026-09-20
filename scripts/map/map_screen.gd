@@ -96,7 +96,8 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 		return
 	inventory_catalog.replace_entries(loadout.storage_records())
 	inventory_screen = MapInventoryScreen.new()
-	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout)
+	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout, player_status)
+	inventory_screen.formation_save_callback = _save_loadout
 	add_child(inventory_screen)
 	inventory_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	inventory_screen.close_requested.connect(func(): set_inventory_open(false))
@@ -110,6 +111,7 @@ func set_inventory_open(open: bool) -> void:
 	if is_inventory_open() == open:
 		return
 	if not open:
+		inventory_screen.close_formation_dialog()
 		inventory_screen.cancel_item_drag()
 		var save_error := _save_loadout()
 		if not save_error.is_empty():
@@ -146,6 +148,11 @@ func _input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if event_state != null and event_state.is_active():
+		return
+	if is_inventory_open() and inventory_screen.is_formation_dialog_open():
+		if event.keycode == KEY_ESCAPE or (event.is_action_pressed("map_inventory") and not (get_viewport().gui_get_focus_owner() is LineEdit)):
+			inventory_screen.close_formation_dialog()
+			get_viewport().set_input_as_handled()
 		return
 	if is_inventory_open() and event.keycode == KEY_ESCAPE:
 		set_inventory_open(false)

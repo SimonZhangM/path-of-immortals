@@ -7,6 +7,9 @@ class LegacyRegistry extends ContentRegistry:
 	func load_base_content() -> bool:
 		if not super.load_base_content():
 			return false
+		# Historical combat fixtures predate board resource bonuses.
+		for board in _boards.values():
+			board.resource_bonuses.clear()
 		_traits.erase("base.trait.ward")
 		return register_trait({"id": "base.trait.ward", "name": "护元", "kind": "passive", "cooldown": 0, "element": "base.element.earth", "effect": "defense", "value": 1, "description": "历史测试：为主角提供1点防御。"})
 

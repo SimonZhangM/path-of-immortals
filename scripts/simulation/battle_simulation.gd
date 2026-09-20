@@ -14,6 +14,7 @@ var _effects := EffectSystem.new()
 var _pending_events: Array[Dictionary] = []
 var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
+var _scheduled_toxins: Dictionary = {}
 var configuration_error: String = ""
 
 func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = [], legacy_fixed_defense: bool = false) -> void:
@@ -67,7 +68,7 @@ func _setup_traits() -> void:
 					elif trait_data["effect"] == "max_hp":
 						main.max_hp_sources[key] = int(trait_data["value"])
 		var new_bonus := main.maximum("hp") - int(main.definition["max_hp"])
-		main.hp = clampi(old_hp + new_bonus - old_bonus, 1, main.maximum("hp")) if old_hp > 0 else 0
+		main.hp = clampf(old_hp + new_bonus - old_bonus, minf(1.0, old_hp), main.maximum("hp")) if old_hp > 0 else 0.0
 
 func trait_remaining_usec(key: String) -> int:
 	var runtime: Dictionary = state.trait_runtime.get(key, {})
@@ -158,6 +159,7 @@ func start() -> bool:
 	if not configuration_error.is_empty() or state.phase != GameState.Phase.PREPARATION:
 		return false
 	state.phase = GameState.Phase.BATTLE
+	_sync_toxins()
 	for id in _definitions:
 		_enter({"instance_id": id, "version": _versions[id]}, 0)
 	_wake_items(0)
@@ -179,8 +181,14 @@ func _can_activate(id: String) -> bool:
 		if entry.is_empty():
 			return false
 		var opened: bool = int(entry["units"][0]["uses_left"]) < item.uses_per_unit
-		var resource: String = item.effects[0]["resource"]
-		return opened or int(owner.get(resource)) < owner.maximum(resource)
+		if opened:
+			return true
+		for effect: Dictionary in item.effects_for("on_activate"):
+			if effect.effect == "cleanse_toxin":
+				return true
+			if effect.get("resource") in ["hp", "stamina", "spirit"] and float(owner.get(effect.resource)) < owner.maximum(effect.resource):
+				return true
+		return false
 	return true
 
 func request_retreat() -> bool:
@@ -232,6 +240,7 @@ func activation_progress(id: String) -> float:
 func advance(real_delta: float) -> void:
 	if state.phase != GameState.Phase.BATTLE or clock.paused:
 		return
+	_sync_toxins()
 	_check_result(state.time_usec)
 	if state.is_finished():
 		return
@@ -251,9 +260,12 @@ func advance(real_delta: float) -> void:
 			_enter(event["payload"], at_usec)
 		elif event["kind"] == "trait":
 			_activate_trait(event["payload"]["key"], at_usec)
+		elif event["kind"] == "toxin":
+			_tick_toxin(event["payload"], at_usec)
 		else:
 			_activate(event["payload"], at_usec)
 		_wake_items(at_usec)
+		_sync_toxins()
 		_check_result(at_usec)
 	state.time_usec = state.finished_at_usec if state.is_finished() else target_usec
 
@@ -275,7 +287,25 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 	state.revision += 1
 	var source := {"item_id": item.id, "instance_id": id, "owner_id": owner.id, "owner_name": owner.definition["name"], "side": side, "stamina_cost": item.stamina_cost, "stamina_after": owner.stamina}
 	_pending_events.append({"kind": "item_activated", "at_usec": at_usec, "owner_id": owner.id, "side": side, "entry": owner.inventory.get_instance(id)})
-	if item.is_consumable():
+	if not item.effects_for("on_activate").filter(func(effect: Dictionary): return effect.effect in ["restore_capped", "restore_ticks", "cleanse_toxin"]).is_empty():
+		for effect: Dictionary in item.effects_for("on_activate"):
+			if effect.effect == "restore_capped":
+				var limit := int(owner.maximum(effect.resource) * int(effect.cap_numerator) / int(effect.cap_denominator))
+				_pending_events.append(_effects.restore(owner, effect.resource, int(effect.value), at_usec, source, limit))
+			elif effect.effect == "restore_ticks":
+				for tick in range(1, int(effect.ticks) + 1):
+					queue.schedule(at_usec + roundi(tick * float(effect.interval) * 1_000_000), "restore", {"owner": owner, "resource": effect.resource, "amount": int(effect.value), "source": source})
+					_pending_restores += 1
+			elif effect.effect == "cleanse_toxin":
+				owner.cleanse_toxin(at_usec, roundi(float(effect.duration) * 1_000_000))
+				_pending_events.append({"kind": "toxin_cleansed", "at_usec": at_usec, "owner_id": owner.id, "immune_until_usec": owner.toxin_immune_until_usec})
+		if item.is_consumable():
+			var consumed := owner.inventory.use_consumable(id)
+			_pending_events.append({"kind": "pill_used", "at_usec": at_usec, "owner_name": owner.definition["name"], "item_id": item.id, "consumed": consumed})
+			if owner.inventory.get_instance(id).is_empty():
+				detach(id)
+				return
+	elif item.is_consumable():
 		var effect: Dictionary = item.effects[0]
 		var duration: int = effect["duration"]
 		for tick in range(1, duration + 1):
@@ -298,16 +328,64 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 			return
 		state.activation_counts[side] += 1
 		for effect in item.effects_for("on_activate"):
+			if effect.effect == "apply_toxin":
+				apply_toxin(target, int(effect.value), side, source)
+				continue
 			var result := _effects.apply(effect, state, target, at_usec, source)
 			if not result.is_empty():
 				_pending_events.append(result)
 		if target.hp == 0:
 			_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": target.definition["name"], "target_id": target.id})
-		else:
+		elif not item.effects_for("on_activate").filter(func(effect: Dictionary): return effect.effect == "damage").is_empty():
 			_counterattack(target, owner, 1 - side, at_usec)
 	runtime["ready_at_usec"] = at_usec + item.cooldown_usec
 	if _can_activate(id):
 		_schedule(id, runtime["ready_at_usec"])
+
+# Public entry point for future enemy effects; current monsters receive no toxin.
+func apply_toxin(target: PartyMemberState, stacks: int, source_side: int, source: Dictionary = {}) -> bool:
+	if state.is_finished() or source_side not in [0, 1] or target not in state.teams[1 - source_side]:
+		return false
+	var attribution := source.duplicate()
+	attribution["side"] = source_side
+	if not target.apply_toxin(stacks, state.time_usec, attribution):
+		return false
+	state.revision += 1
+	_pending_events.append({"kind": "toxin_applied", "at_usec": state.time_usec, "target_id": target.id, "target_name": target.definition.name, "stacks": target.toxin_stacks})
+	if state.phase == GameState.Phase.BATTLE:
+		_sync_toxins()
+	return true
+
+func _sync_toxins() -> void:
+	for side in 2:
+		var member: PartyMemberState = state.teams[side][0]
+		if member.hp <= 0 or member.toxin_stacks <= 0 or member.toxin_next_tick_usec <= 0:
+			_scheduled_toxins.erase(member.id)
+			continue
+		var token := [member.toxin_version, member.toxin_next_tick_usec]
+		if _scheduled_toxins.get(member.id) == token:
+			continue
+		_scheduled_toxins[member.id] = token
+		# Same-time item actions (including cleansing) resolve before the toxin tick.
+		queue.schedule(member.toxin_next_tick_usec, "toxin", {"target": member, "side": side, "version": member.toxin_version}, 8)
+
+func _tick_toxin(payload: Dictionary, at_usec: int) -> void:
+	var target: PartyMemberState = payload.target
+	if target.hp <= 0 or target.toxin_stacks <= 0 or payload.version != target.toxin_version or target.toxin_next_tick_usec != at_usec:
+		return
+	var amount := target.toxin_stacks
+	var dealt := minf(target.hp, float(amount))
+	target.hp = maxf(0.0, target.hp - dealt)
+	if is_zero_approx(target.hp):
+		target.hp = 0.0
+	target.toxin_stacks -= 1
+	target.toxin_next_tick_usec = at_usec + 1_000_000 if target.toxin_stacks > 0 else 0
+	var source_side := int(target.toxin_source.get("side", 1 - int(payload.side)))
+	state.damage_totals[source_side] += dealt
+	state.revision += 1
+	_pending_events.append({"kind": "toxin_damage", "at_usec": at_usec, "side": source_side, "target_id": target.id, "target_name": target.definition.name, "value": dealt, "raw_damage": amount, "hp_after": target.hp, "stacks_after": target.toxin_stacks})
+	if target.hp == 0:
+		_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": target.definition.name, "target_id": target.id})
 
 func _apply_restore(payload: Dictionary, at_usec: int) -> void:
 	_pending_restores -= 1
@@ -360,9 +438,12 @@ func _check_result(at_usec: int) -> void:
 	else:
 		if _pending_restores > 0:
 			return
+		for side in 2:
+			if state.teams[side][0].toxin_stacks > 0:
+				return
 		for id in _definitions:
 			if _can_activate(id):
-				if state.legacy_fixed_defense or _definitions[id].is_consumable() or not _definitions[id].effects_for("on_activate").filter(func(effect: Dictionary): return effect["effect"] == "damage").is_empty():
+				if state.legacy_fixed_defense or _definitions[id].is_consumable() or not _definitions[id].effects_for("on_activate").filter(func(effect: Dictionary): return effect["effect"] in ["damage", "apply_toxin"]).is_empty():
 					return
 		for runtime in state.trait_runtime.values():
 			var trait_data: Dictionary = runtime["trait"]
@@ -381,6 +462,7 @@ func _finish(result: String, at_usec: int) -> void:
 	clock.time_usec = at_usec
 	state.revision += 1
 	queue.clear()
+	_scheduled_toxins.clear()
 	_pending_restores = 0
 	for runtime in state.item_runtime.values():
 		runtime["next_activation_usec"] = 0

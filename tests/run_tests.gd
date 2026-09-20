@@ -406,7 +406,7 @@ func _test_timing() -> void:
 			for frame in range(int(60 * fps / speed)):
 				battle.advance(1.0 / fps)
 			_check(battle.state.time_usec == 60_000_000 and battle.state.activation_counts == [20, 20], "speed/fps invariant attack counts and time")
-			_check(battle.state.damage_totals == [200, 80] and battle.state.result == "draw", "speed/fps invariant damage with iron armor and exhaustion")
+			_check(battle.state.damage_totals[0] == 200 and battle.state.damage_totals[1] == 80 and battle.state.result == "draw", "speed/fps invariant damage with iron armor and exhaustion")
 			var events := battle.drain_events().filter(func(e): return e["kind"] == "damage")
 			for index in 40:
 				_check(events[index]["at_usec"] == (index / 2 + 1) * 3_000_000 and events[index]["side"] == (1 if index % 2 == 1 else 0), "exact deterministic timestamps for both teams")

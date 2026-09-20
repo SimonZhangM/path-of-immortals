@@ -38,7 +38,7 @@ func configure(definition: Dictionary) -> String:
 				if rect.size != Vector2(regions[0][2], regions[0][3]):
 					return "地图角色切片尺寸须一致：" + action
 			frame_size = Vector2(regions[0][2], regions[0][3])
-		# Author-facing indices start at 1, from the leftmost source column.
+		# Author-facing indices start at 1, following the configured source regions.
 		var frame_order: Variant = entry.get("frame_order", range(1, int(entry.frames) + 1))
 		if not frame_order is Array or frame_order.size() != int(entry.frames):
 			return "地图角色播放顺序长度无效：" + action
@@ -77,7 +77,7 @@ func configure(definition: Dictionary) -> String:
 	if not animation_changed.is_connected(_apply_animation_layout):
 		animation_changed.connect(_apply_animation_layout)
 	z_index = 3
-	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	flip_h = initial_facing == "left"
 	play("idle")
 	_apply_animation_layout()

@@ -1,7 +1,7 @@
 class_name StoragePanel
 extends PanelContainer
 
-const CATEGORIES := {"all": "全部", "weapon": "法器", "armor": "防具", "pill": "丹药", "item": "道具", "talisman": "符箓"}
+const CATEGORIES := {"all": "全部", "weapon": "武器", "armor": "防具", "pill": "丹药", "item": "道具", "talisman": "符箓", "artifact": "法器"}
 var manager: GameManager
 var target_board: InventoryView
 var cards: Dictionary = {}

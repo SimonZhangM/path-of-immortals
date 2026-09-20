@@ -1,6 +1,8 @@
 class_name MapItemArtwork
 extends TextureRect
 
+const TextureMetrics = preload("res://scripts/map/map_texture_metrics.gd")
+
 const GLOW_SHADER = preload("res://scripts/map/map_item_glow.gdshader")
 # Presentation palette keyed by quality, independent of enhancement level.
 # Only 下品 is currently authored; unknown qualities use the neutral fallback.
@@ -18,7 +20,7 @@ func configure(record: Dictionary, storage_quality_glow: bool = false) -> void:
 		var source: Texture2D = load(path)
 		var trimmed := AtlasTexture.new()
 		trimmed.atlas = source
-		trimmed.region = source.get_image().get_used_rect()
+		trimmed.region = TextureMetrics.inspect(source).used_rect
 		texture = trimmed
 		outline_source = trimmed
 	var glow := ColorRect.new()

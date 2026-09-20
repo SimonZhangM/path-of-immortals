@@ -20,7 +20,7 @@ func _fixture(support := false, weapon := true) -> Dictionary:
 	var registry := ContentRegistry.new()
 	_check(registry.load_base_content(), "base content loads")
 	var created := MapLoadoutStore.create_state(registry, registry.get_board("base.board.bag"))
-	_check(created.error.is_empty(), "six canonical items register")
+	_check(created.error.is_empty(), "all canonical items register")
 	var hero := PartyMemberState.new(registry.get_character(GameManager.PARTY_IDS[0]), registry)
 	var dog := PartyMemberState.new(registry.get_enemy(GameManager.ENEMY_ID), registry)
 	dog.hp = 1000
@@ -53,16 +53,16 @@ func _run() -> void:
 	_check(hero.armor == 3, "cloth grants3 armor at4s")
 	battle.advance(1)
 	_check(hero.armor == 7, "helmet1 plus shield3 at5s")
-	_check(hero.stamina == 47, "armor gains do not consume stamina; only sword did")
+	_check(hero.stamina == 52, "armor gains do not consume stamina; only sword did (board grants5)")
 	battle.advance(11)
 	_check(hero.armor == 11, "repeated gains cap at11")
 	hero.defense_sources["obsolete"] = 100
 	var hit := _hit(f, 5)
-	_check(hero.armor == 6 and hero.hp == 50 and hit.armor_absorbed == 5, "attack consumes5 armor and preserves remainder, no fixed reduction")
+	_check(hero.armor == 6 and hero.hp == 55 and hit.armor_absorbed == 5, "attack consumes5 armor and preserves remainder, no fixed reduction")
 	hit = _hit(f, 10)
-	_check(hero.armor == 0 and hero.hp == 46 and hit.value == 4, "overflow subtracts HP only after armor empties")
+	_check(hero.armor == 0 and hero.hp == 51 and hit.value == 4, "overflow subtracts HP only after armor empties")
 	hit = _hit(f, 5)
-	_check(hero.hp == 41 and hit.value == 5, "empty armor provides no fixed mitigation even with obsolete defense source")
+	_check(hero.hp == 46 and hit.value == 5, "empty armor provides no fixed mitigation even with obsolete defense source")
 	var restore := EffectSystem.new().restore(hero, "armor", 99, 0, {})
 	_check(restore.value == 11 and hero.armor == 11, "restore reports actual capped gain")
 	battle.detach("cloth")
@@ -95,7 +95,7 @@ func _run() -> void:
 	# An old weapon-only version1 save preserves positions and gains new starter gear.
 	var state: MapLoadoutState = f.loadout
 	var old := {"version": 1, "board_id": "base.board.bag", "placements": [{"instance_id": "owned." + SWORD + ".0", "item_id": SWORD, "cell": [2, 0]}]}
-	_check(state.restore(old).is_empty() and state.storage.entries().size() == 5 and state.inventory.get_instances()[0].cell == Vector2i(2, 0), "old save retains sword and adds three new armor pieces to storage")
+	_check(state.restore(old).is_empty() and state.storage.entries().size() == 9 and state.inventory.get_instances()[0].cell == Vector2i(2, 0), "old save retains sword and adds missing seeded items and support items to storage")
 	for entry in state.storage.entries():
 		if entry.item_id == HELMET:
 			_check(state.place(state.drag_data("storage", entry.instance_id), Vector2i(2, 2)), "1x1 helmet fits last free row")

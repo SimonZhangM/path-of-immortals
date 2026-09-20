@@ -8,11 +8,11 @@ var elapsed: float = 0.0
 var damage_label: Label
 var _start: Vector2
 
-func configure(amount: int, slot: int = 0) -> void:
+func configure(amount: float, slot: int = 0) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	z_index = 10
 	damage_label = Label.new()
-	damage_label.text = "-%d" % amount
+	damage_label.text = "-%s" % EffectSystem.number_text(amount)
 	damage_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	damage_label.add_theme_font_size_override("font_size", 32)
 	damage_label.add_theme_color_override("font_color", HP_COLOR)

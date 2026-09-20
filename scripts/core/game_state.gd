@@ -15,7 +15,7 @@ var companions: Array = [[], []]
 var trait_runtime: Dictionary = {}
 var item_runtime: Dictionary = {}
 var activation_counts: Array[int] = [0, 0]
-var damage_totals: Array[int] = [0, 0]
+var damage_totals: Array[float] = [0.0, 0.0]
 
 func _init(allies: Array, enemies: Array, ally_companions: Array, enemy_companions: Array) -> void:
 	teams = [allies.duplicate(), enemies.duplicate()]

@@ -211,7 +211,7 @@ func refresh(member: RefCounted) -> void:
 		armor_status.add_theme_color_override("font_color", Color("dec995"))
 		resources.add_child(armor_status)
 	armor_status.visible = member.maximum("armor") > 0
-	armor_status.text = "护甲 %d / %d" % [member.armor, member.maximum("armor")]
+	armor_status.text = "护甲 %s / %d" % [EffectSystem.number_text(member.armor), member.maximum("armor")]
 	if member.armor_type != "无甲":
 		armor_status.text += " · " + member.armor_type
 	var values := [member.hp, member.stamina, member.spirit, member.maximum("hp")]
@@ -224,15 +224,16 @@ func refresh(member: RefCounted) -> void:
 		var key: String = keys[index]
 		var maximum: int = member.maximum(key)
 		stat_bars[key].max_value = maxi(maximum, 1)
+		stat_bars[key].step = 0.0
 		stat_bars[key].value = values[index]
-		stat_values[key].text = "%d / %d" % [values[index], maximum]
+		stat_values[key].text = "%s / %d" % [EffectSystem.number_text(values[index]), maximum]
 
 func fit_primary_width(width: float) -> void:
 	custom_minimum_size.x = width
 	_content.custom_minimum_size.x = width
 	_content.set_deferred("size", Vector2(width, BASE_SIZE.y))
 
-func show_hit(amount: int) -> void:
+func show_hit(amount: float) -> void:
 	hit_effects = hit_effects.filter(func(effect): return is_instance_valid(effect) and not effect.is_queued_for_deletion())
 	var effect := HitFeedback.new()
 	# Keep damage text independent of portrait clipping and the death tint.

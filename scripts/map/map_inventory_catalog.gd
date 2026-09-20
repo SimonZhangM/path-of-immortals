@@ -1,10 +1,13 @@
 class_name MapInventoryCatalog
 extends RefCounted
 
+const TextureMetrics = preload("res://scripts/map/map_texture_metrics.gd")
+
 signal changed
 
 var category_names: Dictionary = {}
 var collection_names: Dictionary = {}
+var category_groups: Dictionary = {}
 var collection := "all"
 var category := "all"
 var quality := ""
@@ -17,6 +20,15 @@ var _entries: Array[Dictionary] = []
 func configure(config: Dictionary) -> void:
 	category_names = config.categories.duplicate()
 	collection_names = config.collections.duplicate()
+	category_groups = config.category_groups.duplicate(true)
+
+func subcategories() -> Array:
+	if collection == "all":
+		var children: Array = []
+		for group: Array in category_groups.values():
+			children.append_array(group)
+		return children
+	return category_groups.get(collection, []).duplicate()
 
 func replace_entries(records: Array) -> String:
 	var validated: Array[Dictionary] = []
@@ -24,6 +36,8 @@ func replace_entries(records: Array) -> String:
 	for raw: Variant in records:
 		if not raw is Dictionary:
 			return "物品记录必须为对象。"
+		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(raw.get("buff_bonuses", {})):
+			return "物品常驻增益加成无效。"
 		for key in ["id", "name", "category", "quality"]:
 			if not raw.get(key) is String or raw[key].strip_edges().is_empty():
 				return "物品字段无效：" + key
@@ -40,7 +54,7 @@ func replace_entries(records: Array) -> String:
 				return "物品数值无效：" + key
 		if raw.quantity == 0:
 			return "物品数量须大于零。"
-		for key in ["favorite", "common"]:
+		for key in ["favorite", "common", "recipe"]:
 			if not raw.get(key, false) is bool:
 				return "物品标签须为布尔值。"
 		var icon_path: Variant = raw.get("icon", "")
@@ -50,8 +64,7 @@ func replace_entries(records: Array) -> String:
 		if icon_path_text.strip_edges().is_empty() or not ResourceLoader.exists(icon_path_text, "Texture2D"):
 			return "物品图片须为有效资源路径。"
 		var icon_texture := load(icon_path_text) as Texture2D
-		var icon_image := icon_texture.get_image() if icon_texture != null else null
-		if icon_image == null or not icon_image.has_mipmaps():
+		if not TextureMetrics.inspect(icon_texture).has_mipmaps:
 			return "物品图片必须启用mipmap。"
 		if not raw.get("card_frame", "") is String:
 			return "物品底框须为资源路径。"
@@ -80,6 +93,14 @@ func replace_entries(records: Array) -> String:
 			if raw.has("armor_type") and (raw.subcategory != "衣甲" or raw.armor_type not in ["轻甲", "重甲", "灵甲"]):
 				return "只有衣甲可以设置甲型。"
 		ids[raw.id] = true
+		if raw.category in ["artifact", "pill"] and (raw.has("effects") or raw.has("cooldown") or raw.has("uses_per_unit")):
+			if not ContentRegistry._positive_number(raw.get("cooldown")) or not ContentRegistry._nonnegative_integer(raw.get("uses_per_unit", 0)):
+				return "法器／丹药轮转或使用次数无效。"
+			if not raw.get("effects") is Array or raw.effects.is_empty():
+				return "法器／丹药须有有效效果。"
+			for effect: Variant in raw.effects:
+				if not effect is Dictionary or not EffectSystem.validate_definition(effect) or effect.trigger != "on_activate":
+					return "法器／丹药效果无效。"
 		validated.append(raw.duplicate(true))
 	_entries = validated
 	if quality not in qualities():
@@ -99,8 +120,9 @@ func set_filter(key: String, value: String) -> void:
 			if not collection_names.has(value):
 				return
 			collection = value
+			category = "all"
 		"category":
-			if not category_names.has(value):
+			if value != "all" and value not in subcategories():
 				return
 			category = value
 		"quality":
@@ -145,12 +167,13 @@ func qualities() -> Array[String]:
 	return values
 
 func _in_collection(entry: Dictionary, key: String) -> bool:
-	match key:
-		"favorite", "common":
-			return entry.get(key, false)
-		"material":
-			return entry.category == "material"
-	return true
+	if key == "all":
+		return true
+	if key == "favorite":
+		return entry.get("favorite", false)
+	if key in ["key", "misc"]:
+		return entry.category == key
+	return entry.category in category_groups.get(key, [])
 
 func collection_count(key: String) -> int:
 	var count := 0

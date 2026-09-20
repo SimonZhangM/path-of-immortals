@@ -7,6 +7,8 @@ var texture_path: String
 var source_size: Vector2
 var x_lines: Array
 var y_lines: Array
+var resource_bonuses: Dictionary
+var buff_bonuses: Dictionary
 var grid_size: Vector2i:
 	get:
 		return Vector2i(x_lines.size() - 1, y_lines.size() - 1)
@@ -18,8 +20,21 @@ func _init(raw: Dictionary) -> void:
 	source_size = Vector2(raw["source_size"][0], raw["source_size"][1])
 	x_lines = raw["x_lines"].duplicate()
 	y_lines = raw["y_lines"].duplicate()
+	resource_bonuses = raw.get("resource_bonuses", {}).duplicate(true)
+	buff_bonuses = raw.get("buff_bonuses", {}).duplicate(true)
+
+func resource_bonus(resource: String) -> int:
+	return int(resource_bonuses.get(resource, 0))
 
 static func validate(raw: Dictionary) -> bool:
+	if not preload("res://scripts/map/map_buff_bonuses.gd").valid(raw.get("buff_bonuses", {})):
+		return false
+	var bonuses: Variant = raw.get("resource_bonuses", {})
+	if not bonuses is Dictionary:
+		return false
+	for key in bonuses:
+		if key not in ["hp", "stamina", "spirit"] or not ContentRegistry._nonnegative_integer(bonuses[key]):
+			return false
 	var dimensions: Variant = raw.get("source_size")
 	if not dimensions is Array or dimensions.size() != 2:
 		return false
