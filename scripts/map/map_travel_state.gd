@@ -1,6 +1,9 @@
 class_name MapTravelState
 extends RefCounted
 
+signal node_arrived(point_id: String)
+var paused := false
+
 # Curves and coordinates are detached content data. No Nodes or wall-clock access.
 var node_positions: Dictionary = {}
 var adjacency: Dictionary = {}
@@ -53,6 +56,7 @@ func configure(points: Dictionary, edges: Array[Dictionary], start_id: String, w
 	map_position = points[start_id]
 	pending_destination_id = ""
 	mode = "idle"
+	paused = false
 	_path.clear()
 	journey_node_count = 0
 	return ""
@@ -117,7 +121,7 @@ func _plan(target_id: String) -> bool:
 
 func advance(delta: float) -> void:
 	var remaining := maxf(delta, 0.0)
-	while remaining > 0 and mode != "idle":
+	while remaining > 0 and mode != "idle" and not paused:
 		var edge := _path[_edge_index]
 		var speed := run_speed if mode == "run" else walk_speed
 		var time_to_node: float = (edge.length - _edge_distance) / speed
@@ -138,3 +142,6 @@ func advance(delta: float) -> void:
 			_plan(next_target)
 		elif _edge_index >= _path.size():
 			mode = "idle"
+		# Emit at every node, before consuming time along the next edge.
+		# A story listener can pause here even when this is a passing node.
+		node_arrived.emit(current_node_id)

@@ -36,7 +36,7 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 	var art := layout
 	_art = art
 	var title := Label.new()
-	title.text = "\n".join(item.display_name.split(""))
+	title.text = "\n".join(item.display_name.split("")) if _identified() else "？"
 	title.add_theme_font_size_override("font_size", 17)
 	title.add_theme_color_override("font_color", Color("9dc9f0"))
 	art.add_child(title)
@@ -52,6 +52,7 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 	art.add_child(icon)
 	quantity = Label.new()
 	quantity.text = "×%d" % entry["units"].size()
+	quantity.visible = entry["units"].size() > 1
 	quantity.add_theme_font_size_override("font_size", 16)
 	quantity.add_theme_color_override("font_color", Color("efd59c"))
 	art.add_child(quantity)
@@ -67,7 +68,7 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 	tags.alignment = BoxContainer.ALIGNMENT_CENTER
 	tags.add_theme_constant_override("separation", 7)
 	layout.add_child(tags)
-	tags.add_child(ItemTooltip.chip(StoragePanel.CATEGORIES[item.category]))
+	tags.add_child(ItemTooltip.chip(StoragePanel.CATEGORIES[item.category] if _identified() else "？"))
 	tags.add_child(ItemTooltip.chip(item.quality, Color("c6acdf")))
 	_ignore(layout)
 	art.resized.connect(_layout_art)
@@ -89,8 +90,11 @@ func _layout_art() -> void:
 
 func _make_custom_tooltip(_for_text: String) -> Object:
 	var panel := ItemTooltip.new()
-	panel.configure(item, _entry)
+	panel.configure(item, _entry, -1, 0, _identified())
 	return panel
+
+func _identified() -> bool:
+	return not manager.party.is_empty() and manager.party[0].can_use_item(item)
 
 func _ignore(node: Node) -> void:
 	if node is Control:
@@ -110,7 +114,7 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 
 func drag_data() -> Dictionary:
-	if not manager.can_edit_inventory() or manager.storage.get_entry(storage_id).is_empty():
+	if not manager.can_edit_inventory() or manager.storage.get_entry(storage_id).is_empty() or not manager.party[manager.selected_member_index].can_use_item(item):
 		return {}
 	return {"kind": "storage", "storage_id": storage_id, "epoch": manager.interaction_epoch}
 

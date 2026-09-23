@@ -115,7 +115,7 @@ func _run() -> void:
 	var seventh: Control = panel.grid.get_child(6)
 	var last: Control = panel.grid.get_child(9)
 	_check(panel.grid.columns == 6 and last.size.is_equal_approx(first.size) and is_equal_approx(last.position.y, first.size.y + panel.STORAGE_CARD_ROW_GAP), "ten cards occupy two fixed-size rows of six")
-	_check(is_equal_approx(second.position.x - first.get_rect().end.x, panel.STORAGE_CARD_GAP) and is_equal_approx(seventh.position.y - first.get_rect().end.y, panel.STORAGE_CARD_ROW_GAP), "card row layout gap compensates for the frame artwork's top inset")
+	_check(is_equal_approx(second.position.x - first.get_rect().end.x, panel.STORAGE_CARD_GAP) and is_equal_approx(seventh.position.y - first.get_rect().end.y, panel.STORAGE_CARD_ROW_GAP), "card rows and columns use actual container gaps without old source inset compensation")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://artifacts/inventory_10_items.png")

@@ -168,6 +168,8 @@ func can_equip(storage_id: String, member_index: int, cell: Vector2i) -> bool:
 	var entry := storage.peek_one(storage_id)
 	if entry.is_empty():
 		return false
+	if not party[member_index].can_use_item(registry.get_item(entry.item_id)):
+		return false
 	var bag := party[member_index].inventory
 	return not bag.matching_stack(entry["item_id"]).is_empty() or cell in bag.available_cells(entry["item_id"])
 

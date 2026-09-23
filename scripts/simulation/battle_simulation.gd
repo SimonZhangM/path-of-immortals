@@ -118,6 +118,9 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 		_owners[id].remove_armor_source(id)
 	_versions[id] = int(_versions.get(id, 0)) + 1
 	var item := _registry.get_item(entry["item_id"])
+	if not member.can_use_item(item):
+		detach(id)
+		return
 	_definitions[id] = item
 	_owners[id] = member
 	if item.armor_capacity > 0:
@@ -174,7 +177,7 @@ func _can_activate(id: String) -> bool:
 		return false
 	var owner: PartyMemberState = _owners[id]
 	var item: ItemData = _definitions[id]
-	if owner.hp <= 0 or item.effects_for("on_activate").is_empty() or owner.stamina < item.stamina_cost:
+	if not owner.can_use_item(item) or owner.hp <= 0 or item.effects_for("on_activate").is_empty() or owner.stamina < item.stamina_cost:
 		return false
 	if item.is_consumable():
 		var entry := owner.inventory.get_instance(id)
@@ -402,6 +405,8 @@ func _enter(payload: Dictionary, at_usec: int) -> void:
 	if owner.hp <= 0:
 		return
 	var item: ItemData = _definitions[id]
+	if not owner.can_use_item(item):
+		return
 	state.item_runtime[id]["entered"] = true
 	if not state.legacy_fixed_defense:
 		state.revision += 1
@@ -422,6 +427,8 @@ func _counterattack(defender: PartyMemberState, attacker: PartyMemberState, side
 		if _owners[id] != defender or not state.item_runtime[id]["entered"]:
 			continue
 		var item: ItemData = _definitions[id]
+		if not defender.can_use_item(item):
+			continue
 		for effect in item.effects_for("on_attacked"):
 			var source := {"item_id": item.id, "instance_id": id, "owner_id": defender.id, "owner_name": defender.definition["name"], "side": side, "stamina_cost": 0}
 			var result := _effects.apply(effect, state, attacker, at_usec, source)

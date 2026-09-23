@@ -1,6 +1,7 @@
 {
   "id": "base.map_event.qingshihewan.bridge_traces",
   "type": "dialogue",
+  "trigger": "arrival",
   "point_id": "base.map.qingshihewan.point.n37",
   "speaker_id": "base.map_player.chen_yu",
   "presentation": {

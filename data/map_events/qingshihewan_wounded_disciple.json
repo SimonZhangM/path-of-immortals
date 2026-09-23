@@ -1,11 +1,18 @@
 {
   "id": "base.map_event.qingshihewan.wounded_disciple",
   "type": "dialogue",
+  "trigger": "arrival",
   "point_id": "base.map.qingshihewan.point.n20",
   "requires_completed": [
     "base.map_event.qingshihewan.bridge_traces"
   ],
   "speaker_id": "base.npc.qinglan.outer_disciple",
+  "reward": {
+    "id": "base.map_reward.qingshihewan.warm_jade",
+    "item_id": "base.map_item.warm_jade",
+    "quantity": 1,
+    "after_line": 14
+  },
   "speakers": {
     "base.npc.qinglan.outer_disciple": {
       "portrait": "res://assets/npc-qlzdz-1.webp",

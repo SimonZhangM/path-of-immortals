@@ -25,6 +25,10 @@ func _run() -> void:
 	for i in 8:
 		await process_frame
 	map.set_process(false)
+	# Animation-only journeys use a map with its story already completed.
+	map.event_state.completed = {}
+	for event_id in map.event_registry.events:
+		map.event_state.completed[event_id] = true
 	_check(map.startup_error.is_empty(), "map starts with replacement sheets")
 	var player: MapPlayer = map.player
 	_check(player.flip_h, "preserve initial facing left")

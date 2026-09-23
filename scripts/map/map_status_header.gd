@@ -36,6 +36,8 @@ var background_art: TextureRect
 var connection: Line2D
 var fill: Polygon2D
 var outline: PackedVector2Array
+var settings_button: MapHeaderUtilityButton
+var tasks_button: MapHeaderUtilityButton
 
 func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	state = status
@@ -187,6 +189,18 @@ func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	experience_value = _counter_number(experience, "历练  ")
 	_counter_icon("res://assets/player-status-coin.webp", Vector2(1735, counter_top))
 	_counter_icon("res://assets/player-status-exp.webp", Vector2(1735, counter_top + 32))
+	settings_button = MapHeaderUtilityButton.new()
+	settings_button.name = "SettingsButton"
+	settings_button.position = Vector2(14, 48)
+	settings_button.size = Vector2(36, 36)
+	settings_button.configure(MapHeaderUtilityButton.Kind.SETTINGS, "设置（功能将在后续开放）")
+	content.add_child(settings_button)
+	tasks_button = MapHeaderUtilityButton.new()
+	tasks_button.name = "TaskListButton"
+	tasks_button.position = Vector2(1872, 12)
+	tasks_button.size = Vector2(36, 36)
+	tasks_button.configure(MapHeaderUtilityButton.Kind.TASKS, "任务列表（功能将在后续开放）")
+	content.add_child(tasks_button)
 	state.changed.connect(refresh)
 	resized.connect(_layout)
 	_layout()

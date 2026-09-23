@@ -9,6 +9,8 @@ var completed: Dictionary
 var active_id := ""
 var line_index := 0
 var phase := ""
+var reward_claimed: Callable
+var _accepted_rewards: Dictionary = {}
 
 func _init(content: MapEventRegistry, completion_record: Variant = null) -> void:
 	registry = content
@@ -17,11 +19,13 @@ func _init(content: MapEventRegistry, completion_record: Variant = null) -> void
 func is_active() -> bool:
 	return not active_id.is_empty()
 
-func try_start(point_id: String, current_point_id: String, stationary: bool) -> bool:
+func try_start(point_id: String, current_point_id: String, stationary: bool, trigger: String = "click") -> bool:
 	if is_active() or not stationary or point_id != current_point_id:
 		return false
 	var event_id: String = registry.by_point.get(point_id, "")
 	if event_id.is_empty() or completed.has(event_id):
+		return false
+	if registry.events[event_id].get("trigger", "click") != trigger:
 		return false
 	for prerequisite in registry.events[event_id].get("requires_completed", []):
 		if not completed.has(prerequisite):
@@ -48,9 +52,16 @@ func current_speaker_id() -> String:
 func advance() -> String:
 	if not is_active():
 		return ""
+	if phase == "reward":
+		return ""
 	if phase == "illustration":
 		phase = "dialogue"
 		return ""
+	var reward: Dictionary = active_event().get("reward", {})
+	if not reward.is_empty() and line_index == int(reward.after_line) and not _accepted_rewards.has(reward.id):
+		if not reward_claimed.is_valid() or not reward_claimed.call(reward.id):
+			phase = "reward"
+			return ""
 	if line_index + 1 < active_event().lines.size():
 		line_index += 1
 		return ""
@@ -60,3 +71,10 @@ func advance() -> String:
 	line_index = 0
 	phase = ""
 	return finished
+
+func accept_reward() -> String:
+	if phase != "reward":
+		return ""
+	_accepted_rewards[active_event().reward.id] = true
+	phase = "dialogue"
+	return advance()

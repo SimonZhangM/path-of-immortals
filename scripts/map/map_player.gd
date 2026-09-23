@@ -93,5 +93,6 @@ func present(travel: MapTravelState) -> void:
 	if absf(movement.x) > 0.001:
 		flip_h = movement.x < 0
 	position = travel.map_position
-	if animation != StringName(travel.mode):
-		play(travel.mode)
+	var action := "idle" if travel.paused else travel.mode
+	if animation != StringName(action):
+		play(action)

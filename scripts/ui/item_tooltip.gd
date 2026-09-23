@@ -5,10 +5,13 @@ const WIDTH := 540.0
 const RESOURCES := {"hp": "气血", "stamina": "体力", "spirit": "灵力"}
 const KEY_COLOR := "9de3c3"
 const HARD_BREAK_GAP := 8
+const STATUS_KEYWORDS_PATH := "res://data/ui/combat_status_keywords.json"
 static var _tooltip_theme: Theme
 static var _keyword_theme: Theme
 static var _body_font: SystemFont
 static var _term_font: SystemFont
+static var _status_keyword_definitions: Array = []
+static var _status_keywords_loaded := false
 var description: String = ""
 
 static func _ensure_fonts() -> void:
@@ -18,6 +21,53 @@ static func _ensure_fonts() -> void:
 	if _term_font == null:
 		_term_font = SystemFont.new()
 		_term_font.font_names = PackedStringArray(["SimSun", "宋体", "Noto Serif CJK SC", "serif"])
+
+static func _ensure_status_keywords() -> void:
+	if _status_keywords_loaded:
+		return
+	_status_keywords_loaded = true
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(STATUS_KEYWORDS_PATH))
+	if parsed is Array:
+		_status_keyword_definitions = parsed
+
+static func status_keyword_meanings() -> Dictionary:
+	_ensure_status_keywords()
+	var result := {}
+	for definition: Dictionary in _status_keyword_definitions:
+		result[String(definition.name)] = String(definition.description)
+	return result
+
+static func status_keyword_kinds() -> Dictionary:
+	_ensure_status_keywords()
+	var result := {}
+	for definition: Dictionary in _status_keyword_definitions:
+		result[String(definition.name)] = String(definition.kind)
+	return result
+
+static func status_keyword_icons() -> Dictionary:
+	_ensure_status_keywords()
+	var result := {}
+	for definition: Dictionary in _status_keyword_definitions:
+		result[String(definition.name)] = String(definition.icon)
+	return result
+
+static func status_keyword_colors() -> Dictionary:
+	_ensure_status_keywords()
+	var result := {}
+	for definition: Dictionary in _status_keyword_definitions:
+		result[String(definition.name)] = String(definition.color)
+	return result
+
+static func _keyword_color(word: String) -> String:
+	return String(status_keyword_colors().get(word, KEY_COLOR))
+
+static func _status_meanings_in(text: String) -> Dictionary:
+	var result := {}
+	var meanings := status_keyword_meanings()
+	for word: String in meanings:
+		if text.contains(word):
+			result[word] = meanings[word]
+	return result
 
 static func chip(text: String, color := Color("a7b8c5")) -> Label:
 	var label := Label.new()
@@ -90,19 +140,26 @@ static func keyword_meanings(item: ItemData) -> Dictionary:
 			meanings[tag] = EffectSystem.damage_type_meaning(tag)
 	if item.armor_type == "轻甲":
 		meanings["轻甲"] = "护甲类型，护甲耗尽后仍保留。"
+	if item.armor_capacity > 0:
+		meanings["护甲"] = "优先抵扣伤害，抵扣后消耗。"
 	for effect: Dictionary in item.effects:
 		match effect.effect:
 			"restore_armor":
 				meanings["护甲"] = "优先抵扣伤害，抵扣后消耗。"
 			"restore_ticks", "restore_over_time":
 				meanings["持续"] = "按指定间隔多次生效，直至效果结束。"
-			"cleanse_toxin", "apply_toxin":
-				meanings["毒蚀"] = "持续损失气血，无视护甲。"
+	var status_meanings := _status_meanings_in(effect_text(item))
+	for word: String in status_meanings:
+		meanings[word] = status_meanings[word]
 	return meanings
 
 static func _colored(text: String, words: Dictionary) -> String:
-	# Longest first keeps 毒蚀免疫/护甲上限 intact, without nested tags.
-	var keys := words.keys()
+	# Longest first avoids nested tags when registered terms overlap.
+	var keys: Array[String] = []
+	for candidate: String in words:
+		if candidate.ends_with("上限") or candidate == "毒蚀免疫":
+			continue
+		keys.append(candidate)
 	keys.sort_custom(func(a: String, b: String): return a.length() > b.length())
 	var result := ""
 	var cursor := 0
@@ -110,7 +167,7 @@ static func _colored(text: String, words: Dictionary) -> String:
 		var matched := false
 		for word: String in keys:
 			if text.substr(cursor, word.length()) == word:
-				result += "[b][color=#%s]%s[/color][/b]" % [KEY_COLOR, word]
+				result += "[b][color=#%s]%s[/color][/b]" % [_keyword_color(word), word]
 				cursor += word.length()
 				matched = true
 				break
@@ -151,10 +208,13 @@ func configure_description(text: String, terms: Dictionary = {}) -> void:
 	custom_minimum_size.x = WIDTH
 	add_theme_stylebox_override("panel", _box(Color("0b101b", 0.98), Color("424955"), 18, 22))
 	description = text
-	_rich_paragraphs(self, text, terms, 23)
+	var highlighted := terms.duplicate()
+	for word: String in _status_meanings_in(text):
+		highlighted[word] = ""
+	_rich_paragraphs(self, text, highlighted, 23)
 	_ignore(self)
 
-func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1, cooling_usec: int = 0) -> void:
+func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1, cooling_usec: int = 0, identified: bool = true) -> void:
 	name = "ItemTooltip"
 	custom_minimum_size.x = WIDTH
 	add_theme_stylebox_override("panel", StyleBoxEmpty.new())
@@ -201,7 +261,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	header.add_child(heading)
 	var title := Label.new()
 	title.name = "ItemTitle"
-	title.text = item.display_name
+	title.text = item.display_name if identified else "？"
 	title.add_theme_font_override("font", _term_font)
 	title.add_theme_font_size_override("font_size", 30)
 	title.add_theme_color_override("font_color", Color("f9f8c8"))
@@ -223,6 +283,8 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	if not item.armor_type.is_empty():
 		tags.append(item.armor_type)
 	tags.append("占格 %d×%d" % [item.grid_size.x, item.grid_size.y])
+	if not identified:
+		tags = ["？"]
 	for tag: String in tags:
 		var label := chip(tag)
 		label.add_theme_font_size_override("font_size", 16)
@@ -233,16 +295,15 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	line.thickness = 1
 	divider.add_theme_stylebox_override("separator", line)
 	content.add_child(divider)
-	description = effect_text(item)
-	var meanings := keyword_meanings(item)
+	description = effect_text(item) if identified else MapItemQuality.UNKNOWN_DESCRIPTION
+	var meanings := keyword_meanings(item) if identified else {}
 	var highlighted := meanings.duplicate()
 	highlighted["冷却"] = ""
-	for term in ["护甲上限", "恢复上限", "毒蚀免疫", "消耗"]:
-		highlighted[term] = ""
+	highlighted["消耗"] = ""
 	for resource_name: String in RESOURCES.values():
 		highlighted[resource_name] = ""
 	_rich_paragraphs(content, description, highlighted, 23)
-	if cooling_usec > 0:
+	if identified and cooling_usec > 0:
 		_rich(content, "入场等待：%.1f秒" % (cooling_usec / 1_000_000.0), 17)
 	if not meanings.is_empty():
 		var inset := MarginContainer.new()
@@ -267,7 +328,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 		caption.add_theme_color_override("font_color", Color("f1d4a2"))
 		words.add_child(caption)
 		for word: String in meanings:
-			var row := _rich(words, "[b][color=#%s]%s[/color][/b]：%s" % [KEY_COLOR, word, meanings[word]], 18)
+			var row := _rich(words, "[b][color=#%s]%s[/color][/b]：%s" % [_keyword_color(word), word, meanings[word]], 18)
 			row.custom_minimum_size.x = WIDTH - 74
 	_ignore(self)
 

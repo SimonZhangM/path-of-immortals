@@ -13,6 +13,9 @@ var icon_path: String
 var uses_per_unit: int
 var category: String
 var quality: String
+var quality_level: int:
+	get:
+		return MapItemQuality.level(quality)
 var element: String
 var defense: int
 var armor_capacity: int

@@ -36,7 +36,7 @@ const BOARD_BACKGROUND_X_SHIFT := -1.0
 const BOARD_BACKGROUND_HORIZONTAL_EXTENSION := 5.0
 const BOARD_BACKGROUND_BOTTOM_EXTENSION := 5.0
 const STORAGE_CARD_GAP := 15
-const STORAGE_CARD_ROW_GAP := 6
+const STORAGE_CARD_ROW_GAP := 18
 const STORAGE_CARD_INSET := STORAGE_CONTENT_INSET
 const STORAGE_BORDER_COLOR := Color("806d48")
 const BOARD_HEALTH_ICON_SCALE := 1.1
@@ -395,7 +395,7 @@ func _build_sidebar(board: BoardLayout) -> void:
 	sidebar.add_child(art_layer)
 	sidebar_art = TextureRect.new()
 	sidebar_art.texture = load("res://assets/inventory-sidepic.webp")
-	sidebar_art.self_modulate.a = 0.25
+	sidebar_art.self_modulate.a = 1.0
 	var sidebar_fade := ShaderMaterial.new()
 	sidebar_fade.shader = preload("res://scripts/map/map_inventory_panel_art.gdshader")
 	sidebar_art.material = sidebar_fade

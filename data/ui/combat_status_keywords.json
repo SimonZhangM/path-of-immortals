@@ -1,0 +1,16 @@
+[
+  {"id": "counter", "name": "反锋", "kind": "buff", "icon": "res://assets/buff-jin.webp", "color": "f2bf45", "description": "每层积累1点反弹伤害，受到实际物理伤害时一次性全额反弹并清零。"},
+  {"id": "edge_mark", "name": "锋痕", "kind": "debuff", "icon": "res://assets/debuff-jin.webp", "color": "eea43a", "description": "每层储存1点待追加的金属性伤害，下一次受到物理或武器攻击时全部追加并清零。"},
+  {"id": "vitality", "name": "生机", "kind": "buff", "icon": "res://assets/buff-mu.webp", "color": "7fe05a", "description": "2秒后开始每秒按当前层数恢复气血，每次恢复后减少1层。"},
+  {"id": "toxin", "name": "毒蚀", "kind": "debuff", "icon": "res://assets/debuff-mu.webp", "color": "8bd43b", "description": "持续损失气血，无视护甲。"},
+  {"id": "moisture", "name": "润脉", "kind": "buff", "icon": "res://assets/buff-shui.webp", "color": "59ccef", "description": "2秒后开始每秒按当前层数同时恢复灵力和体力，每次恢复后减少1层。"},
+  {"id": "withered_meridians", "name": "枯脉", "kind": "debuff", "icon": "res://assets/debuff-shui.webp", "color": "86afea", "description": "2秒后开始每秒按当前层数同时损失灵力和体力，每次结算后减少1层。"},
+  {"id": "flame", "name": "附炎", "kind": "buff", "icon": "res://assets/buff-huo.webp", "color": "ff9b38", "description": "每层储存1点火属性伤害，下一次主动攻击全部附加并一次性消耗。"},
+  {"id": "burn", "name": "灼烧", "kind": "debuff", "icon": "res://assets/debuff-huo.webp", "color": "ff7138", "description": "每层每秒造成1点火属性伤害，持续10秒；再次施加会叠加层数并刷新持续时间。"},
+  {"id": "tenacity", "name": "坚韧", "kind": "buff", "icon": "res://assets/buff-tu.webp", "color": "dfb35c", "description": "每层提供1%抗暴击概率，成功抵挡一次暴击后全部清零。"},
+  {"id": "fatigue", "name": "疲惫", "kind": "debuff", "icon": "res://assets/debuff-tu.webp", "color": "bca082", "description": "每层提供1%被暴击概率，敌方成功造成一次暴击后全部清零。"},
+  {"id": "agility", "name": "轻灵", "kind": "buff", "icon": "res://assets/buff-feng.webp", "color": "75dfe2", "description": "每层提供1%闪避率，成功闪避一次攻击后全部清零。"},
+  {"id": "imbalance", "name": "失衡", "kind": "debuff", "icon": "res://assets/debuff-feng.webp", "color": "8bcfd2", "description": "每层提供1%被命中率，武器攻击命中后触发一次首次攻击纯武器伤害50%的追击并全部清零。"},
+  {"id": "thunder", "name": "雷蕴", "kind": "buff", "icon": "res://assets/buff-lei.webp", "color": "c18cff", "description": "每累计10层转化为一次雷盾值，并加入当前雷盾池。"},
+  {"id": "thunder_mark", "name": "雷印", "kind": "debuff", "icon": "res://assets/debuff-lei.webp", "color": "f2cf58", "description": "累计10层进入待引雷状态，下一次受到雷属性武器或法术攻击时触发雷击并施加麻痹。"}
+]

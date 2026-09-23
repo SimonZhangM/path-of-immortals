@@ -1,7 +1,7 @@
 {
   "id": "base.character.chen_yu",
   "name": "张辰宇",
-  "cultivation_rank": "base.cultivation.mortal",
+  "cultivation_rank": "base.cultivation.nascent_soul",
   "max_hp": 50,
   "max_stamina": 50,
   "max_spirit": 0,

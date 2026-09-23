@@ -34,6 +34,7 @@ function Invoke-GodotCheck {
 
 Invoke-GodotCheck -Name 'import' -ExtraArgs @('--headless', '--editor', '--import', '--quit')
 Invoke-GodotCheck -Name 'tests' -ExtraArgs @('--headless', '--script', 'res://tests/run_tests.gd')
+Invoke-GodotCheck -Name 'item-cultivation-access' -ExtraArgs @('--headless', '--script', 'res://tests/item_cultivation_access.gd')
 Invoke-GodotCheck -Name 'ui' -ExtraArgs @('--headless', '--script', 'res://tests/ui_smoke.gd')
 Invoke-GodotCheck -Name 'map' -ExtraArgs @('--headless', '--script', 'res://tests/map_smoke.gd')
 Invoke-GodotCheck -Name 'map-travel' -ExtraArgs @('--headless', '--script', 'res://tests/map_travel_tests.gd')
@@ -52,6 +53,7 @@ Invoke-GodotCheck -Name 'item-tooltips' -ExtraArgs @('--headless', '--script', '
 Invoke-GodotCheck -Name 'buff-sidebar' -ExtraArgs @('--headless', '--script', 'res://tests/map_buff_sidebar.gd')
 Invoke-GodotCheck -Name 'inventory-categories' -ExtraArgs @('--headless', '--script', 'res://tests/map_inventory_categories.gd')
 Invoke-GodotCheck -Name 'map-events' -ExtraArgs @('--headless', '--script', 'res://tests/map_event_tests.gd')
+Invoke-GodotCheck -Name 'map-story-reward' -ExtraArgs @('--headless', '--script', 'res://tests/map_story_reward.gd')
 Invoke-GodotCheck -Name 'map-dialogue' -ExtraArgs @('--headless', '--script', 'res://tests/map_dialogue_smoke.gd')
 Invoke-GodotCheck -Name 'map-illustrated-dialogue' -ExtraArgs @('--headless', '--script', 'res://tests/map_illustrated_dialogue_smoke.gd')
 Invoke-GodotCheck -Name 'startup' -ExtraArgs @('--headless', '--quit-after', '5', '--', '--loadout-save=')

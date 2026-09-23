@@ -154,7 +154,7 @@ func _test_map_status() -> void:
 	config["cultivation_stage"] = "一层"
 	var status := MapPlayerStatus.new()
 	_check(status.configure(registry, config).is_empty(), "map player initializes from actual character")
-	_check(status.rank_name == "凡人" and status.resources == {"hp": 50, "stamina": 50, "spirit": 0}, "map ignores stale presentation rank and shares actual base resources")
+	_check(status.rank_name == "元婴" and status.resources == {"hp": 50, "stamina": 50, "spirit": 0}, "map ignores stale presentation rank and shares actual base resources")
 	_check(status.cultivation_progress == 0 and status.cultivation_required == 100 and status.experience == 0, "mortal starts at zero cultivation and experience with 100 cultivation capacity")
 	status.set_resource("spirit", 5)
 	_check(status.resources.spirit == 0 and status.maxima.spirit == 0, "mortal cannot restore spirit beyond zero capacity")

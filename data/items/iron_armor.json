@@ -1,6 +1,7 @@
 {
   "id": "base.armor.iron_armor",
   "name": "铁甲",
+  "quality": "凡品",
   "type": "armor",
   "tags": [
     "armor",

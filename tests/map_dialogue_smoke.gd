@@ -19,9 +19,8 @@ func _run() -> void:
 	_check(not screen.dialogue.visible and screen.travel.mode == "walk", "first remote click only starts two-node walk")
 	screen.travel.advance(1000)
 	screen.player.present(screen.travel)
-	_check(screen.travel.current_node_id == point.point_id and screen.travel.mode == "idle" and not screen.dialogue.visible, "arrival does not auto trigger")
-	_click(_point("N37"))
-	_check(screen.event_state.is_active() and screen.dialogue.visible, "second native node click opens dialogue")
+	_check(screen.travel.current_node_id == point.point_id and screen.travel.mode == "idle" and screen.dialogue.visible, "arrival automatically triggers dialogue")
+	_check(screen.event_state.is_active() and screen.travel.paused, "arrival locks movement without another click")
 	_check(screen.event_state.line_index == 0 and screen.dialogue.text_label.text == "河水最近又浅了不少。", "opening click does not skip first line")
 	_check(sign.is_visible_in_tree(), "sign remains until completion")
 	var overlay: MapDialogue = screen.dialogue
@@ -65,19 +64,21 @@ func _run() -> void:
 	overlay.notification(Control.NOTIFICATION_WM_WINDOW_FOCUS_OUT)
 	_button(MOUSE_BUTTON_LEFT, false, outside)
 	_check(screen.event_state.line_index == 0, "focus loss cancels pending click")
+	_key(KEY_SPACE)
+	_check(screen.event_state.line_index == 1 and overlay.text_label.text == "以前这几块石头应该都在水下面。", "space advances active dialogue exactly like a left click")
+	_key(KEY_SPACE, true)
+	_check(screen.event_state.line_index == 1, "held-space echo cannot skip dialogue")
 	_click(_point("N15"))
-	_check(screen.event_state.line_index == 1 and screen.travel.destination_id == destination, "clicking another node advances text without movement")
+	_check(screen.event_state.line_index == 2 and screen.travel.destination_id == destination, "clicking another node advances text without movement")
 	_click(overlay.portrait.get_rect().get_center())
-	_check(screen.event_state.line_index == 2 and overlay.text_label.text == "岸边怎么这么多脚印。", "portrait click advances exactly once")
+	_check(screen.event_state.line_index == 3 and overlay.text_label.text == "难道最近山里的野兽确实都往外面来了？", "portrait click advances exactly once")
 	_click(overlay.text_label.get_rect().get_center())
-	_check(screen.event_state.line_index == 3, "text click advances exactly once")
-	_click(outside)
-	_check(screen.event_state.line_index == 4 and overlay.text_label.text == "不好！有血……" and sign.visible, "final paragraph remains until one more click")
+	_check(screen.event_state.line_index == 4 and overlay.text_label.text == "不好！有血……" and sign.visible, "text click reaches the final paragraph without closing it")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		_check(root.get_texture().get_image().save_png("res://artifacts/map_dialogue_last.png") == OK, "last paragraph render")
-	_click(_point("N15"))
-	_check(not overlay.visible and not screen.event_state.is_active(), "final click closes dialogue")
+	_key(KEY_SPACE)
+	_check(not overlay.visible and not screen.event_state.is_active(), "space on the final paragraph completes dialogue like a left click")
 	_check(not sign.visible and not sign.get_node("StoryIcon").is_visible_in_tree(), "completion hides both sign and icon")
 	_check(point.visible and other_sign.visible and screen.content.get_node("Points").get_child_count() == 38 and screen.content.get_node("Routes").get_child_count() == 41, "node, other signs and graph remain intact")
 	_check(screen.travel.map_position == player_position and screen.travel.destination_id == destination and screen.travel.mode == "idle", "closing click never leaks to map")
@@ -100,7 +101,16 @@ func _run() -> void:
 	await process_frame
 	MapEventState.session_completed.clear()
 	await _load_map()
-	_check(screen.content.get_node("Points/N37/Sign").visible, "fresh run starts with sign restored")
+	var click_point: MapRoutePoint = screen.content.get_node("Points/N37")
+	_check(click_point.get_node("Sign").visible, "fresh run starts with sign restored")
+	var click_event_id: String = screen.event_registry.by_point[click_point.point_id]
+	screen.event_registry.events[click_event_id].erase("trigger")
+	_click(_point("N37"))
+	screen.travel.advance(1000)
+	screen.player.present(screen.travel)
+	_check(screen.travel.current_node_id == click_point.point_id and not screen.dialogue.visible and not screen.event_state.is_active(), "ordinary event does not auto trigger on arrival")
+	_click(_point("N37"))
+	_check(screen.dialogue.visible and screen.event_state.active_id == click_event_id and screen.travel.paused, "ordinary event starts only after clicking its current path node")
 	screen.queue_free()
 	await process_frame
 	print("MAP DIALOGUE RESULT: %d checks, %d failures" % [checks, failures])
@@ -130,6 +140,14 @@ func _button(index: MouseButton, pressed: bool, position: Vector2) -> void:
 	event.pressed = pressed
 	event.position = position
 	event.button_mask = MOUSE_BUTTON_MASK_LEFT if index == MOUSE_BUTTON_LEFT and pressed else 0
+	root.push_input(event, true)
+
+func _key(keycode: Key, echo: bool = false) -> void:
+	var event := InputEventKey.new()
+	event.keycode = keycode
+	event.physical_keycode = keycode
+	event.pressed = true
+	event.echo = echo
 	root.push_input(event, true)
 
 func _check(ok: bool, message: String) -> void:

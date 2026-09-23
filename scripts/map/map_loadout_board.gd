@@ -82,7 +82,7 @@ func _make_custom_tooltip(for_text: String) -> Object:
 	if entry.is_empty():
 		return null
 	var tooltip := ItemTooltip.new()
-	tooltip.configure(state.registry.get_item(entry.item_id), entry)
+	tooltip.configure(state.registry.get_item(entry.item_id), entry, -1, 0, state.can_use_item(entry.item_id))
 	return tooltip
 
 func _gui_input(event: InputEvent) -> void:

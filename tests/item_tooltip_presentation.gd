@@ -17,6 +17,24 @@ func _settle() -> void:
 		await process_frame
 
 func _run() -> void:
+	var status_kinds := ItemTooltip.status_keyword_kinds()
+	var status_meanings := ItemTooltip.status_keyword_meanings()
+	var status_icons := ItemTooltip.status_keyword_icons()
+	var status_colors := ItemTooltip.status_keyword_colors()
+	_check(status_kinds.size() == 14 and status_meanings.size() == 14 and status_icons.size() == 14 and status_colors.size() == 14, "all fourteen elemental buff/debuff keywords are registered with presentation metadata")
+	_check(status_kinds.values().count("buff") == 7 and status_kinds.values().count("debuff") == 7, "status keyword registry distinguishes seven buffs and seven debuffs")
+	for pair in [["反锋", "锋痕"], ["生机", "毒蚀"], ["润脉", "枯脉"], ["附炎", "灼烧"], ["坚韧", "疲惫"], ["轻灵", "失衡"], ["雷蕴", "雷印"]]:
+		_check(status_kinds[pair[0]] == "buff" and status_kinds[pair[1]] == "debuff", "registered elemental status pair: %s/%s" % pair)
+	for word: String in status_colors:
+		var color_text := String(status_colors[word])
+		var icon_path := String(status_icons[word])
+		_check(color_text.is_valid_html_color() and color_text.length() == 6, "status keyword has a valid opaque icon-derived color: " + word)
+		_check(ResourceLoader.exists(icon_path), "status keyword icon exists: " + word)
+		var icon_texture := load(icon_path) as Texture2D
+		_check(icon_texture != null and icon_texture.get_image().has_mipmaps(), "status keyword icon has mipmaps: " + word)
+		_check(ItemTooltip._colored(word, {word: ""}) == "[b][color=#%s]%s[/color][/b]" % [color_text, word], "body keyword uses its registered status color: " + word)
+	var compound_sample := ItemTooltip._colored("护甲上限、恢复上限、毒蚀免疫", {"护甲": "", "毒蚀": "", "护甲上限": "", "恢复上限": "", "毒蚀免疫": ""})
+	_check(compound_sample == "[b][color=#%s]护甲[/color][/b]上限、恢复上限、[b][color=#%s]毒蚀[/color][/b]免疫" % [ItemTooltip.KEY_COLOR, status_colors["毒蚀"]], "compound XX上限/免疫 terms are not keywords; only base terms are highlighted")
 	root.size = Vector2i(1920, 1080)
 	var map = load("res://scenes/maps/qingshihewan.tscn").instantiate()
 	map.inventory_save_path = ""
@@ -63,6 +81,12 @@ func _run() -> void:
 			_check(item.stamina_cost > 0 and tip.description.contains("耗费") and not words.has("消耗") and tip.description.contains("敌方"), "weapon keeps stamina cost without consumable meaning")
 		if item.category == "pill":
 			_check(not words.has("消耗") and tip.description.contains("使用后消耗一瓶"), "pill consumption stays in body rather than glossary")
+		if item.display_name == "粗布甲":
+			_check(words.has("护甲") and not words.has("护甲上限"), "armor-cap copy explains and highlights only 护甲")
+		if item.display_name == "温玉佩":
+			_check(not words.has("恢复上限"), "recovery-cap phrase is not a keyword")
+		if item.display_name == "消毒散":
+			_check(words.has("毒蚀") and not words.has("毒蚀免疫"), "toxin-immunity copy explains and highlights only 毒蚀")
 		_check(not tip.description.contains("不超过护甲上限"), "tooltip omits redundant armor-cap wording: " + item.display_name)
 		tip.hide()
 		previews[item.id] = tip

@@ -1,6 +1,7 @@
 {
   "id": "base.test.fire_sword",
   "name": "玄火剑",
+  "quality": "凡品",
   "type": "weapon",
   "tags": [
     "weapon",

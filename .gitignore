@@ -7,3 +7,7 @@
 /builds/
 *.log
 *.tmp
+
+# Local Godot import sidecars for removed temporary MP3 sources
+assets/gameplay-bag-pick.mp3.import
+assets/gameplay-bag-place.mp3.import

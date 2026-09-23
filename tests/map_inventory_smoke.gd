@@ -103,6 +103,10 @@ func _run() -> void:
 	for card: MapInventoryItemCard in panel.grid.get_children():
 		var base_name := String(card.entry.name).trim_suffix('a').trim_suffix('b').trim_suffix('c')
 		var art := card.canvas.get_node("ItemArtwork") as TextureRect
+		_check((card.canvas.get_node("CategoryTags") as HBoxContainer).position.y == 185.0, "item category tags use the lowered visual baseline")
+		var badge_texture := card.quality_badge.texture as AtlasTexture
+		_check(is_equal_approx(card.size.x / card.size.y, 0.75) and card.quality_badge.get_rect().get_center().is_equal_approx(Vector2(card.size.x * 0.5, card.size.y)), "item card uses3:4 geometry and centers the quality badge on its lower border")
+		_check(badge_texture.atlas.resource_path == "res://assets/levelbq-1.webp" and badge_texture.region == card.QUALITY_BADGE_REGION and badge_texture.atlas.get_image().has_mipmaps(), "lower-quality badge uses the cropped mipmapped levelbq-1 artwork")
 		var outline := art.get_node_or_null("ItemOutline")
 		_check(FileAccess.file_exists(card.entry.icon) and art.texture is AtlasTexture and art.texture.atlas.resource_path == card.entry.icon and art.texture.atlas.get_image().has_mipmaps() and art.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED and art.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, "item source exists, has mipmaps, preserves source aspect and uses linear mipmap filtering")
 		_check(card.entry.art_outline_px == 1 and outline != null and outline.get_child_count() == 16 and outline.z_index == 0 and (outline.get_child(0) as TextureRect).self_modulate == MapItemArtwork.OUTLINE_COLOR, "all items use the shared softened one-pixel outline above static backgrounds")
@@ -116,7 +120,7 @@ func _run() -> void:
 		_check(card.entry.enhancement_level == 0, "authored weapons have zero enhancement level")
 		var values: Array = expected[base_name]
 		_check(card.entry.damage_type == values[0] and int(card.entry.base_damage) == values[1] and is_equal_approx(card.entry.cooldown, values[2]) and int(card.entry.base_stamina_cost) == values[3], "authored weapon values match user table")
-		_check(card.frame.resource_path == "res://assets/level-fanpin.webp" and card.entry.quality == "下品", "each weapon has lower quality while retaining current frame asset")
+		_check(card.frame.resource_path == "res://assets/level-1.webp" and card.entry.quality == "下品", "each lower-quality weapon uses level-1 interior artwork")
 		var tags: Array[String] = []
 		for tag: Label in card.canvas.get_node("CategoryTags").get_children():
 			tags.append(tag.text)

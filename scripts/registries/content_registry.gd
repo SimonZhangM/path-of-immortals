@@ -199,6 +199,8 @@ func register_item(raw: Dictionary) -> bool:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"
+	if error.is_empty() and MapItemQuality.level(raw.get("quality", "凡品")) == 0:
+		error = "quality must name one of the seven item ranks"
 	if error.is_empty():
 		for effect in raw["effects"]:
 			if not effect is Dictionary or not EffectSystem.validate_definition(effect):
@@ -281,6 +283,11 @@ func _load_directory(path: String, kind: String) -> void:
 		elif kind == "trait":
 			register_trait(json.data)
 		elif kind == "item":
+			# Production files must declare rarity; register_item keeps the legacy
+			# default only for programmatically constructed fixtures/extensions.
+			if not json.data.has("quality"):
+				errors.append("Item requires explicit quality: " + full_path)
+				continue
 			register_item(json.data)
 		elif kind == "character":
 			register_character(json.data)

@@ -59,3 +59,17 @@ static func save(state: MapLoadoutState, path: String) -> String:
 			DirAccess.rename_absolute(backup, target)
 		return "无法完成行囊保存，已保留上一份配置。"
 	return ""
+
+static func claim_reward(state: MapLoadoutState, reward: Dictionary, path: String) -> String:
+	if state.has_reward(reward.get("id", "")):
+		return ""
+	# Save a candidate before publishing ownership/UI changes. Failure leaves the
+	# live inventory and receipt untouched, so the same button can safely retry.
+	var prepared := state.reward_candidate(reward)
+	var candidate: MapLoadoutState = prepared.state
+	var error: String = prepared.error
+	if error.is_empty():
+		error = save(candidate, path)
+	if not error.is_empty():
+		return error
+	return state.restore(candidate.snapshot())

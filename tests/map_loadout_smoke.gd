@@ -59,6 +59,35 @@ func _model_checks() -> void:
 	_check(not MapLoadoutStore.load_into(restored, SAVE).is_empty() and restored.snapshot() == initial, "corrupt save is reported without mutating configuration")
 	_clear_test_save()
 	_swap_checks()
+	_confirmed_swap_examples()
+
+func _confirmed_swap_examples() -> void:
+	const SWORD := "owned.base.map_item.qingshi_short_sword.0"
+	const CLOTH := "owned.base.map_item.coarse_cloth_armor.0"
+	const HEAVY := "owned.base.map_item.old_iron_helmet.0"
+	const JADE := "owned.base.map_item.warm_jade.0"
+	var same_size := _fresh()
+	_check(same_size.place(same_size.drag_data("storage", SWORD), Vector2i.ZERO), "example: sword occupies two vertical cells")
+	_check(same_size.placement_kind(same_size.drag_data("storage", CLOTH), Vector2i.ZERO) == "swap" and same_size.place(same_size.drag_data("storage", CLOTH), Vector2i.ZERO), "example: cloth armor replaces the sword's exact two cells")
+	_check(same_size.inventory.occupied_cells() == 2 and not same_size.storage.get_entry(SWORD).is_empty(), "example: whole sword returns to storage")
+	for blocker_cell in [Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 0)]:
+		var state := _fresh()
+		# Stand in for a future 2x2 heavy armor without adding a production item.
+		state.registry.get_item("base.map_item.old_iron_helmet").grid_size = Vector2i(2, 2)
+		_check(state.place(state.drag_data("storage", CLOTH), Vector2i.ZERO) and state.place(state.drag_data("storage", JADE), blocker_cell), "example: cloth plus a one-cell neighbor at %s" % blocker_cell)
+		var data := state.drag_data("storage", HEAVY)
+		var before := state.snapshot()
+		var storage_before := state.storage.entries().duplicate(true)
+		var revision_before := state.revision
+		if blocker_cell.x == 1:
+			_check(state.placement_kind(data, Vector2i.ZERO) == "invalid" and not state.place(data, Vector2i.ZERO), "one occupied extra cell prevents the 2x2 swap: %s" % blocker_cell)
+			_check(state.snapshot() == before and state.storage.entries() == storage_before and state.revision == revision_before, "rejected swap keeps both inventories and drag revision unchanged")
+			_check(state.take_back(state.drag_data("board", JADE)), "clear the extra column")
+			data = state.drag_data("storage", HEAVY)
+		_check(state.placement_kind(data, Vector2i.ZERO) == "swap" and state.place(data, Vector2i.ZERO), "2x2 replaces cloth when its extra column is empty")
+		_check(state.inventory.get_instance(HEAVY).cell == Vector2i.ZERO and not state.storage.get_entry(CLOTH).is_empty() and state.storage.get_entry(HEAVY).is_empty(), "larger armor enters at target and displaced cloth returns whole")
+		if blocker_cell.x == 2:
+			_check(state.inventory.get_instance(JADE).cell == blocker_cell, "adjacent item outside incoming footprint is untouched")
 
 func _swap_checks() -> void:
 	for victim_size in [Vector2i(1, 2), Vector2i(2, 1)]:

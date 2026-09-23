@@ -92,6 +92,10 @@ func apply_toxin(stacks: int, at_usec: int, source: Dictionary = {}) -> bool:
 		toxin_source = source.duplicate()
 	return true
 
+func can_use_item(item: ItemData) -> bool:
+	# Creatures without cultivation use innate attacks, not player equipment ranks.
+	return item != null and (cultivation_rank_id.is_empty() or MapItemQuality.usable(item.quality, cultivation))
+
 func cleanse_toxin(at_usec: int, immunity_usec: int) -> void:
 	toxin_stacks = 0
 	toxin_next_tick_usec = 0

@@ -43,6 +43,8 @@ func replace_entries(records: Array) -> String:
 				return "物品字段无效：" + key
 		if ids.has(raw.id) or raw.category == "all" or not category_names.has(raw.category):
 			return "物品ID重复或类别无效。"
+		if MapItemQuality.level(raw.quality) == 0:
+			return "物品品级须为下品、凡品、良品、上品、灵品、玄品或仙品。"
 		if raw.has("subcategory"):
 			if not raw.subcategory is String or raw.subcategory.strip_edges().is_empty():
 				return "物品细分类须为非空文字。"
@@ -191,7 +193,8 @@ func visible_entries() -> Array[Dictionary]:
 			continue
 		if not quality.is_empty() and entry.quality != quality:
 			continue
-		if not search_text.strip_edges().is_empty() and not search_text.strip_edges().to_lower() in String(entry.name).to_lower():
+		var searchable_name := String(entry.name) if entry.get("identified", true) else "？"
+		if not search_text.strip_edges().is_empty() and not search_text.strip_edges().to_lower() in searchable_name.to_lower():
 			continue
 		result.append(entry.duplicate(true))
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:

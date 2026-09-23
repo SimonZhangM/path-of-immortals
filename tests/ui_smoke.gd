@@ -287,9 +287,9 @@ func _test_cultivation_and_feedback() -> void:
 	await _layout()
 	for index in 3:
 		var card: PartyMemberCard = ui.ally_panel.cards[0] if index == 0 else ui.ally_panel.companion_cards[index - 1].portrait_card
-		_check(card.portrait_frame.texture.resource_path == ("res://assets/pt00.webp" if index == 0 else "res://assets/pt000.webp"), "main uses rank frame and companions use shared support frame")
-		_check(card._title.text.ends_with("（%s）" % ["凡人", "炼气", "筑基"][index]), "title shows authoritative cultivation name")
-		_check(card.name_label.text == ["张辰宇 · 凡人", "队友 · 青璃", "队友 · 玄川"][index], "portrait nameplate shows configured name and rank")
+		_check(card.portrait_frame.texture.resource_path == ("res://assets/pt04.webp" if index == 0 else "res://assets/pt000.webp"), "main uses rank frame and companions use shared support frame")
+		_check(card._title.text.ends_with("（%s）" % ["元婴", "炼气", "筑基"][index]), "title shows authoritative cultivation name")
+		_check(card.name_label.text == ["张辰宇 · 元婴", "队友 · 青璃", "队友 · 玄川"][index], "portrait nameplate shows configured name and rank")
 	var hero_card: PartyMemberCard = ui.ally_panel.cards[0]
 	_check(manager.party[0].set_cultivation_rank("base.cultivation.spirit_transformation"), "cultivation state can change without changing attributes")
 	await _layout()

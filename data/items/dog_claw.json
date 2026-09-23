@@ -1,6 +1,7 @@
 {
   "id": "base.weapon.dog_claw",
   "name": "爪子",
+  "quality": "凡品",
   "type": "weapon",
   "tags": [
     "weapon",

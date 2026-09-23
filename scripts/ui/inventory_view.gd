@@ -320,7 +320,7 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 	var item := manager.registry.get_item(_tooltip_entry["item_id"])
 	var panel := ItemTooltip.new()
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
-	panel.configure(item, _tooltip_entry, owner.defense if manager.simulation.state.legacy_fixed_defense else -1, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]))
+	panel.configure(item, _tooltip_entry, owner.defense if manager.simulation.state.legacy_fixed_defense else -1, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]), manager.party[0].can_use_item(item))
 	return panel
 
 static func rotation_ring_center(rect: Rect2, item: ItemData) -> Vector2:

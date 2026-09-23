@@ -25,6 +25,8 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图事件ID无效或重复。"
 		if raw.type != "dialogue" or raw.point_id not in point_ids or point_index.has(raw.point_id):
 			return "地图事件类型、节点或节点绑定无效。"
+		if raw.get("trigger", "click") not in ["arrival", "click"]:
+			return "地图事件触发方式无效。"
 		if not raw.speaker_id is String or raw.speaker_id.is_empty():
 			return "地图对话说话者无效。"
 		if not raw.lines is Array or raw.lines.is_empty():
@@ -32,6 +34,17 @@ func configure(definitions: Array, point_ids: Array) -> String:
 		for line in raw.lines:
 			if not line is String or line.strip_edges().is_empty():
 				return "地图对话段落无效。"
+		if raw.has("reward"):
+			var reward: Variant = raw.reward
+			if not reward is Dictionary or not reward.has_all(["id", "item_id", "quantity", "after_line"]):
+				return "剧情奖励配置不完整。"
+			if not reward.id is String or not reward.id.begins_with("base.map_reward.") or not reward.item_id is String:
+				return "剧情奖励标识无效。"
+			if not ContentRegistry._nonnegative_integer(reward.after_line) or reward.after_line >= raw.lines.size() or not ContentRegistry._nonnegative_integer(reward.quantity) or reward.quantity < 1 or reward.quantity > 10000:
+				return "剧情奖励时机或数量无效。"
+			for previous: Dictionary in loaded.values():
+				if previous.get("reward", {}).get("id", "") == reward.id:
+					return "剧情奖励标识重复。"
 		var speakers: Variant = raw.get("speakers", {})
 		if not speakers is Dictionary:
 			return "地图对话说话者表无效。"

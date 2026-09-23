@@ -12,21 +12,18 @@ func _run() -> void:
 	MapEventState.session_completed.clear()
 	await _load_map()
 	_check(screen.startup_error.is_empty(), "illustrated event loads with map")
-	_walk_to("N20")
-	_click(_point("N20"))
+	_check(not screen.event_state.try_start("base.map.qingshihewan.point.n20", "base.map.qingshihewan.point.n20", true, "arrival"), "N20 prerequisite blocks direct arrival")
 	_check(not screen.dialogue.visible and screen.content.get_node("Points/N20/Sign").visible, "N20 remains locked before N37")
 	_walk_to("N37")
-	_click(_point("N37"))
 	_check(screen.event_state.is_active() and not screen.dialogue.picture.visible, "N37 still has no illustration")
 	for i in 5:
 		_click(Vector2(80,80))
 	_check(not screen.dialogue.visible, "N37 completes normally")
 	_walk_to("N20")
-	_check(not screen.dialogue.visible, "arrival at unlocked N20 still does not auto trigger")
-	_click(_point("N20"))
+	_check(screen.dialogue.visible, "arrival at unlocked N20 auto triggers")
 	var dialogue: MapDialogue = screen.dialogue
 	var picture: MapEventPicture = dialogue.picture
-	_check(screen.event_state.phase == "illustration" and picture.is_visible_in_tree(), "second N20 click opens illustration stage")
+	_check(screen.event_state.phase == "illustration" and picture.is_visible_in_tree(), "N20 arrival opens illustration stage")
 	_check(not dialogue.background.visible and not dialogue.portrait.visible and not dialogue.text_label.visible, "opening click does not open text prematurely")
 	_check(picture.frame.texture.resource_path == "res://assets/map-event-frame.webp" and picture.illustration.texture.resource_path == "res://assets/map-event-1-1.webp", "correct frame and illustration appear together")
 	await _settle()
@@ -46,8 +43,8 @@ func _run() -> void:
 	root.push_input(motion,true)
 	_button(MOUSE_BUTTON_LEFT,false,motion.position)
 	_check(screen.event_state.phase == "illustration" and screen.content.position == camera, "illustration blocks map drag without advancing")
-	_click(picture.get_rect().get_center())
-	_check(screen.event_state.phase == "dialogue" and screen.event_state.line_index == 0 and dialogue.background.visible and picture.visible, "next click opens first line and retains illustration")
+	_key(KEY_SPACE)
+	_check(screen.event_state.phase == "dialogue" and screen.event_state.line_index == 0 and dialogue.background.visible and picture.visible, "space opens the first line and retains the illustration")
 	var event: Dictionary = screen.event_state.active_event()
 	for dimensions in [Vector2i(1920,1080),Vector2i(1280,800)]:
 		root.size = dimensions
@@ -81,6 +78,9 @@ func _run() -> void:
 		if i in [1,8,16,19]:
 			await _capture("illustration_paragraph_%02d" % (i+1))
 		_click(Vector2(80,80))
+		if screen.event_state.phase == "reward":
+			_check(i == 14 and screen.reward_dialog.visible, "reward appears after lending line")
+			screen._accept_reward()
 	_check(not dialogue.visible and not screen.event_state.is_active(), "last click closes both panels")
 	_check(not screen.content.get_node("Points/N20/Sign").is_visible_in_tree() and not screen.content.get_node("Points/N20/Sign/StoryIcon").is_visible_in_tree(), "N20 sign and icon removed")
 	_check(screen.content.get_node("Points/N20").visible and screen.content.get_node("Points/N03/Sign").visible and screen.content.get_node("Points").get_child_count()==38 and screen.content.get_node("Routes").get_child_count()==41, "node graph and unrelated signs unchanged")
@@ -96,8 +96,7 @@ func _run() -> void:
 	MapEventState.session_completed.clear()
 	await _load_map()
 	_check(screen.content.get_node("Points/N20/Sign").visible and screen.content.get_node("Points/N37/Sign").visible, "new run restores both signs")
-	_walk_to("N20")
-	_click(_point("N20"))
+	_check(not screen.event_state.try_start("base.map.qingshihewan.point.n20", "base.map.qingshihewan.point.n20", true, "arrival"), "new run requires bridge completion")
 	_check(not screen.dialogue.visible, "new run also restores prerequisite lock")
 	screen.queue_free()
 	await process_frame
@@ -138,6 +137,13 @@ func _button(index: MouseButton,pressed: bool,position: Vector2) -> void:
 	event.pressed = pressed
 	event.position = position
 	event.button_mask = MOUSE_BUTTON_MASK_LEFT if index==MOUSE_BUTTON_LEFT and pressed else 0
+	root.push_input(event,true)
+
+func _key(keycode: Key) -> void:
+	var event := InputEventKey.new()
+	event.keycode = keycode
+	event.physical_keycode = keycode
+	event.pressed = true
 	root.push_input(event,true)
 
 func _check(ok: bool,message: String) -> void:

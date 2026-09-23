@@ -31,10 +31,18 @@ func _run() -> void:
 	board_raw.erase("resource_bonuses")
 	_check(BoardLayout.validate(board_raw) and BoardLayout.new(board_raw).resource_bonus("hp") == 0, "older boards without bonuses remain valid and default to zero")
 	_check(header.get_parent() == screen and header.is_visible_in_tree(), "header is persistent outside map transform")
-	_check(header.hero_name.text == "张辰宇" and header.hero_rank.text == "凡人", "map identity uses actual character cultivation rank")
+	_check(header.hero_name.text == "张辰宇" and header.hero_rank.text == "元婴", "map identity uses actual character cultivation rank")
 	_check(header.hero_age.text == "年龄 15岁  |  寿元 80年", "prologue age and lifespan come from map state")
 	_check(header.spirit_stones.text == "灵石" and header.experience.text == "历练" and header.spirit_stones_value.text == "0" and header.experience_value.text == "0", "currency and experience display configured zero values")
-	_check(header.find_children("SettingsPlaceholder", "", true, false).is_empty(), "map settings glyph is removed")
+	_check(header.settings_button != null and header.settings_button.tooltip_text == "设置（功能将在后续开放）" and header.settings_button.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "left header edge exposes the future settings button with a simple hint")
+	_check(header.tasks_button != null and header.tasks_button.tooltip_text == "任务列表（功能将在后续开放）" and header.tasks_button.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "right header edge exposes the future task-list button with a simple hint")
+	_check(header.settings_button.size == Vector2(36, 36) and header.tasks_button.size == Vector2(36, 36), "both header utility buttons use the smaller size and the task container is square")
+	_motion(header.settings_button.get_global_rect().get_center(), Vector2.ZERO, 0)
+	await process_frame
+	_check(root.gui_get_hovered_control() == header.settings_button, "settings button receives hover directly")
+	_motion(header.tasks_button.get_global_rect().get_center(), Vector2.ZERO, 0)
+	await process_frame
+	_check(root.gui_get_hovered_control() == header.tasks_button, "task-list button receives hover directly")
 	for key in ["hp", "stamina", "spirit"]:
 		_check(header.values[key].text == ("0/0" if key == "spirit" else "55/55"), "initial resource from character plus equipped board: " + key)
 	screen.player_status.set_resource("spirit", 5)
@@ -87,6 +95,7 @@ func _run() -> void:
 		_check(is_equal_approx(header.resource_row.position.y + header.resource_row.size.y * 0.5, header.CONNECTION_Y * 0.5), "four status groups centered vertically inside header")
 		_check(is_equal_approx(header.right_art.get_rect().end.x, 1921) and is_equal_approx(header.right_art.position.y + header.RIGHT_TIP.y * header.right_art.size.y / header.RIGHT_REGION.size.y, 90.92), "head2 moves right/down by one reference pixel")
 		_check(is_equal_approx(header.left_art.size.x / header.left_art.size.y, 887.0 / 231.0) and is_equal_approx(header.right_art.size.x / header.right_art.size.y, 1171.0 / 689.0), "ornaments retain source aspect ratio")
+		_check(header.settings_button.get_global_rect().end.y <= header.get_global_rect().end.y + 0.01 and header.tasks_button.get_global_rect().end.x <= header.get_global_rect().end.x + 0.01, "utility buttons stay inside the header edges at supported sizes")
 		await _capture("map_header_%dx%d" % [dimensions.x, dimensions.y])
 	root.size = Vector2i(1920, 1080)
 	await _settle()
@@ -94,12 +103,11 @@ func _run() -> void:
 	screen.travel.request_destination(point.point_id)
 	screen.travel.advance(1000)
 	screen.player.present(screen.travel)
-	var target: Vector2 = screen.map_to_screen(point.position)
-	_click(target)
 	await _settle()
 	_check(screen.dialogue.visible and header.is_visible_in_tree() and header.z_index > screen.dialogue.z_index, "header stays visible above dialogue overlay")
+	var dialogue_line_before_header_click: int = screen.event_state.line_index
 	_click(Vector2(600, 35))
-	_check(screen.event_state.line_index == 1, "click on visible header advances active modal dialogue")
+	_check(screen.event_state.line_index == dialogue_line_before_header_click + 1, "click on visible header advances active modal dialogue")
 	await _capture("map_header_dialogue")
 	for i in 4:
 		_click(Vector2(600, 35))

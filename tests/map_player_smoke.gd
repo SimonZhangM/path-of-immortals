@@ -15,6 +15,10 @@ func _run() -> void:
 	for frame in 4:
 		await process_frame
 	screen.set_process(false)
+	# Test movement/camera independently of arrival-triggered story modals.
+	screen.event_state.completed = {}
+	for event_id in screen.event_registry.events:
+		screen.event_state.completed[event_id] = true
 	_check(screen.startup_error.is_empty(), "player loads with map")
 	var player: MapPlayer = screen.player
 	var travel: MapTravelState = screen.travel

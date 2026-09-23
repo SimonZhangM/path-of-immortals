@@ -23,6 +23,7 @@ var player: MapPlayer
 var event_registry: MapEventRegistry
 var event_state: MapEventState
 var dialogue: MapDialogue
+var reward_dialog: MapRewardDialog
 var player_status: MapPlayerStatus
 var status_header: MapStatusHeader
 var inventory_screen: MapInventoryScreen
@@ -94,6 +95,12 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 		loadout = null
 		push_error(startup_error)
 		return
+	event_state.reward_claimed = loadout.has_reward
+	for event: Dictionary in event_registry.events.values():
+		if event.has("reward") and not loadout.records.has(event.reward.item_id):
+			startup_error = "剧情奖励引用了未知物品。"
+			push_error(startup_error)
+			return
 	inventory_catalog.replace_entries(loadout.storage_records())
 	inventory_screen = MapInventoryScreen.new()
 	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout, player_status)
@@ -148,6 +155,9 @@ func _input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if event_state != null and event_state.is_active():
+		if (event.keycode == KEY_SPACE or event.physical_keycode == KEY_SPACE) and dialogue != null and dialogue.visible:
+			_advance_dialogue()
+			get_viewport().set_input_as_handled()
 		return
 	if is_inventory_open() and inventory_screen.is_formation_dialog_open():
 		if event.keycode == KEY_ESCAPE or (event.is_action_pressed("map_inventory") and not (get_viewport().gui_get_focus_owner() is LineEdit)):
@@ -186,6 +196,11 @@ func _setup_events() -> void:
 	add_child(dialogue)
 	dialogue.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	dialogue.advance_requested.connect(_advance_dialogue)
+	reward_dialog = MapRewardDialog.new()
+	add_child(reward_dialog)
+	reward_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	reward_dialog.accept_requested.connect(_accept_reward)
+	travel.node_arrived.connect(_on_node_arrived)
 	_sync_completed_signs()
 
 func _sync_completed_signs() -> void:
@@ -198,13 +213,51 @@ func _advance_dialogue() -> void:
 	if event_state == null or not event_state.is_active():
 		return
 	var completed_id := event_state.advance()
+	_present_event_progress(completed_id)
+
+func _present_event_progress(completed_id: String = "") -> void:
 	if not completed_id.is_empty():
 		dialogue.hide()
+		reward_dialog.hide()
+		travel.paused = false
 		_sync_completed_signs()
 		_end_drag()
 		_clear_hover()
+	elif event_state.phase == "reward":
+		dialogue.hide()
+		var reward: Dictionary = event_state.active_event().reward
+		var record: Dictionary = loadout.records[reward.item_id].duplicate(true)
+		record.quantity = reward.quantity
+		record.identified = loadout.can_use_item(reward.item_id)
+		reward_dialog.present(record, inventory_catalog.category_names.get(record.category, "法器"))
 	else:
+		reward_dialog.hide()
 		dialogue.present(event_state.active_event(), event_state.current_line(), event_state.current_speaker_id(), event_state.phase)
+
+func _accept_reward() -> void:
+	if event_state.phase != "reward" or reward_dialog.accept_button.disabled:
+		return
+	reward_dialog.accept_button.disabled = true
+	var error := MapLoadoutStore.claim_reward(loadout, event_state.active_event().reward, inventory_save_path)
+	if not error.is_empty():
+		reward_dialog.error_label.text = error
+		reward_dialog.accept_button.disabled = false
+		return
+	_saved_loadout_revision = loadout.revision
+	reward_dialog.pick_sound.play()
+	_present_event_progress(event_state.accept_reward())
+
+func _on_node_arrived(point_id: String) -> void:
+	_try_start_event(point_id, "arrival", true)
+
+func _try_start_event(point_id: String, trigger: String, stationary: bool) -> bool:
+	if event_state.try_start(point_id, travel.current_node_id, stationary, trigger):
+		travel.paused = true
+		_end_drag()
+		_clear_hover()
+		_present_event_progress()
+		return true
+	return false
 
 func _setup_player() -> void:
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/player.json"))
@@ -257,10 +310,7 @@ func _select_destination(pointer: Vector2) -> void:
 		return
 	var closest_id := _node_at(pointer)
 	if not closest_id.is_empty():
-		if event_state != null and event_state.try_start(closest_id, travel.current_node_id, travel.mode == "idle"):
-			_end_drag()
-			_clear_hover()
-			dialogue.present(event_state.active_event(), event_state.current_line(), event_state.current_speaker_id(), event_state.phase)
+		if _try_start_event(closest_id, "click", travel.mode == "idle"):
 			return
 		travel.request_destination(closest_id)
 		player.present(travel)
