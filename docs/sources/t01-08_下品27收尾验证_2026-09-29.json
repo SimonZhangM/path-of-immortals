@@ -1,0 +1,33 @@
+{
+  "formal_file": "output\\spreadsheet\\t01-08-物品资产主表.xlsx",
+  "formal_sha256": "5fc0dab680f82f2f28c4a28d60fbf3b9de82ccb1760ea82190448576c28f973b",
+  "source_numeric_validation": "t01-08_下品27数值修订验证_2026-09-29.json",
+  "only_display_text_changes_after_numeric_validation": 145,
+  "all_other_cells_styles_and_caches_preserved": true,
+  "formulas": 684,
+  "numeric_targets_preserved": 27,
+  "assets": 115,
+  "sheets": 24,
+  "no_office_render": true,
+  "no_game_tests": true,
+  "independent_numeric_assertions": 27,
+  "fanpin_rows_unchanged": 88,
+  "seven_workbooks_hashes_verified": true,
+  "game_files_hashes_verified": 510,
+  "source_archive_bytes_equal": true,
+  "local_markdown_links_checked": 729,
+  "missing_links": [],
+  "doc_files_checked": [
+    "00_新线程必读_当前进度与下一步.md",
+    "PROJECT_PROGRESS.md",
+    "README.md",
+    "docs/01_核心定案_七系功法与战斗规则.md",
+    "docs/02_专题路线图_后续设计任务.md",
+    "docs/03_文档导航_按任务查阅.md",
+    "docs/t01-08_朋友反馈核对与逐项处理_2026-09-29.md",
+    "docs/t01-08_下品27数值修订记录_2026-09-29.md"
+  ],
+  "all_formulas_have_cached_results": 684,
+  "git_diff_check": "passed; CRLF conversion warnings only",
+  "game_diff_empty": true
+}

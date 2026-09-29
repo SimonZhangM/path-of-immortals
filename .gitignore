@@ -5,6 +5,7 @@
 # Local test artifacts and exported builds
 /artifacts/
 /builds/
+/tmp/
 *.log
 *.tmp
 

@@ -1,0 +1,35 @@
+{
+  "status": "Q01-Q04 confirmed; no pending questions",
+  "assets": 27,
+  "sheets": 17,
+  "workbooks": [
+    {
+      "file": "t01-03-品级机制权限矩阵-260928.xlsx",
+      "changed_cells_from_initial": 7,
+      "formulas_preserved": 3769,
+      "linked_caches_verified": 3666,
+      "row_heights_increased": 2,
+      "sha256": "e9c80cc2caec8622e019429063faebb223349069f0d9351e953f97f81219a571"
+    },
+    {
+      "file": "t01-04-器具类别与规格词典-260928.xlsx",
+      "changed_cells_from_initial": 53,
+      "formulas_preserved": 240,
+      "linked_caches_verified": 240,
+      "row_heights_increased": 17,
+      "sha256": "0def56c3da7479def45601ab37cf94d361e3c21057f9b6ab9095894b719a71c4"
+    },
+    {
+      "file": "t01-08-物品资产主表.xlsx",
+      "changed_cells_from_initial": 93,
+      "formulas_preserved": 179,
+      "linked_caches_verified": 0,
+      "row_heights_increased": 22,
+      "sha256": "81a7fde4c6c59483f36286466f7fbc58303b9069e4acfecf2adb30374403ea1f"
+    }
+  ],
+  "protected_files_unchanged": 515,
+  "visual_rendered": false,
+  "game_tested": false,
+  "balance_tested": false
+}

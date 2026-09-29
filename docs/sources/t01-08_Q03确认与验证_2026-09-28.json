@@ -1,0 +1,19 @@
+{
+  "answer": "允许多件盾，只受阵盘空间限制",
+  "rule": "身甲、头具、护臂、护腿各最多1件；护臂与护腿分别计限。盾允许多件，仅受阵盘空间限制。所有防具仍摆在阵盘，不新增固定装备槽。",
+  "workbooks": [
+    {
+      "file": "t01-04-器具类别与规格词典-260928.xlsx",
+      "cells_changed": 14,
+      "formula_caches_updated": 2,
+      "sha256": "394d9fd2387ba26814ce1ab5399e8374ce6b88514135727f2d72e4d07fdb2d81"
+    },
+    {
+      "file": "t01-08-物品资产主表.xlsx",
+      "cells_changed": 18,
+      "formula_caches_updated": 0,
+      "sha256": "f7d5b84e6a918b625647d2fd225937d215a647d7fb37d9bfefc7bd1a4a54f141"
+    }
+  ],
+  "pending_question": "Q04"
+}

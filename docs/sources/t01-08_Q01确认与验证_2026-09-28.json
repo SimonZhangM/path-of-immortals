@@ -1,0 +1,23 @@
+{
+  "Q01": {
+    "question": "第1项：03词典规定“正交邻接机制”从良品常规开放，但本批布甲、铁甲两组联动都是凡品。你希望怎样处理这两组联动的品级权限？",
+    "answer": "仅允许这两组凡品防具联动，其他凡品仍按03原权限（建议）",
+    "rule": "仅批准粗布甲＋布护臂＋布护腿、铁甲＋铁护臂＋铁护腿两组凡品基础防具联动；两个护具分别正交邻接对应身甲。其他凡品仍按03原权限；无Set_ID，不新增独立CD。"
+  },
+  "workbooks": [
+    {
+      "file": "t01-03-品级机制权限矩阵-260928.xlsx",
+      "cells_changed": 7,
+      "formula_caches_updated": 6,
+      "sha256": "c76568f44f9a9d23e2094b42634811847f3dc3a7e2ba8e881a99c0bd903c5788"
+    },
+    {
+      "file": "t01-08-物品资产主表.xlsx",
+      "cells_changed": 17,
+      "formula_caches_updated": 0,
+      "sha256": "a196113026e4f14875fda1a41c0c795af00c330d8fd40f67d942f32da3044fb7"
+    }
+  ],
+  "pending_question": "Q02",
+  "pending_answer": null
+}

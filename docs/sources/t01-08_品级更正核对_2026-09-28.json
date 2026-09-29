@@ -1,0 +1,30 @@
+{
+  "quote": "不对，说错了，这一批道具全是下品",
+  "current_grade": "下品",
+  "assets": 27,
+  "statistics": {
+    "下品": 27,
+    "凡品": 0
+  },
+  "workbooks": [
+    {
+      "file": "t01-03-品级机制权限矩阵-260928.xlsx",
+      "changed_cells": 7,
+      "formulas_preserved": 3769,
+      "updated_caches": 6,
+      "sha256": "7fa468f756912e1a8f6b50cb9898c8cbd923e1c4eef7816cf6fb41cfa3d46d02"
+    },
+    {
+      "file": "t01-08-物品资产主表.xlsx",
+      "changed_cells": 106,
+      "formulas_preserved": 179,
+      "updated_caches": 37,
+      "sha256": "eb6b829a8dd36d4003b5ebee0b01b8635ab3afb3b3f620f4440adbcb8130f0db"
+    }
+  ],
+  "unchanged_game_and_six_workbooks": 516,
+  "valid_document_links": 704,
+  "pending_question": null,
+  "game_tested": false,
+  "visual_rendered": false
+}

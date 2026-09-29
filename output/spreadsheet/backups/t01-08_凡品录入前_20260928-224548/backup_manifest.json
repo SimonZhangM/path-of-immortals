@@ -1,0 +1,42 @@
+[
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-01-器具机制词典-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-01-器具机制词典-260928.xlsx",
+    "sha256": "766b274c106b4938d38c3eab51b1f52d1a29648ca320985d7375ab3a7dc29858"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-02-状态与器具控制词典-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-02-状态与器具控制词典-260928.xlsx",
+    "sha256": "edefa70f4926121901d526919c9151a4fb1f332ffab9708f1d0259d5170a670a"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-03-品级机制权限矩阵-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-03-品级机制权限矩阵-260928.xlsx",
+    "sha256": "7fa468f756912e1a8f6b50cb9898c8cbd923e1c4eef7816cf6fb41cfa3d46d02"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-04-器具类别与规格词典-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-04-器具类别与规格词典-260928.xlsx",
+    "sha256": "0def56c3da7479def45601ab37cf94d361e3c21057f9b6ab9095894b719a71c4"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-05-材料与锻造词典-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-05-材料与锻造词典-260928.xlsx",
+    "sha256": "4d8cd6ba7f921e898f237f268c212ddf1cadcd95091097adc588219c9e75951a"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-06-套装与联动器具词典-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-06-套装与联动器具词典-260928.xlsx",
+    "sha256": "49ee69a0f9f25f0552d495abf66e8a3bf5e17cac18e460b025268636ed8a301a"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-07-物品获取与投放规则词典-260928.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-07-物品获取与投放规则词典-260928.xlsx",
+    "sha256": "0f81a92b99297c26d45bbe23f5915ab8e70f12afd3752c0eda2af04a70e80cec"
+  },
+  {
+    "source": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-08-物品资产主表.xlsx",
+    "backup": "E:\\games\\path-of-immortals\\output\\spreadsheet\\backups\\t01-08_凡品录入前_20260928-224548\\t01-08-物品资产主表.xlsx",
+    "sha256": "eb6b829a8dd36d4003b5ebee0b01b8635ab3afb3b3f620f4440adbcb8130f0db"
+  }
+]

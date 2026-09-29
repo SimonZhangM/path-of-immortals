@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-28",
+  "status": "骨架初稿；Q01已发待答；未完成全局规则衔接",
+  "file": "output\\spreadsheet\\t01-08-物品资产主表.xlsx",
+  "sha256": "a8104563d83506e9405818a4984f41dd02e46c95d302c31c8f3ea640b980ecf0",
+  "assets": 27,
+  "sheets": 17,
+  "formula_count": 179,
+  "formula_cache_readback": "passed",
+  "workbook_links": 34,
+  "document_links": 701,
+  "protected_files_unchanged": 517,
+  "git_diff_check": "passed",
+  "not_run": [
+    "Excel/WPS真实渲染",
+    "游戏／平衡测试"
+  ],
+  "pending_question": "Q01：凡品两组基础防具正交邻接许可；用户尚未答复",
+  "existing_dictionary_filenames": "启动时已带-260928后缀；本轮仅修正维护文档链接，未重命名或修改Excel"
+}

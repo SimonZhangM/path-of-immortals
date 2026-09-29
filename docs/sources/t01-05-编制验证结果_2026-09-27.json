@@ -1,0 +1,20 @@
+{
+  "file": "E:\\games\\path-of-immortals\\output\\spreadsheet\\t01-05-材料与锻造词典.xlsx",
+  "sheets": 23,
+  "tables": 23,
+  "data_rows": 5916,
+  "source_lines": 5447,
+  "source_sections": 176,
+  "fields": 72,
+  "cases": 38,
+  "audit_rows": 28,
+  "inheritance_rows": 10,
+  "formulas": 0,
+  "protected_files_unchanged": 192,
+  "old04_formulas_preserved": 240,
+  "old04_cache_updates": 1,
+  "old04_content_cells_changed": 15,
+  "max_cell_chars": 136,
+  "rendering": "Excel/WPS真实渲染未进行",
+  "game_test": "未进行；本次仅设计资料"
+}

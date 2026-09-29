@@ -1,0 +1,127 @@
+{
+  "runs": [
+    {
+      "date": "2026-09-29",
+      "confirmed": "RV01～RV04",
+      "pending": "单叠上限数值明确后定；08文件占用，待用户保存关闭后写回",
+      "workbooks": [
+        {
+          "file": "t01-04-器具类别与规格词典-260928.xlsx",
+          "written_to_formal": true,
+          "validated_candidate": "tmp\\spreadsheets\\review_20260929\\t01-04-器具类别与规格词典-260928.xlsx",
+          "edited_cells": [
+            "07_丹药规格!D19",
+            "07_丹药规格!E19",
+            "07_丹药规格!G19",
+            "09_暗器规格!D13",
+            "09_暗器规格!E13",
+            "09_暗器规格!G13"
+          ],
+          "appended_rows": {},
+          "formulas_and_caches_preserved": 240,
+          "sha256": "ff1c954a0af3d20bfdbbf817b129805a0273c59df9e4f1db41e41edf0b66ba05"
+        },
+        {
+          "file": "t01-07-物品获取与投放规则词典-260928.xlsx",
+          "written_to_formal": true,
+          "validated_candidate": "tmp\\spreadsheets\\review_20260929\\t01-07-物品获取与投放规则词典-260928.xlsx",
+          "edited_cells": [],
+          "appended_rows": {},
+          "formulas_and_caches_preserved": 0,
+          "sha256": "06c88332c194fe6778cbbaa3e21e3001b49ae43360f7216d4c59c5cd830e9a7f"
+        },
+        {
+          "file": "t01-08-物品资产主表.xlsx",
+          "written_to_formal": true,
+          "validated_candidate": "tmp\\spreadsheets\\review_20260929\\t01-08-物品资产主表.xlsx",
+          "edited_cells": [
+            "05_丹药!A2",
+            "07_暗器!A2",
+            "12_现有配置与迁移!M13",
+            "12_现有配置与迁移!N13",
+            "12_现有配置与迁移!O13",
+            "12_现有配置与迁移!M14",
+            "12_现有配置与迁移!N14",
+            "12_现有配置与迁移!O14",
+            "12_现有配置与迁移!M15",
+            "12_现有配置与迁移!N15",
+            "12_现有配置与迁移!O15"
+          ],
+          "appended_rows": {
+            "19_凡品规则与模板": [
+              20
+            ],
+            "14_确认与后续事项": [
+              21,
+              22,
+              23,
+              24
+            ]
+          },
+          "formulas_and_caches_preserved": 680,
+          "sha256": "27fce6375f18c7960c935d1cc0ce9d94f2e5ee214ef6e37384d1b1833e622bc1"
+        }
+      ],
+      "game_files_unchanged": 189,
+      "other_workbooks_unchanged": [
+        "t01-01-器具机制词典-260928.xlsx",
+        "t01-02-状态与器具控制词典-260928.xlsx",
+        "t01-03-品级机制权限矩阵-260928.xlsx",
+        "t01-05-材料与锻造词典-260928.xlsx",
+        "t01-06-套装与联动器具词典-260928.xlsx"
+      ],
+      "no_game_tests": true,
+      "no_visual_render": true,
+      "backup": "output\\spreadsheet\\backups\\朋友反馈逐项核对前_20260929"
+    },
+    {
+      "date": "2026-09-29",
+      "confirmed": "RV01～RV04",
+      "pending": "RV05基础防具升品承接处理范围，已发待答；单叠上限数值明确另定",
+      "workbooks": [
+        {
+          "file": "t01-04-器具类别与规格词典-260928.xlsx",
+          "written_to_formal": true,
+          "validated_candidate": "tmp\\spreadsheets\\review_20260929\\t01-04-器具类别与规格词典-260928.xlsx",
+          "edited_cells": [],
+          "appended_rows": {},
+          "formulas_and_caches_preserved": 240,
+          "sha256": "ff1c954a0af3d20bfdbbf817b129805a0273c59df9e4f1db41e41edf0b66ba05"
+        },
+        {
+          "file": "t01-07-物品获取与投放规则词典-260928.xlsx",
+          "written_to_formal": true,
+          "validated_candidate": "tmp\\spreadsheets\\review_20260929\\t01-07-物品获取与投放规则词典-260928.xlsx",
+          "edited_cells": [],
+          "appended_rows": {},
+          "formulas_and_caches_preserved": 0,
+          "sha256": "06c88332c194fe6778cbbaa3e21e3001b49ae43360f7216d4c59c5cd830e9a7f"
+        },
+        {
+          "file": "t01-08-物品资产主表.xlsx",
+          "written_to_formal": true,
+          "validated_candidate": "tmp\\spreadsheets\\review_20260929\\t01-08-物品资产主表.xlsx",
+          "edited_cells": [],
+          "appended_rows": {
+            "14_确认与后续事项": [
+              25
+            ]
+          },
+          "formulas_and_caches_preserved": 680,
+          "sha256": "b1039f4228a0909838cea149efac6891d684213558d7d2c012048ae9f2c17bb7"
+        }
+      ],
+      "game_files_unchanged": 189,
+      "other_workbooks_unchanged": [
+        "t01-01-器具机制词典-260928.xlsx",
+        "t01-02-状态与器具控制词典-260928.xlsx",
+        "t01-03-品级机制权限矩阵-260928.xlsx",
+        "t01-05-材料与锻造词典-260928.xlsx",
+        "t01-06-套装与联动器具词典-260928.xlsx"
+      ],
+      "no_game_tests": true,
+      "no_visual_render": true,
+      "backup": "output\\spreadsheet\\backups\\朋友反馈逐项核对前_20260929"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "answer": "采用整套规则，更新04（建议）",
+  "rule": "双方均按身甲每实际占格权重2、其他防具每格权重1，汇总轻／重／灵；唯一最高直接采用。最高并列含身甲甲型时优先身甲，否则玩家选最高候选、敌方逐行从左至右扫描决胜；无防具为NONE。",
+  "workbooks": [
+    {
+      "file": "t01-04-器具类别与规格词典-260928.xlsx",
+      "cells_changed": 41,
+      "formula_caches_updated": 2,
+      "sha256": "b6431edf032cff57e89deae5a23e658d733d572a334d04fe7b9c6f9624ce8c99"
+    },
+    {
+      "file": "t01-08-物品资产主表.xlsx",
+      "cells_changed": 30,
+      "formula_caches_updated": 0,
+      "sha256": "e204b44bf41d3bdf472ef69a0acbc67c45a2b20a48fb8e82482f02f601bbcdbf"
+    }
+  ],
+  "protected_files_unchanged": 515,
+  "pending_question": null
+}

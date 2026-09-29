@@ -1,0 +1,121 @@
+{
+  "date": "2026-09-29",
+  "authorization": "用户要求词典更新，与结丹开放保持一致",
+  "backup": "output/spreadsheet/backups/共鸣结丹同步前_20260929-104851",
+  "workbooks": [
+    {
+      "file": "output/spreadsheet/t01-01-器具机制词典-260928.xlsx",
+      "before_sha256": "e6a7981a6e0284acbaa968b71b3715ae6aec97037ac3da7cea6e709002a80687",
+      "after_sha256": "7a68b95a996d1a4ef949797257243ffe13409ce33f1ee2be0da3b3cc847c51b2",
+      "edits": [
+        {
+          "sheet": "M03_资格过滤",
+          "cell": "E109",
+          "before": "元婴共鸣、化神器具连携分别解锁；玄品可用不自动开放器具连携。",
+          "after": "结丹共鸣、元婴法术连携、化神器具连携分别解锁；玄品可用不自动开放器具连携。"
+        },
+        {
+          "sheet": "M06_效果行为",
+          "cell": "F123",
+          "before": "品级许可与境界解锁分开；共鸣元婴起，器具参与连携化神起。明确有向配对仍留T04。",
+          "after": "品级许可与境界解锁分开；共鸣结丹起，器具参与连携化神起。明确有向配对仍留T04。"
+        },
+        {
+          "sheet": "M06_效果行为",
+          "cell": "F126",
+          "before": "品级许可与境界解锁分开；共鸣元婴起，器具参与连携化神起。明确有向配对仍留T04。",
+          "after": "品级许可与境界解锁分开；共鸣结丹起，器具参与连携化神起。明确有向配对仍留T04。"
+        },
+        {
+          "sheet": "M06_效果行为",
+          "cell": "F127",
+          "before": "品级许可与境界解锁分开；共鸣元婴起，器具参与连携化神起。明确有向配对仍留T04。",
+          "after": "品级许可与境界解锁分开；共鸣结丹起，器具参与连携化神起。明确有向配对仍留T04。"
+        },
+        {
+          "sheet": "M06_效果行为",
+          "cell": "F128",
+          "before": "品级许可与境界解锁分开；共鸣元婴起，器具参与连携化神起。明确有向配对仍留T04。",
+          "after": "品级许可与境界解锁分开；共鸣结丹起，器具参与连携化神起。明确有向配对仍留T04。"
+        },
+        {
+          "sheet": "总则与终审",
+          "cell": "F76",
+          "before": "共鸣元婴、器具连携化神，玄品可用不自动越过境界门槛。",
+          "after": "共鸣结丹、器具连携化神，玄品可用不自动越过境界门槛。"
+        },
+        {
+          "sheet": "00_使用说明",
+          "cell": "E8",
+          "before": "同时查“条目有效性”和H列规则状态；停用排除，关键变更见决定索引。",
+          "after": "共鸣结丹起，每种读层结丹10／元婴20／化神30；2026-09-29已同步。原文旧门槛已覆盖；仍查条目有效性与规则状态。"
+        }
+      ],
+      "formula_count_preserved": 0,
+      "formula_caches_preserved": true,
+      "other_cells_styles_and_parts_preserved": true,
+      "changed_zip_entries": [
+        "xl/worksheets/sheet1.xml",
+        "xl/worksheets/sheet4.xml",
+        "xl/worksheets/sheet7.xml",
+        "xl/worksheets/sheet12.xml"
+      ]
+    },
+    {
+      "file": "output/spreadsheet/t01-02-状态与器具控制词典-260928.xlsx",
+      "before_sha256": "edefa70f4926121901d526919c9151a4fb1f332ffab9708f1d0259d5170a670a",
+      "after_sha256": "3124807f97a47866a90d3e9e441b0a204dd8603bd2c48f67c9ff22dda033b447",
+      "edits": [
+        {
+          "sheet": "12_逐节规则",
+          "cell": "E9",
+          "before": "二、S1：七系21核心状态保持现有体系，不重新发明\n现有体系是每一系：\n1个自身Buff + 2个目标Debuff\n共21种。\n状态的实际容量已经正式统一为：\n凡人0 / 炼气10 / 筑基20 / 结丹30 / 元婴40 / 化神50，\n而且21种状态各有独立容量，不是共享一个总池；合格阵盘、法器等可以增加额外容量，超过最终容量的新层浪费。\n共鸣则是另一套参数：凡人～结丹不读取，元婴每种读取10层，化神20层；不能把“实际容量40层”误写成“共鸣读取40层”。",
+          "after": "二、S1：七系21核心状态保持现有体系，不重新发明\n现有体系是每一系：\n1个自身Buff + 2个目标Debuff\n共21种。\n状态的实际容量已经正式统一为：\n凡人0 / 炼气10 / 筑基20 / 结丹30 / 元婴40 / 化神50，\n而且21种状态各有独立容量，不是共享一个总池；合格阵盘、法器等可以增加额外容量，超过最终容量的新层浪费。\n共鸣则是另一套参数：凡人／炼气／筑基不读取，结丹每种读取10层，元婴20层，化神30层；不能把“实际容量40层”误写成“共鸣读取40层”。（本段共鸣口径于2026-09-29按核心01第5.25节同步；历史原话保留在13表。）"
+        },
+        {
+          "sheet": "00_使用说明",
+          "cell": "C9",
+          "before": "七系7 Buff＋14 Debuff，共21种；各有独立核心容量，按现行规则参与共鸣。完整公式引用核心定案，不用接口摘要替换。",
+          "after": "七系7 Buff＋14 Debuff各有独立容量。共鸣结丹10／元婴20／化神30，2026-09-29同步；原文旧门槛已覆盖。完整公式查核心01，容量不等于共鸣读层。"
+        }
+      ],
+      "formula_count_preserved": 0,
+      "formula_caches_preserved": true,
+      "other_cells_styles_and_parts_preserved": true,
+      "changed_zip_entries": [
+        "xl/worksheets/sheet1.xml",
+        "xl/worksheets/sheet13.xml"
+      ]
+    },
+    {
+      "file": "output/spreadsheet/t01-03-品级机制权限矩阵-260928.xlsx",
+      "before_sha256": "57a1c9ecbed9ed7db8fa4378f08e95994a26ca6e0a41dcff100af35ef8b5d02f",
+      "after_sha256": "566506a17537b0dfcf556e7c4e2d76bfbc5f49ee29e7f8c08765ec8d522334e4",
+      "edits": [
+        {
+          "sheet": "06_复杂度与投入",
+          "cell": "D41",
+          "before": "共鸣元婴起；器具参与连携仍化神及合法有向配对。",
+          "after": "共鸣结丹起；器具参与连携仍化神及合法有向配对。"
+        },
+        {
+          "sheet": "00_使用说明",
+          "cell": "D7",
+          "before": "第4份复查覆盖前三批旧说法；用户最新明确答复和核心定案中的全局规则继续优先。历史原文完整保留。",
+          "after": "第4份复查及用户最新定案优先。2026-09-29共鸣同步为结丹10／元婴20／化神30；原文旧门槛已覆盖，历史原话保留。"
+        }
+      ],
+      "formula_count_preserved": 3769,
+      "formula_caches_preserved": true,
+      "other_cells_styles_and_parts_preserved": true,
+      "changed_zip_entries": [
+        "xl/worksheets/sheet1.xml",
+        "xl/worksheets/sheet7.xml"
+      ]
+    }
+  ],
+  "office_render_run": false,
+  "game_tests_run": false,
+  "changed_rule_cells": 8,
+  "changed_guide_cells": 3
+}

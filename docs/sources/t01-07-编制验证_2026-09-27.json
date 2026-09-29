@@ -1,0 +1,161 @@
+{
+  "workbook": "output\\spreadsheet\\t01-07-物品获取与投放规则词典.xlsx",
+  "sha256": "fccfda34a3a469974f9ec6154930b2da608d385a3b12c972e41804dd403c9490",
+  "sheets": [
+    {
+      "name": "00_使用说明",
+      "records": 10
+    },
+    {
+      "name": "01_对象与职责边界",
+      "records": 10
+    },
+    {
+      "name": "02_渠道与世界交付",
+      "records": 16
+    },
+    {
+      "name": "03_投放记录与交付身份",
+      "records": 10
+    },
+    {
+      "name": "04_长期成品投放倾向",
+      "records": 12
+    },
+    {
+      "name": "05_分类投放与对象视图",
+      "records": 12
+    },
+    {
+      "name": "06_发生内容与奖励槽",
+      "records": 10
+    },
+    {
+      "name": "07_重复唯一与库存",
+      "records": 12
+    },
+    {
+      "name": "08_待领取与交付一致性",
+      "records": 8
+    },
+    {
+      "name": "09_制作方与升品路径",
+      "records": 11
+    },
+    {
+      "name": "10_可达链供需与替代",
+      "records": 14
+    },
+    {
+      "name": "11_随机池与经济审查",
+      "records": 9
+    },
+    {
+      "name": "12_仙品套装与特殊入口",
+      "records": 10
+    },
+    {
+      "name": "13_字段接口",
+      "records": 58
+    },
+    {
+      "name": "14_验收场景",
+      "records": 38
+    },
+    {
+      "name": "15_审查逐项回填",
+      "records": 17
+    },
+    {
+      "name": "16_建议与待配置",
+      "records": 15
+    },
+    {
+      "name": "17_跨词典接口",
+      "records": 8
+    },
+    {
+      "name": "18_原文章节对照",
+      "records": 120
+    },
+    {
+      "name": "19_历史_第1批",
+      "records": 1205
+    },
+    {
+      "name": "20_历史_第2批",
+      "records": 1442
+    },
+    {
+      "name": "21_历史_审查",
+      "records": 553
+    },
+    {
+      "name": "22_来源与归档",
+      "records": 3
+    },
+    {
+      "name": "23_终审检查",
+      "records": 26
+    }
+  ],
+  "field_count": 58,
+  "case_count": 38,
+  "audit_items": 17,
+  "chapter_count": 120,
+  "original_lines": 3200,
+  "source_manifest": [
+    {
+      "id": "B1",
+      "path": "docs\\sources\\t01-07-物品获取与投放规则词典_第1批原文_2026-09-27.txt",
+      "lines": 1205,
+      "chapters": 45,
+      "sha256": "45c2cdf6a9b02462c241c0deaf68d5dfc913b510d92e6904d69e344ea089fb0c"
+    },
+    {
+      "id": "B2",
+      "path": "docs\\sources\\t01-07-物品获取与投放规则词典_第2批原文_2026-09-27.txt",
+      "lines": 1442,
+      "chapters": 58,
+      "sha256": "7a6d8f053ec6ca19240a088bdd238b5150e83ccacdf16380d7f569b9aa900695"
+    },
+    {
+      "id": "R3",
+      "path": "docs\\sources\\t01-07-物品获取与投放规则词典_第3份审查原文_2026-09-27.txt",
+      "lines": 553,
+      "chapters": 17,
+      "sha256": "249f5176e4e32d70a85f0feec3b8a33f98262702061cfe81d37872ad780eec13"
+    }
+  ],
+  "checks": {
+    "xlsx_readback": true,
+    "unique_record_ids": true,
+    "historical_lines_match": true,
+    "all_120_chapters_linked": true,
+    "all_17_review_sections_integrated": true,
+    "12_required_cases_present": true,
+    "monster_complete_items_not_authorized": true,
+    "no_unexpected_formulas": true,
+    "protected_files_unchanged": 516
+  },
+  "limitations": [
+    "未做Excel／WPS真实渲染",
+    "未运行游戏、随机抽样或经济平衡测试",
+    "正文保留建议与待资产，不代表已全部定案",
+    "本轮未改前六词典与游戏"
+  ],
+  "protected_snapshot_sha256": "5532a03b8727d817ac1fc9363016cdb3efbf2e455b1bdd69de89d3719fdacaaa",
+  "closing_checks": {
+    "local_document_links": 683,
+    "broken_links": [],
+    "xlsx_internal_links": 120,
+    "body_id_references_checked": 188,
+    "unknown_body_ids": [],
+    "rows_at_height_cap": [],
+    "git_diff_check": "passed",
+    "protected_files_rechecked": 516,
+    "formal_07_files": [
+      "t01-07-物品获取与投放规则词典.xlsx"
+    ]
+  }
+}
