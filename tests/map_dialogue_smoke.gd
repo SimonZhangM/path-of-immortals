@@ -79,6 +79,7 @@ func _run() -> void:
 		_check(root.get_texture().get_image().save_png("res://artifacts/map_dialogue_last.png") == OK, "last paragraph render")
 	_key(KEY_SPACE)
 	_check(not overlay.visible and not screen.event_state.is_active(), "space on the final paragraph completes dialogue like a left click")
+	screen.sign_motion.advance_visuals(0.3)
 	_check(not sign.visible and not sign.get_node("StoryIcon").is_visible_in_tree(), "completion hides both sign and icon")
 	_check(point.visible and other_sign.visible and screen.content.get_node("Points").get_child_count() == 38 and screen.content.get_node("Routes").get_child_count() == 41, "node, other signs and graph remain intact")
 	_check(screen.travel.map_position == player_position and screen.travel.destination_id == destination and screen.travel.mode == "idle", "closing click never leaks to map")

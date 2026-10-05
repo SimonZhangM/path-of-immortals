@@ -1,0 +1,227 @@
+{
+  "date": "2026-09-29",
+  "scope": "115资产库存与依赖明确的共享机制首批；不是完整七系／连携／平衡验收",
+  "authority": {
+    "mechanics": "docs/01_核心定案_七系功法与战斗规则.md",
+    "latest_decisions": "1.21",
+    "resonance_revision": "docs/04_战斗机制实施交接_规则衔接与验收.md::2.1"
+  },
+  "workbooks": [
+    {
+      "file": "output/spreadsheet/t01-01-器具机制词典-260928.xlsx",
+      "sha256": "7a68b95a996d1a4ef949797257243ffe13409ce33f1ee2be0da3b3cc847c51b2",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-02-状态与器具控制词典-260928.xlsx",
+      "sha256": "3124807f97a47866a90d3e9e441b0a204dd8603bd2c48f67c9ff22dda033b447",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-03-品级机制权限矩阵-260928.xlsx",
+      "sha256": "566506a17537b0dfcf556e7c4e2d76bfbc5f49ee29e7f8c08765ec8d522334e4",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-04-器具类别与规格词典-260928.xlsx",
+      "sha256": "ff1c954a0af3d20bfdbbf817b129805a0273c59df9e4f1db41e41edf0b66ba05",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-05-材料与锻造词典-260928.xlsx",
+      "sha256": "041e087c5aa4dd3e527ff2eb0a3a3cb817afa46a55a9c66a52285bad6d8992dc",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-06-套装与联动器具词典-260928.xlsx",
+      "sha256": "49ee69a0f9f25f0552d495abf66e8a3bf5e17cac18e460b025268636ed8a301a",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-07-物品获取与投放规则词典-260928.xlsx",
+      "sha256": "06c88332c194fe6778cbbaa3e21e3001b49ae43360f7216d4c59c5cd830e9a7f",
+      "unchanged": true
+    },
+    {
+      "file": "output/spreadsheet/t01-08-物品资产主表-260928.xlsx",
+      "sha256": "5fc0dab680f82f2f28c4a28d60fbf3b9de82ccb1760ea82190448576c28f973b",
+      "unchanged": true
+    }
+  ],
+  "assets": {
+    "count": 115,
+    "lower": 27,
+    "common": 88,
+    "new_blank_icons": 105,
+    "old_ids_icons_quantities_preserved": [
+      "base.map_item.qingshi_short_sword",
+      "base.map_item.hunting_bow",
+      "base.map_item.short_iron_hammer",
+      "base.map_item.coarse_cloth_armor",
+      "base.map_item.old_iron_helmet",
+      "base.map_item.round_wood_shield",
+      "base.map_item.warm_jade",
+      "base.map_item.hemostatic_pill",
+      "base.map_item.sinew_pill",
+      "base.map_item.detox_powder"
+    ]
+  },
+  "books_spells": {
+    "books": 35,
+    "spells": 56,
+    "status": "映射完成；本体与学习未接"
+  },
+  "tests": [
+    {
+      "script": "t01_integration_tests.gd",
+      "mode": "headless",
+      "checks": 972,
+      "failures": 0,
+      "summary": "T01 CHECKS 972; FAILURES 0",
+      "log": "artifacts/t01_integration_tests.stdout.log",
+      "log_sha256": "73ab2df54cdf810dd9943d2021e8ac9a749c298dcf85eadf101fb4b45894da24"
+    },
+    {
+      "script": "t01_entry_tests.gd",
+      "mode": "headless",
+      "checks": 22,
+      "failures": 0,
+      "summary": "T01 ENTRY CHECKS 22; FAILURES 0",
+      "log": "artifacts/t01_entry_tests.stdout.log",
+      "log_sha256": "e446192aa895415073fcbbd038f25ebf7adfe0635087a52f44ded01305f5c804"
+    },
+    {
+      "script": "t01_entry_tests.gd",
+      "mode": "OpenGL Compatibility / NVIDIA GeForce RTX 2080 Ti",
+      "checks": 22,
+      "failures": 0,
+      "summary": "T01 ENTRY CHECKS 22; FAILURES 0",
+      "log": "artifacts/t01_entry_tests.render.stdout.log",
+      "log_sha256": "a79d19b1219f077909da4bbd99c8c3955f16a538402024c1087ef31209d5a621"
+    },
+    {
+      "script": "run_tests.gd",
+      "mode": "headless",
+      "checks": 1117,
+      "failures": 0,
+      "summary": "RESULT: 1117 checks, 0 failures",
+      "log": "artifacts/run_tests.stdout.log",
+      "log_sha256": "c626db18373edb044a5700a64959fd891fb4bde2c8825f6354524761d23b8eeb"
+    },
+    {
+      "script": "damage_toxin_tests.gd",
+      "mode": "headless",
+      "checks": 210,
+      "failures": 0,
+      "summary": "DAMAGE / TOXIN: 210 checks, 0 failures",
+      "log": "artifacts/damage_toxin_tests.stdout.log",
+      "log_sha256": "10b09b24c8aadef3dad836809ffc631bccd25e7d8f5c13baec8becbb440773f9"
+    },
+    {
+      "script": "armor_pool_tests.gd",
+      "mode": "headless",
+      "checks": 34,
+      "failures": 0,
+      "summary": "ARMOR POOL RESULT: 34 checks, 0 failures",
+      "log": "artifacts/armor_pool_tests.stdout.log",
+      "log_sha256": "e692a559481efa277d72c0d2301a45e6a0758b90bd06708da95f879ede2237db"
+    },
+    {
+      "script": "support_effects_tests.gd",
+      "mode": "headless",
+      "checks": 47,
+      "failures": 0,
+      "summary": "SUPPORT EFFECTS: 47 checks, 0 failures",
+      "log": "artifacts/support_effects_tests.stdout.log",
+      "log_sha256": "fe71b55aa0df50deb92a082abbee32188a9928dc568c769e5be051ed67cd6e1b"
+    },
+    {
+      "script": "item_tooltip_presentation.gd",
+      "mode": "headless",
+      "checks": 1488,
+      "failures": 0,
+      "summary": "ITEM TOOLTIPS: 1488 checks, 0 failures",
+      "log": "artifacts/item_tooltip_presentation.stdout.log",
+      "log_sha256": "33bc0a4d2089a462bf28d939dc134baf168bb0236d83b74597ed026a1ba3acb8"
+    }
+  ],
+  "import": "passed",
+  "actual_player_inventory_migration": {
+    "equipped_stacks": 0,
+    "grant": true,
+    "kinds": 115,
+    "old_version": 1.0,
+    "path": "C:/Users/Administrator/AppData/Roaming/Godot/app_userdata/Path of Immortals/inventory_loadout.json",
+    "units": 116,
+    "version": 2
+  },
+  "migration_notes": [
+    "原额外温玉佩保留，115种／116件",
+    "读取文件close后再备份改名，修复Windows迁移失败",
+    "旧超10叠退回库存，不丢持有单位",
+    "不支持同时运行多个客户端编辑同一存档"
+  ],
+  "entry_checks": [
+    "地图I显示115种",
+    "空图卡片／暗器",
+    "数量按钮真实Input事件，合入同格",
+    "F6共享库存及开局使用",
+    "2秒回复／消费持久化／重载不补",
+    "战斗临时换装不覆盖地图阵型",
+    "状态／雷盾文本和可点击战斗记录"
+  ],
+  "screenshots": [
+    {
+      "path": "artifacts/t01-map-inventory.png",
+      "sha256": "aa3338f7caf3a06f2a575aa670af2d9f9a2da383aebe885e0f281eb576ac2292",
+      "visually_inspected": true
+    },
+    {
+      "path": "artifacts/t01-battle-storage.png",
+      "sha256": "8fef60d9a7cfa616b513c120d2529fe053c1710fda8bf58ac06b633edc402ef7",
+      "visually_inspected": true
+    },
+    {
+      "path": "artifacts/t01-battle-state.png",
+      "sha256": "f22e4559eeaba27f6c719ad8e2ebcadc93e981710ac4e3a41530968a7c13505c",
+      "visually_inspected": true
+    },
+    {
+      "path": "artifacts/t01-battle-log.png",
+      "sha256": "c1acd1f604f1c27979ee76182d88ad0514fa114bde585380883333c361920cd8",
+      "visually_inspected": true
+    }
+  ],
+  "static": {
+    "local_links_checked": 822,
+    "git_diff_check": "passed",
+    "old_source_workbooks_changed": false
+  },
+  "case_coverage": "docs/t01_实施清单_2026-09-29.md::04的17个案例逐项覆盖",
+  "not_verified": [
+    "未运行整套tests/run.ps1；旧地图测试10件及全有图断言待迁移",
+    "未穷尽七系组合",
+    "未进行平衡试跑",
+    "未做Office渲染或本轮词典回写"
+  ],
+  "not_implemented": [
+    "35书56术本体／学习／总纲专精",
+    "全部手自动／预备式",
+    "正式连携",
+    "剑幕返剑和灵障来源专属消费",
+    "禁用沉默扰乱及复杂法术CD干预",
+    "甲型并列手选UI",
+    "完整跨战资源持久化"
+  ],
+  "pending_decisions": [
+    "四武器以上费用",
+    "跨境界克制启用",
+    "正式有向配对",
+    "成长／实练数值",
+    "配方／商店／掉落及未来套装专项"
+  ],
+  "git": {
+    "committed": false,
+    "pushed": false
+  }
+}

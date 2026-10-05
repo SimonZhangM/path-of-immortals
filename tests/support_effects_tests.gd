@@ -76,13 +76,15 @@ func _run() -> void:
 	var registry := ContentRegistry.new()
 	registry.load_base_content()
 	var created := MapLoadoutStore.create_state(registry, registry.get_board("base.board.bag"))
-	_check(created.error.is_empty(), "ten live records load")
+	_check(created.error.is_empty() and created.state.records.size() == 115, "115 live records load")
 	var live_jade := registry.get_item("base.map_item.warm_jade")
-	_check(live_jade.cooldown_usec == 4_000_000 and live_jade.grid_size == Vector2i.ONE and live_jade.effects == JSON.parse_string(JSON.stringify(effects)) and not live_jade.is_consumable(), "live jade has exact footprint, cadence, dual recovery and ceiling")
-	var expected_cooldowns := [6_500_000, 7_500_000, 5_500_000]
+	effects[0].value = 5
+	effects[1].value = 7
+	_check(live_jade.cooldown_usec == 6_000_000 and live_jade.grid_size == Vector2i.ONE and live_jade.effects == JSON.parse_string(JSON.stringify(effects)) and not live_jade.is_consumable(), "r1 jade has exact footprint, cadence, dual recovery and ceiling")
+	var expected_cooldowns := [10_000_000, 11_500_000, 8_500_000]
 	var expected_effects := [
-		{"trigger": "on_activate", "effect": "restore_ticks", "resource": "hp", "value": 2, "ticks": 3, "interval": 2.0},
-		{"trigger": "on_activate", "effect": "restore_ticks", "resource": "stamina", "value": 4, "ticks": 3, "interval": 2.0},
+		{"trigger": "on_activate", "effect": "restore_ticks", "resource": "hp", "value": 3, "ticks": 3, "interval": 2.0},
+		{"trigger": "on_activate", "effect": "restore_ticks", "resource": "stamina", "value": 6, "ticks": 3, "interval": 2.0},
 		{"trigger": "on_activate", "effect": "cleanse_toxin", "duration": 15},
 	]
 	var index := 0

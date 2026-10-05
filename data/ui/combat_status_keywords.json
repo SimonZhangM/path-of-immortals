@@ -1,16 +1,171 @@
 [
-  {"id": "counter", "name": "反锋", "kind": "buff", "icon": "res://assets/buff-jin.webp", "color": "f2bf45", "description": "每层积累1点反弹伤害，受到实际物理伤害时一次性全额反弹并清零。"},
-  {"id": "edge_mark", "name": "锋痕", "kind": "debuff", "icon": "res://assets/debuff-jin.webp", "color": "eea43a", "description": "每层储存1点待追加的金属性伤害，下一次受到物理或武器攻击时全部追加并清零。"},
-  {"id": "vitality", "name": "生机", "kind": "buff", "icon": "res://assets/buff-mu.webp", "color": "7fe05a", "description": "2秒后开始每秒按当前层数恢复气血，每次恢复后减少1层。"},
-  {"id": "toxin", "name": "毒蚀", "kind": "debuff", "icon": "res://assets/debuff-mu.webp", "color": "8bd43b", "description": "持续损失气血，无视护甲。"},
-  {"id": "moisture", "name": "润脉", "kind": "buff", "icon": "res://assets/buff-shui.webp", "color": "59ccef", "description": "2秒后开始每秒按当前层数同时恢复灵力和体力，每次恢复后减少1层。"},
-  {"id": "withered_meridians", "name": "枯脉", "kind": "debuff", "icon": "res://assets/debuff-shui.webp", "color": "86afea", "description": "2秒后开始每秒按当前层数同时损失灵力和体力，每次结算后减少1层。"},
-  {"id": "flame", "name": "附炎", "kind": "buff", "icon": "res://assets/buff-huo.webp", "color": "ff9b38", "description": "每层储存1点火属性伤害，下一次主动攻击全部附加并一次性消耗。"},
-  {"id": "burn", "name": "灼烧", "kind": "debuff", "icon": "res://assets/debuff-huo.webp", "color": "ff7138", "description": "每层每秒造成1点火属性伤害，持续10秒；再次施加会叠加层数并刷新持续时间。"},
-  {"id": "tenacity", "name": "坚韧", "kind": "buff", "icon": "res://assets/buff-tu.webp", "color": "dfb35c", "description": "每层提供1%抗暴击概率，成功抵挡一次暴击后全部清零。"},
-  {"id": "fatigue", "name": "疲惫", "kind": "debuff", "icon": "res://assets/debuff-tu.webp", "color": "bca082", "description": "每层提供1%被暴击概率，敌方成功造成一次暴击后全部清零。"},
-  {"id": "agility", "name": "轻灵", "kind": "buff", "icon": "res://assets/buff-feng.webp", "color": "75dfe2", "description": "每层提供1%闪避率，成功闪避一次攻击后全部清零。"},
-  {"id": "imbalance", "name": "失衡", "kind": "debuff", "icon": "res://assets/debuff-feng.webp", "color": "8bcfd2", "description": "每层提供1%被命中率，武器攻击命中后触发一次首次攻击纯武器伤害50%的追击并全部清零。"},
-  {"id": "thunder", "name": "雷蕴", "kind": "buff", "icon": "res://assets/buff-lei.webp", "color": "c18cff", "description": "每累计10层转化为一次雷盾值，并加入当前雷盾池。"},
-  {"id": "thunder_mark", "name": "雷印", "kind": "debuff", "icon": "res://assets/debuff-lei.webp", "color": "f2cf58", "description": "累计10层进入待引雷状态，下一次受到雷属性武器或法术攻击时触发雷击并施加麻痹。"}
+  {
+    "id": "counter",
+    "name": "反锋",
+    "kind": "buff",
+    "icon": "res://assets/buff-jin.webp",
+    "color": "ffdf66",
+    "description": "每层积累1点反弹伤害，受到实际物理伤害时一次性全额反弹并清零。"
+  },
+  {
+    "id": "edge_mark",
+    "name": "锋痕",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-jin.webp",
+    "color": "ffc44d",
+    "description": "每层储存1点待追加的金属性伤害，下一次受到物理或武器攻击时全部追加并清零。"
+  },
+  {
+    "id": "bleed",
+    "name": "流血",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-jin.webp",
+    "color": "ffe98c",
+    "description": "首次2秒后开始，每秒按当前层数直接扣气血，绕过盾甲；生效起持续5秒，追加刷新到期但保留下一跳。"
+  },
+  {
+    "id": "vitality",
+    "name": "生机",
+    "kind": "buff",
+    "icon": "res://assets/buff-mu.webp",
+    "color": "a2f56d",
+    "description": "2秒后开始每秒按当前层数恢复气血，每次恢复后减少1层。"
+  },
+  {
+    "id": "toxin",
+    "name": "毒蚀",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-mu.webp",
+    "color": "c4f25a",
+    "description": "持续损失气血，无视护甲。"
+  },
+  {
+    "id": "entangle",
+    "name": "缠绕",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-mu.webp",
+    "color": "72efa5",
+    "description": "合格主动火伤或雷伤每层增加2个百分点伤害；对应元素每轮触发一次并消耗1层。"
+  },
+  {
+    "id": "moisture",
+    "name": "润脉",
+    "kind": "buff",
+    "icon": "res://assets/buff-shui.webp",
+    "color": "62dfff",
+    "description": "2秒后开始每秒按当前层数同时恢复灵力和体力，每次恢复后减少1层。"
+  },
+  {
+    "id": "withered_meridians",
+    "name": "枯脉",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-shui.webp",
+    "color": "88baff",
+    "description": "2秒后开始每秒按当前层数同时损失灵力和体力，每次结算后减少1层。"
+  },
+  {
+    "id": "frost",
+    "name": "寒霜",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-shui.webp",
+    "color": "9befff",
+    "description": "合格主动水攻成功命中时，先施加再消耗1层，冻结全阵盘CD与发动0.5秒；不同攻击的冻结可累加。"
+  },
+  {
+    "id": "flame",
+    "name": "附炎",
+    "kind": "buff",
+    "icon": "res://assets/buff-huo.webp",
+    "color": "ffb34f",
+    "description": "每层储存1点火属性伤害，下一次主动攻击全部附加并一次性消耗。"
+  },
+  {
+    "id": "burn",
+    "name": "灼烧",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-huo.webp",
+    "color": "ff875f",
+    "description": "每层每秒造成1点火属性伤害，持续10秒；再次施加会叠加层数并刷新持续时间。"
+  },
+  {
+    "id": "armor_break",
+    "name": "破甲",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-huo.webp",
+    "color": "ffca72",
+    "description": "主动火伤经盾后，按每层1%绕过护甲扣气血；施加后保持10秒，再每秒减1层。"
+  },
+  {
+    "id": "tenacity",
+    "name": "坚韧",
+    "kind": "buff",
+    "icon": "res://assets/buff-tu.webp",
+    "color": "f5ce79",
+    "description": "每层提供1个百分点抗暴击概率；成功抵抗暴击后消耗半数层（向下取整、至少1层）。"
+  },
+  {
+    "id": "fatigue",
+    "name": "疲惫",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-tu.webp",
+    "color": "eac18d",
+    "description": "每层增加1个百分点被暴击概率；实际受到暴击后消耗半数层（向下取整、至少1层）。"
+  },
+  {
+    "id": "injury",
+    "name": "重伤",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-tu.webp",
+    "color": "f6b86a",
+    "description": "首次2秒后生效，减少等同层数的每次气血恢复，并增加原本非零的体力和灵力费用；第3秒起每秒减1层。"
+  },
+  {
+    "id": "agility",
+    "name": "轻灵",
+    "kind": "buff",
+    "icon": "res://assets/buff-feng.webp",
+    "color": "70f0e4",
+    "description": "每层增加1个百分点闪避率；成功闪避后消耗半数层（向下取整、至少1层）。"
+  },
+  {
+    "id": "imbalance",
+    "name": "失衡",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-feng.webp",
+    "color": "91dff5",
+    "description": "每层增加1个百分点被命中率。原始武器命中后有25%机会追击，追击另判命中，取首击盾甲前武器伤害的50%；追击成功才消耗半数层（向下取整、至少1层）。"
+  },
+  {
+    "id": "dispel",
+    "name": "驱散",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-feng.webp",
+    "color": "a2f7dc",
+    "description": "首次2秒后随机拆除Buff；核心Buff逐层、持续药效和免疫按整份扣除。余层无目标时暂存5秒，有新目标后1秒再结算。"
+  },
+  {
+    "id": "thunder",
+    "name": "雷蕴",
+    "kind": "buff",
+    "icon": "res://assets/buff-lei.webp",
+    "color": "d0a0ff",
+    "description": "本身无效果，每累积10层生成1层雷盾。",
+    "related_keywords": ["雷盾"]
+  },
+  {
+    "id": "thunder_mark",
+    "name": "雷印",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-lei.webp",
+    "color": "bc9bff",
+    "description": "合格主动雷攻命中并实际造成雷伤时，消耗已有10层引雷一次并施加1秒麻痹；本次新增层数不回溯引雷。雷击取己方阵盘最高攻击值的1.5倍，不再引雷或连环。"
+  },
+  {
+    "id": "chain",
+    "name": "连环",
+    "kind": "debuff",
+    "icon": "res://assets/debuff-lei.webp",
+    "color": "e2b3ff",
+    "description": "未引雷的合格主动雷攻触发一记雷属性派生闪电，基础伤害为扣层前层数的2倍，消耗1层；派生闪电不递归引雷或连环。"
+  }
 ]

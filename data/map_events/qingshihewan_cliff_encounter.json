@@ -1,0 +1,19 @@
+{
+  "id": "base.map_event.qingshihewan.cliff_encounter",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n12",
+  "title": "夹壁山径",
+  "description": "山脚小径夹在岩壁与疏林之间，路旁枯枝像是刚被重物反复踩过。前方灌木忽然向两侧倒伏，一头赤鬃野兽低头刨地，粗重鼻息越来越近。",
+  "enemy_id": "base.enemy.chisong_liaozhu",
+  "enemy_rank": "一级中阶",
+  "enemy_category": "野兽类",
+  "enemy_description": "常出没于山脚疏林，獠牙粗硬，赤鬃如针。平日拱土觅食，受惊便低头猛冲，踏得枯枝碎石四散。",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "background": "res://assets/battle-tanchuang.webp",
+    "background_region": [64, 56, 960, 1344],
+    "rank_icon": "res://assets/enemy-level.webp",
+    "battle_background": "res://assets/battle-qingshihewan-zhu.webp"
+  }
+}

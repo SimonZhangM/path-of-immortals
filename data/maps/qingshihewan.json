@@ -3,10 +3,19 @@
   "name": "青石河湾",
   "background": "res://assets/gamemap-qingshihewan.webp",
   "marker": "res://assets/mapdot.webp",
-  "source_size": [3220, 1830],
+  "source_size": [3215, 1835],
   "layout_scene": "res://scenes/maps/qingshihewan_layout.tscn",
+  "sign_motion": "res://data/ui/map_sign_motion.json",
+  "exits": [{
+    "point_id": "base.map.qingshihewan.point.east_exit",
+    "title": "前往 青石镇",
+    "scene": "res://scenes/maps/qingshizhen.tscn",
+    "target_point": "base.map.qingshizhen.point.n25",
+    "target_facing": "right"
+  }],
   "event_files": [
     "res://data/map_events/qingshihewan_bridge_dialogue.json",
-    "res://data/map_events/qingshihewan_wounded_disciple.json"
+    "res://data/map_events/qingshihewan_wounded_disciple.json",
+    "res://data/map_events/qingshihewan_cliff_encounter.json"
   ]
 }

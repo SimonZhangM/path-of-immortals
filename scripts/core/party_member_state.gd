@@ -3,11 +3,24 @@ extends RefCounted
 
 var id: String
 var definition: Dictionary
+var knowledge := CultivationKnowledge.new()
 var inventory: InventoryState
 var board: BoardLayout
 var hp: float
-var stamina: int
-var spirit: int
+var stamina: float
+var spirit: float
+var combat_statuses: Dictionary = {}
+var barrier := 0.0
+var barrier_sources: Array = []
+var sword_screen: Dictionary = {}
+var weapon_enchantment: Dictionary = {}
+var return_edge := ""
+var thunder_shields: Array[float] = []
+var paralyzed_until := 0
+var frozen_until := 0
+var temporary_effects: Dictionary = {}
+var body_element := "base.element.none"
+var defense_element := "base.element.none"
 var armor: float = 0.0
 var toxin_stacks: int = 0
 var toxin_immune_until_usec: int = 0
@@ -16,6 +29,9 @@ var toxin_version: int = 0
 var toxin_source: Dictionary = {}
 var armor_capacity_sources: Dictionary = {}
 var armor_type_sources: Dictionary = {}
+var armor_choice := ""
+var armor_candidates: Array[String] = []
+var armor_choice_required := false
 var armor_type: String:
 	get:
 		return "无甲" if armor_type_sources.is_empty() else String(armor_type_sources.values()[0])
@@ -61,6 +77,16 @@ func maximum(resource: String) -> int:
 	return value
 
 func reset_resources() -> void:
+	combat_statuses.clear()
+	temporary_effects.clear()
+	barrier = 0
+	barrier_sources.clear()
+	sword_screen.clear()
+	weapon_enchantment.clear()
+	return_edge = ""
+	thunder_shields.clear()
+	paralyzed_until = 0
+	frozen_until = 0
 	toxin_stacks = 0
 	toxin_immune_until_usec = 0
 	toxin_next_tick_usec = 0
@@ -93,6 +119,8 @@ func apply_toxin(stacks: int, at_usec: int, source: Dictionary = {}) -> bool:
 	return true
 
 func can_use_item(item: ItemData) -> bool:
+	if item != null and item.category == "book": return true
+	if item != null and item.category == "spell": return knowledge.level(item.combat.book_id) >= int(item.combat.learned_at_book_level)
 	# Creatures without cultivation use innate attacks, not player equipment ranks.
 	return item != null and (cultivation_rank_id.is_empty() or MapItemQuality.usable(item.quality, cultivation))
 

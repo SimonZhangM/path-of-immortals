@@ -11,6 +11,7 @@ var quantity: Label
 var _art: Control
 var _tags: HBoxContainer
 var _native_drag_active: bool = false
+var quantity_picker: SpinBox
 
 func configure(game: GameManager, entry: Dictionary) -> void:
 	manager = game
@@ -71,12 +72,26 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 	tags.add_child(ItemTooltip.chip(StoragePanel.CATEGORIES[item.category] if _identified() else "？"))
 	tags.add_child(ItemTooltip.chip(item.quality, Color("c6acdf")))
 	_ignore(layout)
+	if item.is_consumable() and item.rule_version == 1 and entry.units.size() > 1:
+		quantity_picker = SpinBox.new()
+		quantity_picker.name = "DeployQuantity"
+		quantity_picker.min_value = 1
+		quantity_picker.max_value = mini(10, entry.units.size())
+		quantity_picker.value = 1
+		quantity_picker.prefix = "上阵"
+		quantity_picker.position = Vector2(25, 35)
+		quantity_picker.size = Vector2(100, 30)
+		layout.add_child(quantity_picker)
 	art.resized.connect(_layout_art)
 	_layout_art.call_deferred()
 	tooltip_text = item.id
 
 func _layout_art() -> void:
 	if icon.texture == null:
+		quantity.size = quantity.get_combined_minimum_size()
+		quantity.position = Vector2(_art.size.x - quantity.size.x, _art.size.y * 0.5)
+		_tags.size = _tags.get_combined_minimum_size()
+		_tags.position = Vector2((_art.size.x - _tags.size.x) * 0.5, _art.size.y - _tags.size.y)
 		return
 	var available := Vector2(maxf(1, _art.size.x - 34), maxf(1, _art.size.y - 58))
 	var source := icon.texture.get_size()
@@ -110,13 +125,16 @@ func _gui_input(event: InputEvent) -> void:
 		_begin_drag.call_deferred(drag_data())
 		accept_event()
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-		manager.equip_random(storage_id)
+		manager.equip_random(storage_id, selected_quantity())
 		accept_event()
 
 func drag_data() -> Dictionary:
 	if not manager.can_edit_inventory() or manager.storage.get_entry(storage_id).is_empty() or not manager.party[manager.selected_member_index].can_use_item(item):
 		return {}
-	return {"kind": "storage", "storage_id": storage_id, "epoch": manager.interaction_epoch}
+	return {"kind": "storage", "storage_id": storage_id, "epoch": manager.interaction_epoch, "quantity": selected_quantity()}
+
+func selected_quantity() -> int:
+	return int(quantity_picker.value) if quantity_picker != null else 1
 
 func _get_drag_data(_point: Vector2) -> Variant:
 	var data := drag_data()
@@ -132,7 +150,7 @@ func _get_drag_data(_point: Vector2) -> Variant:
 func _make_drag_preview() -> Control:
 	if not is_instance_valid(target_board):
 		return null
-	return target_board.make_drag_preview(item, manager.storage.peek_one(storage_id))
+	return target_board.make_drag_preview(item, manager.storage.peek_units(storage_id, selected_quantity()))
 
 func _begin_drag(data: Dictionary) -> void:
 	if data.get("epoch") != manager.interaction_epoch or drag_data().is_empty() or get_viewport().gui_is_dragging():

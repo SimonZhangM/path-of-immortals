@@ -19,14 +19,23 @@ func configure(definitions: Array, point_ids: Array) -> String:
 	var loaded: Dictionary = {}
 	var point_index: Dictionary = {}
 	for raw in definitions:
-		if not raw is Dictionary or not raw.has_all(["id", "type", "point_id", "speaker_id", "lines", "presentation"]):
+		if not raw is Dictionary or not raw.has_all(["id", "type", "point_id", "presentation"]):
 			return "地图事件字段不完整。"
 		if not raw.id is String or not raw.id.begins_with("base.map_event.") or loaded.has(raw.id):
 			return "地图事件ID无效或重复。"
-		if raw.type != "dialogue" or raw.point_id not in point_ids or point_index.has(raw.point_id):
+		if raw.type not in ["dialogue", "encounter"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
 			return "地图事件类型、节点或节点绑定无效。"
 		if raw.get("trigger", "click") not in ["arrival", "click"]:
 			return "地图事件触发方式无效。"
+		if raw.type == "encounter":
+			var encounter_error := _validate_encounter(raw)
+			if not encounter_error.is_empty():
+				return encounter_error
+			loaded[raw.id] = raw.duplicate(true)
+			point_index[raw.point_id] = raw.id
+			continue
+		if not raw.has_all(["speaker_id", "lines"]):
+			return "地图对话字段不完整。"
 		if not raw.speaker_id is String or raw.speaker_id.is_empty():
 			return "地图对话说话者无效。"
 		if not raw.lines is Array or raw.lines.is_empty():
@@ -43,8 +52,15 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			if not ContentRegistry._nonnegative_integer(reward.after_line) or reward.after_line >= raw.lines.size() or not ContentRegistry._nonnegative_integer(reward.quantity) or reward.quantity < 1 or reward.quantity > 10000:
 				return "剧情奖励时机或数量无效。"
 			for previous: Dictionary in loaded.values():
+				# Reward IDs still stay unique while test replay is enabled.
 				if previous.get("reward", {}).get("id", "") == reward.id:
 					return "剧情奖励标识重复。"
+			if not reward.get("test_replay_on_restart", false) is bool:
+				return "剧情奖励测试重播开关必须为布尔值。"
+			if reward.has("test_storage_limit") and (not ContentRegistry._positive_integer(reward.test_storage_limit) or reward.test_storage_limit > 10000):
+				return "剧情奖励测试储物袋限额无效。"
+			if reward.get("test_replay_on_restart", false) and not reward.has("test_storage_limit"):
+				return "剧情奖励测试重播必须配置储物袋限额。"
 		var speakers: Variant = raw.get("speakers", {})
 		if not speakers is Dictionary:
 			return "地图对话说话者表无效。"
@@ -101,6 +117,28 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图事件前置条件存在循环。"
 	events = loaded
 	by_point = point_index
+	return ""
+
+func _validate_encounter(raw: Dictionary) -> String:
+	for key in ["title", "description", "enemy_id", "enemy_rank", "enemy_description", "battle_scene"]:
+		if not raw.get(key) is String or raw[key].strip_edges().is_empty():
+			return "地图遭遇字段无效：" + key
+	if not raw.enemy_id.begins_with("base.enemy.") or not ResourceLoader.exists(raw.battle_scene, "PackedScene"):
+		return "地图遭遇敌人标识或战斗场景无效。"
+	var art: Variant = raw.presentation
+	if not art is Dictionary or not art.has_all(["background", "background_region", "rank_icon"]):
+		return "地图遭遇美术配置不完整。"
+	for key in ["background", "rank_icon"]:
+		if not art[key] is String or not ResourceLoader.exists(art[key], "Texture2D"):
+			return "地图遭遇图片不存在：" + key
+	if art.has("battle_background") and (not art.battle_background is String or not ResourceLoader.exists(art.battle_background, "Texture2D")):
+		return "地图遭遇战场背景不存在。"
+	if not _valid_rect(art.background_region):
+		return "地图遭遇背景裁切无效。"
+	var region: Array = art.background_region
+	var texture := load(art.background) as Texture2D
+	if not Rect2(Vector2.ZERO, texture.get_size()).encloses(Rect2(region[0], region[1], region[2], region[3])):
+		return "地图遭遇裁切超出背景。"
 	return ""
 
 func _valid_rect(rect: Variant) -> bool:

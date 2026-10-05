@@ -9,6 +9,7 @@ var _characters: Dictionary = {}
 var _boards: Dictionary = {}
 var _cultivation: Dictionary = {}
 var errors: PackedStringArray = []
+var library: CultivationLibrary
 
 func load_base_content() -> bool:
 	_elements.clear()
@@ -26,6 +27,8 @@ func load_base_content() -> bool:
 	_load_directory("res://data/cultivation", "cultivation")
 	_load_directory("res://data/enemies", "enemy")
 	_load_directory("res://data/characters", "character")
+	library = CultivationLibrary.new()
+	if not library.load_catalog(self) and not library.error.is_empty(): errors.append(library.error)
 	for character in _characters.values() + _enemies.values():
 		if character.has("board_layout") and not _boards.has(character["board_layout"]):
 			errors.append("Unknown board layout for " + character["id"])
@@ -181,25 +184,25 @@ func register_item(raw: Dictionary) -> bool:
 					error = "size dimensions must be integers from 1 to 4"
 	if error.is_empty() and not raw.get("icon", "") is String:
 		error = "icon must be a resource path string"
-	if error.is_empty() and not _nonnegative_integer(raw.get("stamina_cost", 0)):
+	if error.is_empty() and raw.get("rule_version", 0) == 0 and not _nonnegative_integer(raw.get("stamina_cost", 0)):
 		error = "stamina_cost must be a nonnegative integer"
 	if error.is_empty() and not _nonnegative_integer(raw.get("defense", 0)):
 		error = "defense must be a nonnegative integer"
 	if error.is_empty() and not _nonnegative_integer(raw.get("armor_capacity", 0)):
 		error = "armor capacity must be a nonnegative integer"
-	if error.is_empty() and raw.get("armor_slot", "") not in ["", "衣甲", "头盔", "盾"]:
+	if error.is_empty() and raw.get("armor_slot", "") not in ["", "衣甲", "头盔", "盾"] + T01Definition.SLOTS:
 		error = "invalid armor slot"
 	if error.is_empty() and raw.get("armor_type", "") not in ["", "轻甲", "重甲", "灵甲"]:
 		error = "invalid armor type"
-	if error.is_empty() and raw.get("armor_type", "") != "" and raw.get("armor_slot", "") != "衣甲":
+	if error.is_empty() and raw.get("rule_version", 0) == 0 and raw.get("armor_type", "") != "" and raw.get("armor_slot", "") != "衣甲":
 		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
-	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact"]:
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell"]:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"
-	if error.is_empty() and MapItemQuality.level(raw.get("quality", "凡品")) == 0:
+	if error.is_empty() and raw.get("category") not in ["book", "spell"] and MapItemQuality.level(raw.get("quality", "凡品")) == 0:
 		error = "quality must name one of the seven item ranks"
 	if error.is_empty():
 		for effect in raw["effects"]:
@@ -208,10 +211,12 @@ func register_item(raw: Dictionary) -> bool:
 				break
 			if effect.get("effect") == "restore_over_time" and (int(raw.get("uses_per_unit", 0)) <= 0 or raw["effects"].size() != 1):
 				error = "restoration requires a consumable with one effect"
-		if error.is_empty() and int(raw.get("uses_per_unit", 0)) > 0 and (raw["effects"].size() != 1 or raw["effects"][0].get("effect") not in ["restore_over_time", "restore_ticks", "cleanse_toxin"]):
+		if error.is_empty() and raw.get("rule_version", 0) == 0 and int(raw.get("uses_per_unit", 0)) > 0 and (raw["effects"].size() != 1 or raw["effects"][0].get("effect") not in ["restore_over_time", "restore_ticks", "cleanse_toxin"]):
 			error = "consumables require one supported recovery or cleansing effect"
+	if error.is_empty():
+		error = T01Definition.runtime_error(raw)
 	if not error.is_empty():
-		return _reject(raw, error)
+		return _reject(raw, error + " " + str(raw.get("combat", {}).get("source_location", "")))
 	if raw.get("element", "base.element.none") != "base.element.none" and not _elements.has(raw.get("element")):
 		return _reject(raw, "unknown item element")
 	_items[raw["id"]] = ItemData.new(raw)

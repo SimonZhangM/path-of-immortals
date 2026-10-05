@@ -3,6 +3,9 @@ extends Container
 # Always reserve six equal columns, including columns with no visible item.
 # Fractional widths preserve equal side insets without redistributing spare pixels.
 var columns := 6
+# Quality badges extend below their card rect. Include room for the overhang
+# and a small visual inset in the scroll extent, without changing row spacing.
+const BOTTOM_PADDING := 24.0
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
@@ -26,6 +29,8 @@ func _get_minimum_size() -> Vector2:
 	for value in heights:
 		height += value
 	height += maxi(0, heights.size() - 1) * get_theme_constant("v_separation")
+	if not heights.is_empty():
+		height += BOTTOM_PADDING
 	return Vector2(0, height)
 
 func _cards() -> Array[Control]:

@@ -50,6 +50,8 @@ func _image(node_name: String) -> TextureRect:
 
 func prepare(registry: MapEventRegistry) -> String:
 	for event: Dictionary in registry.events.values():
+		if event.type != "dialogue":
+			continue
 		var textures: Dictionary = {}
 		for key in ["background", "portrait"]:
 			var texture := load(event.presentation[key]) as Texture2D

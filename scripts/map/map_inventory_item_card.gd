@@ -20,6 +20,7 @@ var loadout: MapLoadoutState
 var target_board: MapLoadoutBoard
 var _drag_active := false
 var identified := true
+var quantity_picker: SpinBox
 
 func bind_loadout(model: MapLoadoutState, board: MapLoadoutBoard) -> void:
 	loadout = model
@@ -31,10 +32,10 @@ func _gui_input(event: InputEvent) -> void:
 	if loadout == null or not event is InputEventMouseButton or not event.pressed:
 		return
 	if event.button_index == MOUSE_BUTTON_RIGHT:
-		loadout.equip_random(entry.get("storage_id", ""))
+		loadout.equip_random(entry.get("storage_id", ""), selected_quantity())
 		accept_event()
 	elif event.button_index == MOUSE_BUTTON_LEFT:
-		_begin_drag.call_deferred(loadout.drag_data("storage", entry.get("storage_id", "")))
+		_begin_drag.call_deferred(loadout.drag_data("storage", entry.get("storage_id", ""), selected_quantity()))
 		accept_event()
 
 func _make_custom_tooltip(_for_text: String) -> Object:
@@ -91,6 +92,7 @@ func configure(record: Dictionary, category_name: String) -> void:
 	art.size = Vector2(106, 99)
 	art.configure(entry, true)
 	canvas.add_child(art)
+	art.apply_inventory_pose(entry)
 	var title := _label(entry.name, Rect2(16, 151, 158, 28), 20, Color("ffd700"))
 	title.name = "ItemName"
 	var tags := HBoxContainer.new()
@@ -102,6 +104,8 @@ func configure(record: Dictionary, category_name: String) -> void:
 	canvas.add_child(tags)
 	var categories: Array[String] = [category_name]
 	var subcategory: String = entry.get("subcategory", "")
+	if entry.category == "armor" and subcategory.begins_with("护具·"):
+		subcategory = "护具"
 	if not subcategory.is_empty():
 		categories.append(subcategory)
 	if entry.category == "weapon" and entry.has("damage_type"):
@@ -113,6 +117,7 @@ func configure(record: Dictionary, category_name: String) -> void:
 			continue
 		var tag := Label.new()
 		tag.text = caption
+		tag.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		tag.set_meta("identified_text", caption)
 		tag.mouse_filter = MOUSE_FILTER_IGNORE
 		tag.add_theme_font_size_override("font_size", 15)
@@ -124,8 +129,9 @@ func configure(record: Dictionary, category_name: String) -> void:
 		border.set_corner_radius_all(4)
 		border.content_margin_left = 7
 		border.content_margin_right = 7
-		border.content_margin_top = 2
-		border.content_margin_bottom = 2
+		# Preserve the tag height while centering the visible CJK strokes.
+		border.content_margin_top = 1
+		border.content_margin_bottom = 3
 		tag.add_theme_stylebox_override("normal", border)
 		tags.add_child(tag)
 	if int(entry.quantity) > 1:
@@ -151,8 +157,21 @@ func configure(record: Dictionary, category_name: String) -> void:
 			footprint_cells.append(Rect2(168 - columns * 13 + column * 13, 24 + row * 13, 10, 10))
 	tooltip_text = entry.name
 	set_identified(entry.get("identified", true))
+	if entry.category in ["pill", "throwable"] and int(entry.quantity) > 1:
+		quantity_picker = SpinBox.new()
+		quantity_picker.name = "DeployQuantity"
+		quantity_picker.min_value = 1
+		quantity_picker.max_value = mini(10, int(entry.quantity))
+		quantity_picker.value = 1
+		quantity_picker.prefix = "上阵"
+		quantity_picker.position = Vector2(25, 214)
+		quantity_picker.size = Vector2(135, 30)
+		canvas.add_child(quantity_picker)
 	resized.connect(_layout)
 	_layout()
+
+func selected_quantity() -> int:
+	return int(quantity_picker.value) if quantity_picker != null else 1
 
 func set_identified(value: bool) -> void:
 	identified = value
@@ -203,6 +222,9 @@ func _layout() -> void:
 	if canvas != null:
 		canvas.position = artwork_rect().position
 		canvas.scale = Vector2.ONE * artwork_rect().size.x / DESIGN_WIDTH
+		var art := canvas.get_node_or_null("ItemArtwork") as MapItemArtwork
+		if art != null and canvas.scale.x > 0:
+			art.center_visible_horizontally((size.x * 0.5 - canvas.position.x) / canvas.scale.x)
 	if background != null and size.x > 0 and size.y > 0:
 		var region := background_region()
 		background.material.set_shader_parameter("panel_size", size)

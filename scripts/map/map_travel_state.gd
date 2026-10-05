@@ -107,6 +107,13 @@ func request_destination(target_id: String) -> bool:
 		return true
 	return _plan(target_id)
 
+func stop_at_current_node() -> bool:
+	# Only valid at an arrival boundary; never teleport back along an edge.
+	if not map_position.is_equal_approx(node_positions[current_node_id]):
+		return false
+	pending_destination_id = ""
+	return _plan(current_node_id)
+
 func _plan(target_id: String) -> bool:
 	var next_path := shortest_path(current_node_id, target_id)
 	if target_id != current_node_id and next_path.is_empty():

@@ -63,11 +63,12 @@ func replace_entries(records: Array) -> String:
 		if not icon_path is String:
 			return "物品图片须为有效资源路径。"
 		var icon_path_text := String(icon_path)
-		if icon_path_text.strip_edges().is_empty() or not ResourceLoader.exists(icon_path_text, "Texture2D"):
+		if not icon_path_text.is_empty() and not ResourceLoader.exists(icon_path_text, "Texture2D"):
 			return "物品图片须为有效资源路径。"
-		var icon_texture := load(icon_path_text) as Texture2D
-		if not TextureMetrics.inspect(icon_texture).has_mipmaps:
-			return "物品图片必须启用mipmap。"
+		if not icon_path_text.is_empty():
+			var icon_texture := load(icon_path_text) as Texture2D
+			if not TextureMetrics.inspect(icon_texture).has_mipmaps:
+				return "物品图片必须启用mipmap。"
 		if not raw.get("card_frame", "") is String:
 			return "物品底框须为资源路径。"
 		if raw.has("art_outline_px") and not ContentRegistry._positive_integer(raw.art_outline_px):
@@ -76,6 +77,15 @@ func replace_entries(records: Array) -> String:
 			for key in ["footprint_rows", "footprint_columns"]:
 				if not ContentRegistry._positive_integer(raw.get(key)):
 					return "物品占格须包含正整数行数和列数。"
+		if raw.get("rule_version", 0) == 1:
+			if not raw.get("effects") is Array:
+				return "%s：缺少效果数组 (%s)" % [raw.id, raw.get("source_location", "")]
+			for effect: Variant in raw.effects:
+				if not effect is Dictionary or not EffectSystem.validate_definition(effect):
+					return "%s：未知或无效效果 %s (%s)" % [raw.id, str(effect), raw.get("source_location", "")]
+			ids[raw.id] = true
+			validated.append(raw.duplicate(true))
+			continue
 		if raw.has("damage_type"):
 			if raw.damage_type not in ["斩击", "穿刺", "钝击"]:
 				return "未知的武器攻击类型。"

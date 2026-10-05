@@ -6,6 +6,7 @@ const ARMOR_MULTIPLIERS := {
 	"斩击": {"无甲": 1.2, "轻甲": 1.0, "重甲": 0.8, "灵甲": 1.0},
 	"穿刺": {"无甲": 1.0, "轻甲": 1.2, "重甲": 0.8, "灵甲": 1.0},
 	"钝击": {"无甲": 1.0, "轻甲": 1.0, "重甲": 1.2, "灵甲": 1.0},
+	"法术型": {"无甲": 1.1, "轻甲": 1.0, "重甲": 1.0, "灵甲": 0.9},
 }
 
 static func armor_multiplier(damage_type: String, armor_type: String) -> float:
@@ -24,6 +25,8 @@ static func damage_type_meaning(damage_type: String) -> String:
 	return "，".join(parts) + "。"
 
 static func validate_definition(effect: Dictionary) -> bool:
+	if T01Definition.valid_effect(effect):
+		return true
 	var allowed := {"on_activate": ["damage", "apply_toxin", "restore_over_time", "restore_armor", "restore_capped", "restore_ticks", "cleanse_toxin"], "on_enter": ["defense"], "on_attacked": ["counter_damage"]}
 	if not allowed.has(effect.get("trigger")) or effect.get("effect") not in allowed[effect["trigger"]]:
 		return false
@@ -50,7 +53,10 @@ static func validate_definition(effect: Dictionary) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and float(value) > 0.0 and float(value) <= 1_000_000_000.0 and floor(float(value)) == float(value)
 
 func apply(effect: Dictionary, state: GameState, target: PartyMemberState, at_usec: int, source: Dictionary) -> Dictionary:
-	if state.is_finished() or target.hp <= 0 or not validate_definition(effect) or effect["effect"] not in ["damage", "counter_damage"]:
+	if not validate_definition(effect) or effect.get("effect") not in ["damage", "counter_damage"]:
+		push_error("Unsupported EffectSystem.apply effect: %s, source: %s" % [effect, source])
+		return {"kind": "effect_error", "at_usec": at_usec, "message": "Unsupported effect: " + str(effect), "source": source}
+	if state.is_finished() or target.hp <= 0:
 		return {}
 	var is_counter: bool = effect["effect"] == "counter_damage"
 	var blocked := 0.0

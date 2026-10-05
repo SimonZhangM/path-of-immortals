@@ -17,14 +17,14 @@ func _run() -> void:
 	var points: Node2D = content.get_node("Points")
 	var routes: Node2D = content.get_node("Routes")
 	_check(points.get_child_count() == 38, "38 marked stops including east road end")
-	_check(ProjectSettings.get_setting("application/run/main_scene") == "res://scenes/maps/qingshihewan.tscn", "F5 project main scene is the map preview")
+	_check(ResourceLoader.exists("res://scenes/maps/qingshihewan.tscn"), "original river-bay map remains available")
 	var east_exit := points.get_node("EastExit") as MapRoutePoint
 	_check(east_exit != null and east_exit.visible and east_exit.texture.resource_path == "res://assets/mapdot.webp", "east road endpoint displays mapdot")
 	_check(routes.get_child_count() == 41, "all reference route branches are present")
-	_check(content.get_node("Background").texture.get_size() == Vector2(3220, 1830), "map uses original bitmap dimensions")
+	_check(content.get_node("Background").texture.get_size() == Vector2(3215, 1835), "map uses original bitmap dimensions")
 	_check(content.get_node("Background").texture.resource_path == screen.definition["background"], "background matches metadata")
 	var background_image: Image = content.get_node("Background").texture.get_image()
-	_check(background_image != null and not background_image.is_empty() and background_image.get_size() == Vector2i(3220, 1830), "imported background also decodes for editor image previews")
+	_check(background_image != null and not background_image.is_empty() and background_image.get_size() == Vector2i(3215, 1835), "imported background also decodes for editor image previews")
 	_check(screen.find_child("GameManager", true, false) == null, "route preview does not start a battle")
 	var identities: Dictionary = {}
 	var neighbors: Dictionary = {}
@@ -67,7 +67,7 @@ func _run() -> void:
 	marker.position = original
 	first.sync_endpoints()
 	_check(is_equal_approx(screen.zoom_factor, 1.25), "default map magnification is 125 percent")
-	_check(is_equal_approx(marker.global_scale.x, 0.224 * 1.25 * screen.size.x / 3220.0), "marker scales with width-based initial map view")
+	_check(is_equal_approx(marker.global_scale.x, 0.224 * 1.25 * screen.size.x / 3215.0), "marker scales with width-based initial map view")
 	var center := screen.size * 0.5
 	var initial_position := content.position
 	_button(MOUSE_BUTTON_LEFT, true, center)
@@ -87,12 +87,12 @@ func _run() -> void:
 	_motion(center + Vector2.ONE, Vector2(10000, 10000), MOUSE_BUTTON_MASK_LEFT)
 	_check(content.position.is_equal_approx(Vector2.ZERO), "panning clamps at top left edge")
 	_motion(center, Vector2(-20000, -20000), MOUSE_BUTTON_MASK_LEFT)
-	_check(content.position.is_equal_approx(screen.map_viewport.size - Vector2(3220, 1830) * content.scale), "panning clamps at bottom right edge")
+	_check(content.position.is_equal_approx(screen.map_viewport.size - Vector2(3215, 1835) * content.scale), "panning clamps at bottom right edge")
 	_button(MOUSE_BUTTON_LEFT, false, center)
 	for step in 20:
 		_button(MOUSE_BUTTON_WHEEL_DOWN, true, center)
 	_check(is_equal_approx(screen.zoom_factor, 1.0), "zoom stops at width-fit minimum")
-	_check(is_zero_approx(content.position.x) and is_equal_approx(3220.0 * content.scale.x, screen.size.x), "minimum zoom fills width with no side bars")
+	_check(is_zero_approx(content.position.x) and is_equal_approx(3215.0 * content.scale.x, screen.size.x), "minimum zoom fills width with no side bars")
 	for step in 30:
 		_button(MOUSE_BUTTON_WHEEL_UP, true, center)
 	_check(is_equal_approx(screen.zoom_factor, 1.75), "zoom stops at 175 percent maximum")
@@ -108,12 +108,12 @@ func _run() -> void:
 	_button(MOUSE_BUTTON_LEFT, false, center)
 	# Restore the authored opening view for visual captures at every aspect ratio.
 	screen._zoom_at(1.25, center)
-	content.position = screen.map_viewport.size * 0.5 - Vector2(3220, 1830) * content.scale * 0.5
+	content.position = screen.map_viewport.size * 0.5 - Vector2(3215, 1835) * content.scale * 0.5
 	for dimensions in [Vector2i(1920, 1080), Vector2i(1280, 720), Vector2i(1280, 800), Vector2i(1720, 720)]:
 		root.size = dimensions
 		await _settle()
-		var shown := Rect2(content.position, Vector2(3220, 1830) * content.scale)
-		var fit := screen.size.x / 3220.0
+		var shown := Rect2(content.position, Vector2(3215, 1835) * content.scale)
+		var fit := screen.size.x / 3215.0
 		_check(is_equal_approx(content.scale.x, fit * 1.25), "opening view keeps 125 percent magnification across aspect ratios")
 		_check(shown.get_center().is_equal_approx(screen.map_viewport.size * 0.5), "map stays centered")
 		_check(is_equal_approx(content.scale.x, content.scale.y), "map geometry scales uniformly")
@@ -121,7 +121,7 @@ func _run() -> void:
 			await RenderingServer.frame_post_draw
 			_check(root.get_texture().get_image().save_png("res://artifacts/map_%dx%d.png" % [dimensions.x, dimensions.y]) == OK, "map render capture")
 		screen._zoom_at(1.0, screen.size * 0.5)
-		_check(is_zero_approx(content.position.x) and is_equal_approx(content.scale.x * 3220.0, screen.size.x), "100 percent has no side bars at every aspect ratio")
+		_check(is_zero_approx(content.position.x) and is_equal_approx(content.scale.x * 3215.0, screen.size.x), "100 percent has no side bars at every aspect ratio")
 		# Even an attempted pan at minimum zoom cannot expose a side border.
 		content.position.x += 100
 		screen._clamp_position()
@@ -130,9 +130,9 @@ func _run() -> void:
 			await RenderingServer.frame_post_draw
 			_check(root.get_texture().get_image().save_png("res://artifacts/map_min_%dx%d.png" % [dimensions.x, dimensions.y]) == OK, "minimum zoom render capture")
 		screen._zoom_at(1.75, screen.size * 0.5)
-		_check(is_equal_approx(content.scale.x * 3220.0, screen.size.x * 1.75), "maximum is 175 percent of screen width")
+		_check(is_equal_approx(content.scale.x * 3215.0, screen.size.x * 1.75), "maximum is 175 percent of screen width")
 		screen._zoom_at(1.25, screen.size * 0.5)
-		content.position = screen.map_viewport.size * 0.5 - Vector2(3220, 1830) * content.scale * 0.5
+		content.position = screen.map_viewport.size * 0.5 - Vector2(3215, 1835) * content.scale * 0.5
 	if DisplayServer.get_name() != "headless":
 		root.size = Vector2i(1920, 1080)
 		await _settle()

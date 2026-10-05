@@ -12,13 +12,19 @@ func _init(registry: ContentRegistry, dimensions: Vector2i = Vector2i(4, 4)) -> 
 	_registry = registry
 	grid_size = dimensions
 
-func add_item(instance_id: String, item_id: String, cell: Vector2i) -> bool:
+func add_item(instance_id: String, item_id: String, cell: Vector2i, vertical_book := false) -> bool:
 	if locked or instance_id.is_empty() or _instances.has(instance_id):
 		return false
 	var item := _registry.get_item(item_id)
-	if item == null or not _fits(cell, item.grid_size, ""):
+	if item == null: return false
+	if vertical_book and (item.category != "book" or item.grid_size != Vector2i(2,1)): return false
+	var dimensions := Vector2i(1,2) if vertical_book else item.grid_size
+	if not _fits(cell, dimensions, ""):
+		return false
+	if not equipment_allowed(item):
 		return false
 	_instances[instance_id] = {"instance_id": instance_id, "item_id": item_id, "cell": cell, "units": [{"id": instance_id, "uses_left": item.uses_per_unit}]}
+	if vertical_book: _instances[instance_id].vertical_book = true
 	revision += 1
 	return true
 
@@ -28,11 +34,16 @@ func get_instances() -> Array:
 func get_instance(instance_id: String) -> Dictionary:
 	return _instances.get(instance_id, {}).duplicate(true)
 
+func instance_size(instance_id: String) -> Vector2i:
+	var entry: Dictionary = _instances.get(instance_id,{})
+	if entry.is_empty(): return Vector2i.ZERO
+	return Vector2i(1,2) if entry.get("vertical_book",false) else _registry.get_item(entry.item_id).grid_size
+
 func item_at(cell: Vector2i) -> String:
 	for instance_id in _instances:
 		var instance: Dictionary = _instances[instance_id]
 		var item := _registry.get_item(instance["item_id"])
-		if Rect2i(instance["cell"], item.grid_size).has_point(cell):
+		if Rect2i(instance["cell"], instance_size(instance_id)).has_point(cell):
 			return instance_id
 	return ""
 
@@ -40,7 +51,7 @@ func can_move(instance_id: String, cell: Vector2i) -> bool:
 	if locked or not _instances.has(instance_id):
 		return false
 	var item := _registry.get_item(_instances[instance_id]["item_id"])
-	return _fits(cell, item.grid_size, instance_id)
+	return _fits(cell, instance_size(instance_id), instance_id)
 
 func move_item(instance_id: String, cell: Vector2i) -> bool:
 	if not can_move(instance_id, cell):
@@ -79,14 +90,34 @@ func put(entry: Dictionary, cell: Vector2i) -> String:
 	if locked or entry.is_empty():
 		return ""
 	var matching := matching_stack(entry["item_id"])
+	var item := _registry.get_item(entry.item_id)
+	if item == null:
+		return ""
+	if item.rule_version == 1 and item.is_consumable():
+		var current: int = 0 if matching.is_empty() else _instances[matching].units.size()
+		if current + entry.units.size() > 10:
+			return ""
 	if not matching.is_empty():
 		_instances[matching]["units"].append_array(entry["units"].duplicate(true))
 		revision += 1
 		return matching
-	if not add_item(entry["instance_id"], entry["item_id"], cell):
+	if not add_item(entry["instance_id"], entry["item_id"], cell, entry.get("vertical_book",false)):
 		return ""
 	_instances[entry["instance_id"]]["units"] = entry["units"].duplicate(true)
 	return entry["instance_id"]
+
+func equipment_allowed(item: ItemData, ignore_id: String = "") -> bool:
+	if item.rule_version != 1:
+		return true
+	for entry: Dictionary in _instances.values():
+		if entry.instance_id == ignore_id:
+			continue
+		var other := _registry.get_item(entry.item_id)
+		if (item.is_consumable() or item.category in ["spell", "book"]) and other.id == item.id:
+			return false
+		if item.category == "armor" and item.armor_slot in ["身甲", "头具"] and other.armor_slot == item.armor_slot:
+			return false
+	return true
 
 func take(id: String) -> Dictionary:
 	if locked or not _instances.has(id):
@@ -148,6 +179,6 @@ func _fits(cell: Vector2i, dimensions: Vector2i, ignore_id: String) -> bool:
 			continue
 		var instance: Dictionary = _instances[instance_id]
 		var item := _registry.get_item(instance["item_id"])
-		if target.intersects(Rect2i(instance["cell"], item.grid_size)):
+		if target.intersects(Rect2i(instance["cell"], instance_size(instance_id))):
 			return false
 	return true

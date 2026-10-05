@@ -21,8 +21,8 @@ func _run() -> void:
 	var status_meanings := ItemTooltip.status_keyword_meanings()
 	var status_icons := ItemTooltip.status_keyword_icons()
 	var status_colors := ItemTooltip.status_keyword_colors()
-	_check(status_kinds.size() == 14 and status_meanings.size() == 14 and status_icons.size() == 14 and status_colors.size() == 14, "all fourteen elemental buff/debuff keywords are registered with presentation metadata")
-	_check(status_kinds.values().count("buff") == 7 and status_kinds.values().count("debuff") == 7, "status keyword registry distinguishes seven buffs and seven debuffs")
+	_check(status_kinds.size() == 21 and status_meanings.size() == 21 and status_icons.size() == 21 and status_colors.size() == 21, "all twenty-one elemental buff/debuff keywords are registered with presentation metadata")
+	_check(status_kinds.values().count("buff") == 7 and status_kinds.values().count("debuff") == 14, "status keyword registry distinguishes seven buffs and fourteen debuffs")
 	for pair in [["反锋", "锋痕"], ["生机", "毒蚀"], ["润脉", "枯脉"], ["附炎", "灼烧"], ["坚韧", "疲惫"], ["轻灵", "失衡"], ["雷蕴", "雷印"]]:
 		_check(status_kinds[pair[0]] == "buff" and status_kinds[pair[1]] == "debuff", "registered elemental status pair: %s/%s" % pair)
 	for word: String in status_colors:
@@ -57,14 +57,17 @@ func _run() -> void:
 		var parsed_lines := PackedStringArray()
 		var soft_wrap_spacing_unchanged := true
 		for line: RichTextLabel in body.get_children():
-			parsed_lines.append(line.get_parsed_text())
+			parsed_lines.append(line.get_parsed_text().replace("\u2060", ""))
 			soft_wrap_spacing_unchanged = soft_wrap_spacing_unchanged and not line.has_theme_constant_override("line_separation")
 		_check(portrait.size == Vector2(96, 96) and portrait.find_child("ItemGlow", true, false) != null, "square portrait uses quality mist")
 		_check(title.get_theme_font("font") == ItemTooltip._term_font, "item name uses the term Song font: " + item.display_name)
 		for line: RichTextLabel in body.get_children():
-			_check(line.get_theme_font("normal_font") == ItemTooltip._body_font and line.get_theme_font("bold_font") == ItemTooltip._term_font, "effect copy uses Kai body font and Song term font: " + item.display_name)
+			_check(line.get_theme_font("normal_font") == ItemTooltip._body_font and line.get_theme_font("bold_font") == ItemTooltip._bold_term_font, "effect copy uses Kai body font and bold Song term font: " + item.display_name)
 		_check(tip.size.x <= tip.WIDTH + 2 and tip.size.y < 780, "tooltip uses the quarter-reduced width and fits fixed1920x1080 canvas: " + item.display_name)
-		_check("\n".join(parsed_lines) == tip.description and not tip.description.contains("轮转") and not tip.description.contains("敌人"), "body uses cold-down/enemy-side wording with plain-text descriptions")
+		var expected_description := tip.description
+		for resource: String in ItemTooltip.RESOURCES.values():
+			expected_description = expected_description.replace(resource, "  \u00a0" + resource)
+		_check("\n".join(parsed_lines) == expected_description and not tip.description.contains("轮转") and not tip.description.contains("敌人"), "body keeps descriptions plus one parsed placeholder per resource image")
 		var keyword_panel := tip.find_child("KeywordPanel", true, false)
 		var words := ItemTooltip.keyword_meanings(item)
 		_check((keyword_panel != null) == not words.is_empty(), "tooltip includes a glossary exactly when the item has defined keyword meanings: " + item.display_name)
@@ -72,11 +75,11 @@ func _run() -> void:
 		if keyword_rows != null:
 			for row_index in range(1, keyword_rows.get_child_count()):
 				var keyword_row := keyword_rows.get_child(row_index) as RichTextLabel
-				_check(keyword_row.get_theme_font("normal_font") == ItemTooltip._body_font and keyword_row.get_theme_font("bold_font") == ItemTooltip._term_font, "glossary uses Song terms and Kai explanations: " + item.display_name)
+				_check(keyword_row.get_theme_font("normal_font") == ItemTooltip._body_font and keyword_row.get_theme_font("bold_font") == ItemTooltip._bold_term_font, "glossary uses bold Song terms and Kai explanations: " + item.display_name)
 		_check(body.get_theme_constant("separation") == tip.HARD_BREAK_GAP and soft_wrap_spacing_unchanged and (keyword_rows == null or body.get_theme_constant("separation") == keyword_rows.get_theme_constant("separation")), "hard breaks match glossary row spacing while soft-wrap line spacing stays unchanged: " + item.display_name)
 		if item.category == "weapon":
 			var chip_row := tip.find_child("CategoryTags", true, false) as HFlowContainer
-			var damage_type := "斩击" if item.display_name == "青石短剑" else ("穿刺" if item.display_name == "猎弓" else "钝击")
+			var damage_type: String = item.effects.filter(func(effect: Dictionary): return effect.effect == "damage")[0].damage_type
 			_check(chip_row.get_child_count() >= 3 and (chip_row.get_child(2) as Label).text == damage_type, "weapon third chip shows attack type: " + item.display_name)
 			_check(item.stamina_cost > 0 and tip.description.contains("耗费") and not words.has("消耗") and tip.description.contains("敌方"), "weapon keeps stamina cost without consumable meaning")
 		if item.category == "pill":
@@ -120,6 +123,7 @@ func _run() -> void:
 	ItemTooltip._keyword_theme = null
 	ItemTooltip._body_font = null
 	ItemTooltip._term_font = null
+	ItemTooltip._bold_term_font = null
 	await _settle()
 	await create_timer(0.2).timeout
 	print("ITEM TOOLTIPS: ", checks, " checks, ", failures, " failures")

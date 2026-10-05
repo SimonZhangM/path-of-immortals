@@ -1,0 +1,17 @@
+{
+  "fade_seconds": 0.3,
+  "frames": {
+    "res://assets/mapdot1.webp": "battle",
+    "res://assets/mapdot2.webp": "opportunity",
+    "res://assets/mapdot3.webp": "rest",
+    "res://assets/mapdot4.webp": "story",
+    "res://assets/mapdot5.webp": "location"
+  },
+  "profiles": {
+    "battle": {"icon": "EnemyIcon", "mode": "scale", "period": 3.6, "maximum_scale": 1.10},
+    "opportunity": {"icon": "EventIcon", "mode": "float", "period": 4.8, "screen_pixels": 1.2},
+    "rest": {"icon": "RestIcon", "mode": "breathe", "period": 5.5, "minimum": 0.78},
+    "story": {"icon": "StoryIcon", "mode": "sway", "period": 6.0, "sway_seconds": 1.4, "degrees": 10.0, "split_source_y": 215, "pivot_source": [150, 253]},
+    "location": {"icon": "LocationIcon", "mode": "frame_breathe", "period": 7.0, "minimum": 0.78}
+  }
+}

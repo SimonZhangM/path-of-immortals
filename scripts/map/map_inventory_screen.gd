@@ -6,6 +6,9 @@ signal close_requested
 const GOLD := Color("dec995")
 const MUTED := Color("85989f")
 const SECTION_TITLE_COLOR := Color("f9f8c8")
+const MAIN_PANEL_BORDER_COLOR := Color("d9bb72")
+const MAIN_PANEL_BORDER_WIDTH := 3.0
+const BOARD_PANEL_BORDER_WIDTH := 2.0
 const BODY_HEIGHT := 910.0
 const BODY_WIDTH := 1874.0
 const BODY_SIDE_MARGIN := 23.0
@@ -18,8 +21,9 @@ const FORMATION_BACKGROUND_REGION := Rect2(40, 99, 2052, 515)
 const FORMATION_BACKGROUND_CONTENT_SCALE := 1.01
 const FORMATION_BACKGROUND_HORIZONTAL_SCALE := 714.0 / 718.0
 const FORMATION_BACKGROUND_LEFT_EXTENSION := 1.0
+const FORMATION_BACKGROUND_WIDTH_SCALE := 1.15
 const STORAGE_BACKGROUND_REGION := Rect2(33, 32, 1192, 1196)
-const STORAGE_BACKGROUND_SCALE := 1.0404
+const STORAGE_BACKGROUND_SCALE := 1.0404 * 1.15
 const STORAGE_BACKGROUND_X_SHIFT := 2.0
 const STORAGE_BACKGROUND_Y_SHIFT := 2.0
 const STORAGE_SEARCH_WIDTH := 200.0
@@ -36,9 +40,8 @@ const BOARD_BACKGROUND_X_SHIFT := -1.0
 const BOARD_BACKGROUND_HORIZONTAL_EXTENSION := 5.0
 const BOARD_BACKGROUND_BOTTOM_EXTENSION := 5.0
 const STORAGE_CARD_GAP := 15
-const STORAGE_CARD_ROW_GAP := 18
+const STORAGE_CARD_ROW_GAP := 24
 const STORAGE_CARD_INSET := STORAGE_CONTENT_INSET
-const STORAGE_BORDER_COLOR := Color("806d48")
 const BOARD_HEALTH_ICON_SCALE := 1.1
 const COLLECTION_SELECTED_FILL := Color("313126")
 const COLLECTION_SELECTED_BORDER := Color("d6b85f")
@@ -394,13 +397,14 @@ func _build_sidebar(board: BoardLayout) -> void:
 	art_layer.name = "SidebarBackground"
 	sidebar.add_child(art_layer)
 	sidebar_art = TextureRect.new()
-	sidebar_art.texture = load("res://assets/inventory-sidepic.webp")
+	sidebar_art.texture = load("res://assets/inv-bg-4.webp")
 	sidebar_art.self_modulate.a = 1.0
 	var sidebar_fade := ShaderMaterial.new()
 	sidebar_fade.shader = preload("res://scripts/map/map_inventory_panel_art.gdshader")
 	sidebar_art.material = sidebar_fade
 	sidebar_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sidebar_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	sidebar_art.stretch_mode = TextureRect.STRETCH_SCALE
+	sidebar_art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	sidebar_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art_layer.add_child(sidebar_art)
 	sidebar.resized.connect(_layout_sidebar_art)
@@ -539,10 +543,8 @@ func _refresh_buff_bonuses() -> void:
 func _layout_sidebar_art() -> void:
 	if sidebar_art == null or sidebar_art.texture == null:
 		return
-	var dimensions := sidebar_art.texture.get_size()
-	sidebar_art.size = dimensions * (sidebar.size.x / dimensions.x)
-	sidebar_art.position = Vector2(0, sidebar.size.y - sidebar_art.size.y)
-	(sidebar_art.material as ShaderMaterial).set_shader_parameter("top_fade_fraction", minf(1.0, 64.0 / maxf(1.0, sidebar_art.size.y)))
+	sidebar_art.size = sidebar.size
+	sidebar_art.position = Vector2.ZERO
 	_layout_panel_art(sidebar_art, sidebar, 18.0)
 
 func _layout_panel_art(art: TextureRect, panel: Control, radius: float) -> void:
@@ -576,6 +578,7 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	var panel_style := _box(Color.TRANSPARENT, Color.TRANSPARENT, int(BOARD_PANEL_RADIUS), 22)
 	panel_style.set_border_width_all(0)
 	board_panel.add_theme_stylebox_override("panel", panel_style)
+	_add_panel_border(board_panel, BOARD_PANEL_RADIUS, BOARD_PANEL_BORDER_WIDTH)
 	# Keep the backing as a separate layer below the heading and interactive bag.
 	var backdrop_layer := Node2D.new()
 	backdrop_layer.name = "BoardBackdropLayer"
@@ -583,7 +586,7 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	var backdrop := TextureRect.new()
 	backdrop.name = "BoardPanelBackground"
 	backdrop.texture = panel_texture
-	backdrop.self_modulate.a = 0.5
+	backdrop.self_modulate.a = 1.0
 	var backdrop_mask := ShaderMaterial.new()
 	backdrop_mask.shader = preload("res://scripts/map/map_inventory_panel_art.gdshader")
 	backdrop.material = backdrop_mask
@@ -632,7 +635,7 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	board_art.mouse_filter = Control.MOUSE_FILTER_STOP if loadout != null else Control.MOUSE_FILTER_IGNORE
 	column.add_child(board_art)
 
-func _add_panel_border(panel: PanelContainer, radius: float, line_color: Color = MapStatusHeader.LINE_COLOR) -> void:
+func _add_panel_border(panel: PanelContainer, radius: float, line_width: float = MAIN_PANEL_BORDER_WIDTH) -> void:
 	var fill := panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 	fill.set_border_width_all(0)
 	fill.corner_detail = 16
@@ -649,8 +652,8 @@ func _add_panel_border(panel: PanelContainer, radius: float, line_color: Color =
 	var paint := ShaderMaterial.new()
 	paint.shader = preload("res://scripts/map/map_panel_border.gdshader")
 	paint.set_shader_parameter("corner_radius", radius)
-	paint.set_shader_parameter("line_width", MapStatusHeader.LINE_WIDTH)
-	paint.set_shader_parameter("line_color", line_color)
+	paint.set_shader_parameter("line_width", line_width)
+	paint.set_shader_parameter("line_color", MAIN_PANEL_BORDER_COLOR)
 	rim.material = paint
 	rim_layer.add_child(rim)
 	panel.resized.connect(_layout_panel_border.bind(panel, rim))
@@ -671,6 +674,7 @@ func _build_formations(parent: Node) -> void:
 	var formation_style := _box(Color.TRANSPARENT, Color.TRANSPARENT, int(BOARD_PANEL_RADIUS), 14)
 	formation_style.set_border_width_all(0)
 	formation_panel.add_theme_stylebox_override("panel", formation_style)
+	_add_panel_border(formation_panel, BOARD_PANEL_RADIUS)
 	var background_source: Texture2D = load("res://assets/inv-bg-1.webp")
 	var background_texture := AtlasTexture.new()
 	background_texture.atlas = background_source
@@ -688,7 +692,7 @@ func _build_formations(parent: Node) -> void:
 	var background := TextureRect.new()
 	background.name = "FormationPanelBackground"
 	background.texture = background_texture
-	background.self_modulate.a = 0.5
+	background.self_modulate.a = 1.0
 	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background.stretch_mode = TextureRect.STRETCH_SCALE
 	background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -700,6 +704,9 @@ func _build_formations(parent: Node) -> void:
 	formation_panel.resized.connect(func():
 		background.position = Vector2(-FORMATION_BACKGROUND_LEFT_EXTENSION, 0)
 		background.size = formation_panel.size + Vector2(FORMATION_BACKGROUND_LEFT_EXTENSION, 0)
+		var extra_width := background.size.x * (FORMATION_BACKGROUND_WIDTH_SCALE - 1.0)
+		background.position.x -= extra_width * 0.5
+		background.size.x += extra_width
 		_layout_panel_art(background, formation_panel, BOARD_PANEL_RADIUS)
 	)
 	formation_scroll = ScrollContainer.new()
@@ -1103,7 +1110,7 @@ func _build_storage() -> void:
 	storage_style.content_margin_left = 0
 	storage_style.content_margin_right = 0
 	storage_panel.add_theme_stylebox_override("panel", storage_style)
-	_add_panel_border(storage_panel, BOARD_PANEL_RADIUS, STORAGE_BORDER_COLOR)
+	_add_panel_border(storage_panel, BOARD_PANEL_RADIUS)
 	storage_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var background_source: Texture2D = load("res://assets/inv-bg-3.webp")
 	var background_texture := AtlasTexture.new()
@@ -1115,7 +1122,7 @@ func _build_storage() -> void:
 	var background := TextureRect.new()
 	background.name = "StoragePanelBackground"
 	background.texture = background_texture
-	background.self_modulate.a = 0.5
+	background.self_modulate.a = 1.0
 	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background.stretch_mode = TextureRect.STRETCH_SCALE
 	background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS

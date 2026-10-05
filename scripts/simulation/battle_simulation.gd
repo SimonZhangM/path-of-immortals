@@ -16,11 +16,18 @@ var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
 var _scheduled_toxins: Dictionary = {}
 var configuration_error: String = ""
+var t01: T01CombatRules
+var timeline: CombatTimeline
+var cultivation: CultivationCombat
 
 func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = [], legacy_fixed_defense: bool = false) -> void:
 	state = GameState.new(allies, enemies, ally_companions, enemy_companions)
 	state.legacy_fixed_defense = legacy_fixed_defense
 	_registry = registry
+	if not legacy_fixed_defense and registry.get_item("base.map_item.t01_0002") != null:
+		t01 = T01CombatRules.new(self)
+		timeline = CombatTimeline.new(self)
+		cultivation = CultivationCombat.new(self)
 	for side in 2:
 		if state.teams[side].size() != 1 or not state.teams[side][0] is PartyMemberState or state.companions[side].size() > 2:
 			configuration_error = "Each side requires one main character and at most two companions"
@@ -45,6 +52,9 @@ func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_compan
 				assert(not _definitions.has(instance["instance_id"]), "Combat instance IDs must be unique across teams")
 				attach(member, side, instance["instance_id"], false)
 	_setup_traits()
+	if t01 != null:
+		for team: Array in state.teams:
+			t01.refresh_equipment(team[0])
 
 static func trait_key(side: int, companion_index: int, slot: int) -> String:
 	return "run.trait.%d.%d.%d" % [side, companion_index, slot]
@@ -98,11 +108,20 @@ func _activate_trait(key: String, at_usec: int) -> void:
 	var target: PartyMemberState
 	if trait_data["effect"] == "damage":
 		target = state.target_for(side)
-		result = _effects.apply({"trigger": "on_activate", "effect": "damage", "value": trait_data["value"]}, state, target, at_usec, source)
+		if t01 != null:
+			t01.damage(state.teams[side][0], target, trait_data.value, "法术型", "base.element.none", at_usec, source, false, {"special": not target.thunder_shields.is_empty()})
+		else:
+			result = _effects.apply({"trigger": "on_activate", "effect": "damage", "value": trait_data["value"]}, state, target, at_usec, source)
 	elif trait_data["effect"] == "restore_armor":
-		result = _effects.restore(state.teams[side][0], "armor", int(trait_data["value"]), at_usec, source)
+		if t01 != null:
+			t01.restore(state.teams[side][0], "armor", trait_data.value, at_usec)
+		else:
+			result = _effects.restore(state.teams[side][0], "armor", int(trait_data["value"]), at_usec, source)
 	else:
-		result = _effects.restore(state.teams[side][0], "hp", int(trait_data["value"]), at_usec, source)
+		if t01 != null:
+			t01.restore(state.teams[side][0], "hp", trait_data.value, at_usec)
+		else:
+			result = _effects.restore(state.teams[side][0], "hp", int(trait_data["value"]), at_usec, source)
 	if not result.is_empty():
 		_pending_events.append(result)
 	if target != null and target.hp == 0:
@@ -131,6 +150,14 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 	if inserted_during_battle:
 		register_inserted_units(entry["units"])
 	state.item_runtime[id] = {"item_id": item.id, "owner_id": member.id, "side": side, "next_activation_usec": 0, "activation_count": 0, "frozen_until_usec": frozen_until, "ready_at_usec": frozen_until + item.cooldown_usec, "entered": false}
+	if t01 != null:
+		timeline.attach(id, inserted_during_battle)
+		t01.refresh_equipment(member)
+		state.item_runtime[id].reactive_ready = state.time_usec + 9_000_000
+		if item.combat.get("first_ready", false):
+			state.item_runtime[id].ready_at_usec = frozen_until
+	if state.phase == GameState.Phase.BATTLE and timeline != null:
+		timeline.sync(id, state.time_usec)
 	if state.phase == GameState.Phase.BATTLE:
 		# Cooldown completion becomes authoritative before attacks at the same timestamp.
 		queue.schedule(frozen_until, "enter", {"instance_id": id, "version": _versions[id]}, -1)
@@ -152,17 +179,28 @@ func detach(id: String) -> void:
 	if _owners.has(id):
 		_owners[id].defense_sources.erase(id)
 		_owners[id].remove_armor_source(id)
+		if t01 != null:
+			t01.refresh_equipment(_owners[id], id)
 	_versions[id] = int(_versions.get(id, 0)) + 1
 	_definitions.erase(id)
 	_owners.erase(id)
 	state.item_runtime.erase(id)
+	if timeline != null: timeline.timers.erase(id)
 	state.revision += 1
 
 func start() -> bool:
+	if t01 != null:
+		configuration_error = t01.configuration_issue()
 	if not configuration_error.is_empty() or state.phase != GameState.Phase.PREPARATION:
 		return false
 	state.phase = GameState.Phase.BATTLE
+	if t01 != null:
+		for team: Array in state.teams:
+			t01.refresh_equipment(team[0])
+			team[0].armor = team[0].maximum("armor")
 	_sync_toxins()
+	if timeline != null:
+		for id: String in _definitions: timeline.sync(id, 0)
 	for id in _definitions:
 		_enter({"instance_id": id, "version": _versions[id]}, 0)
 	_wake_items(0)
@@ -177,6 +215,8 @@ func _can_activate(id: String) -> bool:
 		return false
 	var owner: PartyMemberState = _owners[id]
 	var item: ItemData = _definitions[id]
+	if t01 != null and (item.rule_version == 1 or item.category == "weapon" and item.effects.all(func(e: Dictionary): return e.effect == "damage")):
+		return owner.can_use_item(item) and not item.effects_for("on_activate").is_empty() and t01.can_activate(owner, item, state.time_usec)
 	if not owner.can_use_item(item) or owner.hp <= 0 or item.effects_for("on_activate").is_empty() or owner.stamina < item.stamina_cost:
 		return false
 	if item.is_consumable():
@@ -206,25 +246,45 @@ func request_retreat() -> bool:
 
 # Wake on commands/resource events, never poll items each rendered frame.
 func _wake_items(at_usec: int) -> void:
+	if timeline != null:
+		timeline.wake(at_usec)
+		return
 	for id in _definitions:
 		var runtime: Dictionary = state.item_runtime[id]
+		if t01 != null:
+			var owner: PartyMemberState = _owners[id]
+			var definition: ItemData = _definitions[id]
+			if definition.combat.get("barrier_full_stop", false) and owner.barrier >= T01CombatRules.barrier_capacity(owner):
+				if not runtime.get("barrier_stopped", false):
+					runtime.barrier_stopped = true
+					runtime.next_activation_usec = 0
+					_versions[id] += 1
+				continue
+			if owner.frozen_until > at_usec or runtime.get("barrier_stopped", false):
+				continue
 		if int(runtime["next_activation_usec"]) != 0 or not _can_activate(id):
 			continue
 		var item: ItemData = _definitions[id]
 		var ready: int = runtime["ready_at_usec"]
-		if ready == 0:
+		if ready == 0 and not (t01 != null and item.combat.get("first_ready", false) and runtime.activation_count == 0):
 			ready = at_usec + item.cooldown_usec
 		_schedule(id, maxi(at_usec, ready))
 
 func _schedule(id: String, at_usec: int) -> void:
-	at_usec = maxi(at_usec, _entry_deadline(id) + _definitions[id].cooldown_usec)
+	if timeline != null:
+		timeline.restart(id, state.time_usec)
+		return
+	var first_ready: bool = t01 != null and _definitions[id].combat.get("first_ready", false) and state.item_runtime[id].activation_count == 0
+	at_usec = maxi(at_usec, _entry_deadline(id) + (0 if first_ready else _definitions[id].cooldown_usec))
 	state.item_runtime[id]["next_activation_usec"] = at_usec
 	queue.schedule(at_usec, "activate", {"instance_id": id, "version": _versions[id]})
 
 func cooling_remaining_usec(id: String) -> int:
 	if state.phase != GameState.Phase.BATTLE or not state.item_runtime.has(id):
 		return 0
-	return maxi(0, _entry_deadline(id) - state.time_usec)
+	if timeline != null: return timeline.remaining(id, true)
+	var now := maxi(state.time_usec, _owners[id].frozen_until) if t01 != null else state.time_usec
+	return maxi(0, _entry_deadline(id) - now)
 
 func activation_progress(id: String) -> float:
 	if state.phase != GameState.Phase.BATTLE or not _definitions.has(id):
@@ -235,14 +295,23 @@ func activation_progress(id: String) -> float:
 	if item.cooldown_usec == 0:
 		return 1.0
 	var runtime: Dictionary = state.item_runtime[id]
+	if runtime.get("barrier_stopped", false): return 1.0
+	if timeline != null: return clampf(1.0 - float(timeline.remaining(id)) / timeline.full_cd(id), 0, 1)
 	var next: int = runtime["next_activation_usec"]
 	if next == 0:
 		next = runtime["ready_at_usec"]
-	return clampf(1.0 - float(next - state.time_usec) / item.cooldown_usec, 0.0, 1.0) if next > 0 else 1.0
+	var now := maxi(state.time_usec, _owners[id].frozen_until) if t01 != null else state.time_usec
+	return clampf(1.0 - float(next - now) / item.cooldown_usec, 0.0, 1.0) if next > 0 else 1.0
 
 func advance(real_delta: float) -> void:
 	if state.phase != GameState.Phase.BATTLE or clock.paused:
 		return
+	if t01 != null:
+		configuration_error = t01.configuration_issue()
+		if not configuration_error.is_empty():
+			clock.paused = true
+			t01.emit("effect_error",state.time_usec,{"message":configuration_error})
+			return
 	_sync_toxins()
 	_check_result(state.time_usec)
 	if state.is_finished():
@@ -265,6 +334,19 @@ func advance(real_delta: float) -> void:
 			_activate_trait(event["payload"]["key"], at_usec)
 		elif event["kind"] == "toxin":
 			_tick_toxin(event["payload"], at_usec)
+		elif event.kind == "timeline":
+			timeline.event(event.payload, at_usec)
+		elif event.kind == "control_end":
+			timeline.end_control(event.payload, at_usec)
+		elif event.kind == "t01_status":
+			t01.tick_status(event.payload, at_usec)
+		elif event.kind == "t01_restore":
+			_pending_restores -= 1
+			var p: Dictionary = event.payload
+			if p.member.temporary_effects.get(p.item_id, {}).get("token", -1) == p.token:
+				t01.restore(p.member, p.resource, p.value, at_usec)
+		elif event.kind == "t01_wake":
+			pass
 		else:
 			_activate(event["payload"], at_usec)
 		_wake_items(at_usec)
@@ -278,13 +360,27 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 		return
 	var runtime: Dictionary = state.item_runtime[id]
 	runtime["next_activation_usec"] = 0
+	if t01 != null:
+		var controlled: PartyMemberState = _owners[id]
+		if controlled.frozen_until > at_usec:
+			_schedule(id, controlled.frozen_until)
+			return
+		if controlled.paralyzed_until > at_usec:
+			runtime.ready_at_usec = at_usec + _definitions[id].cooldown_usec
+			_schedule(id, runtime.ready_at_usec)
+			return
 	if not _can_activate(id):
-		if not _definitions[id].is_consumable():
+		if t01 == null and not _definitions[id].is_consumable():
 			runtime["ready_at_usec"] = 0
 		return
 	var owner: PartyMemberState = _owners[id]
 	var item: ItemData = _definitions[id]
 	var side: int = runtime["side"]
+	if t01 != null and (item.rule_version == 1 or item.category == "weapon" and item.effects.all(func(e: Dictionary): return e.effect == "damage")):
+		if not cultivation.tax_attempt(id,at_usec): return
+		if item.category == "spell": cultivation.cast(id, at_usec)
+		else: t01.activate(id, at_usec)
+		return
 	owner.stamina -= item.stamina_cost
 	runtime["activation_count"] += 1
 	state.revision += 1
@@ -334,12 +430,18 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 			if effect.effect == "apply_toxin":
 				apply_toxin(target, int(effect.value), side, source)
 				continue
-			var result := _effects.apply(effect, state, target, at_usec, source)
+			var result: Dictionary = {}
+			if t01 != null and effect.effect == "damage":
+				var attack: Dictionary = effect.duplicate()
+				attack.damage_type = effect.get("damage_type", "钝击")
+				t01.attack_item(owner, target, item, attack, at_usec, source)
+			else:
+				result = _effects.apply(effect, state, target, at_usec, source)
 			if not result.is_empty():
 				_pending_events.append(result)
 		if target.hp == 0:
 			_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": target.definition["name"], "target_id": target.id})
-		elif not item.effects_for("on_activate").filter(func(effect: Dictionary): return effect.effect == "damage").is_empty():
+		elif t01 == null and not item.effects_for("on_activate").filter(func(effect: Dictionary): return effect.effect == "damage").is_empty():
 			_counterattack(target, owner, 1 - side, at_usec)
 	runtime["ready_at_usec"] = at_usec + item.cooldown_usec
 	if _can_activate(id):
@@ -401,6 +503,7 @@ func _enter(payload: Dictionary, at_usec: int) -> void:
 	var id: String = payload["instance_id"]
 	if not _definitions.has(id) or payload["version"] != _versions[id] or state.item_runtime[id]["entered"]:
 		return
+	if timeline != null and timeline.remaining(id,true)>0: return
 	var owner: PartyMemberState = _owners[id]
 	if owner.hp <= 0:
 		return
@@ -443,13 +546,27 @@ func _check_result(at_usec: int) -> void:
 	elif not state.has_survivor(1):
 		_finish("victory", at_usec)
 	else:
+		if t01 != null:
+			for team: Array in state.teams:
+				var member: PartyMemberState = team[0]
+				for status in ["流血", "灼烧", "毒蚀"]:
+					if T01CombatRules.layers(member, status) > 0:
+						return
+				if T01CombatRules.layers(member, "润脉") > 0:
+					return
 		if _pending_restores > 0:
 			return
 		for side in 2:
 			if state.teams[side][0].toxin_stacks > 0:
 				return
 		for id in _definitions:
+			if timeline != null and timeline.has_future_action(id, at_usec):
+				return
 			if _can_activate(id):
+				if t01 != null:
+					for effect: Dictionary in _definitions[id].effects_for("on_activate"):
+						if effect.effect in ["restore_capped", "restore_instant", "restore_ticks"] and effect.get("resource") in ["stamina", "spirit"] and _owners[id].get(effect.resource) < _owners[id].maximum(effect.resource):
+							return
 				if state.legacy_fixed_defense or _definitions[id].is_consumable() or not _definitions[id].effects_for("on_activate").filter(func(effect: Dictionary): return effect["effect"] in ["damage", "apply_toxin"]).is_empty():
 					return
 		for runtime in state.trait_runtime.values():
@@ -471,6 +588,21 @@ func _finish(result: String, at_usec: int) -> void:
 	queue.clear()
 	_scheduled_toxins.clear()
 	_pending_restores = 0
+	if timeline != null:
+		timeline.controls.clear()
+	if t01 != null:
+		for team: Array in state.teams:
+			var member: PartyMemberState = team[0]
+			member.combat_statuses.clear()
+			member.temporary_effects.clear()
+			member.thunder_shields.clear()
+			member.barrier = 0
+			member.barrier_sources.clear()
+			member.sword_screen.clear()
+			member.weapon_enchantment.clear()
+			member.return_edge=""
+			member.paralyzed_until = 0
+			member.frozen_until = 0
 	for runtime in state.item_runtime.values():
 		runtime["next_activation_usec"] = 0
 	for runtime in state.trait_runtime.values():

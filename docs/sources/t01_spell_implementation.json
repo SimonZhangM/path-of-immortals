@@ -1,0 +1,2175 @@
+{
+  "core": "docs/01_核心定案_七系功法与战斗规则.md",
+  "runtime_catalog": "data/cultivation_library.json",
+  "implementation_record": "docs/t01_书术与控制实施清单_2026-09-29.md",
+  "sources": {
+    "docs/metal-cultivation-design-2026-09-22.md": "8d32e4ae5579a88c81355b2b7f46a5fa1e60ed1f6ed5d4bc68254b3ac5868298",
+    "docs/wood-cultivation-design-2026-09-22.md": "bb4c3932cce66392a5ace733b7eeb24cb324ef0bc6f6019b349584416c785f2a",
+    "docs/water-cultivation-design-2026-09-22.md": "cc7e022d773ba310bc946b6c1f8faa222840a2f767ee19f8aaa7a87bfa7c9de6",
+    "docs/fire-cultivation-design-2026-09-22.md": "0c99526b9cbed2045b4ceafb0b72c667914eb610b29e425ffc3131b7f79d4eb1",
+    "docs/earth-cultivation-design-2026-09-22.md": "f8a9075126421269e9d7fa9c6a6338ed88ad2e1b5c139744e033398a19038908",
+    "docs/wind-cultivation-design-2026-09-22.md": "3dbf6ef27d07b75ee571b6ec8e9d56efbb19221fee2dee63dbaabaf2ad5a4b08",
+    "docs/thunder-cultivation-design-2026-09-22.md": "7db299f5f5ef2a3569a598d9c3283bf11c4bb61e3353e98a5d524f033afc0fed"
+  },
+  "books": [
+    {
+      "id": "base.cultivation_book.metal_01",
+      "name": "玄金百炼录",
+      "element": "metal",
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 233
+      },
+      "core_references": [
+        "4.8 金系尚未填写的内容与下一步范围"
+      ],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.metal_02",
+      "name": "庚金真解",
+      "element": "metal",
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 234
+      },
+      "core_references": [
+        "4.8 金系尚未填写的内容与下一步范围",
+        "4.13 金31～金33已确认：庚金真解前三重",
+        "4.14 金34～金36已确认：七系连携口径与庚金第四重",
+        "4.15 金37～金39已确认：庚金第五重与化神器具连携"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.metal_03",
+      "name": "金煞藏锋经",
+      "element": "metal",
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 235
+      },
+      "core_references": [
+        "4.6 金系第六组：金16～金18已确认",
+        "4.7 金系第七组：金19～金21已确认",
+        "4.8 金系尚未填写的内容与下一步范围",
+        "4.9 金22～金24已确认：玄庚剑诀攻击术分支"
+      ],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.metal_04",
+      "name": "玄庚剑诀",
+      "element": "metal",
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 236
+      },
+      "core_references": [
+        "4.8 金系尚未填写的内容与下一步范围",
+        "4.9 金22～金24已确认：玄庚剑诀攻击术分支"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.metal_05",
+      "name": "百兵御灵诀",
+      "element": "metal",
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 237
+      },
+      "core_references": [],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wood_01",
+      "name": "百兽驭灵录",
+      "element": "wood",
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 65
+      },
+      "core_references": [],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wood_02",
+      "name": "青木真解",
+      "element": "wood",
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 66
+      },
+      "core_references": [
+        "4.19 木10～木12已确认：青木真解前三重",
+        "4.20 木13～木15已确认：青木真解第四／五重",
+        "4.27 木34～木36已确认：青萝天罗强化与蚀脉荆初学值"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wood_03",
+      "name": "枯荣生灭经",
+      "element": "wood",
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 67
+      },
+      "core_references": [
+        "4.16 木1～木3已确认：枯荣生灭经第一重",
+        "4.17 木4～木6已确认：枯荣生灭经第二／四重效果对象",
+        "4.18 木7～木9已确认：枯荣生灭经第五重"
+      ],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wood_04",
+      "name": "万木生杀诀",
+      "element": "wood",
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 68
+      },
+      "core_references": [
+        "4.21 木16～木18已确认：万木生杀诀前三术分支",
+        "4.23 木22～木24已确认：万木生杀诀前三术初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wood_05",
+      "name": "青萝化生诀",
+      "element": "wood",
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 69
+      },
+      "core_references": [],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.water_01",
+      "name": "灵墨玄符录",
+      "element": "water",
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 21
+      },
+      "core_references": [],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.water_02",
+      "name": "玄水真解",
+      "element": "water",
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 22
+      },
+      "core_references": [
+        "4.33 水10～水12已确认：《玄水真解》前三重",
+        "4.34 水13～水15已确认：《玄水真解》第四／五重"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.water_03",
+      "name": "寒脉流转经",
+      "element": "water",
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 23
+      },
+      "core_references": [
+        "4.30 水1～水3已确认：《寒脉流转经》第一重",
+        "4.31 水4～水7已确认：《寒脉流转经》第二重与枯极生寒"
+      ],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.water_04",
+      "name": "寒月凝冰诀",
+      "element": "water",
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 24
+      },
+      "core_references": [],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.water_05",
+      "name": "沧澜燃灵诀",
+      "element": "water",
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 25
+      },
+      "core_references": [],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.fire_01",
+      "name": "赤炉丹经",
+      "element": "fire",
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 119
+      },
+      "core_references": [],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.fire_02",
+      "name": "离火真解",
+      "element": "fire",
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 120
+      },
+      "core_references": [
+        "4.58 火47～火49已确认：离火真解前两重",
+        "4.59 火50～火52已确认：离火真解第三／四重",
+        "4.60 火53～火55已确认：离火真解第五重"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.fire_03",
+      "name": "炎煞流火经",
+      "element": "fire",
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 121
+      },
+      "core_references": [],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.fire_04",
+      "name": "赤阳真火诀",
+      "element": "fire",
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 122
+      },
+      "core_references": [
+        "4.55 火38～火40已确认：赤阳真火诀前三术初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.fire_05",
+      "name": "离火燎原诀",
+      "element": "fire",
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 123
+      },
+      "core_references": [
+        "4.57 火44～火46已确认：离火燎原诀后三术初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.earth_01",
+      "name": "坤元地脉录",
+      "element": "earth",
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 104
+      },
+      "core_references": [],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.earth_02",
+      "name": "厚土真解",
+      "element": "earth",
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 105
+      },
+      "core_references": [
+        "4.94 土61已确认：厚土真解第一重",
+        "4.95 土62已确认：厚土真解第二重",
+        "4.96 土63已确认：厚土真解第三重共鸣",
+        "4.97 土64已确认：厚土真解第四重连携",
+        "4.98 土65已确认：厚土真解第五重·坤岳同势",
+        "4.99 土66已确认：厚土真解第五重·重器合流条件",
+        "4.100 土67已确认：厚土真解第五重·重器合流收益"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.earth_03",
+      "name": "镇岳沉元经",
+      "element": "earth",
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 106
+      },
+      "core_references": [
+        "4.61 土1～土3已确认：镇岳沉元经第一重",
+        "4.62 土4已确认：沉伤强化重伤三项效果",
+        "4.63 土5已确认：伤元的追加幅度",
+        "4.64 土6～土7已确认：伤深养韧的有效结算与返层",
+        "4.65 土8已确认：岳势反镇产层",
+        "4.66 土9已确认：乏极成伤产层",
+        "4.67 土10～土11已确认：山岳不倾的减伤位置与幅度",
+        "4.68 土12已确认：疲势崩裂的派生土伤",
+        "4.69 土13已确认：伤势反噬系数",
+        "4.87 土48～土50已确认：镇脉诀第六重双分支"
+      ],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.earth_04",
+      "name": "撼岳裂地诀",
+      "element": "earth",
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 107
+      },
+      "core_references": [
+        "4.70 土14～土15已确认：岩罡锤第二重双分支",
+        "4.72 土18～土19已确认：坠岳印第四重双分支",
+        "4.74 土25～土27已确认：地脉震第六重双分支",
+        "4.76 土30～土31已确认：山河崩第八重双分支"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.earth_05",
+      "name": "不动玄岳诀",
+      "element": "earth",
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 108
+      },
+      "core_references": [
+        "4.81 土36～土37已确认：守岳式减伤位置与基础幅度",
+        "4.82 土38已确认：守岳式·镇身",
+        "4.83 土39已确认：守岳式·蓄岳",
+        "4.85 土43～土44已确认：破岳式·震伤的门槛与产层",
+        "4.87 土48～土50已确认：镇脉诀第六重双分支",
+        "4.89 土53～土56已确认：玄岳反震第八重两条路线",
+        "4.90 土57已确认：守岳式初学CD与费用",
+        "4.91 土58已确认：破岳式初学CD与费用",
+        "4.92 土59已确认：镇脉诀初学CD与自身费用",
+        "4.93 土60已确认：玄岳反震初学CD与自身费用",
+        "4.101 全局暴击伤害基值已确认"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wind_01",
+      "name": "听风寻迹录",
+      "element": "wind",
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 234
+      },
+      "core_references": [],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wind_02",
+      "name": "御风真解",
+      "element": "wind",
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 235
+      },
+      "core_references": [
+        "4.159 风57已确认：御风真解第一重·风锋",
+        "4.160 风58已确认：御风真解第一重·灵行的强化范围",
+        "4.161 风59已确认：御风真解·灵行的普通闪避增幅",
+        "4.162 风60已确认：御风真解·灵行的主动风攻命中增幅",
+        "4.163 风61已确认：御风真解·灵行的失衡追击发动增幅",
+        "4.164 风62已确认：御风真解第二重·乘克／逆克",
+        "4.165 风63已确认：御风真解第三重·内鸣／外鸣",
+        "4.166 风64已确认：御风真解第四重·启式／承式",
+        "4.167 风65已确认：御风真解第五重·长风同势",
+        "4.168 风66已确认：御风真解·风矢合流的触发条件",
+        "4.169 风67已确认：御风真解·风矢合流的连携收益"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wind_03",
+      "name": "流风无相经",
+      "element": "wind",
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 236
+      },
+      "core_references": [
+        "4.103 风1已确认：流风无相经第一重·留影",
+        "4.104 风2已确认：流风无相经第一重·留隙",
+        "4.105 风3已确认：驱散基础首次等待与疾散",
+        "4.106 风4已确认：流风无相经第三重·避实成隙",
+        "4.107 风5已确认：流风无相经第三重·乘隙化影",
+        "4.108 风6已确认：流风无相经第三重·清风乱势",
+        "4.109 风7已确认：流风无相经第五重·乘风留影读层增命中",
+        "4.113 风11已确认：流风无相经第五重·逐影连锋通用比例",
+        "4.114 风12已确认：逐影连锋穿刺额外收益方向",
+        "4.115 风13已确认：逐影连锋穿刺武器最终比例",
+        "4.116 风14已确认：风过无尘触发层数",
+        "4.144 风42已确认：追风式·贯影的单独比例",
+        "4.145 风43已确认：逐影连锋与贯影同修时的追击比例",
+        "4.154 风52已确认：清风涤尘·洗尘的效率方向",
+        "4.155 风53已确认：清风涤尘·洗尘的额外拆层概率"
+      ],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wind_04",
+      "name": "青冥破空诀",
+      "element": "wind",
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 237
+      },
+      "core_references": [
+        "4.124 风22已确认：风羽矢的高命中数值",
+        "4.125 风23已确认：风羽矢·疾羽",
+        "4.126 风24已确认：风羽矢·透风",
+        "4.128 风26已确认：穿云枪·贯云",
+        "4.129 风27已确认：穿云枪·破隙的每层追加量",
+        "4.132 风30已确认：裂空罡风·风暴",
+        "4.133 风31已确认：裂空罡风·乱流的额外产层",
+        "4.136 风34已确认：青冥贯日·贯日",
+        "4.137 风35已确认：青冥贯日·逐隙的收益方向",
+        "4.140 风38已确认：青冥贯日未强化初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.wind_05",
+      "name": "听风无影诀",
+      "element": "wind",
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 238
+      },
+      "core_references": [
+        "4.141 风39已确认：听风步·留风",
+        "4.142 风40已确认：听风步·借势",
+        "4.144 风42已确认：追风式·贯影的单独比例",
+        "4.145 风43已确认：逐影连锋与贯影同修时的追击比例",
+        "4.146 风44已确认：追风式·疾追的命中修正",
+        "4.149 风47已确认：回风引·顺风的额外CD缩短",
+        "4.150 风48已确认：回风引·逆风的敌方CD延长",
+        "4.152 风50已确认：清风涤尘基础驱散产层",
+        "4.153 风51已确认：清风涤尘·洗尘的额外产层",
+        "4.156 风54已确认：清风涤尘·乘风的目标范围",
+        "4.157 风55已确认：清风涤尘·乘风的CD缩短量",
+        "4.158 风56已确认：清风涤尘未强化初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.thunder_01",
+      "name": "玄枢阵录",
+      "element": "thunder",
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 306
+      },
+      "core_references": [],
+      "role": "技艺",
+      "status": "已注册与学习；技艺功能后续",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.thunder_02",
+      "name": "天雷真解",
+      "element": "thunder",
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 307
+      },
+      "core_references": [
+        "4.188 雷19已确认：天雷真解第一重·霆威",
+        "4.189 雷20已确认：天雷真解第一重·雷罡的强化范围",
+        "4.190 雷21已确认：雷罡强化的防守反击来源",
+        "4.191 雷22已确认：天雷真解·雷罡的新盾值增幅",
+        "4.192 雷23已确认：天雷真解·雷罡的破盾麻痹延长",
+        "4.193 雷24已确认：天雷真解·雷罡的双反击增伤",
+        "4.194 雷25已确认：天雷真解第二重·乘克／逆克",
+        "4.195 雷26已确认：天雷真解第三重·内鸣／外鸣",
+        "4.196 雷27已确认：天雷真解第四重·启式／承式",
+        "4.197 雷28已确认：天雷真解第五重·万雷同势",
+        "4.198 雷29已确认：天雷真解·雷兵合流触发条件",
+        "4.200 雷31已确认：天雷真解·雷兵合流的连携收益",
+        "4.229 雷60已确认：雷返式·震返增伤"
+      ],
+      "role": "属性总纲（上阵生效）",
+      "status": "已接非连携收益；连携分支暂缓",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.thunder_03",
+      "name": "雷池引霆经",
+      "element": "thunder",
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 308
+      },
+      "core_references": [
+        "4.174 雷5已确认：雷池引霆经第一重·回蕴",
+        "4.175 雷6已确认：雷池引霆经第一重·留印",
+        "4.176 雷7已确认：雷池引霆经第一重·连势",
+        "4.177 雷8已确认：雷池引霆经第二重三支强化",
+        "4.178 雷9已确认：雷池引霆经第三重·盾破留印",
+        "4.179 雷10已确认：雷池引霆经第三重·雷击成环",
+        "4.180 雷11已确认：雷池引霆经第三重·连环回蕴有效门槛",
+        "4.181 雷12已确认：雷池引霆经第三重·连环回蕴返层量",
+        "4.182 雷13已确认：雷池引霆经第四重·雷罡凝实强化范围",
+        "4.185 雷16已确认：雷池引霆经第四重·雷印震威／连霆增势",
+        "4.186 雷17已确认：雷罡反震的事件次数与基数",
+        "4.187 雷18已确认：雷罡反震的伤害转化比例",
+        "4.191 雷22已确认：天雷真解·雷罡的新盾值增幅",
+        "4.210 雷41已确认：连霆术·重链的额外闪电增幅"
+      ],
+      "role": "状态专精（习得生效）",
+      "status": "已接已定状态专精",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.thunder_04",
+      "name": "九霄霆光诀",
+      "element": "thunder",
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 309
+      },
+      "core_references": [
+        "4.201 雷32已确认：雷光指第二重·疾电",
+        "4.202 雷33已确认：雷光指第二重·刻雷",
+        "4.205 雷36已确认：玄霆枪第四重·贯霆",
+        "4.208 雷39已确认：连霆术第六重·疾霆",
+        "4.209 雷40已确认：连霆术·重链的强化对象",
+        "4.218 雷49已确认：九霄雷落未强化初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    },
+    {
+      "id": "base.cultivation_book.thunder_05",
+      "name": "雷罡镇狱诀",
+      "element": "thunder",
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 310
+      },
+      "core_references": [
+        "4.219 雷50已确认：雷罡护体基础产雷蕴",
+        "4.223 雷54已确认：引雷印基础施加雷印",
+        "4.232 雷63已确认：雷狱锁基础产雷印",
+        "4.236 雷67已确认：雷狱锁未强化初学值"
+      ],
+      "role": "战斗功法",
+      "status": "已接学习、分支与独立法术",
+      "dependencies": [
+        "学习账本/境界资格",
+        "分支效果注册",
+        "正式修炼进度/获取后续"
+      ]
+    }
+  ],
+  "spells": [
+    {
+      "id": "base.spell.metal_01",
+      "name": "庚锋剑",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 561
+      },
+      "core_references": [
+        "4.8 金系尚未填写的内容与下一步范围",
+        "4.9 金22～金24已确认：玄庚剑诀攻击术分支",
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.metal_02",
+      "name": "分光剑雨",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 591
+      },
+      "core_references": [
+        "4.9 金22～金24已确认：玄庚剑诀攻击术分支",
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.metal_03",
+      "name": "回锋剑幕",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 621
+      },
+      "core_references": [
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算",
+        "4.236 雷67已确认：雷狱锁未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "特殊盾替换",
+        "盾阶段返剑"
+      ]
+    },
+    {
+      "id": "base.spell.metal_04",
+      "name": "玄庚归一剑",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 655
+      },
+      "core_references": [
+        "4.9 金22～金24已确认：玄庚剑诀攻击术分支",
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算",
+        "4.24 木25～木27已确认：万木森罗初学值与缚灵藤基础／分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.metal_05",
+      "name": "附灵术",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 698
+      },
+      "core_references": [
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "来源独立附伤"
+      ]
+    },
+    {
+      "id": "base.spell.metal_06",
+      "name": "御兵术",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 724
+      },
+      "core_references": [
+        "4.1 金系第一组：金1～金3已确认",
+        "4.2 金系第二组：金4～金6已确认",
+        "4.5 金系第五组：金13～金15已确认",
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算",
+        "4.73 土20～土24已确认：地脉震定身时长、对象与武器CD"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "武器额外发动",
+        "独立支付"
+      ]
+    },
+    {
+      "id": "base.spell.metal_07",
+      "name": "兵甲化元",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 760
+      },
+      "core_references": [
+        "4.3 金系第三组：金7～金9已确认",
+        "4.4 金系第四组：金10～金12已确认，第一组数值",
+        "4.10 金25～金27已确认：附灵／返锋与合击的组合",
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "灵盾来源份额账本"
+      ]
+    },
+    {
+      "id": "base.spell.metal_08",
+      "name": "百兵归元",
+      "element": "metal",
+      "book_id": "base.cultivation_book.metal_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/metal-cultivation-design-2026-09-22.md",
+        "line": 790
+      },
+      "core_references": [
+        "4.1 金系第一组：金1～金3已确认",
+        "4.2 金系第二组：金4～金6已确认",
+        "4.6 金系第六组：金16～金18已确认",
+        "4.11 金28～金30已确认：八个法术的初学数值",
+        "4.12 已确认参数的分支应用例算",
+        "4.73 土20～土24已确认：地脉震定身时长、对象与武器CD"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "金系状态/共鸣",
+        "武器合击",
+        "参与者费用"
+      ]
+    },
+    {
+      "id": "base.spell.wood_01",
+      "name": "青木刺",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 429
+      },
+      "core_references": [
+        "4.21 木16～木18已确认：万木生杀诀前三术分支",
+        "4.23 木22～木24已确认：万木生杀诀前三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wood_02",
+      "name": "青藤刃",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 461
+      },
+      "core_references": [
+        "4.21 木16～木18已确认：万木生杀诀前三术分支",
+        "4.23 木22～木24已确认：万木生杀诀前三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wood_03",
+      "name": "森罗灵矢",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 495
+      },
+      "core_references": [
+        "4.21 木16～木18已确认：万木生杀诀前三术分支",
+        "4.23 木22～木24已确认：万木生杀诀前三术初学值",
+        "4.28 木37～木38已确认：缚灵藤初学值与森罗灵矢命中"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wood_04",
+      "name": "万木森罗",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 529
+      },
+      "core_references": [
+        "4.22 木19～木21已确认：万木森罗",
+        "4.24 木25～木27已确认：万木森罗初学值与缚灵藤基础／分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wood_05",
+      "name": "缚灵藤",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 589
+      },
+      "core_references": [
+        "4.24 木25～木27已确认：万木森罗初学值与缚灵藤基础／分支",
+        "4.28 木37～木38已确认：缚灵藤初学值与森罗灵矢命中",
+        "4.29 木39已确认：时间计算精度"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wood_06",
+      "name": "蚀脉荆",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 621
+      },
+      "core_references": [
+        "4.25 木28～木30已确认：蚀脉荆基础产层与第四重分支",
+        "4.27 木34～木36已确认：青萝天罗强化与蚀脉荆初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wood_07",
+      "name": "回春术",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 656
+      },
+      "core_references": [
+        "4.26 木31～木33已确认：回春术与青萝天罗"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术治疗"
+      ]
+    },
+    {
+      "id": "base.spell.wood_08",
+      "name": "青萝天罗",
+      "element": "wood",
+      "book_id": "base.cultivation_book.wood_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/wood-cultivation-design-2026-09-22.md",
+        "line": 697
+      },
+      "core_references": [
+        "4.26 木31～木33已确认：回春术与青萝天罗",
+        "4.27 木34～木36已确认：青萝天罗强化与蚀脉荆初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动；引火召雷暂缓",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "木系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_01",
+      "name": "寒月刃",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 488
+      },
+      "core_references": [
+        "4.35 水16～水18已确认：寒月刃初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_02",
+      "name": "玄冰枪",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 51
+      },
+      "core_references": [
+        "4.36 水19～水21已确认：玄冰枪初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_03",
+      "name": "沧澜寒潮",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 564
+      },
+      "core_references": [
+        "4.37 水22～水24已确认：沧澜寒潮初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_04",
+      "name": "寒月天河",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 596
+      },
+      "core_references": [
+        "4.38 水25～水27已确认：寒月天河初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_05",
+      "name": "燃灵指",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 658
+      },
+      "core_references": [
+        "4.39 水28～水30已确认：燃灵指初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_06",
+      "name": "断脉印",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 700
+      },
+      "core_references": [
+        "4.40 水31～水33已确认：断脉印与枯脉双方向"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_07",
+      "name": "寒潮锁阵",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 728
+      },
+      "core_references": [
+        "4.41 水34～水36已确认：寒潮锁阵初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.water_08",
+      "name": "归墟断流",
+      "element": "water",
+      "book_id": "base.cultivation_book.water_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/water-cultivation-design-2026-09-22.md",
+        "line": 764
+      },
+      "core_references": [
+        "4.42 水37～水39已确认：归墟断流初学值与双分支"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "水系状态/共鸣",
+        "资源缺失倍率",
+        "回澜分配"
+      ]
+    },
+    {
+      "id": "base.spell.fire_01",
+      "name": "赤焰刃",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 455
+      },
+      "core_references": [
+        "4.51 火25～火27已确认：赤焰刃第二重双分支",
+        "4.55 火38～火40已确认：赤阳真火诀前三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_02",
+      "name": "炎龙枪",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 481
+      },
+      "core_references": [
+        "4.52 火28～火30已确认：炎龙枪第四重双分支",
+        "4.55 火38～火40已确认：赤阳真火诀前三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_03",
+      "name": "烈阳印",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 507
+      },
+      "core_references": [
+        "4.46 火10～火12已确认：爆燃与熔爆基础公式",
+        "4.55 火38～火40已确认：赤阳真火诀前三术初学值",
+        "4.56 火41～火43已确认：阳爆、赤阳天火与引焰诀初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_04",
+      "name": "赤阳天火",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 562
+      },
+      "core_references": [
+        "4.53 火31～火34已确认：赤阳天火第八重双分支",
+        "4.56 火41～火43已确认：阳爆、赤阳天火与引焰诀初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_05",
+      "name": "引焰诀",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 613
+      },
+      "core_references": [
+        "4.54 火35～火37已确认：引焰诀初学产层与双分支",
+        "4.56 火41～火43已确认：阳爆、赤阳天火与引焰诀初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_06",
+      "name": "熔甲炎",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 643
+      },
+      "core_references": [
+        "4.46 火10～火12已确认：爆燃与熔爆基础公式",
+        "4.47 火13～火15已确认：熔甲炎产层与炽裂",
+        "4.57 火44～火46已确认：离火燎原诀后三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_07",
+      "name": "燎原火",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 692
+      },
+      "core_references": [
+        "4.48 火16～火18已确认：燎原火铺灼与烈灼取舍",
+        "4.49 火19～火21已确认：烈灼增幅与离火真炎状态利用",
+        "4.57 火44～火46已确认：离火燎原诀后三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.fire_08",
+      "name": "离火真炎",
+      "element": "fire",
+      "book_id": "base.cultivation_book.fire_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/fire-cultivation-design-2026-09-22.md",
+        "line": 720
+      },
+      "core_references": [
+        "4.49 火19～火21已确认：烈灼增幅与离火真炎状态利用",
+        "4.50 火22～火24已确认：离火真炎第八重分支",
+        "4.57 火44～火46已确认：离火燎原诀后三术初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "火系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.earth_01",
+      "name": "岩罡锤",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 426
+      },
+      "core_references": [
+        "4.70 土14～土15已确认：岩罡锤第二重双分支",
+        "4.77 土32已确认：岩罡锤初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.earth_02",
+      "name": "坠岳印",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 450
+      },
+      "core_references": [
+        "4.71 土16～土17已确认：坠岳印·震溃的基础伤害与命中门槛",
+        "4.72 土18～土19已确认：坠岳印第四重双分支",
+        "4.78 土33已确认：坠岳印初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.earth_03",
+      "name": "地脉震",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 22
+      },
+      "core_references": [
+        "4.73 土20～土24已确认：地脉震定身时长、对象与武器CD",
+        "4.74 土25～土27已确认：地脉震第六重双分支",
+        "4.79 土34已确认：地脉震初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "武器定身"
+      ]
+    },
+    {
+      "id": "base.spell.earth_04",
+      "name": "山河崩",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 514
+      },
+      "core_references": [
+        "4.75 土28～土29已确认：山河崩·崩体基础伤害与命中门槛",
+        "4.76 土30～土31已确认：山河崩第八重双分支",
+        "4.80 土35已确认：山河崩初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.earth_05",
+      "name": "守岳式",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 576
+      },
+      "core_references": [
+        "4.65 土8已确认：岳势反镇产层",
+        "4.67 土10～土11已确认：山岳不倾的减伤位置与幅度",
+        "4.81 土36～土37已确认：守岳式减伤位置与基础幅度",
+        "4.82 土38已确认：守岳式·镇身",
+        "4.83 土39已确认：守岳式·蓄岳",
+        "4.90 土57已确认：守岳式初学CD与费用",
+        "4.93 土60已确认：玄岳反震初学CD与自身费用"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "待发",
+        "暴击拦截"
+      ]
+    },
+    {
+      "id": "base.spell.earth_06",
+      "name": "破岳式",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 65
+      },
+      "core_references": [
+        "4.61 土1～土3已确认：镇岳沉元经第一重",
+        "4.66 土9已确认：乏极成伤产层",
+        "4.68 土12已确认：疲势崩裂的派生土伤",
+        "4.84 土40～土42已确认：破岳式基础钝击收益与崩击倍率",
+        "4.85 土43～土44已确认：破岳式·震伤的门槛与产层",
+        "4.91 土58已确认：破岳式初学CD与费用",
+        "4.93 土60已确认：玄岳反震初学CD与自身费用"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "待发",
+        "保证暴击"
+      ]
+    },
+    {
+      "id": "base.spell.earth_07",
+      "name": "镇脉诀",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 508
+      },
+      "core_references": [
+        "4.86 土45～土47已确认：镇脉诀基础增耗、截断与产伤",
+        "4.87 土48～土50已确认：镇脉诀第六重双分支",
+        "4.91 土58已确认：破岳式初学CD与费用",
+        "4.92 土59已确认：镇脉诀初学CD与自身费用",
+        "4.93 土60已确认：玄岳反震初学CD与自身费用"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "待发",
+        "发动申请截断"
+      ]
+    },
+    {
+      "id": "base.spell.earth_08",
+      "name": "玄岳反震",
+      "element": "earth",
+      "book_id": "base.cultivation_book.earth_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/earth-cultivation-design-2026-09-22.md",
+        "line": 737
+      },
+      "core_references": [
+        "4.88 土51～土52已确认：玄岳反震的扣甲门槛与基础系数",
+        "4.89 土53～土56已确认：玄岳反震第八重两条路线",
+        "4.91 土58已确认：破岳式初学CD与费用",
+        "4.92 土59已确认：镇脉诀初学CD与自身费用",
+        "4.93 土60已确认：玄岳反震初学CD与自身费用"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "土系状态/共鸣",
+        "待发",
+        "实际护甲损失反击"
+      ]
+    },
+    {
+      "id": "base.spell.wind_01",
+      "name": "风羽矢",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 538
+      },
+      "core_references": [
+        "4.124 风22已确认：风羽矢的高命中数值",
+        "4.125 风23已确认：风羽矢·疾羽",
+        "4.126 风24已确认：风羽矢·透风",
+        "4.127 风25已确认：风羽矢未强化初学值",
+        "4.162 风60已确认：御风真解·灵行的主动风攻命中增幅"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wind_02",
+      "name": "穿云枪",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 566
+      },
+      "core_references": [
+        "4.128 风26已确认：穿云枪·贯云",
+        "4.129 风27已确认：穿云枪·破隙的每层追加量",
+        "4.130 风28已确认：穿云枪·破隙的命中门槛",
+        "4.131 风29已确认：穿云枪未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wind_03",
+      "name": "裂空罡风",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 600
+      },
+      "core_references": [
+        "4.132 风30已确认：裂空罡风·风暴",
+        "4.133 风31已确认：裂空罡风·乱流的额外产层",
+        "4.134 风32已确认：裂空罡风的基础失衡产层",
+        "4.135 风33已确认：裂空罡风未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wind_04",
+      "name": "青冥贯日",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 622
+      },
+      "core_references": [
+        "4.136 风34已确认：青冥贯日·贯日",
+        "4.137 风35已确认：青冥贯日·逐隙的收益方向",
+        "4.138 风36已确认：青冥贯日·逐隙的每层增伤",
+        "4.139 风37已确认：青冥贯日·逐隙的命中产层",
+        "4.140 风38已确认：青冥贯日未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.wind_05",
+      "name": "听风步",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 161
+      },
+      "core_references": [
+        "4.103 风1已确认：流风无相经第一重·留影",
+        "4.106 风4已确认：流风无相经第三重·避实成隙",
+        "4.109 风7已确认：流风无相经第五重·乘风留影读层增命中",
+        "4.112 风10最新更正：乘风留影固定限时命中加成",
+        "4.141 风39已确认：听风步·留风",
+        "4.142 风40已确认：听风步·借势",
+        "4.143 风41已确认：听风步未强化初学CD与费用",
+        "4.160 风58已确认：御风真解第一重·灵行的强化范围",
+        "4.161 风59已确认：御风真解·灵行的普通闪避增幅",
+        "4.162 风60已确认：御风真解·灵行的主动风攻命中增幅"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "待发",
+        "保证闪避"
+      ]
+    },
+    {
+      "id": "base.spell.wind_06",
+      "name": "追风式",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 188
+      },
+      "core_references": [
+        "4.104 风2已确认：流风无相经第一重·留隙",
+        "4.107 风5已确认：流风无相经第三重·乘隙化影",
+        "4.113 风11已确认：流风无相经第五重·逐影连锋通用比例",
+        "4.122 风20已确认：失衡来源追击的基础发动率",
+        "4.123 风21已确认：二次追击基础命中判定",
+        "4.144 风42已确认：追风式·贯影的单独比例",
+        "4.145 风43已确认：逐影连锋与贯影同修时的追击比例",
+        "4.146 风44已确认：追风式·疾追的命中修正",
+        "4.147 风45已确认：追风式未强化初学CD与费用",
+        "4.160 风58已确认：御风真解第一重·灵行的强化范围",
+        "4.162 风60已确认：御风真解·灵行的主动风攻命中增幅",
+        "4.163 风61已确认：御风真解·灵行的失衡追击发动增幅"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "待发",
+        "追击来源优先级"
+      ]
+    },
+    {
+      "id": "base.spell.wind_07",
+      "name": "回风引",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 742
+      },
+      "core_references": [
+        "4.148 风46已确认：回风引基础CD缩短量",
+        "4.149 风47已确认：回风引·顺风的额外CD缩短",
+        "4.150 风48已确认：回风引·逆风的敌方CD延长",
+        "4.151 风49已确认：回风引未强化初学CD与费用"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "CD推进或延后",
+        "扫描选目标"
+      ]
+    },
+    {
+      "id": "base.spell.wind_08",
+      "name": "清风涤尘",
+      "element": "wind",
+      "book_id": "base.cultivation_book.wind_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/wind-cultivation-design-2026-09-22.md",
+        "line": 832
+      },
+      "core_references": [
+        "4.152 风50已确认：清风涤尘基础驱散产层",
+        "4.153 风51已确认：清风涤尘·洗尘的额外产层",
+        "4.154 风52已确认：清风涤尘·洗尘的效率方向",
+        "4.155 风53已确认：清风涤尘·洗尘的额外拆层概率",
+        "4.156 风54已确认：清风涤尘·乘风的目标范围",
+        "4.157 风55已确认：清风涤尘·乘风的CD缩短量",
+        "4.158 风56已确认：清风涤尘未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "风系状态/共鸣",
+        "驱散",
+        "分支CD推进"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_01",
+      "name": "雷光指",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_04",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 623
+      },
+      "core_references": [
+        "4.201 雷32已确认：雷光指第二重·疾电",
+        "4.202 雷33已确认：雷光指第二重·刻雷",
+        "4.203 雷34已确认：雷光指未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_02",
+      "name": "玄霆枪",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_04",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 645
+      },
+      "core_references": [
+        "4.204 雷35已确认：玄霆枪基础雷印产层",
+        "4.205 雷36已确认：玄霆枪第四重·贯霆",
+        "4.206 雷37已确认：玄霆枪第四重·引印",
+        "4.207 雷38已确认：玄霆枪未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_03",
+      "name": "连霆术",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_04",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 669
+      },
+      "core_references": [
+        "4.180 雷11已确认：雷池引霆经第三重·连环回蕴有效门槛",
+        "4.181 雷12已确认：雷池引霆经第三重·连环回蕴返层量",
+        "4.208 雷39已确认：连霆术第六重·疾霆",
+        "4.209 雷40已确认：连霆术·重链的强化对象",
+        "4.210 雷41已确认：连霆术·重链的额外闪电增幅",
+        "4.211 雷42已确认：连霆术未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "多次连环"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_04",
+      "name": "九霄雷落",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_04",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 699
+      },
+      "core_references": [
+        "4.212 雷43已确认：鬼、妖、魔种族特攻的适用范围",
+        "4.213 雷44已确认：鬼、妖、魔基础种族特攻",
+        "4.214 雷45已确认：九霄雷落·镇邪的强化范围",
+        "4.215 雷46已确认：九霄雷落·镇邪的种族特攻增幅",
+        "4.216 雷47已确认：九霄雷落·引劫的终结收益方向",
+        "4.217 雷48已确认：九霄雷落·引劫的雷击增幅",
+        "4.218 雷49已确认：九霄雷落未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_05",
+      "name": "雷罡护体",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_05",
+      "learned_at_book_level": 1,
+      "cells": 1,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 727
+      },
+      "core_references": [
+        "4.219 雷50已确认：雷罡护体基础产雷蕴",
+        "4.220 雷51已确认：雷罡护体·聚罡产层",
+        "4.221 雷52已确认：雷罡护体·疾护",
+        "4.222 雷53已确认：雷罡护体未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_06",
+      "name": "引雷印",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_05",
+      "learned_at_book_level": 3,
+      "cells": 1,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 751
+      },
+      "core_references": [
+        "4.223 雷54已确认：引雷印基础施加雷印",
+        "4.224 雷55已确认：引雷印·深印产层",
+        "4.225 雷56已确认：引雷印·疾引",
+        "4.226 雷57已确认：引雷印未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "法术本体/已定分支"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_07",
+      "name": "雷返式",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_05",
+      "learned_at_book_level": 5,
+      "cells": 1,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 773
+      },
+      "core_references": [
+        "4.190 雷21已确认：雷罡强化的防守反击来源",
+        "4.193 雷24已确认：天雷真解·雷罡的双反击增伤",
+        "4.227 雷58已确认：雷返式待发触发门槛",
+        "4.228 雷59已确认：雷返式基础反击伤害",
+        "4.229 雷60已确认：雷返式·震返增伤",
+        "4.230 雷61已确认：雷返式·连锁产层",
+        "4.231 雷62已确认：雷返式未强化初学CD与费用"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "待发",
+        "破盾监听"
+      ]
+    },
+    {
+      "id": "base.spell.thunder_08",
+      "name": "雷狱锁",
+      "element": "thunder",
+      "book_id": "base.cultivation_book.thunder_05",
+      "learned_at_book_level": 7,
+      "cells": 2,
+      "source": {
+        "path": "docs/thunder-cultivation-design-2026-09-22.md",
+        "line": 154
+      },
+      "core_references": [
+        "4.232 雷63已确认：雷狱锁基础产雷印",
+        "4.233 雷64已确认：雷狱锁·锁狱额外延时",
+        "4.234 雷65已确认：雷狱锁·雷刑本体增伤",
+        "4.235 雷66已确认：雷狱锁·雷刑额外雷印",
+        "4.236 雷67已确认：雷狱锁未强化初学值"
+      ],
+      "status": "已接本体与已定非连携分支；实际入口已发动",
+      "dependencies": [
+        "独立法术上阵/唯一",
+        "双资源支付/独立CD",
+        "雷系状态/共鸣",
+        "麻痹延时"
+      ]
+    }
+  ]
+}

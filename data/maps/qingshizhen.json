@@ -1,0 +1,18 @@
+{
+  "id": "base.map.qingshizhen",
+  "name": "青石镇",
+  "background": "res://assets/map-qingshizhen.webp",
+  "marker": "res://assets/mapdot.webp",
+  "source_size": [3317, 1865],
+  "layout_scene": "res://scenes/maps/qingshizhen_layout.tscn",
+  "sign_motion": "res://data/ui/map_sign_motion.json",
+  "start_point": "base.map.qingshizhen.point.n25",
+  "show_map_title": false,
+  "exits": [{
+    "point_id": "base.map.qingshizhen.point.n25",
+    "title": "前往 青石河湾",
+    "scene": "res://scenes/maps/qingshihewan.tscn",
+    "target_point": "base.map.qingshihewan.point.east_exit"
+  }],
+  "event_files": []
+}

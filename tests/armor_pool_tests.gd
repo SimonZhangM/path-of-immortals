@@ -45,14 +45,16 @@ func _run() -> void:
 	var hero: PartyMemberState = f.hero
 	var battle: BattleSimulation = f.battle
 	_check(hero.maximum("armor") == 11 and hero.armor == 0, "caps sum to11 without granting starting armor")
-	_check(hero.armor_type == "轻甲" and f.registry.get_item(HELMET).armor_type.is_empty() and f.registry.get_item(SHIELD).armor_type.is_empty(), "only clothes define armor type")
+	_check(hero.armor_type == "轻甲" and f.registry.get_item(HELMET).armor_type == "重甲" and f.registry.get_item(SHIELD).armor_type == "轻甲", "all armor contributes type, weighted body wins")
 	battle.start()
-	battle.advance(3.999)
-	_check(hero.armor == 0, "first gain waits a full4s")
+	_check(hero.armor == 11, "combat initializes armor at equipment baseline")
+	_hit(f,6)
+	battle.advance(5.999)
+	_check(hero.armor == 5, "r1 cloth waits full6s before recovery")
 	battle.advance(0.001)
-	_check(hero.armor == 3, "cloth grants3 armor at4s")
-	battle.advance(1)
-	_check(hero.armor == 7, "helmet1 plus shield3 at5s")
+	_check(hero.armor == 9, "r1 cloth restores4 armor at6s")
+	battle.advance(1.5)
+	_check(hero.armor == 11, "r1 helmet and shield restore at7.5s with cap")
 	_check(hero.stamina == 52, "armor gains do not consume stamina; only sword did (board grants5)")
 	battle.advance(11)
 	_check(hero.armor == 11, "repeated gains cap at11")
@@ -67,14 +69,14 @@ func _run() -> void:
 	_check(restore.value == 11 and hero.armor == 11, "restore reports actual capped gain")
 	battle.detach("cloth")
 	var cloth := hero.inventory.take("cloth")
-	_check(hero.maximum("armor") == 4 and hero.armor == 4 and hero.armor_type == "无甲", "remove body armor clamps current value and clears armor type")
+	_check(hero.maximum("armor") == 4 and hero.armor == 4 and hero.armor_type == "轻甲", "remove body clamps armor, remaining tie uses scan order")
 	hero.inventory.put(cloth, Vector2i.ZERO)
 	battle.attach(hero, 0, "cloth", true)
 	_check(hero.maximum("armor") == 11 and hero.armor == 4, "reinsert cap does not grant free armor")
-	battle.advance(6.999)
-	_check(battle.state.item_runtime.cloth.activation_count == 0, "battle insertion waits3s plus full4s rotation")
+	battle.advance(8.999)
+	_check(battle.state.item_runtime.cloth.activation_count == 0, "battle insertion waits3s plus r1 full6s rotation")
 	battle.advance(0.001)
-	_check(battle.state.item_runtime.cloth.activation_count == 1, "reinserted armor activates after7s")
+	_check(battle.state.item_runtime.cloth.activation_count == 1, "reinserted armor activates after9s")
 	var old_activation: int = battle.state.item_runtime.shield.activation_count
 	var old_due: int = battle.state.item_runtime.shield.next_activation_usec
 	_check(hero.inventory.move_item("shield", Vector2i(1, 1)), "armor can be rearranged within board")
@@ -85,8 +87,9 @@ func _run() -> void:
 	_check(hero.armor == before, "pause freezes armor rotation")
 	var guarded := _fixture(true)
 	guarded.battle.start()
+	_hit(guarded,5)
 	guarded.battle.advance(5)
-	_check(guarded.hero.armor == 9 and guarded.hero.maximum("armor") == 11, "ward grants2 at5s with no cap bonus")
+	_check(guarded.hero.armor == 8 and guarded.hero.maximum("armor") == 11, "ward restores2 at5s with no cap bonus")
 	var trait_data: Dictionary = guarded.registry.get_trait("base.trait.ward")
 	_check(trait_data.kind == "active" and trait_data.cooldown == 5 and trait_data.effect == "restore_armor" and trait_data.value == 2, "actual ward definition matches user instruction")
 	var peaceful := _fixture(true, false)
@@ -95,7 +98,7 @@ func _run() -> void:
 	# An old weapon-only version1 save preserves positions and gains new starter gear.
 	var state: MapLoadoutState = f.loadout
 	var old := {"version": 1, "board_id": "base.board.bag", "placements": [{"instance_id": "owned." + SWORD + ".0", "item_id": SWORD, "cell": [2, 0]}]}
-	_check(state.restore(old).is_empty() and state.storage.entries().size() == 9 and state.inventory.get_instances()[0].cell == Vector2i(2, 0), "old save retains sword and adds missing seeded items and support items to storage")
+	_check(state.restore(old).is_empty() and state.storage.entries().size() == 114 and state.inventory.get_instances()[0].cell == Vector2i(2, 0), "old save retains sword and grants remaining114 kinds once")
 	for entry in state.storage.entries():
 		if entry.item_id == HELMET:
 			_check(state.place(state.drag_data("storage", entry.instance_id), Vector2i(2, 2)), "1x1 helmet fits last free row")

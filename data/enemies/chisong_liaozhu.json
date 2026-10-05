@@ -1,0 +1,9 @@
+{
+  "id": "base.enemy.chisong_liaozhu",
+  "name": "赤鬃獠猪",
+  "max_hp": 80,
+  "max_stamina": 100,
+  "max_spirit": 0,
+  "portrait": "res://assets/enemy-qshw-chisongliaozhu.webp",
+  "board_layout": "base.board.enemy_3x3"
+}

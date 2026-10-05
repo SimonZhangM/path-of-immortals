@@ -82,6 +82,7 @@ func _run() -> void:
 			_check(i == 14 and screen.reward_dialog.visible, "reward appears after lending line")
 			screen._accept_reward()
 	_check(not dialogue.visible and not screen.event_state.is_active(), "last click closes both panels")
+	screen.sign_motion.advance_visuals(0.3)
 	_check(not screen.content.get_node("Points/N20/Sign").is_visible_in_tree() and not screen.content.get_node("Points/N20/Sign/StoryIcon").is_visible_in_tree(), "N20 sign and icon removed")
 	_check(screen.content.get_node("Points/N20").visible and screen.content.get_node("Points/N03/Sign").visible and screen.content.get_node("Points").get_child_count()==38 and screen.content.get_node("Routes").get_child_count()==41, "node graph and unrelated signs unchanged")
 	_check(screen.travel.map_position == map_position and screen.travel.mode == "idle", "dialogue never moves player")

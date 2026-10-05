@@ -36,7 +36,7 @@
 
 装备专属候选在288场中240胜保持、38败保持、10败转胜，无胜转败；但敌先攻会翻转8组胜负，因此不把新增的临界Boss胜局当作稳健性结论。全局1.25敌先攻翻转4组。岩雉、灰蛛的上述单弓对照未因敌先攻翻转胜负。
 
-专属候选新增4组核验：沿用灵障→系数→消耗护甲的顺序；其他甲型和体力成本保持；敌方蛛牙仍用全局1.20；所有非弓/非轻甲目标的结束结果、时间和资源逐项复现第六轮CSV。只在候选派生类中使用私有查表别名复用原伤害公式，不是新增正式伤害类别，不改变任何冻结模拟核心。
+专属候选新增4组核验：沿用灵盾→系数→消耗护甲的顺序；其他甲型和体力成本保持；敌方蛛牙仍用全局1.20；所有非弓/非轻甲目标的结束结果、时间和资源逐项复现第六轮CSV。只在候选派生类中使用私有查表别名复用原伤害公式，不是新增正式伤害类别，不改变任何冻结模拟核心。
 
 - [六项参数候选脚本](../analysis/prologue_bow_light_proposals_20260913.py)、[装备专属候选脚本](../analysis/prologue_bow_light_scoped_20260913.py)。
 - [六项结果](../artifacts/balance-2026-09-13-bow-light-proposals/proposals.csv)、[专属候选结果](../artifacts/balance-2026-09-13-bow-light-proposals/bow_only_light125.csv)、[参数核验](../artifacts/balance-2026-09-13-bow-light-proposals/verification.json)、[专属效果核验](../artifacts/balance-2026-09-13-bow-light-proposals/scoped_verification.json)。

@@ -17,6 +17,7 @@ var formation_icons: Array[String] = []
 var _owned: Dictionary = {}
 var _seed_owned: Dictionary = {}
 var granted_rewards: Dictionary = {}
+var content_grants: Dictionary = {"t01.115.v1": true}
 var _rng := RandomNumberGenerator.new()
 
 # Explicitly retired test definitions only; unrelated unknown save IDs still fail.
@@ -42,9 +43,9 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 	for record: Dictionary in definitions:
 		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(record.get("buff_bonuses", {})):
 			return "物品常驻增益加成无效。"
-		if record.category not in ["weapon", "armor", "artifact", "pill"]:
+		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable"]:
 			return "此物品尚未接入行囊战斗：" + String(record.name)
-		if record.category in ["artifact", "pill"] and (not record.get("effects") is Array or not ContentRegistry._positive_number(record.get("cooldown"))):
+		if record.get("rule_version", 0) == 0 and record.category in ["artifact", "pill"] and (not record.get("effects") is Array or not ContentRegistry._positive_number(record.get("cooldown"))):
 			return "法器／丹药缺少战斗效果或轮转：" + String(record.name)
 		var raw := {
 			"id": record.id, "name": record.name, "type": record.category, "category": record.category,
@@ -53,7 +54,9 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 			"cooldown": record.cooldown, "stamina_cost": record.get("base_stamina_cost", 0),
 			"effects": []
 		}
-		if record.category == "armor":
+		if record.get("rule_version", 0) == 1:
+			raw = T01Definition.item_record(record)
+		elif record.category == "armor":
 			raw.armor_capacity = record.armor_capacity
 			raw.armor_type = record.get("armor_type", "")
 			raw.armor_slot = record.subcategory
@@ -65,7 +68,7 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 			raw.effects = record.effects.duplicate(true)
 			raw.uses_per_unit = record.get("uses_per_unit", 0)
 		if not registry.register_item(raw):
-			return "行囊物品无效：" + String(record.name)
+			return "行囊物品无效：" + String(record.name) + "\n" + "\n".join(registry.errors)
 		records[record.id] = record.duplicate(true)
 		for index in int(record.quantity):
 			var id := "owned.%s.%d" % [record.id, index]
@@ -91,12 +94,31 @@ func reward_candidate(reward: Dictionary) -> Dictionary:
 	return {"state": candidate, "error": error}
 
 func add_reward(reward: Dictionary) -> String:
-	if has_reward(reward.get("id", "")):
+	var test_replay: bool = reward.get("test_replay_on_restart", false)
+	if has_reward(reward.get("id", "")) and not test_replay:
 		return ""
+	if test_replay and (not ContentRegistry._positive_integer(reward.get("test_storage_limit")) or reward.test_storage_limit > 10000):
+		return "剧情奖励测试储物袋限额无效。"
 	var next := snapshot()
 	var grants: Dictionary = granted_rewards.duplicate(true)
 	grants[reward.get("id", "")] = {"item_id": reward.get("item_id"), "quantity": reward.get("quantity")}
 	next.granted_rewards = grants
+	if records.has(reward.get("item_id")) and ContentRegistry._positive_integer(reward.get("quantity")) and reward.quantity <= 10000:
+		var amount := int(reward.quantity)
+		if test_replay:
+			var stored := 0
+			for entry: Dictionary in storage.entries():
+				if entry.item_id == reward.item_id:
+					stored += entry.units.size()
+			amount = mini(amount, maxi(0, int(reward.test_storage_limit) - stored))
+		var index := 0
+		for unused in amount:
+			# Existing reward units may be equipped; never overwrite their IDs.
+			if test_replay:
+				while next.owned_units.has("reward.%s.%d" % [reward.id, index]):
+					index += 1
+			next.owned_units["reward.%s.%d" % [reward.id, index]] = reward.item_id
+			index += 1
 	return restore(next)
 
 func _unit(id: String, item_id: String) -> Dictionary:
@@ -116,11 +138,11 @@ func can_use_item(item_id: String) -> bool:
 	var item := registry.get_item(item_id)
 	return item != null and MapItemQuality.usable(item.quality, registry.get_cultivation(cultivation_rank_id))
 
-func drag_data(source: String, id: String) -> Dictionary:
+func drag_data(source: String, id: String, quantity: int = 1) -> Dictionary:
 	var entry := storage.get_entry(id) if source == "storage" else inventory.get_instance(id)
 	if entry.is_empty():
 		return {}
-	return {"kind": "map_loadout", "owner": get_instance_id(), "revision": revision, "source": source, "id": id}
+	return {"kind": "map_loadout", "owner": get_instance_id(), "revision": revision, "source": source, "id": id, "quantity": quantity}
 
 func valid_drag(data: Variant) -> bool:
 	return data is Dictionary and data.get("kind") == "map_loadout" and data.get("owner") == get_instance_id() and data.get("revision") == revision and data.get("source") in ["storage", "board"] and not drag_data(data.source, data.get("id", "")).is_empty()
@@ -128,7 +150,7 @@ func valid_drag(data: Variant) -> bool:
 func drag_entry(data: Variant) -> Dictionary:
 	if not valid_drag(data):
 		return {}
-	return storage.peek_one(data.id) if data.source == "storage" else inventory.get_instance(data.id)
+	return storage.peek_units(data.id, int(data.get("quantity", 1))) if data.source == "storage" else inventory.get_instance(data.id)
 
 func can_place(data: Variant, cell: Vector2i) -> bool:
 	return placement_kind(data, cell) != "invalid"
@@ -140,6 +162,12 @@ func placement_kind(data: Variant, cell: Vector2i) -> String:
 	if data.source == "board":
 		return "place" if inventory.can_move(data.id, cell) else "invalid"
 	var item := registry.get_item(entry.item_id)
+	if item.is_consumable():
+		var matching := inventory.matching_stack(item.id)
+		if entry.units.size() > 10:
+			return "invalid"
+		if not matching.is_empty():
+			return "stack" if inventory.get_instance(matching).units.size() + entry.units.size() <= 10 else "invalid"
 	var target := Rect2i(cell, item.grid_size)
 	if not Rect2i(Vector2i.ZERO, inventory.grid_size).encloses(target):
 		return "invalid"
@@ -161,7 +189,7 @@ func place(data: Variant, cell: Vector2i) -> bool:
 	if data.source == "board":
 		inventory.move_item(data.id, cell)
 	else:
-		var entry := storage.peek_one(data.id)
+		var entry := drag_entry(data)
 		if kind == "swap":
 			# Build the entire exchange before replacing live state or consuming storage.
 			var target := Rect2i(cell, registry.get_item(entry.item_id).grid_size)
@@ -173,20 +201,22 @@ func place(data: Variant, cell: Vector2i) -> bool:
 			if replacement.put(entry, cell).is_empty():
 				return false
 			inventory = replacement
-			storage.take_one(data.id)
+			storage.take_units(data.id, entry.units.size())
 			storage.put(displaced)
 		else:
 			if inventory.put(entry, cell).is_empty():
 				return false
-			storage.take_one(data.id)
+			storage.take_units(data.id, entry.units.size())
 	_commit()
 	return true
 
-func equip_random(id: String) -> bool:
-	var data := drag_data("storage", id)
+func equip_random(id: String, quantity: int = 1) -> bool:
+	var data := drag_data("storage", id, quantity)
 	var entry := drag_entry(data)
 	if entry.is_empty():
 		return false
+	if not inventory.matching_stack(entry.item_id).is_empty():
+		return place(data, Vector2i.ZERO)
 	var cells := inventory.available_cells(entry.item_id)
 	if cells.is_empty():
 		interaction.emit("invalid")
@@ -207,6 +237,12 @@ func _commit() -> void:
 
 func snapshot() -> Dictionary:
 	var result := layout_snapshot()
+	result.version = 2
+	result.owned_units = {}
+	for entry: Dictionary in storage.entries() + inventory.get_instances():
+		for unit: Dictionary in entry.units:
+			result.owned_units[unit.id] = entry.item_id
+	result.content_grants = content_grants.duplicate()
 	if not granted_rewards.is_empty():
 		result.granted_rewards = granted_rewards.duplicate(true)
 	if not formations.is_empty():
@@ -219,7 +255,7 @@ func layout_snapshot() -> Dictionary:
 func formation_snapshot() -> Dictionary:
 	var placements: Array = []
 	for entry in inventory.get_instances():
-		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [entry.cell.x, entry.cell.y]})
+		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [entry.cell.x, entry.cell.y], "unit_ids": entry.units.map(func(unit: Dictionary): return unit.id)})
 	_sort_placements(placements)
 	return {"placements": placements}
 
@@ -230,14 +266,29 @@ func restore(raw: Variant) -> String:
 	if not grants is Dictionary:
 		return "剧情奖励存档格式无效。"
 	var owned := _seed_owned.duplicate()
+	var receipts: Variant = raw.get("content_grants", {})
+	if not receipts is Dictionary:
+		return "内容补发凭证无效。"
+	if raw.get("version", 1) == 2:
+		if not raw.get("owned_units") is Dictionary:
+			return "持有单位账本无效。"
+		owned = raw.owned_units.duplicate()
+		for unit_id: Variant in owned:
+			if not unit_id is String or unit_id.is_empty() or not owned[unit_id] is String or not records.has(owned[unit_id]):
+				return "持有单位引用未知物品。"
+		if not receipts.get("t01.115.v1", false):
+			for unit_id: String in _seed_owned:
+				if _seed_owned[unit_id] not in owned.values():
+					owned[unit_id] = _seed_owned[unit_id]
 	for reward_id: Variant in grants:
 		var grant: Variant = grants[reward_id]
 		if not reward_id is String or not reward_id.begins_with("base.map_reward.") or not grant is Dictionary:
 			return "剧情奖励存档标识无效。"
 		if not grant.get("item_id") is String or not records.has(grant.item_id) or not ContentRegistry._nonnegative_integer(grant.get("quantity")) or grant.quantity < 1 or grant.quantity > 10000:
 			return "剧情奖励存档物品或数量无效。"
-		for index in int(grant.quantity):
-			owned["reward.%s.%d" % [reward_id, index]] = grant.item_id
+		if raw.get("version", 1) == 1:
+			for index in int(grant.quantity):
+				owned["reward.%s.%d" % [reward_id, index]] = grant.item_id
 	var checked := _validate_layout(raw, owned, true)
 	if not checked.error.is_empty():
 		return checked.error
@@ -257,7 +308,11 @@ func restore(raw: Variant) -> String:
 		ids[entry.id] = true
 		restored_formations.append({"id": entry.id, "name": entry.name, "icon": entry.icon, "layout": layout.layout})
 	_owned = owned
+	content_grants = receipts.duplicate()
+	content_grants["t01.115.v1"] = true
 	granted_rewards = grants.duplicate(true)
+	for grant: Dictionary in granted_rewards.values():
+		grant.quantity = int(grant.quantity)
 	formations = restored_formations
 	_apply_checked_layout(checked)
 	formations_changed.emit()
@@ -284,13 +339,15 @@ func _validate_formation_layout(raw: Variant) -> Dictionary:
 		if cell[0] > 2147483647 or cell[1] > 2147483647:
 			return {"error": "阵型格位无效。"}
 		used[entry.instance_id] = true
-		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [int(cell[0]), int(cell[1])]})
+		if not entry.get("unit_ids", [entry.instance_id]) is Array:
+			return {"error": "阵型叠内单位无效。"}
+		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [int(cell[0]), int(cell[1])], "unit_ids": entry.get("unit_ids", [entry.instance_id]).duplicate()})
 	_sort_placements(placements)
 	return {"error": "", "layout": {"placements": placements}}
 
 func _validate_layout(raw: Variant, available_owned: Variant = null, return_unusable: bool = false) -> Dictionary:
 	var owned: Dictionary = _owned if available_owned == null else available_owned
-	if not raw is Dictionary or raw.get("version") != 1 or raw.get("board_id") != board.id or not raw.get("placements") is Array:
+	if not raw is Dictionary or (raw.get("version") != 1 and raw.get("version") != 2) or raw.get("board_id") != board.id or not raw.get("placements") is Array:
 		return {"error": "行囊存档格式、阵盘或版本无效。"}
 	var restored := InventoryState.new(registry, board.grid_size)
 	var placements: Array = []
@@ -311,10 +368,24 @@ func _validate_layout(raw: Variant, available_owned: Variant = null, return_unus
 			if return_unusable:
 				continue
 			return {"error": "修为不足，暂不可使用此物。"}
-		if not restored.add_item(entry.instance_id, entry.item_id, Vector2i(int(cell[0]), int(cell[1]))):
+		var units: Array = []
+		var unit_ids: Variant = entry.get("unit_ids", [entry.instance_id])
+		if not unit_ids is Array or unit_ids.is_empty() or unit_ids[0] != entry.instance_id:
+			return {"error": "行囊叠内单位无效。"}
+		for unit_id: Variant in unit_ids:
+			if not unit_id is String or owned.get(unit_id) != entry.item_id or used.has(unit_id):
+				return {"error": "行囊叠内单位缺失或重复。"}
+			units.append(_unit(unit_id, entry.item_id).units[0])
+			used[unit_id] = true
+		if restored.put({"instance_id": entry.instance_id, "item_id": entry.item_id, "units": units}, Vector2i(int(cell[0]), int(cell[1]))).is_empty():
+			var item := registry.get_item(entry.item_id)
+			var oversized := item.rule_version == 1 and item.is_consumable() and units.size() > 10
+			if return_unusable and (oversized or not restored.equipment_allowed(item)):
+				for unit: Dictionary in units: used.erase(unit.id)
+				push_warning("旧阵型受新部位或数量限制，已将原单位保留在储物袋：" + entry.item_id)
+				continue
 			return {"error": "行囊存档物品越界或重叠。"}
-		used[entry.instance_id] = true
-		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [int(cell[0]), int(cell[1])]})
+		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [int(cell[0]), int(cell[1])], "unit_ids": unit_ids.duplicate()})
 	var remaining := SharedStorage.new()
 	for id: String in owned:
 		if not used.has(id):
@@ -372,7 +443,9 @@ func apply_formation(id: String) -> String:
 	var placements: Array = []
 	for placement: Dictionary in saved.layout.placements:
 		# Ownership includes equipped items. Missing units leave holes; never substitute copies.
-		if _owned.get(placement.instance_id) == placement.item_id:
+		placement.unit_ids = placement.unit_ids.filter(func(unit_id): return _owned.get(unit_id) == placement.item_id)
+		if not placement.unit_ids.is_empty():
+			placement.instance_id = placement.unit_ids[0]
 			if not can_use_item(placement.item_id):
 				return "阵型含有超出当前境界的物品，原布局保持不变。"
 			placements.append(placement)

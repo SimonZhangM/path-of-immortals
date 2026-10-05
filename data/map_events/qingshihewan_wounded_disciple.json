@@ -11,7 +11,9 @@
     "id": "base.map_reward.qingshihewan.warm_jade",
     "item_id": "base.map_item.warm_jade",
     "quantity": 1,
-    "after_line": 14
+    "after_line": 14,
+    "test_replay_on_restart": true,
+    "test_storage_limit": 2
   },
   "speakers": {
     "base.npc.qinglan.outer_disciple": {

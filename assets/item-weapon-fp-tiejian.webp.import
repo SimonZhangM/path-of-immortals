@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b66yyb1xfrdfm"
-path="res://.godot/imported/inventory-sidepic.webp-f053c261b96ff17e5fc1d0cc2da13cfc.ctex"
+uid="uid://cpybd7802lwwj"
+path="res://.godot/imported/item-weapon-fp-tiejian.webp-67f9b3ed244e14799058f544a84950de.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/inventory-sidepic.webp"
-dest_files=["res://.godot/imported/inventory-sidepic.webp-f053c261b96ff17e5fc1d0cc2da13cfc.ctex"]
+source_file="res://assets/item-weapon-fp-tiejian.webp"
+dest_files=["res://.godot/imported/item-weapon-fp-tiejian.webp-67f9b3ed244e14799058f544a84950de.ctex"]
 
 [params]
 
@@ -23,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

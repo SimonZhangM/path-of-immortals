@@ -12,7 +12,7 @@ func configure(game: GameManager, definition: ItemData, instance: Dictionary, fo
 	manager = game
 	item = definition
 	entry = instance.duplicate(true)
-	texture = load(item.icon_path)
+	texture = null if item.icon_path.is_empty() else load(item.icon_path)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_footprint(footprint)
 
@@ -26,15 +26,18 @@ static func artwork_rect(footprint: Rect2) -> Rect2:
 	var dimensions := interior.size * BOARD_ICON_SCALE
 	return Rect2(interior.get_center() - dimensions * 0.5, dimensions)
 
-static func fitted_icon_rect(texture_value: Texture2D, footprint: Rect2) -> Rect2:
+static func fitted_icon_rect(texture_value: Texture2D, footprint: Rect2, visual_scale: float = 1.0) -> Rect2:
 	var interior := artwork_rect(footprint)
-	var dimensions := texture_value.get_size() * minf(interior.size.x / texture_value.get_width(), interior.size.y / texture_value.get_height())
-	return Rect2(interior.get_center() - dimensions * 0.5, dimensions)
+	var factor := minf(interior.size.x / texture_value.get_width(), interior.size.y / texture_value.get_height()) * visual_scale
+	var dimensions := texture_value.get_size() * factor
+	var center := MapItemArtwork.TextureMetrics.alignment_center(texture_value)
+	return Rect2(interior.get_center() - center * factor, dimensions)
 
 func _draw() -> void:
 	if texture == null:
-		return
-	draw_texture_rect(texture, fitted_icon_rect(texture, Rect2(Vector2.ZERO, size)), false)
+		draw_string(get_theme_default_font(), Vector2(0, size.y * 0.5), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, size.x, 24, Color("eadbb9"))
+	else:
+		draw_texture_rect(texture, fitted_icon_rect(texture, Rect2(Vector2.ZERO, size)), false)
 	var rect := Rect2(Vector2.ZERO, size).grow(-4)
 	var id: String = entry.get("instance_id", "")
 	var remaining := manager.simulation.cooling_remaining_usec(id)

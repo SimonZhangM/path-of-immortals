@@ -1,0 +1,268 @@
+{
+  "date": "2026-09-29",
+  "scope": "T01第二批：35书56术及已定非连携分支、专属结算、手自动/预备式、基础控制/CD、甲型及多武器费用；不是完整连携/成长/跨战/平衡交付",
+  "authority": {
+    "mechanics": "docs/01_核心定案_七系功法与战斗规则.md",
+    "latest_decisions": "1.22",
+    "implementation": "docs/t01_书术与控制实施清单_2026-09-29.md"
+  },
+  "workbooks": [
+    {
+      "file": "output/spreadsheet/t01-01-器具机制词典-260928.xlsx",
+      "sha256": "7a68b95a996d1a4ef949797257243ffe13409ce33f1ee2be0da3b3cc847c51b2",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-02-状态与器具控制词典-260928.xlsx",
+      "sha256": "3124807f97a47866a90d3e9e441b0a204dd8603bd2c48f67c9ff22dda033b447",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-03-品级机制权限矩阵-260928.xlsx",
+      "sha256": "566506a17537b0dfcf556e7c4e2d76bfbc5f49ee29e7f8c08765ec8d522334e4",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-04-器具类别与规格词典-260928.xlsx",
+      "sha256": "ff1c954a0af3d20bfdbbf817b129805a0273c59df9e4f1db41e41edf0b66ba05",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-05-材料与锻造词典-260928.xlsx",
+      "sha256": "041e087c5aa4dd3e527ff2eb0a3a3cb817afa46a55a9c66a52285bad6d8992dc",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-06-套装与联动器具词典-260928.xlsx",
+      "sha256": "49ee69a0f9f25f0552d495abf66e8a3bf5e17cac18e460b025268636ed8a301a",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-07-物品获取与投放规则词典-260928.xlsx",
+      "sha256": "06c88332c194fe6778cbbaa3e21e3001b49ae43360f7216d4c59c5cd830e9a7f",
+      "unchanged_from_first_batch": true
+    },
+    {
+      "file": "output/spreadsheet/t01-08-物品资产主表-260928.xlsx",
+      "sha256": "5fc0dab680f82f2f28c4a28d60fbf3b9de82ccb1760ea82190448576c28f973b",
+      "unchanged_from_first_batch": true
+    }
+  ],
+  "content": {
+    "books": 35,
+    "spells": 56,
+    "blank_icons": 91,
+    "craft_books_registered_function_deferred": 7,
+    "prepared_spells": 7,
+    "runtime_catalog": "data/cultivation_library.json",
+    "runtime_catalog_sha256": "339c1f8af82f33d062aca6410d1b908c3969aa27bab94530ba55e017dfdf0a6e",
+    "runtime_rebuild_byte_identical": true,
+    "mapping": "docs/sources/t01_spell_implementation.json",
+    "all_runtime_ids_match_map": true,
+    "spell_entry_activations": 56,
+    "automatically_granted_to_actual_player": false
+  },
+  "import_check": {
+    "command": "./tests/run_t01.ps1 -Import",
+    "result": "passed",
+    "log_sha256": "bed9de6e829524969de6096d97321f4e2687bbc1f406a00322fff0eca9542ecb"
+  },
+  "tests": [
+    {
+      "script": "res://tests/cultivation_combat_tests.gd",
+      "mode": "headless",
+      "checks": 2410,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/cultivation_combat_tests.gd",
+      "summary": "CULTIVATION CHECKS 2410; FAILURES 0",
+      "log": "artifacts/cultivation_combat_tests.stdout.log",
+      "log_sha256": "5eecc2d188a1992d08ad806ef2aa7104a45eff8b859c280484b3268f4f410633",
+      "log_recorded_at": "2026-09-29T05:46:55.106250+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/cultivation_entry_tests.gd",
+      "mode": "headless",
+      "checks": 199,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/cultivation_entry_tests.gd",
+      "summary": "CULTIVATION ENTRY CHECKS 199; FAILURES 0",
+      "log": "artifacts/cultivation_entry_tests.stdout.log",
+      "log_sha256": "7d5ddd262ef5a189bf8bd09bcb071bfa2bc9da9e1fee18ab6e5964fefedbd85e",
+      "log_recorded_at": "2026-09-29T06:03:47.518551+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/cultivation_entry_tests.gd",
+      "mode": "OpenGL Compatibility",
+      "checks": 199,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/cultivation_entry_tests.gd -Render",
+      "summary": "CULTIVATION ENTRY CHECKS 199; FAILURES 0",
+      "log": "artifacts/cultivation_entry_tests.render.stdout.log",
+      "log_sha256": "c460c6db4a3fd93878729779dd2a1ac467d7bdfbcc20783ecc88fa8bbc91e795",
+      "log_recorded_at": "2026-09-29T05:55:37.590199+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/t01_integration_tests.gd",
+      "mode": "headless",
+      "checks": 972,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/t01_integration_tests.gd",
+      "summary": "T01 CHECKS 972; FAILURES 0",
+      "log": "artifacts/t01_integration_tests.stdout.log",
+      "log_sha256": "73ab2df54cdf810dd9943d2021e8ac9a749c298dcf85eadf101fb4b45894da24",
+      "log_recorded_at": "2026-09-29T05:47:10.470688+00:00",
+      "stderr_note": "旧超限丹药退回储物袋：保留单位的预期警告"
+    },
+    {
+      "script": "res://tests/t01_entry_tests.gd",
+      "mode": "headless",
+      "checks": 22,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/t01_entry_tests.gd",
+      "summary": "T01 ENTRY CHECKS 22; FAILURES 0",
+      "log": "artifacts/t01_entry_tests.stdout.log",
+      "log_sha256": "e446192aa895415073fcbbd038f25ebf7adfe0635087a52f44ded01305f5c804",
+      "log_recorded_at": "2026-09-29T05:48:07.933954+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/run_tests.gd",
+      "mode": "headless",
+      "checks": 1117,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/run_tests.gd",
+      "summary": "RESULT: 1117 checks, 0 failures",
+      "log": "artifacts/run_tests.stdout.log",
+      "log_sha256": "c626db18373edb044a5700a64959fd891fb4bde2c8825f6354524761d23b8eeb",
+      "log_recorded_at": "2026-09-29T05:47:10.414227+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/damage_toxin_tests.gd",
+      "mode": "headless",
+      "checks": 210,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/damage_toxin_tests.gd",
+      "summary": "DAMAGE / TOXIN: 210 checks, 0 failures",
+      "log": "artifacts/damage_toxin_tests.stdout.log",
+      "log_sha256": "10b09b24c8aadef3dad836809ffc631bccd25e7d8f5c13baec8becbb440773f9",
+      "log_recorded_at": "2026-09-29T05:45:55.865549+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/armor_pool_tests.gd",
+      "mode": "headless",
+      "checks": 34,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/armor_pool_tests.gd",
+      "summary": "ARMOR POOL RESULT: 34 checks, 0 failures",
+      "log": "artifacts/armor_pool_tests.stdout.log",
+      "log_sha256": "e692a559481efa277d72c0d2301a45e6a0758b90bd06708da95f879ede2237db",
+      "log_recorded_at": "2026-09-29T05:47:09.864079+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/support_effects_tests.gd",
+      "mode": "headless",
+      "checks": 47,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/support_effects_tests.gd",
+      "summary": "SUPPORT EFFECTS: 47 checks, 0 failures",
+      "log": "artifacts/support_effects_tests.stdout.log",
+      "log_sha256": "fe71b55aa0df50deb92a082abbee32188a9928dc568c769e5be051ed67cd6e1b",
+      "log_recorded_at": "2026-09-29T05:45:54.589502+00:00",
+      "stderr_note": "empty"
+    },
+    {
+      "script": "res://tests/item_tooltip_presentation.gd",
+      "mode": "headless",
+      "checks": 1488,
+      "failures": 0,
+      "command": "./tests/run_t01.ps1 -Script res://tests/item_tooltip_presentation.gd",
+      "summary": "ITEM TOOLTIPS: 1488 checks, 0 failures",
+      "log": "artifacts/item_tooltip_presentation.stdout.log",
+      "log_sha256": "33bc0a4d2089a462bf28d939dc134baf168bb0236d83b74597ed026a1ba3acb8",
+      "log_recorded_at": "2026-09-29T05:47:18.440142+00:00",
+      "stderr_note": "empty"
+    }
+  ],
+  "actual_inventory": {
+    "path": "C:/Users/Administrator/AppData/Roaming/Godot/app_userdata/Path of Immortals/inventory_loadout.json",
+    "version": 2,
+    "kinds": 115,
+    "units": 116,
+    "one_time_grant": {
+      "t01.115.v1": true
+    },
+    "sha256": "096d7072f5d703b250ec5c12fdb99624015095933f896b47fd721610cb83a840",
+    "preservation_evidence": "cultivation_entry_tests.gd在入口运行前后比较默认玩家库存完整字节，并在隔离存档验证学习写入不改库存；199项全部通过"
+  },
+  "entry_coverage": [
+    "学习取得0重/逐重达成/分支/独立保存与重载",
+    "失败写入回滚；损坏学习文件明确报错保留内存",
+    "115件原库存不重复发放，默认存档字节不变",
+    "真实GameManager的全部56术在13秒内至少实际发动一次",
+    "单项/全部模式命令、手动实际施法",
+    "无图法术当前分支说明、剑幕和沉默状态、法术/控制战斗记录",
+    "两格书横竖占位及实际界面拖动方法、命令结果"
+  ],
+  "screenshots": [
+    {
+      "path": "artifacts/cultivation-screen-and-log.png",
+      "sha256": "87ddbd38fb57593fe9f6e6f9a25601a33c234d53e2d142e1e33d6a862d8a28bc",
+      "visually_inspected": true
+    },
+    {
+      "path": "artifacts/cultivation-spell-tooltip.png",
+      "sha256": "9da2b59f2d3dbfb2e271450a978502570faa46073a0e498d0b1aad6c4103c598",
+      "visually_inspected": true
+    },
+    {
+      "path": "artifacts/cultivation-vertical-book.png",
+      "sha256": "69f6b6aabafae32a392ee0c1d1a973084c5e17b787f7df449b2de81570bed3ad",
+      "visually_inspected": true
+    }
+  ],
+  "rules_verified": [
+    "武器耗体1/2/3/4/5把100/125/150/175/200%，逐件费用落一位小数",
+    "普通灵障先扣其他来源，本术20+其他30扣10后本术20+其他20；他源不足后才扣本术",
+    "返锋仅消费兵甲化元剩余份额50%",
+    "甲型最高权重并列含身甲型优先身甲，防御元素含NONE独立扫描",
+    "盾反在全部甲血余伤之前，攻击者死亡中止整次余伤",
+    "双霆首记击杀，不扣第二份雷印",
+    "冻结/禁用/沉默暂停监听与CD时序，扰乱相对基准加算",
+    "未知操作/状态/控制与非法数据明确拒绝"
+  ],
+  "not_verified": [
+    "2410是检查项数，含大量逐重/配置断言，不是2410独立机制或穷尽所有组合",
+    "未运行整套历史runner；旧地图10件/全有图断言待迁移",
+    "未穷尽七系分支组合、复杂控制交错及04每个精确夹具",
+    "未做平衡、长时间自动试跑或Office渲染"
+  ],
+  "deferred": [
+    "连携整模块及依赖连携的分支",
+    "成长修为进度/收益/正式数值；现有达成接口不等于免费升级玩法",
+    "七技艺生产探索、配方与投放",
+    "完整学习/选书/模式/特殊甲型选择界面",
+    "完整跨战资源与书术阵盘持久化",
+    "跨境界克制等未定项实际依赖时明确拒绝",
+    "下一轮封锁多凭证、入阵时获凭证等未定专项"
+  ],
+  "pending_user_question": null,
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "preserved_existing_changes": true
+  },
+  "static": {
+    "local_markdown_links_checked": 843,
+    "markdown_files_checked": 12,
+    "broken_links": 0,
+    "git_diff_check": "passed",
+    "new_source_files_trailing_whitespace": "passed",
+    "no_cache_log_or_tmp_in_changes": true
+  }
+}

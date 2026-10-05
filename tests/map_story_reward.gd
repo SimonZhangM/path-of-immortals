@@ -91,7 +91,10 @@ func _run() -> void:
 	var restored := _fresh()
 	_check(MapLoadoutStore.load_into(restored, SAVE).is_empty() and restored.inventory.get_instance(reward_unit).get("cell") == Vector2i(1, 0), "equipped reward position survives restart")
 	var receipt_before := restored.snapshot()
-	_check(MapLoadoutStore.claim_reward(restored, screen.event_registry.events[screen.event_registry.by_point[N20]].reward, SAVE).is_empty() and restored.snapshot() == receipt_before, "receipt prevents direct duplicate grants after reload")
+	var reward: Dictionary = screen.event_registry.events[screen.event_registry.by_point[N20]].reward
+	var normal_reward := reward.duplicate(true)
+	normal_reward.test_replay_on_restart = false
+	_check(MapLoadoutStore.claim_reward(restored, normal_reward, SAVE).is_empty() and restored.snapshot() == receipt_before, "disabling test replay restores ordinary receipt deduplication")
 	var malformed := receipt_before.duplicate(true)
 	malformed.granted_rewards[REWARD].quantity = -1
 	_check(not restored.restore(malformed).is_empty() and restored.snapshot() == receipt_before, "malformed receipt is rejected atomically")
@@ -108,7 +111,12 @@ func _run() -> void:
 	replay.advance()
 	for i in 15:
 		replay.advance()
-	_check(replay.phase == "dialogue" and replay.line_index == 15, "replayed story skips already claimed reward")
+	_check(replay.phase == "reward" and replay.line_index == 14, "new run shows reward even with a saved receipt")
+	replay.accept_reward()
+	for i in 5:
+		replay.advance()
+	_check(not replay.try_start(N20, N20, true, "arrival"), "completed story cannot replay again in the same run")
+	_test_replay_limits(reward)
 	var card := MapInventoryItemCard.new()
 	var record: Dictionary = screen.loadout.records[JADE].duplicate(true)
 	record.quantity = 2
@@ -121,9 +129,82 @@ func _run() -> void:
 	screen.queue_free()
 	await process_frame
 	MapEventState.session_completed.clear()
+	# Model a new process with existing items/receipt, then use the real modal.
+	var restart_inventory := _fresh()
+	restart_inventory.add_reward(normal_reward)
+	_check(MapLoadoutStore.save(restart_inventory, SAVE).is_empty(), "prepare restart fixture with two stored jade units")
+	await _load_map()
+	screen.travel.request_destination(N20)
+	screen.travel.advance(1000)
+	for i in 5:
+		screen._advance_dialogue()
+	screen.travel.advance(1000)
+	screen._advance_dialogue()
+	for i in 15:
+		screen._advance_dialogue()
+	await _settle()
+	_check(screen.reward_dialog.visible and screen.event_state.phase == "reward", "reloaded game displays the real reward popup")
+	_click(screen.reward_dialog.accept_button.get_global_rect().get_center())
+	_check(not screen.reward_dialog.visible and screen.event_state.line_index == 15 and _quantity(screen.loadout) == 2, "accept at storage cap resumes story without adding jade")
+	var after_restart := _fresh()
+	_check(MapLoadoutStore.load_into(after_restart, SAVE).is_empty() and _quantity(after_restart) == 2, "cap acceptance persists without growing inventory")
+	screen.inventory_save_path = ""
+	await create_timer(0.4).timeout
+	screen.queue_free()
+	await process_frame
+	MapEventState.session_completed.clear()
 	_clean()
 	print("MAP STORY REWARD RESULT: %d checks, %d failures" % [checks, failures])
 	quit(1 if failures else 0)
+
+func _test_replay_limits(reward: Dictionary) -> void:
+	for count in [0, 1, 2, 3]:
+		var state := _fresh()
+		var saved := state.snapshot()
+		for unit_id in saved.owned_units.keys():
+			if saved.owned_units[unit_id] == JADE:
+				saved.owned_units.erase(unit_id)
+		for index in count:
+			saved.owned_units["reward.%s.%d" % [REWARD, index]] = JADE
+		saved.granted_rewards = {REWARD: {"item_id": JADE, "quantity": 1}}
+		_check(state.restore(saved).is_empty(), "prepare stored-count boundary %d" % count)
+		_check(MapLoadoutStore.claim_reward(state, reward, "").is_empty(), "test replay accepts with existing receipt at count %d" % count)
+		_check(_quantity(state) == (count + 1 if count < 2 else count), "only add below two stored jade units: %d" % count)
+	var equipped := _fresh()
+	equipped.add_reward(reward)
+	var original := equipped.snapshot()
+	_check(equipped.place(equipped.drag_data("storage", _jade_storage(equipped)), Vector2i.ZERO), "equip one jade before capacity check")
+	var positions: Array = equipped.snapshot().placements
+	_check(MapLoadoutStore.claim_reward(equipped, reward, "").is_empty() and _quantity(equipped) == 2, "capacity counts storage only, not equipped jade")
+	_check(equipped.snapshot().placements == positions and equipped.snapshot().owned_units.size() == original.owned_units.size() + 1, "new reward ID preserves existing and equipped units")
+	var failure_state := _fresh()
+	var before := failure_state.snapshot()
+	_check(not MapLoadoutStore.claim_reward(failure_state, reward, "res://artifacts/nonexistent-story-directory/save.json").is_empty() and failure_state.snapshot() == before, "failed replay save changes no items or receipts")
+	var invalid := reward.duplicate(true)
+	invalid.test_storage_limit = 0
+	_check(not failure_state.add_reward(invalid).is_empty() and failure_state.snapshot() == before, "invalid replay cap is rejected without mutation")
+	var definitions: Array = screen.event_registry.events.values().duplicate(true)
+	var ids := [N37, N20]
+	for event: Dictionary in definitions:
+		if event.has("reward"):
+			event.reward.test_replay_on_restart = false
+	var normal_registry := MapEventRegistry.new()
+	_check(normal_registry.configure(definitions, ids).is_empty(), "normal reward mode validates")
+	var normal_event := MapEventState.new(normal_registry, {BRIDGE: true})
+	normal_event.reward_claimed = func(_id: String) -> bool: return true
+	normal_event.try_start(N20, N20, true, "arrival")
+	normal_event.advance()
+	for i in 15:
+		normal_event.advance()
+	_check(normal_event.phase == "dialogue" and normal_event.line_index == 15, "switching off replay restores skip of claimed popup")
+	for bad_options in [{"test_replay_on_restart": "yes"}, {"test_replay_on_restart": true, "test_storage_limit": 0}, {"test_replay_on_restart": true, "test_storage_limit": 1.5}, {"test_replay_on_restart": true}]:
+		var invalid_definitions: Array = definitions.duplicate(true)
+		for event: Dictionary in invalid_definitions:
+			if event.has("reward"):
+				event.reward.erase("test_replay_on_restart")
+				event.reward.erase("test_storage_limit")
+				event.reward.merge(bad_options, true)
+		_check(not MapEventRegistry.new().configure(invalid_definitions, ids).is_empty(), "invalid test replay configuration is rejected")
 
 func _jade_storage(state: MapLoadoutState) -> String:
 	for entry in state.storage.entries():

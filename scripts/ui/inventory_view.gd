@@ -8,6 +8,7 @@ const PULSE_DURATION := 0.24
 const FLASH_SHADER := preload("res://scripts/ui/item_flash.gdshader")
 var _pulses: Dictionary = {}
 
+var _hover_dimensions := Vector2i.ONE
 var manager: GameManager
 var member_index: int = 0
 var enemy_side: bool = false
@@ -92,7 +93,8 @@ func _on_presentation_events(events: Array[Dictionary]) -> void:
 		var overlay := TextureRect.new()
 		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		overlay.texture = load(manager.registry.get_item(entry["item_id"]).icon_path)
+		var icon_path := manager.registry.get_item(entry["item_id"]).icon_path
+		overlay.texture = null if icon_path.is_empty() else load(icon_path)
 		var flash := ShaderMaterial.new()
 		flash.shader = FLASH_SHADER
 		overlay.material = flash
@@ -147,7 +149,7 @@ func make_drag_preview(item: ItemData, entry: Dictionary) -> Control:
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_drag_preview = ItemDragPreview.new()
 	holder.add_child(_drag_preview)
-	_drag_preview.configure(manager, item, entry, board_layout.footprint_rect(entry.get("cell", Vector2i.ZERO), item.grid_size, size).size)
+	_drag_preview.configure(manager, item, entry, board_layout.footprint_rect(entry.get("cell", Vector2i.ZERO), Vector2i(1,2) if entry.get("vertical_book",false) else item.grid_size, size).size)
 	return holder
 
 func _draw() -> void:
@@ -163,21 +165,22 @@ func _draw() -> void:
 		var item := manager.registry.get_item(instance["item_id"])
 		if not _textures.has(item.id) and not item.icon_path.is_empty():
 			_textures[item.id] = load(item.icon_path)
-		var rect := board_layout.footprint_rect(instance["cell"], item.grid_size, size).grow(-4)
-		var icon_rect := rect.grow(-5)
+		var rect := board_layout.footprint_rect(instance["cell"], Vector2i(1,2) if instance.get("vertical_book",false) else item.grid_size, size).grow(-4)
 		var id: String = instance["instance_id"]
 		var ghost := inventory.get_instance(id).is_empty()
 		if _textures.has(item.id):
 			var texture: Texture2D = _textures[item.id]
-			var icon_size := ItemDragPreview.fitted_icon_rect(texture, rect.grow(4)).size
+			var icon_draw_rect := ItemDragPreview.fitted_icon_rect(texture, rect.grow(4))
 			if _pulses.has(id):
 				var pulse: Dictionary = _pulses[id]
 				var t: float = pulse["elapsed"] / PULSE_DURATION
-				icon_size *= pulse_scale(t)
-				pulse["overlay"].position = icon_rect.get_center() - icon_size * 0.5
-				pulse["overlay"].size = icon_size
+				icon_draw_rect = ItemDragPreview.fitted_icon_rect(texture, rect.grow(4), pulse_scale(t))
+				pulse["overlay"].position = icon_draw_rect.position
+				pulse["overlay"].size = icon_draw_rect.size
 				pulse["overlay"].modulate.a = 0.26 * sin(PI * t)
-			draw_texture_rect(texture, Rect2(icon_rect.get_center() - icon_size * 0.5, icon_size), false)
+			draw_texture_rect(texture, icon_draw_rect, false)
+		else:
+			draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 18 if compact else 24, Color("eadbb9"))
 		if ghost:
 			continue
 		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
@@ -187,7 +190,10 @@ func _draw() -> void:
 		if remaining == 0 and item.cooldown_usec > 0:
 			var seconds := item.cooldown_usec / 1_000_000.0
 			var left := seconds if manager.simulation.state.phase == GameState.Phase.PREPARATION else seconds * (1.0 - cooldown_progress(id))
+			if manager.simulation.state.phase == GameState.Phase.PREPARATION and item.combat.get("first_ready",false): left = 0
 			CooldownRing.paint(self, rotation_ring_center(rect, item), 23, left, seconds, CooldownRing.tint(manager.registry, item.element))
+			if manager.simulation.state.item_runtime.get(id,{}).get("barrier_stopped",false):
+				draw_string(get_theme_default_font(),rect.position+Vector2(8,25),"灵盾已满·停用",HORIZONTAL_ALIGNMENT_LEFT,rect.size.x-16,16,Color.WHITE)
 		if item.is_consumable():
 			var badge_size := Vector2(19, 20) if compact else Vector2(28, 25)
 			var badge := Rect2(rect.end - badge_size, badge_size)
@@ -195,8 +201,8 @@ func _draw() -> void:
 			draw_string(get_theme_default_font(), badge.position + Vector2(0, badge_size.y - 4), str(instance["units"].size()), HORIZONTAL_ALIGNMENT_CENTER, badge_size.x, 13 if compact else 16, Color("f4d48e"))
 	if _hover_item != null and _hover_cell.x > -100:
 		var tint := Color("7ed6ad") if _hover_valid else Color("ee857a")
-		for y in _hover_item.grid_size.y:
-			for x in _hover_item.grid_size.x:
+		for y in _hover_dimensions.y:
+			for x in _hover_dimensions.x:
 				var preview := board_layout.footprint_rect(_hover_cell + Vector2i(x, y), Vector2i.ONE, size).grow(-3)
 				draw_rect(preview, Color(tint, 0.22))
 				draw_rect(preview, tint, false, 2)
@@ -260,33 +266,35 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("epoch") != manager.interaction_epoch or not grid_rect().has_point(point):
 		return false
 	if data.get("kind") == "storage":
-		var entry := manager.storage.peek_one(data.get("storage_id", ""))
+		var entry := manager.storage.peek_units(data.get("storage_id", ""), int(data.get("quantity", 1)))
 		if entry.is_empty():
 			return false
 		_hover_item = manager.registry.get_item(entry["item_id"])
-		_hover_cell = nearest_footprint_cell(point, _hover_item.grid_size)
+		_hover_dimensions = Vector2i(1,2) if entry.get("vertical_book",false) else _hover_item.grid_size
+		_hover_cell = nearest_footprint_cell(point, _hover_dimensions)
 		var stack := inventory.matching_stack(_hover_item.id)
 		if not stack.is_empty():
 			_hover_cell = inventory.get_instance(stack)["cell"]
-		_hover_valid = manager.can_equip(data["storage_id"], member_index, _hover_cell)
+		_hover_valid = manager.can_equip(data["storage_id"], member_index, _hover_cell, int(data.get("quantity", 1)))
 	elif data.get("kind") == "inventory" and data.get("source") == get_instance_id() and data.get("generation") == _generation and data.get("member_index") == member_index:
 		var entry := inventory.get_instance(data.get("instance_id", ""))
 		if entry.is_empty():
 			return false
 		_hover_item = manager.registry.get_item(entry["item_id"])
-		_hover_cell = nearest_footprint_cell(point, _hover_item.grid_size)
+		_hover_dimensions = Vector2i(1,2) if entry.get("vertical_book",false) else _hover_item.grid_size
+		_hover_cell = nearest_footprint_cell(point, _hover_dimensions)
 		_drag_instance = data["instance_id"]
 		_hover_valid = inventory.can_move(_drag_instance, _hover_cell)
 	else:
 		return false
 	if is_instance_valid(_drag_preview):
-		_drag_preview.set_footprint(board_layout.footprint_rect(_hover_cell, _hover_item.grid_size, size).size)
+		_drag_preview.set_footprint(board_layout.footprint_rect(_hover_cell, _hover_dimensions, size).size)
 	return _hover_valid
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
 		if data.get("kind") == "storage":
-			manager.equip(data["storage_id"], member_index, _hover_cell)
+			manager.equip(data["storage_id"], member_index, _hover_cell, int(data.get("quantity", 1)))
 		else:
 			manager.move_item(member_index, data["instance_id"], _hover_cell)
 		feedback.emit("已调整位置")
@@ -320,6 +328,10 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 	var item := manager.registry.get_item(_tooltip_entry["item_id"])
 	var panel := ItemTooltip.new()
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
+	if item.category == "spell":
+		_tooltip_entry.effect_description = CultivationDescription.spell(manager.registry.library.resolved(owner,item.id))
+	elif item.category == "book":
+		_tooltip_entry.effect_description = ItemTooltip.effect_text(item)+"\n当前已修至%d重。" % owner.knowledge.level(item.id)
 	panel.configure(item, _tooltip_entry, owner.defense if manager.simulation.state.legacy_fixed_defense else -1, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]), manager.party[0].can_use_item(item))
 	return panel
 

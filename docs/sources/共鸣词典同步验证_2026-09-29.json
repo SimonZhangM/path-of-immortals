@@ -117,5 +117,21 @@
   "office_render_run": false,
   "game_tests_run": false,
   "changed_rule_cells": 8,
-  "changed_guide_cells": 3
+  "changed_guide_cells": 3,
+  "final_checks": {
+    "other_protected_files": 246,
+    "unexpected_changes": [],
+    "stale_gate_non_original_cells": [],
+    "local_links_checked": 743,
+    "missing_links": [],
+    "docs_synchronized": [
+      "docs/04_战斗机制实施交接_规则衔接与验收.md",
+      "docs/t01_词典到游戏实施交接说明_2026-09-29.md",
+      "00_新线程必读_当前进度与下一步.md",
+      "docs/02_专题路线图_后续设计任务.md",
+      "docs/03_文档导航_按任务查阅.md",
+      "README.md",
+      "PROJECT_PROGRESS.md"
+    ]
+  }
 }

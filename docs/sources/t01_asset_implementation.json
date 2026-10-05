@@ -1,0 +1,2722 @@
+{
+  "source": "t01-08-物品资产主表-260928.xlsx",
+  "sha256": "9d88acf1b72d0d94e019a7c4f1063dde07b40d002b211e1552eb3d41a0abe0bc",
+  "assets": [
+    {
+      "asset_id": "t01.asset.0001",
+      "name": "青石短剑",
+      "quality": "下品",
+      "game_id": "base.map_item.qingshi_short_sword",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A6",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0002",
+      "name": "铁刀",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0002",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A7",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0003",
+      "name": "柴斧",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0003",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A8",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0004",
+      "name": "猎弓",
+      "quality": "下品",
+      "game_id": "base.map_item.hunting_bow",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A9",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0005",
+      "name": "匕首",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0005",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A10",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0006",
+      "name": "长枪",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0006",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A11",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0007",
+      "name": "短柄铁锤",
+      "quality": "下品",
+      "game_id": "base.map_item.short_iron_hammer",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A12",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0008",
+      "name": "石印",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0008",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A13",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0009",
+      "name": "皮鞭",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0009",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A14",
+      "effects": [],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0028",
+      "name": "铁剑",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0028",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A15",
+      "effects": [
+        "t01.asset.0028.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0029",
+      "name": "赤纹剑",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0029",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A16",
+      "effects": [
+        "t01.asset.0029.effect.01",
+        "t01.asset.0029.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "灼烧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0030",
+      "name": "寒水剑",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0030",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A17",
+      "effects": [
+        "t01.asset.0030.effect.01",
+        "t01.asset.0030.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "寒霜"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0031",
+      "name": "钢刀",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0031",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A18",
+      "effects": [
+        "t01.asset.0031.effect.01",
+        "t01.asset.0031.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "流血"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0032",
+      "name": "金纹刀",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0032",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A19",
+      "effects": [
+        "t01.asset.0032.effect.01",
+        "t01.asset.0032.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "锋痕"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0033",
+      "name": "赤焰刀",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0033",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A20",
+      "effects": [
+        "t01.asset.0033.effect.01",
+        "t01.asset.0033.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "破甲"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0034",
+      "name": "开山斧",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0034",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A21",
+      "effects": [
+        "t01.asset.0034.effect.01",
+        "t01.asset.0034.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "疲惫"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0035",
+      "name": "金刚斧",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0035",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A22",
+      "effects": [
+        "t01.asset.0035.effect.01",
+        "t01.asset.0035.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "锋痕"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0036",
+      "name": "厚土斧",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0036",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A23",
+      "effects": [
+        "t01.asset.0036.effect.01",
+        "t01.asset.0036.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "重伤"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0037",
+      "name": "桑木弓",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0037",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A24",
+      "effects": [
+        "t01.asset.0037.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0038",
+      "name": "水纹弓",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0038",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A25",
+      "effects": [
+        "t01.asset.0038.effect.01",
+        "t01.asset.0038.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "枯脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0039",
+      "name": "雷纹弓",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0039",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A26",
+      "effects": [
+        "t01.asset.0039.effect.01",
+        "t01.asset.0039.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "连环"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0040",
+      "name": "精铁匕",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0040",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A27",
+      "effects": [
+        "t01.asset.0040.effect.01",
+        "t01.asset.0040.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "流血"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0041",
+      "name": "风刃匕",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0041",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A28",
+      "effects": [
+        "t01.asset.0041.effect.01",
+        "t01.asset.0041.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "失衡"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0042",
+      "name": "青木枪",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0042",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A29",
+      "effects": [
+        "t01.asset.0042.effect.01",
+        "t01.asset.0042.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "缠绕"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0043",
+      "name": "雷纹枪",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0043",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A30",
+      "effects": [
+        "t01.asset.0043.effect.01",
+        "t01.asset.0043.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "雷印"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0044",
+      "name": "炎纹锤",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0044",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A31",
+      "effects": [
+        "t01.asset.0044.effect.01",
+        "t01.asset.0044.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "破甲"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0045",
+      "name": "石骨锤",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0045",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A32",
+      "effects": [
+        "t01.asset.0045.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0046",
+      "name": "镇土印",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0046",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A33",
+      "effects": [
+        "t01.asset.0046.effect.01",
+        "t01.asset.0046.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "疲惫"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0047",
+      "name": "雷纹印",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0047",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A34",
+      "effects": [
+        "t01.asset.0047.effect.01",
+        "t01.asset.0047.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "雷蕴"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0048",
+      "name": "藤鞭",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0048",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A35",
+      "effects": [
+        "t01.asset.0048.effect.01",
+        "t01.asset.0048.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "毒蚀"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0049",
+      "name": "雷鞭",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0049",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A36",
+      "effects": [
+        "t01.asset.0049.effect.01",
+        "t01.asset.0049.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "雷印"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0050",
+      "name": "刺血匕",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0050",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A37",
+      "effects": [
+        "t01.asset.0050.effect.01",
+        "t01.asset.0050.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "流血"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0051",
+      "name": "震骨锤",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0051",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A38",
+      "effects": [
+        "t01.asset.0051.effect.01",
+        "t01.asset.0051.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "重伤"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0052",
+      "name": "清风印",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0052",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A39",
+      "effects": [
+        "t01.asset.0052.effect.01",
+        "t01.asset.0052.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "驱散"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0053",
+      "name": "荆鞭",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0053",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A40",
+      "effects": [
+        "t01.asset.0053.effect.01",
+        "t01.asset.0053.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "缠绕"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0054",
+      "name": "赤焰枪",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0054",
+      "source": "t01-08-物品资产主表-260928.xlsx::02_武器!A41",
+      "effects": [
+        "t01.asset.0054.effect.01",
+        "t01.asset.0054.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "灼烧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0010",
+      "name": "粗布甲",
+      "quality": "下品",
+      "game_id": "base.map_item.coarse_cloth_armor",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A6",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0011",
+      "name": "铁甲",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0011",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A7",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0012",
+      "name": "旧铁盔",
+      "quality": "下品",
+      "game_id": "base.map_item.old_iron_helmet",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A8",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0013",
+      "name": "木圆盾",
+      "quality": "下品",
+      "game_id": "base.map_item.round_wood_shield",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A9",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0014",
+      "name": "布护臂",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0014",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A10",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0015",
+      "name": "布护腿",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0015",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A11",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0016",
+      "name": "铁护臂",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0016",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A12",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0017",
+      "name": "铁护腿",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0017",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A13",
+      "effects": [],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0055",
+      "name": "细布衣",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0055",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A14",
+      "effects": [
+        "t01.asset.0055.effect.01",
+        "t01.asset.0055.effect.02"
+      ],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0056",
+      "name": "水纹衣",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0056",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A15",
+      "effects": [
+        "t01.asset.0056.effect.01",
+        "t01.asset.0056.effect.02",
+        "t01.asset.0056.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "润脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0057",
+      "name": "札甲",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0057",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A16",
+      "effects": [
+        "t01.asset.0057.effect.01",
+        "t01.asset.0057.effect.02"
+      ],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0058",
+      "name": "赤铜甲",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0058",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A17",
+      "effects": [
+        "t01.asset.0058.effect.01",
+        "t01.asset.0058.effect.02",
+        "t01.asset.0058.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "附炎"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0059",
+      "name": "雷纹法袍",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0059",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A18",
+      "effects": [
+        "t01.asset.0059.effect.01",
+        "t01.asset.0059.effect.02",
+        "t01.asset.0059.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "雷蕴"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0060",
+      "name": "皮帽",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0060",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A19",
+      "effects": [
+        "t01.asset.0060.effect.01",
+        "t01.asset.0060.effect.02",
+        "t01.asset.0060.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "轻灵"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0061",
+      "name": "铁盔",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0061",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A20",
+      "effects": [
+        "t01.asset.0061.effect.01",
+        "t01.asset.0061.effect.02",
+        "t01.asset.0061.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "坚韧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0062",
+      "name": "木纹冠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0062",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A21",
+      "effects": [
+        "t01.asset.0062.effect.01",
+        "t01.asset.0062.effect.02",
+        "t01.asset.0062.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "生机"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0063",
+      "name": "风纹冠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0063",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A22",
+      "effects": [
+        "t01.asset.0063.effect.01",
+        "t01.asset.0063.effect.02",
+        "t01.asset.0063.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "轻灵"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0064",
+      "name": "皮护臂",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0064",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A23",
+      "effects": [
+        "t01.asset.0064.effect.01",
+        "t01.asset.0064.effect.02",
+        "t01.asset.0064.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "反锋"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0065",
+      "name": "铁护腕",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0065",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A24",
+      "effects": [
+        "t01.asset.0065.effect.01",
+        "t01.asset.0065.effect.02",
+        "t01.asset.0065.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "反锋"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0066",
+      "name": "水纹护臂",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0066",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A25",
+      "effects": [
+        "t01.asset.0066.effect.01",
+        "t01.asset.0066.effect.02",
+        "t01.asset.0066.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "润脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0067",
+      "name": "雷纹护腕",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0067",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A26",
+      "effects": [
+        "t01.asset.0067.effect.01",
+        "t01.asset.0067.effect.02",
+        "t01.asset.0067.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "雷蕴"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0068",
+      "name": "皮护腿",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0068",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A27",
+      "effects": [
+        "t01.asset.0068.effect.01",
+        "t01.asset.0068.effect.02",
+        "t01.asset.0068.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "轻灵"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0069",
+      "name": "铁胫甲",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0069",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A28",
+      "effects": [
+        "t01.asset.0069.effect.01",
+        "t01.asset.0069.effect.02",
+        "t01.asset.0069.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "坚韧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0070",
+      "name": "水纹护腿",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0070",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A29",
+      "effects": [
+        "t01.asset.0070.effect.01",
+        "t01.asset.0070.effect.02",
+        "t01.asset.0070.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "润脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0071",
+      "name": "藤甲护腿",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0071",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A30",
+      "effects": [
+        "t01.asset.0071.effect.01",
+        "t01.asset.0071.effect.02",
+        "t01.asset.0071.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "生机"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0072",
+      "name": "皮护肩",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0072",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A31",
+      "effects": [
+        "t01.asset.0072.effect.01",
+        "t01.asset.0072.effect.02"
+      ],
+      "dependencies": [
+        "坚韧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": false,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0073",
+      "name": "金纹护肩",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0073",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A32",
+      "effects": [
+        "t01.asset.0073.effect.01",
+        "t01.asset.0073.effect.02",
+        "t01.asset.0073.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "反锋"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0074",
+      "name": "灵丝腰带",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0074",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A33",
+      "effects": [
+        "t01.asset.0074.effect.01",
+        "t01.asset.0074.effect.02"
+      ],
+      "dependencies": [
+        "轻灵"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0075",
+      "name": "包铁木盾",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0075",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A34",
+      "effects": [
+        "t01.asset.0075.effect.01",
+        "t01.asset.0075.effect.02",
+        "t01.asset.0075.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "生机"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0076",
+      "name": "铁盾",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0076",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A35",
+      "effects": [
+        "t01.asset.0076.effect.01",
+        "t01.asset.0076.effect.02",
+        "t01.asset.0076.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "反锋"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0077",
+      "name": "水纹盾",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0077",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A36",
+      "effects": [
+        "t01.asset.0077.effect.01",
+        "t01.asset.0077.effect.02",
+        "t01.asset.0077.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "润脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0078",
+      "name": "束甲带",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0078",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A37",
+      "effects": [
+        "t01.asset.0078.effect.01"
+      ],
+      "dependencies": [],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": false,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0079",
+      "name": "燎火护臂",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0079",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A38",
+      "effects": [
+        "t01.asset.0079.effect.01",
+        "t01.asset.0079.effect.02",
+        "t01.asset.0079.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "附炎"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0080",
+      "name": "雷纹护腿",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0080",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A39",
+      "effects": [
+        "t01.asset.0080.effect.01",
+        "t01.asset.0080.effect.02",
+        "t01.asset.0080.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "雷蕴"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0081",
+      "name": "炎纹护肩",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0081",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A40",
+      "effects": [
+        "t01.asset.0081.effect.01",
+        "t01.asset.0081.effect.02",
+        "t01.asset.0081.effect.03"
+      ],
+      "dependencies": [
+        "restore_armor",
+        "附炎"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0082",
+      "name": "润脉腰带",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0082",
+      "source": "t01-08-物品资产主表-260928.xlsx::03_防具!A41",
+      "effects": [
+        "t01.asset.0082.effect.01",
+        "t01.asset.0082.effect.02"
+      ],
+      "dependencies": [
+        "润脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0018",
+      "name": "温玉佩",
+      "quality": "下品",
+      "game_id": "base.map_item.warm_jade",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A6",
+      "effects": [],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0019",
+      "name": "回春玉",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0019",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A7",
+      "effects": [],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0020",
+      "name": "养息珠",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0020",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A8",
+      "effects": [],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0021",
+      "name": "聚灵珠",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0021",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A9",
+      "effects": [],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0083",
+      "name": "回春佩",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0083",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A10",
+      "effects": [
+        "t01.asset.0083.effect.01"
+      ],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0084",
+      "name": "行气珠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0084",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A11",
+      "effects": [
+        "t01.asset.0084.effect.01"
+      ],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0085",
+      "name": "聚元环",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0085",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A12",
+      "effects": [
+        "t01.asset.0085.effect.01"
+      ],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0086",
+      "name": "调息玉",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0086",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A13",
+      "effects": [
+        "t01.asset.0086.effect.01",
+        "t01.asset.0086.effect.02"
+      ],
+      "dependencies": [
+        "restore_capped"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0087",
+      "name": "金光镜",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0087",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A14",
+      "effects": [
+        "t01.asset.0087.effect.01",
+        "t01.asset.0087.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "锋痕"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0088",
+      "name": "青木铃",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0088",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A15",
+      "effects": [
+        "t01.asset.0088.effect.01"
+      ],
+      "dependencies": [
+        "生机"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0089",
+      "name": "寒水珠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0089",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A16",
+      "effects": [
+        "t01.asset.0089.effect.01",
+        "t01.asset.0089.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "寒霜"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0090",
+      "name": "火灵珠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0090",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A17",
+      "effects": [
+        "t01.asset.0090.effect.01"
+      ],
+      "dependencies": [
+        "附炎"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0091",
+      "name": "坤土珠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0091",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A18",
+      "effects": [
+        "t01.asset.0091.effect.01"
+      ],
+      "dependencies": [
+        "坚韧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0092",
+      "name": "逐风旗",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0092",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A19",
+      "effects": [
+        "t01.asset.0092.effect.01"
+      ],
+      "dependencies": [
+        "失衡"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0093",
+      "name": "引雷珠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0093",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A20",
+      "effects": [
+        "t01.asset.0093.effect.01"
+      ],
+      "dependencies": [
+        "雷印"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0094",
+      "name": "护心镜",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0094",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A21",
+      "effects": [
+        "t01.asset.0094.effect.01"
+      ],
+      "dependencies": [],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": false,
+        "damage_asserted": false,
+        "armor_source_asserted": true,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0095",
+      "name": "复甲环",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0095",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A22",
+      "effects": [
+        "t01.asset.0095.effect.01"
+      ],
+      "dependencies": [
+        "restore_armor"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0096",
+      "name": "灵盾珠",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0096",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A23",
+      "effects": [
+        "t01.asset.0096.effect.01"
+      ],
+      "dependencies": [
+        "barrier"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0097",
+      "name": "枯脉瓶",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0097",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A24",
+      "effects": [
+        "t01.asset.0097.effect.01"
+      ],
+      "dependencies": [
+        "枯脉"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0098",
+      "name": "清风拂",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0098",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A25",
+      "effects": [
+        "t01.asset.0098.effect.01"
+      ],
+      "dependencies": [
+        "驱散"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0099",
+      "name": "锁雷环",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0099",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A26",
+      "effects": [
+        "t01.asset.0099.effect.01"
+      ],
+      "dependencies": [
+        "连环"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0100",
+      "name": "蕴雷铃",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0100",
+      "source": "t01-08-物品资产主表-260928.xlsx::04_法器!A27",
+      "effects": [
+        "t01.asset.0100.effect.01"
+      ],
+      "dependencies": [
+        "雷蕴"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0022",
+      "name": "止血丹",
+      "quality": "下品",
+      "game_id": "base.map_item.hemostatic_pill",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A6",
+      "effects": [],
+      "dependencies": [
+        "restore_ticks"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0023",
+      "name": "强筋丸",
+      "quality": "下品",
+      "game_id": "base.map_item.sinew_pill",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A7",
+      "effects": [],
+      "dependencies": [
+        "restore_ticks"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0024",
+      "name": "消毒散",
+      "quality": "下品",
+      "game_id": "base.map_item.detox_powder",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A8",
+      "effects": [],
+      "dependencies": [
+        "cleanse_toxin"
+      ],
+      "previous": "需迁移",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0025",
+      "name": "回灵丹",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0025",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A9",
+      "effects": [],
+      "dependencies": [
+        "restore_ticks"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0026",
+      "name": "金疮散",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0026",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A10",
+      "effects": [],
+      "dependencies": [
+        "restore_instant"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0027",
+      "name": "回元散",
+      "quality": "下品",
+      "game_id": "base.map_item.t01_0027",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A11",
+      "effects": [],
+      "dependencies": [
+        "restore_instant"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0101",
+      "name": "回春丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0101",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A12",
+      "effects": [
+        "t01.asset.0101.effect.01"
+      ],
+      "dependencies": [
+        "restore_ticks"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0102",
+      "name": "益气丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0102",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A13",
+      "effects": [
+        "t01.asset.0102.effect.01"
+      ],
+      "dependencies": [
+        "restore_ticks"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0103",
+      "name": "聚灵丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0103",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A14",
+      "effects": [
+        "t01.asset.0103.effect.01"
+      ],
+      "dependencies": [
+        "restore_ticks"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0104",
+      "name": "培元丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0104",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A15",
+      "effects": [
+        "t01.asset.0104.effect.01",
+        "t01.asset.0104.effect.02"
+      ],
+      "dependencies": [
+        "restore_instant"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0105",
+      "name": "铁骨丸",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0105",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A16",
+      "effects": [
+        "t01.asset.0105.effect.01"
+      ],
+      "dependencies": [
+        "坚韧"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0106",
+      "name": "避火丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0106",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A17",
+      "effects": [
+        "t01.asset.0106.effect.01"
+      ],
+      "dependencies": [
+        "resistance"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0107",
+      "name": "辟寒丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0107",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A18",
+      "effects": [
+        "t01.asset.0107.effect.01"
+      ],
+      "dependencies": [
+        "resistance"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0108",
+      "name": "辟金丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0108",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A19",
+      "effects": [
+        "t01.asset.0108.effect.01"
+      ],
+      "dependencies": [
+        "resistance"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0109",
+      "name": "御木丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0109",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A20",
+      "effects": [
+        "t01.asset.0109.effect.01"
+      ],
+      "dependencies": [
+        "resistance"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0110",
+      "name": "镇土丹",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0110",
+      "source": "t01-08-物品资产主表-260928.xlsx::05_丹药!A21",
+      "effects": [
+        "t01.asset.0110.effect.01"
+      ],
+      "dependencies": [
+        "resistance"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": false,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0111",
+      "name": "飞针",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0111",
+      "source": "t01-08-物品资产主表-260928.xlsx::07_暗器!A6",
+      "effects": [
+        "t01.asset.0111.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0112",
+      "name": "柳叶镖",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0112",
+      "source": "t01-08-物品资产主表-260928.xlsx::07_暗器!A7",
+      "effects": [
+        "t01.asset.0112.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0113",
+      "name": "铁丸",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0113",
+      "source": "t01-08-物品资产主表-260928.xlsx::07_暗器!A8",
+      "effects": [
+        "t01.asset.0113.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0114",
+      "name": "毒针",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0114",
+      "source": "t01-08-物品资产主表-260928.xlsx::07_暗器!A9",
+      "effects": [
+        "t01.asset.0114.effect.01",
+        "t01.asset.0114.effect.02"
+      ],
+      "dependencies": [
+        "damage",
+        "毒蚀"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    },
+    {
+      "asset_id": "t01.asset.0115",
+      "name": "火砂",
+      "quality": "凡品",
+      "game_id": "base.map_item.t01_0115",
+      "source": "t01-08-物品资产主表-260928.xlsx::07_暗器!A10",
+      "effects": [
+        "t01.asset.0115.effect.01"
+      ],
+      "dependencies": [
+        "damage"
+      ],
+      "previous": "需新增",
+      "implementation": "已接入真实库存；逐件注册与激活或被动来源检查通过；代表性实际入口通过",
+      "missing": "",
+      "verification": {
+        "script": "tests/t01_integration_tests.gd::test_assets",
+        "periodic_activation": true,
+        "damage_asserted": true,
+        "armor_source_asserted": false,
+        "entry_scope": "地图与F6代表性路径，未逐件人工操作、未穷尽组合或平衡"
+      }
+    }
+  ],
+  "verification_record": "t01_实施验证_2026-09-29.json",
+  "rule_overrides": "核心01第1.21节：单叠10、同具体物品单格；攻击法器95%／暗器90%，无普通暴击；测试灵力50。八份Excel本轮未回写。"
+}

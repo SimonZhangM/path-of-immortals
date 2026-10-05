@@ -6,7 +6,10 @@ var display_name: String
 var type: String
 var tags: Array
 var cooldown_usec: int
-var stamina_cost: int
+var stamina_cost: float
+var spirit_cost: float
+var rule_version := 0
+var combat: Dictionary = {}
 var effects: Array
 var grid_size: Vector2i
 var icon_path: String
@@ -26,11 +29,14 @@ var armor_slot: String
 func _init(raw: Dictionary) -> void:
 	element = raw.get("element", "base.element.none")
 	id = raw["id"]
+	rule_version = int(raw.get("rule_version", 0))
+	combat = raw.get("combat", {}).duplicate(true)
+	spirit_cost = float(raw.get("spirit_cost", 0))
 	display_name = raw["name"]
 	type = raw["type"]
 	tags = raw["tags"].duplicate()
 	cooldown_usec = roundi(float(raw["cooldown"]) * 1_000_000.0)
-	stamina_cost = int(raw.get("stamina_cost", 0))
+	stamina_cost = float(raw.get("stamina_cost", 0))
 	effects = raw["effects"].duplicate(true)
 	grid_size = Vector2i(int(raw["size"][0]), int(raw["size"][1]))
 	icon_path = raw.get("icon", "")

@@ -4,6 +4,10 @@ extends Control
 signal accept_requested
 
 const DESIGN_SIZE := Vector2(540, 540)
+const FRAME_REGION := Rect2(25, 12, 894, 894)
+const CONTENT_WIDTH := 480.0
+const ACTION_SIZE := Vector2(CONTENT_WIDTH / 3.0, 57.6)
+const ACTION_BOTTOM_GAP := 64.2
 var canvas: Control
 var heading: Label
 var card: MapInventoryItemCard
@@ -28,30 +32,32 @@ func _init() -> void:
 	add_child(canvas)
 	var backing := TextureRect.new()
 	var atlas := AtlasTexture.new()
-	atlas.atlas = load("res://assets/UI-jiaohu-xiao.webp")
-	# Crop only the large transparent canvas surrounding the authored frame.
-	atlas.region = Rect2(200, 88, 512, 512)
+	atlas.atlas = load("res://assets/UI-jiaohu-size1.webp")
+	# Align the higher-resolution frame with the original 540px layout.
+	# Its transparent padding differs from the old 910x700 source image.
+	atlas.region = FRAME_REGION
 	backing.texture = atlas
 	backing.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	backing.size = DESIGN_SIZE
 	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	canvas.add_child(backing)
-	heading = _label("获得物品", Rect2(100, 54, 340, 62), 32, Color("f9f8c8"))
+	heading = _label("获得物品", Rect2(100, 62, 340, 62), 32, Color("f9f8c8"))
 	heading.name = "RewardHeading"
 	accept_button = TextureButton.new()
 	accept_button.name = "AcceptReward"
 	accept_button.texture_normal = load("res://assets/button-queren.webp")
 	accept_button.ignore_texture_size = true
-	accept_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	accept_button.position = Vector2(164, 423)
-	accept_button.size = Vector2(212, 64)
+	accept_button.stretch_mode = TextureButton.STRETCH_SCALE
+	accept_button.size = ACTION_SIZE
+	accept_button.position = Vector2((DESIGN_SIZE.x - ACTION_SIZE.x) * 0.5, DESIGN_SIZE.y - ACTION_BOTTOM_GAP - ACTION_SIZE.y)
 	accept_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	accept_button.focus_mode = Control.FOCUS_NONE
 	accept_button.pressed.connect(func(): accept_requested.emit())
 	canvas.add_child(accept_button)
-	var caption := _label("收下", Rect2(0, 0, 212, 64), 26, Color.WHITE, accept_button)
+	var caption := _label("收下", Rect2(Vector2.ZERO, accept_button.size), 26, Color.WHITE, accept_button)
+	caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	caption.name = "AcceptCaption"
-	error_label = _label("", Rect2(50, 388, 440, 32), 17, Color("ffb9a8"))
+	error_label = _label("", Rect2(50, 395, 440, 22), 17, Color("ffb9a8"))
 	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	pick_sound = AudioStreamPlayer.new()
 	pick_sound.stream = GameAudio.STREAMS.pick
@@ -83,9 +89,9 @@ func present(record: Dictionary, category_name: String) -> void:
 	card.configure(record, category_name)
 	card.tooltip_text = ""
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.set_card_width(168)
+	card.set_card_width(152)
 	card.size = card.custom_minimum_size
-	card.position = Vector2((DESIGN_SIZE.x - card.size.x) * 0.5, 151)
+	card.position = Vector2((DESIGN_SIZE.x - card.size.x) * 0.5, 171)
 	canvas.add_child(card)
 	card._layout()
 	error_label.text = ""

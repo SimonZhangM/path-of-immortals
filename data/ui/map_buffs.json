@@ -7,5 +7,5 @@
   {"id": "flame", "name": "附炎", "icon": "huo", "description": "每层储存1点火属性伤害，下一次主动攻击全部附加并一次性消耗。"},
   {"id": "tenacity", "name": "坚韧", "icon": "tu", "description": "每层提供1%抗暴击概率，成功抵挡一次暴击后全部清零。"},
   {"id": "agility", "name": "轻灵", "icon": "feng", "description": "每层提供1%闪避率，成功闪避一次攻击后全部清零。"},
-  {"id": "thunder", "name": "雷蕴", "icon": "lei", "description": "每累计10层转化为一次雷盾值，并加入当前雷盾池。"}
+  {"id": "thunder", "name": "雷蕴", "icon": "lei", "description": "本身无效果，每累积10层生成1层雷盾。"}
 ]

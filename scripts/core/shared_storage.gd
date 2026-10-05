@@ -39,3 +39,18 @@ func take_one(id: String) -> Dictionary:
 			_entries.erase(id)
 		revision += 1
 	return entry
+
+func peek_units(id: String, count: int) -> Dictionary:
+	var entry := get_entry(id)
+	if entry.is_empty() or count < 1 or count > entry.units.size():
+		return {}
+	entry.units = entry.units.slice(0, count)
+	entry.instance_id = entry.units[0].id
+	return entry
+
+func take_units(id: String, count: int) -> Dictionary:
+	var entry := peek_units(id, count)
+	if not entry.is_empty():
+		for index in count:
+			take_one(id)
+	return entry

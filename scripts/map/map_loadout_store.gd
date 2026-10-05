@@ -22,18 +22,24 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 static func load_into(state: MapLoadoutState, path: String) -> String:
 	if path.is_empty():
 		return ""
+	var target_path := path
 	if not FileAccess.file_exists(path):
 		# Recover the last complete file if shutdown interrupted the rename.
 		if not FileAccess.file_exists(path + ".bak"):
-			return ""
+			return save(state, path)
 		path += ".bak"
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return "无法读取行囊存档。"
 	var parser := JSON.new()
-	if parser.parse(file.get_as_text()) != OK:
+	var saved_text := file.get_as_text()
+	file.close() # Windows cannot rename the v1 file while our read handle is open.
+	if parser.parse(saved_text) != OK:
 		return "行囊存档内容不完整，原文件已保留。"
-	return state.restore(parser.data)
+	var error := state.restore(parser.data)
+	if error.is_empty() and (path != target_path or parser.data.get("version", 1) == 1 or not parser.data.get("content_grants", {}).get("t01.115.v1", false)):
+		error = save(state, target_path)
+	return error
 
 static func save(state: MapLoadoutState, path: String) -> String:
 	if path.is_empty():
@@ -61,7 +67,7 @@ static func save(state: MapLoadoutState, path: String) -> String:
 	return ""
 
 static func claim_reward(state: MapLoadoutState, reward: Dictionary, path: String) -> String:
-	if state.has_reward(reward.get("id", "")):
+	if state.has_reward(reward.get("id", "")) and not reward.get("test_replay_on_restart", false):
 		return ""
 	# Save a candidate before publishing ownership/UI changes. Failure leaves the
 	# live inventory and receipt untouched, so the same button can safely retry.

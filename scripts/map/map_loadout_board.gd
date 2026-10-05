@@ -42,6 +42,7 @@ func _layout_items() -> void:
 		var rect := ItemDragPreview.artwork_rect(layout.footprint_rect(entry.cell, state.registry.get_item(entry.item_id).grid_size, size))
 		_items[entry.instance_id].position = rect.position
 		_items[entry.instance_id].size = rect.size
+		_items[entry.instance_id].center_visible_at(rect.get_center())
 	queue_redraw()
 
 func nearest_cell(point: Vector2, dimensions: Vector2i) -> Vector2i:
@@ -70,6 +71,7 @@ func make_preview(data: Dictionary) -> Control:
 	art.size = ItemDragPreview.artwork_rect(layout.footprint_rect(Vector2i.ZERO, dimensions, size)).size * get_global_transform().get_scale().abs()
 	art.position = -art.size * 0.5
 	holder.add_child(art)
+	art.center_visible_at(Vector2.ZERO)
 	return holder
 
 func _get_tooltip(at_position: Vector2) -> String:

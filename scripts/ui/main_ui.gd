@@ -4,6 +4,8 @@ const INK := Color("ece4cd")
 const MUTED := Color("b2bdb6")
 const JADE := Color("91c6b0")
 const GOLD := Color("dfc28a")
+const LAYOUT_SIZE := Vector2(1920, 1080)
+@export_file("*.webp", "*.png") var battle_background_path := "res://assets/backgroundtest.png"
 @onready var manager: GameManager = $"../GameManager"
 var ally_panel: TeamPanel
 var enemy_panel: TeamPanel
@@ -19,6 +21,8 @@ var _retreat_button: Button
 var _settings_button: Button
 var _pause_button: Button
 var _retreat_dialog: Control
+var _result_heading: Label
+var battle_exit_handler: Callable
 var _review_button: Button
 var _exit_button: Button
 var _review_note: Label
@@ -31,6 +35,10 @@ var _battle_log := BattleLog.new()
 var game_audio: GameAudio
 
 func _ready() -> void:
+	set_deferred("oversampling_with_scale", CanvasItem.OVERSAMPLING_WITH_SCALE_ENABLED)
+	set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_fit_native_layout()
+	get_viewport().size_changed.connect(_fit_native_layout)
 	_build_ui()
 	if not manager.startup_error.is_empty():
 		_status.text = "内容加载失败"
@@ -46,6 +54,14 @@ func _ready() -> void:
 	add_child(game_audio)
 	game_audio.configure(manager)
 	_on_restart()
+
+func _fit_native_layout() -> void:
+	# Retain authored proportions; canvas items and fonts render at output resolution.
+	var available := get_viewport_rect().size
+	var factor := minf(available.x / LAYOUT_SIZE.x, available.y / LAYOUT_SIZE.y)
+	size = LAYOUT_SIZE
+	scale = Vector2.ONE * factor
+	position = ((available - LAYOUT_SIZE * factor) * 0.5).round()
 
 func _build_ui() -> void:
 	var ui_theme := Theme.new()
@@ -65,6 +81,7 @@ func _build_ui() -> void:
 	ui_theme.set_stylebox("disabled", "Button", _box(Color("1b282d"), Color("374447")))
 	theme = ui_theme
 	var backdrop: Control = load("res://scripts/ui/battle_backdrop.gd").new()
+	backdrop.texture = load(battle_background_path)
 	backdrop.name = "BattleBackground"
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
@@ -177,6 +194,8 @@ func _build_ui() -> void:
 	if manager.startup_error.is_empty():
 		enemy_panel.configure(manager, true)
 	_build_log()
+	var log_button := _button(middle, "战斗记录", func(): _log_panel.show())
+	log_button.name = "BattleLogButton"
 	if manager.startup_error.is_empty():
 		storage_panel = StoragePanel.new()
 		storage_panel.z_index = 10
@@ -259,7 +278,8 @@ func _build_retreat_dialog() -> void:
 	column.alignment = BoxContainer.ALIGNMENT_CENTER
 	column.add_theme_constant_override("separation", 24)
 	panel.add_child(column)
-	_label(column, "已成功撤退", 28, GOLD).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_result_heading = _label(column, "已成功撤退", 28, GOLD)
+	_result_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_review_note = _label(column, "战斗复盘尚未开放", 18, MUTED)
 	_review_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_review_note.hide()
@@ -267,7 +287,7 @@ func _build_retreat_dialog() -> void:
 	actions.add_theme_constant_override("separation", 16)
 	column.add_child(actions)
 	_review_button = _button(actions, "战斗复盘", manager.request_battle_review)
-	_exit_button = _button(actions, "退出战斗", manager.request_battle_exit)
+	_exit_button = _button(actions, "返回地图" if battle_exit_handler.is_valid() else "退出战斗", manager.request_battle_exit)
 	_review_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_exit_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_retreat_dialog.hide()
@@ -280,6 +300,13 @@ func _exit_battle() -> void:
 	await get_tree().process_frame
 	await get_tree().create_timer(0.05).timeout
 	game_audio.stop_all()
+	if battle_exit_handler.is_valid():
+		var error: String = battle_exit_handler.call()
+		if not error.is_empty():
+			_review_note.text = error
+			_review_note.show()
+			_exit_button.disabled = false
+		return
 	# Let the audio mixer release active streams before closing the application.
 	await get_tree().create_timer(0.2).timeout
 	get_tree().quit()
@@ -331,7 +358,9 @@ func _refresh() -> void:
 	_pause_button.set_pressed_no_signal(fighting and sim.clock.paused)
 	_retreat_button.disabled = not fighting or state.retreat_at_usec >= 0
 	_countdown.update_remaining(state.retreat_at_usec - state.time_usec if state.retreat_at_usec >= 0 else 0)
-	_retreat_dialog.visible = state.result == "retreat"
+	_retreat_dialog.visible = state.result == "retreat" or (battle_exit_handler.is_valid() and state.is_finished())
+	if _retreat_dialog.visible:
+		_result_heading.text = {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局", "retreat": "已成功撤退"}.get(state.result, "战斗结束")
 	if preparing:
 		_status.text = "战前准备"
 	elif state.is_finished():

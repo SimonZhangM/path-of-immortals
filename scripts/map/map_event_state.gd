@@ -1,6 +1,8 @@
 class_name MapEventState
 extends RefCounted
 
+signal encounter_changed(event_id: String)
+
 # Run-scoped stable IDs survive map reinstantiation, but never write to disk.
 static var session_completed: Dictionary = {}
 
@@ -25,14 +27,16 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 	var event_id: String = registry.by_point.get(point_id, "")
 	if event_id.is_empty() or completed.has(event_id):
 		return false
-	if registry.events[event_id].get("trigger", "click") != trigger:
+	var event: Dictionary = registry.events[event_id]
+	# Arrival encounters can be retried by clicking while standing at the node.
+	if event.get("trigger", "click") != trigger and not (event.type == "encounter" and trigger == "click"):
 		return false
 	for prerequisite in registry.events[event_id].get("requires_completed", []):
 		if not completed.has(prerequisite):
 			return false
 	active_id = event_id
 	line_index = 0
-	phase = "illustration" if active_event().presentation.has("illustration") else "dialogue"
+	phase = "encounter" if event.type == "encounter" else ("illustration" if event.presentation.has("illustration") else "dialogue")
 	return true
 
 func active_event() -> Dictionary:
@@ -52,14 +56,14 @@ func current_speaker_id() -> String:
 func advance() -> String:
 	if not is_active():
 		return ""
-	if phase == "reward":
+	if phase in ["reward", "encounter"]:
 		return ""
 	if phase == "illustration":
 		phase = "dialogue"
 		return ""
 	var reward: Dictionary = active_event().get("reward", {})
 	if not reward.is_empty() and line_index == int(reward.after_line) and not _accepted_rewards.has(reward.id):
-		if not reward_claimed.is_valid() or not reward_claimed.call(reward.id):
+		if reward.get("test_replay_on_restart", false) or not reward_claimed.is_valid() or not reward_claimed.call(reward.id):
 			phase = "reward"
 			return ""
 	if line_index + 1 < active_event().lines.size():
@@ -71,6 +75,31 @@ func advance() -> String:
 	line_index = 0
 	phase = ""
 	return finished
+
+func cancel_encounter() -> bool:
+	if phase != "encounter":
+		return false
+	active_id = ""
+	line_index = 0
+	phase = ""
+	return true
+
+func resolve_encounter(event_id: String, result: String) -> bool:
+	if registry.events.get(event_id, {}).get("type", "") != "encounter" or result not in ["victory", "defeat", "draw", "retreat"]:
+		return false
+	if active_id == event_id:
+		cancel_encounter()
+	if result == "victory" and not completed.has(event_id):
+		completed[event_id] = true
+		encounter_changed.emit(event_id)
+	return true
+
+func respawn_encounter(event_id: String) -> bool:
+	if active_id == event_id or registry.events.get(event_id, {}).get("type", "") != "encounter":
+		return false
+	if completed.erase(event_id):
+		encounter_changed.emit(event_id)
+	return true
 
 func accept_reward() -> String:
 	if phase != "reward":

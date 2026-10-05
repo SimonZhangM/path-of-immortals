@@ -49,7 +49,7 @@ func _test_damage() -> void:
 			for side in 2:
 				var f := _fixture()
 				var target: PartyMemberState = f.dog if side == 0 else f.hero
-				target.armor_type_sources["test"] = armors[index]
+				target.armor_type_sources = {"test": armors[index]}
 				target.armor = 2.5
 				var event := _damage(f, kind, 7, side)
 				var adjusted: float = 7 * expected[kind][index]
@@ -80,8 +80,9 @@ func _test_damage() -> void:
 		var item: ItemData = f.registry.get_item("base.map_item." + item_id)
 		f.hero.inventory.add_item("weapon", item.id, Vector2i.ZERO)
 		f.battle = BattleSimulation.new([f.hero], [f.dog], f.registry)
-		f.dog.armor_type_sources.test = "重甲"
 		f.battle.start()
+		f.dog.armor_type_sources = {"test":"重甲"}
+		f.battle.t01.forced_rolls.assign([0.0,0.5])
 		f.battle.advance(item.cooldown_usec / 1_000_000.0)
 		var damage_events: Array = f.battle.drain_events().filter(func(event): return event.kind == "damage")
 		_check(damage_events.size() == 1 and damage_events[0].damage_type == item.effects[0].damage_type, "actual map weapon carries type into combat")
@@ -95,6 +96,7 @@ func _test_toxin() -> void:
 	f.dog.armor_type_sources.test = "重甲"
 	_check(f.battle.apply_toxin(f.dog, 5, 0), "prepare five toxin stacks")
 	f.battle.start()
+	f.dog.armor = 30.5 # Explicit synthetic armor after equipment baseline initialization.
 	_check(not f.battle.state.is_finished(), "pending toxin prevents premature draw")
 	f.battle.advance(1.999)
 	_near(f.dog.hp, 100, "no poison damage before two seconds")
@@ -204,7 +206,7 @@ func _test_display() -> void:
 	var hit := _damage(f, "斩击", 7)
 	var log := BattleLog.new()
 	var events: Array[Dictionary] = [hit]
-	_check(log.consume(events, f.registry).contains("伤害8.4"), "battle log keeps fractional damage")
+	_check(log.consume(events, f.registry).contains("气血-8.4"), "battle log keeps fractional damage")
 	f.hero.hp = 54.6
 	f.hero.armor = 1.6
 	f.hero.armor_capacity_sources.test = 7
