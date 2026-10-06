@@ -1,9 +1,28 @@
 {
   "id": "base.enemy.chisong_liaozhu",
   "name": "赤鬃獠猪",
-  "max_hp": 80,
-  "max_stamina": 100,
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 96,
+  "max_stamina": 98,
+  "innate_armor_type": "轻甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 0,
   "max_spirit": 0,
   "portrait": "res://assets/enemy-qshw-chisongliaozhu.webp",
-  "board_layout": "base.board.enemy_3x3"
+  "portrait_includes_frame": true,
+  "board_layout": "base.board.qingshihewan_chisong_liaozhu",
+  "loadout": [
+    {"item_id": "base.organ.cslz_hide", "cell": [0, 0]},
+    {"item_id": "base.organ.cslz_tusk", "cell": [2, 0]},
+    {"item_id": "base.organ.cslz_hoof", "cell": [0, 2]},
+    {"item_id": "base.organ.cslz_mane", "cell": [1, 2]},
+    {"item_id": "base.organ.cslz_heart", "cell": [2, 2]}
+  ],
+  "loot": [
+    {"item_id": "base.material.cslz_hide", "chance": 0.25},
+    {"item_id": "base.material.cslz_tusk", "chance": 0.25},
+    {"item_id": "base.material.cslz_hoof", "chance": 0.25},
+    {"item_id": "base.material.cslz_mane", "chance": 0.25},
+    {"item_id": "base.material.cslz_heart", "chance": 0.1, "first_victory_guaranteed": true}
+  ]
 }

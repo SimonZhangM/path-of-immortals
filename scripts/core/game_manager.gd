@@ -35,12 +35,14 @@ var interaction_epoch: int = 0
 var _placement_rng := RandomNumberGenerator.new()
 var _durable_loadout: MapLoadoutState
 var _durable_snapshot: Dictionary = {}
+var player_snapshot: Dictionary = {}
 @export var use_saved_loadout := false
 @export var enemy_id := ENEMY_ID
 @export var cultivation_preview := false
 @export var preview_spell_id := "base.spell.metal_01"
 @export var preview_branch := ""
 var legacy_fixed_defense := false
+var loot_summary := ""
 @export var loadout_save_path := MapLoadoutStore.DEFAULT_PATH
 
 func _ready() -> void:
@@ -58,15 +60,28 @@ func _ready() -> void:
 		DebugLogger.error(startup_error)
 		set_process(false)
 		return
+	if use_saved_loadout and player_snapshot.is_empty():
+		var current_player := MapPlayerStatus.new()
+		var current_config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json"))
+		startup_error = current_player.configure(registry, current_config)
+		if not startup_error.is_empty():
+			set_process(false)
+			return
+		player_snapshot = current_player.battle_snapshot()
 	for index in 1:
-		var member := PartyMemberState.new(registry.get_character(PARTY_IDS[index]), registry)
+		var definition: Dictionary = player_snapshot.character if not player_snapshot.is_empty() else registry.get_character(PARTY_IDS[index])
+		var member := PartyMemberState.new(definition, registry)
 		member.inventory.add_item(sword_instance(index), ITEM_ID, Vector2i.ZERO)
 		member.inventory.add_item(armor_instance(index), ARMOR_ID, Vector2i(1, 1))
 		party.append(member)
-	for id in PARTY_IDS.slice(1):
+	var roster: Array = player_snapshot.get("companion_ids", []) if not player_snapshot.is_empty() else PARTY_IDS.slice(1)
+	for id in roster:
 		companions.append(CompanionState.new(registry.get_character(id), registry))
 	var enemy := PartyMemberState.new(registry.get_enemy(enemy_id), registry)
-	enemy.inventory.add_item(CLAW_INSTANCE, CLAW_ID, Vector2i(1, 1))
+	if enemy.definition.has("loadout"):
+		enemy.equip_definition_loadout()
+	else:
+		enemy.inventory.add_item(CLAW_INSTANCE, CLAW_ID, Vector2i(1, 1))
 	enemies.append(enemy)
 	if use_saved_loadout:
 		loadout_save_path = MapLoadoutStore.session_path(loadout_save_path)
@@ -74,11 +89,14 @@ func _ready() -> void:
 		startup_error = created.error
 		if startup_error.is_empty():
 			var loadout: MapLoadoutState = created.state
+			loadout.cultivation_rank_id = party[0].cultivation_rank_id
 			startup_error = MapLoadoutStore.load_into(loadout, loadout_save_path)
 			if startup_error.is_empty():
 				_durable_loadout = loadout
 				_durable_snapshot = loadout.snapshot()
 				party[0].inventory = loadout.inventory
+				party[0].board = loadout.board
+				party[0].definition.board_layout = loadout.board.id
 				storage = loadout.storage
 		if not startup_error.is_empty():
 			DebugLogger.error(startup_error)
@@ -169,9 +187,14 @@ func restart() -> void:
 	for member in party + enemies:
 		member.reset_resources()
 		member.inventory.locked = member in enemies
+	loot_summary = ""
 	adjustment_open = false
 	interaction_epoch += 1
 	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense)
+	if not player_snapshot.is_empty():
+		for resource: String in player_snapshot.get("resources", {}):
+			if resource in ["hp", "stamina", "spirit"]:
+				party[0].set(resource, clampf(float(player_snapshot.resources[resource]), 0.0, party[0].maximum(resource)))
 	battle_restarted.emit()
 	adjustment_changed.emit()
 
@@ -207,6 +230,59 @@ func can_edit_inventory() -> bool:
 func can_adjust() -> bool:
 	return simulation != null and (simulation.state.phase == GameState.Phase.PREPARATION or (simulation.state.phase == GameState.Phase.BATTLE and simulation.clock.paused))
 
+func board_change_error(storage_id: String) -> String:
+	if not can_edit_inventory() or party.is_empty() or party[0].hp <= 0 or party[0].inventory.locked:
+		return "请在战前或暂停后的置换界面更换阵盘。"
+	var entry := storage.get_entry(storage_id)
+	if entry.is_empty() or _durable_loadout == null:
+		return "未持有此阵盘。"
+	var record: Dictionary = _durable_loadout.records.get(entry.item_id, {})
+	if record.get("category") != "board": return "此物品不是阵盘。"
+	var required := registry.get_cultivation(record.required_cultivation)
+	if int(party[0].cultivation.get("order", -1)) < int(required.order):
+		return "尚未达到此阵盘要求的境界。"
+	var selected := registry.get_board(record.board_layout)
+	if selected == null: return "阵盘配置不存在。"
+	var bag := party[0].inventory
+	for placed: Dictionary in bag.get_instances():
+		if not Rect2i(Vector2i.ZERO, selected.grid_size).encloses(Rect2i(placed.cell, bag.instance_size(placed.instance_id))):
+			if bag.returnable_count(placed.instance_id) != placed.units.size():
+				return "新阵盘放不下尚未用完的丹药，请先用完或调整位置。"
+	return ""
+
+func change_board(storage_id: String) -> bool:
+	var error := board_change_error(storage_id)
+	if not error.is_empty():
+		feedback.emit(error)
+		return _inventory_result(false)
+	var entry := storage.get_entry(storage_id)
+	var selected := registry.get_board(_durable_loadout.records[entry.item_id].board_layout)
+	var member := party[0]
+	if selected == member.board: return _inventory_result(true)
+	var previous := member.inventory
+	var next_inventory := InventoryState.new(registry, selected.grid_size)
+	var overflow: Array[Dictionary] = []
+	for placed: Dictionary in previous.get_instances():
+		if next_inventory.put(placed, placed.cell).is_empty(): overflow.append(placed)
+	# Keep retained instance IDs and runtime clocks; only detach actual overflow.
+	for returned: Dictionary in overflow:
+		simulation.remember_paused_item(returned.instance_id, returned.units)
+	member.inventory = next_inventory
+	next_inventory.revision = previous.revision + 1
+	member.board = selected
+	member.definition.board_layout = selected.id
+	for returned: Dictionary in overflow:
+		simulation.detach(returned.instance_id)
+		if registry.get_item(returned.item_id).category not in ["spell", "book"]:
+			storage.put(returned)
+	if simulation.t01 != null: simulation.t01.refresh_equipment(member)
+	for resource: String in ["hp", "stamina", "spirit"]:
+		member.set(resource, minf(float(member.get(resource)), member.maximum(resource)))
+	simulation.state.revision += 1
+	interaction_epoch += 1
+	inventory_changed.emit()
+	return _inventory_result(true)
+
 func set_adjustment(open: bool) -> bool:
 	if open and not can_adjust():
 		return false
@@ -237,7 +313,7 @@ func can_equip(storage_id: String, member_index: int, cell: Vector2i, quantity: 
 	var matching := bag.matching_stack(entry.item_id)
 	if item.rule_version == 1 and item.is_consumable() and quantity + (0 if matching.is_empty() else bag.get_instance(matching).units.size()) > 10:
 		return false
-	return not matching.is_empty() or bag.equipment_allowed(item) and cell in bag.available_cells(entry["item_id"])
+	return not matching.is_empty() or bag.equipment_allowed(item) and cell in bag.available_cells(entry["item_id"]) or not bag.replacement_target(entry, cell).is_empty()
 
 func equip(storage_id: String, member_index: int, cell: Vector2i, quantity: int = 1) -> bool:
 	if not can_equip(storage_id, member_index, cell, quantity):
@@ -245,7 +321,19 @@ func equip(storage_id: String, member_index: int, cell: Vector2i, quantity: int 
 	var entry := storage.peek_units(storage_id, quantity)
 	var bag := party[member_index].inventory
 	var stacking := not bag.matching_stack(entry["item_id"]).is_empty()
-	var placed := bag.put(entry, cell)
+	var placed := ""
+	var displaced := bag.replacement_target(entry, cell) if not stacking else ""
+	if not displaced.is_empty():
+		var returned := bag.replace_item(entry, cell)
+		if returned.is_empty():
+			return _inventory_result(false)
+		simulation.remember_paused_item(displaced, returned.units)
+		simulation.detach(displaced)
+		if registry.get_item(returned.item_id).category not in ["spell", "book"]:
+			storage.put(returned)
+		placed = entry.instance_id
+	else:
+		placed = bag.put(entry, cell)
 	if placed.is_empty():
 		return _inventory_result(false)
 	storage.take_units(storage_id, quantity)
@@ -282,6 +370,7 @@ func unequip(member_index: int, id: String, single: bool = false) -> bool:
 	if entry.is_empty():
 		feedback.emit("已开启的丹药需留在阵盘用完，不能收回")
 		return _inventory_result(false)
+	simulation.remember_paused_item(id, entry.units)
 	if bag.get_instance(id).is_empty():
 		simulation.detach(id)
 	if registry.get_item(entry.item_id).category not in ["spell","book"]: storage.put(entry)
@@ -320,6 +409,7 @@ func toggle_pause() -> void:
 	if simulation != null and simulation.state.phase == GameState.Phase.BATTLE:
 		simulation.clock.paused = not simulation.clock.paused
 		if not simulation.clock.paused:
+			simulation.clear_paused_returns()
 			set_adjustment(false)
 			simulation._wake_items(simulation.state.time_usec)
 
@@ -328,6 +418,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("ui_cancel") and adjustment_open:
 		set_adjustment(false)
+	elif event.is_action_pressed("map_inventory") and can_adjust():
+		set_adjustment(not adjustment_open)
 	elif event.is_action_pressed("battle_pause"):
 		if simulation != null and simulation.state.phase == GameState.Phase.PREPARATION:
 			start_battle()

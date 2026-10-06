@@ -38,9 +38,38 @@ func load_base_content() -> bool:
 			if not _traits.has(trait_id):
 				errors.append("Unknown companion trait for " + character["id"])
 	for board in _boards.values():
+		if not board.required_cultivation.is_empty() and not _cultivation.has(board.required_cultivation):
+			errors.append("Unknown board cultivation: " + board.id)
 		if not FileAccess.file_exists(board.texture_path):
 			errors.append("Missing board texture: " + board.texture_path)
+	for item: ItemData in _items.values():
+		for effect: Dictionary in item.effects:
+			if effect.effect == "prime_item_attack" and (not _items.has(effect.target_item) or not _items[effect.target_item].effects.any(func(e: Dictionary): return e.effect == "damage")):
+				errors.append("Unknown/non-attacking enhancement target: " + item.id)
+	for enemy: Dictionary in _enemies.values():
+		var issue := enemy_loadout_error(enemy)
+		if not issue.is_empty(): errors.append(enemy.id + ": " + issue)
 	return errors.is_empty()
+
+func enemy_loadout_error(enemy: Dictionary) -> String:
+	if not enemy.get("loadout", []) is Array: return "loadout must be an array"
+	var board := get_board(enemy.get("board_layout", ""))
+	var inventory := InventoryState.new(self, board.grid_size if board != null else Vector2i(3,3))
+	var index := 0
+	for raw: Variant in enemy.get("loadout", []):
+		if not raw is Dictionary or not raw.get("item_id") is String or not raw.get("cell") is Array or raw.cell.size() != 2:
+			return "invalid loadout row"
+		if not _nonnegative_integer(raw.cell[0]) or not _nonnegative_integer(raw.cell[1]) or not inventory.add_item("check.%d" % index, raw.item_id, Vector2i(raw.cell[0], raw.cell[1])):
+			return "unknown, overlapping or out-of-board item"
+		index += 1
+	if not enemy.get("loot", []) is Array: return "loot must be an array"
+	var seen := {}
+	for row: Variant in enemy.get("loot", []):
+		if not row is Dictionary or not row.get("item_id") is String or seen.has(row.item_id): return "invalid/duplicate loot item"
+		if not row.get("chance") is float and not row.get("chance") is int: return "invalid loot probability"
+		if not is_finite(row.chance) or row.chance < 0 or row.chance > 1 or not row.get("first_victory_guaranteed", false) is bool: return "invalid loot probability/first victory flag"
+		seen[row.item_id] = true
+	return ""
 
 func get_element(id: String) -> Dictionary:
 	return _elements.get(id, {}).duplicate(true)
@@ -198,7 +227,7 @@ func register_item(raw: Dictionary) -> bool:
 		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
-	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell"]:
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "beast", "board"]:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"
@@ -224,6 +253,13 @@ func register_item(raw: Dictionary) -> bool:
 
 func register_enemy(raw: Dictionary) -> bool:
 	var error := _validate_identity(raw)
+	if error.is_empty() and raw.get("innate_armor_type", "无甲") not in ["无甲", "轻甲", "重甲", "灵甲"]:
+		error = "invalid innate armor type"
+	for stat in ["innate_armor_capacity", "initial_armor"]:
+		if error.is_empty() and not _nonnegative_integer(raw.get(stat, 0)):
+			error = stat + " must be a nonnegative integer"
+	if error.is_empty() and raw.get("initial_armor", 0) > raw.get("innate_armor_capacity", 0):
+		error = "initial armor exceeds innate capacity"
 	if error.is_empty() and not _positive_integer(raw.get("max_hp")):
 		error = "max_hp must be a positive integer <= 1 billion"
 	if error.is_empty():

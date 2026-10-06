@@ -16,7 +16,7 @@ func _run() -> void:
 	manager._process(3)
 	await process_frame
 	ui._refresh()
-	if manager.simulation.state.result != "retreat" or not ui._retreat_dialog.visible:
+	if manager.simulation.state.result != "defeat" or manager.simulation.state.finish_reason != "retreat" or not ui._retreat_dialog.visible:
 		printerr("FAIL: retreat dialog unavailable for exit")
 		quit(1)
 		return

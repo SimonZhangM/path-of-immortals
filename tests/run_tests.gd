@@ -61,7 +61,7 @@ func _test_retreat() -> void:
 		_check(battle.state.time_usec == 1_000_000, "pause freezes retreat deadline progress")
 		battle.clock.paused = false
 		battle.advance(2.0 / speed)
-		_check(battle.state.result == "retreat" and battle.state.time_usec == 3_000_000, "retreat completes at exact deadline")
+		_check(battle.state.result == "defeat" and battle.state.finish_reason == "retreat" and battle.state.time_usec == 3_000_000, "retreat defeat completes at exact deadline")
 		_check(battle.state.activation_counts == [1, 1] and battle.state.teams[0][0].hp == 96, "combat including same-time attacks continues during retreat")
 		_check(battle.queue.size() == 0 and battle.state.retreat_at_usec == -1, "retreat clears scheduled work and deadline")
 		var hp: int = battle.state.teams[1][0].hp
@@ -458,7 +458,7 @@ func _test_storage_and_medicine() -> void:
 		_check(game.equip_random(pill_key), "right click appends same medicine")
 	_check(bag.get_instance(pill_id)["units"].size() == 4 and game.storage.get_entry(pill_key)["units"].size() == 6, "stack transfer conserves bottle total")
 	_check(game.simulation.cooling_remaining_usec(pill_id) == 0, "prebattle medicine has no insertion cooldown")
-	_check(not game.can_equip(sword_key, 0, Vector2i(1, 1)), "3x3 cannot hold two vertical swords alongside 2x2 armor")
+	_check(game.can_equip(sword_key, 0, Vector2i(1, 1)), "one overlapping armor can be replaced by the new sword")
 	_check(game.unequip(0, GameManager.ARMOR_INSTANCE), "make room for second weapon in smaller array")
 	_check(game.equip(sword_key, 0, Vector2i(1, 1)), "main equips storage weapon")
 	_check(game.storage.get_entry(sword_key).is_empty(), "equipped weapon absent from storage")
@@ -565,13 +565,13 @@ func _test_transfer_rules() -> void:
 	game.set_adjustment(true)
 	_check(sim.cooling_remaining_usec(inserted) == 2_000_000, "one second elapsed from entry cooldown")
 	_check(game.unequip(0, inserted) and game.equip(inserted, 0, Vector2i.ZERO), "cooling item can return and reenter")
-	_check(sim.cooling_remaining_usec(inserted) == 3_000_000 and sim.state.item_runtime[inserted]["next_activation_usec"] == 8_000_000, "return and reentry starts full three seconds again")
+	_check(sim.cooling_remaining_usec(inserted) == 2_000_000 and sim.state.item_runtime[inserted]["next_activation_usec"] == 7_000_000, "same pause return preserves remaining entry and activation deadlines")
 	game.toggle_pause()
 	sim.advance(3)
 	_check(sim.state.item_runtime[inserted]["entered"] and sim.state.item_runtime[inserted]["activation_count"] == 0, "stale entry and activation events cannot bypass replacement cooldown")
 	game.toggle_pause()
 	game.set_adjustment(true)
-	_check(game.unequip(0, inserted) and game.equip(inserted, 0, Vector2i.ZERO) and sim.cooling_remaining_usec(inserted) == 3_000_000, "already entered item also restarts cooldown when reequipped")
+	_check(game.unequip(0, inserted) and game.equip(inserted, 0, Vector2i.ZERO) and sim.cooling_remaining_usec(inserted) == 0, "already entered item gains no new cooldown during same pause")
 	game.free()
 	# Exercise the same public commands used by right-click and drag-to-storage.
 	var medicine := _medicine_fixture("spirit", 50, 3)

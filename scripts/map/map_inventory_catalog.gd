@@ -27,7 +27,10 @@ func subcategories() -> Array:
 		var children: Array = []
 		for group: Array in category_groups.values():
 			children.append_array(group)
+		children = children.filter(func(key): return key not in category_groups.get("blueprint", []))
+		children.append("blueprint")
 		return children
+	if collection == "blueprint": return ["blueprint"]
 	return category_groups.get(collection, []).duplicate()
 
 func replace_entries(records: Array) -> String:
@@ -56,6 +59,8 @@ func replace_entries(records: Array) -> String:
 				return "物品数值无效：" + key
 		if raw.quantity == 0:
 			return "物品数量须大于零。"
+		if not raw.get("grant_on_start", true) is bool:
+			return "初始发放标记须为布尔值。"
 		for key in ["favorite", "common", "recipe"]:
 			if not raw.get(key, false) is bool:
 				return "物品标签须为布尔值。"
@@ -199,7 +204,7 @@ func visible_entries() -> Array[Dictionary]:
 	for entry in _entries:
 		if not _in_collection(entry, collection):
 			continue
-		if category != "all" and entry.category != category:
+		if category != "all" and entry.category != category and not (category == "blueprint" and entry.category in category_groups.get("blueprint", [])):
 			continue
 		if not quality.is_empty() and entry.quality != quality:
 			continue

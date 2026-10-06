@@ -7,7 +7,11 @@ signal retreat_requested
 const DESIGN_SIZE := Vector2(MapExitDialog.DESIGN_SIZE.x * 4.0 / 3.0, 1008)
 const DISPLAY_SCALE := 0.8
 # Inside the preview's gold line, below its heading; artwork clouds may be covered.
-const PREVIEW_RECT := Rect2(45.75, 511.5, 630, 291)
+const PREVIEW_RECT := Rect2(45.75, 714, 630, 178)
+const ENEMY_ITEMS_RECT := Rect2(45.75, 494, 630, 166)
+const ENEMY_ITEMS_SPLIT := 0.6
+const ACTION_BOTTOM_GAP := 30.0
+const ACTION_SCALE := 0.8
 const TEXT_COLOR := Color("fbf4bf")
 var canvas: Control
 var backing: TextureRect
@@ -19,6 +23,8 @@ var enemy_name: Label
 var rank_label: Label
 var category_label: Label
 var enemy_description: Label
+var enemy_summary: VBoxContainer
+var item_slots: Array[MapEncounterItemSlot] = []
 var fight_button: TextureButton
 var retreat_button: TextureButton
 var error_label: Label
@@ -48,14 +54,14 @@ func _init() -> void:
 	preview_mask.set_shader_parameter("panel_size", PREVIEW_RECT.size)
 	preview_mask.set_shader_parameter("corner_radius", 18.0)
 	battle_preview.material = preview_mask
-	heading = _label(canvas, "", Rect2(130, 48, 460, 72), 42)
+	heading = _label(canvas, "", Rect2(130, 52, 460, 72), 42)
 	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	description = _label(canvas, "", Rect2(48, 145, 624, 90), 18)
+	description = _label(canvas, "", Rect2(48, 140, 624, 60), 18)
 	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	description.add_theme_constant_override("line_spacing", 6)
-	# Center under the baked-in “息” glyph (source x292.5, atlas left64, scale0.75).
-	portrait = _image(canvas, Rect2(94.875, 298, 153, 153))
+	description.add_theme_constant_override("line_spacing", 4)
+	# Preserve the portrait/text arrangement inside the new upper information frame.
+	portrait = _image(canvas, Rect2(94.875, 264, 153, 153))
 	var details := VBoxContainer.new()
 	details.position.x = 256
 	details.size = Vector2(397, 0)
@@ -87,11 +93,12 @@ func _init() -> void:
 	enemy_description.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	enemy_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	enemy_description.add_theme_constant_override("line_spacing", 5)
+	_build_enemy_items(description_font)
 	fight_button = _button("开战", "res://assets/button-queren.webp", 200)
 	retreat_button = _button("撤退", "res://assets/button-quxiao.webp", 520)
 	fight_button.pressed.connect(func(): fight_requested.emit())
 	retreat_button.pressed.connect(func(): retreat_requested.emit())
-	error_label = _label(canvas, "", Rect2(45, 948, 630, 26), 17)
+	error_label = _label(canvas, "", Rect2(45, 982, 630, 20), 14)
 	error_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	error_label.add_theme_color_override("font_color", Color("ffb9a8"))
 	resized.connect(_layout)
@@ -105,6 +112,112 @@ func _image(parent: Control, rect: Rect2) -> TextureRect:
 	image.mouse_filter = MOUSE_FILTER_IGNORE
 	parent.add_child(image)
 	return image
+
+func _build_enemy_items(font: Font) -> void:
+	var area := Control.new()
+	area.name = "EnemyItems"
+	area.position = ENEMY_ITEMS_RECT.position
+	area.size = ENEMY_ITEMS_RECT.size
+	area.mouse_filter = MOUSE_FILTER_IGNORE
+	canvas.add_child(area)
+	var slots := CenterContainer.new()
+	slots.name = "EmptyItemSlots"
+	slots.mouse_filter = MOUSE_FILTER_IGNORE
+	area.add_child(slots)
+	slots.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	slots.anchor_right = ENEMY_ITEMS_SPLIT
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 9)
+	grid.add_theme_constant_override("v_separation", 9)
+	grid.mouse_filter = MOUSE_FILTER_IGNORE
+	slots.add_child(grid)
+	for index in 6:
+		var slot := MapEncounterItemSlot.new()
+		slot.name = "EmptySlot%d" % (index + 1)
+		slot.custom_minimum_size = Vector2(72, 72)
+		slot.mouse_filter = MOUSE_FILTER_PASS
+		var frame := StyleBoxFlat.new()
+		frame.bg_color = Color.TRANSPARENT
+		frame.border_color = Color("a89165")
+		frame.set_border_width_all(1)
+		frame.set_corner_radius_all(2)
+		slot.add_theme_stylebox_override("panel", frame)
+		grid.add_child(slot)
+		item_slots.append(slot)
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 0.16, 0.84, 1.0])
+	gradient.colors = PackedColorArray([Color("aeada8", 0.0), Color("aeada8", 0.75), Color("aeada8", 0.75), Color("aeada8", 0.0)])
+	var line_texture := GradientTexture2D.new()
+	line_texture.gradient = gradient
+	line_texture.width = 2
+	line_texture.height = 256
+	line_texture.fill_from = Vector2(0, 0)
+	line_texture.fill_to = Vector2(0, 1)
+	var divider := _image(area, Rect2(ENEMY_ITEMS_RECT.size.x * ENEMY_ITEMS_SPLIT - 0.75, 0, 1.5, ENEMY_ITEMS_RECT.size.y))
+	divider.name = "EnemyItemsDivider"
+	divider.texture = line_texture
+	divider.stretch_mode = TextureRect.STRETCH_SCALE
+	var right := MarginContainer.new()
+	right.name = "EnemySummaryMargin"
+	right.mouse_filter = MOUSE_FILTER_IGNORE
+	area.add_child(right)
+	right.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	right.anchor_left = ENEMY_ITEMS_SPLIT
+	right.add_theme_constant_override("margin_left", 12)
+	right.add_theme_constant_override("margin_right", 6)
+	right.add_theme_constant_override("margin_top", 0)
+	right.add_theme_constant_override("margin_bottom", 0)
+	enemy_summary = VBoxContainer.new()
+	enemy_summary.name = "EnemySummary"
+	enemy_summary.size_flags_vertical = SIZE_SHRINK_CENTER
+	enemy_summary.add_theme_constant_override("separation", 4)
+	enemy_summary.mouse_filter = MOUSE_FILTER_IGNORE
+	var summary_theme := Theme.new()
+	summary_theme.default_font = font
+	enemy_summary.theme = summary_theme
+	right.add_child(enemy_summary)
+
+func _show_enemy_summary(rows: Array) -> void:
+	for child in enemy_summary.get_children():
+		enemy_summary.remove_child(child)
+		child.queue_free()
+	for entry: Dictionary in rows:
+		var row := HBoxContainer.new()
+		row.mouse_filter = MOUSE_FILTER_IGNORE
+		row.add_theme_constant_override("separation", 7)
+		enemy_summary.add_child(row)
+		var icon := _image(row, Rect2())
+		icon.custom_minimum_size = Vector2(20, 20)
+		icon.size_flags_vertical = SIZE_SHRINK_BEGIN
+		icon.texture = load(entry.icon)
+		# Separate columns keep continuation lines aligned with the value, not the label.
+		var fields := HBoxContainer.new()
+		fields.size_flags_horizontal = SIZE_EXPAND_FILL
+		fields.mouse_filter = MOUSE_FILTER_IGNORE
+		fields.add_theme_constant_override("separation", 7)
+		row.add_child(fields)
+		for field in ["label", "value"]:
+			var text := Label.new()
+			text.name = "SummaryLabel" if field == "label" else "SummaryValue"
+			text.text = entry[field]
+			text.autowrap_mode = TextServer.AUTOWRAP_OFF
+			text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+			text.size_flags_vertical = SIZE_SHRINK_BEGIN
+			text.mouse_filter = MOUSE_FILTER_IGNORE
+			text.add_theme_font_size_override("font_size", 20)
+			text.add_theme_color_override("font_color", Color("d9c59a") if field == "label" else Color("deded9"))
+			if field == "value":
+				text.size_flags_horizontal = SIZE_EXPAND_FILL
+			if field == "value" and entry.get("below_label", false):
+				# A free child is excluded from the VBox minimum: only the four
+				# heading rows are centered. The extra trait line hangs below.
+				var caption: Label = fields.get_child(0)
+				caption.add_child(text)
+				caption.resized.connect(func(): text.position = Vector2(0, caption.size.y + 4))
+				text.position = Vector2(0, caption.get_minimum_size().y + 4)
+			else:
+				fields.add_child(text)
 
 func _label(parent: Control, text: String, rect: Rect2, font_size: int) -> Label:
 	var label := Label.new()
@@ -147,10 +260,12 @@ func _button(text: String, path: String, center_x: float) -> TextureButton:
 	button.ignore_texture_size = true
 	button.stretch_mode = TextureButton.STRETCH_SCALE
 	button.size = MapRewardDialog.ACTION_SIZE
-	# Match exit/reward buttons, including captions, despite the smaller encounter frame.
-	button.scale = Vector2.ONE / DISPLAY_SCALE
+	# Shrink both buttons, captions and their gap together about the old group center.
+	button.scale = Vector2.ONE * ACTION_SCALE / DISPLAY_SCALE
 	var displayed_size := button.size * button.scale
-	button.position = Vector2(center_x - displayed_size.x * 0.5, DESIGN_SIZE.y - MapRewardDialog.ACTION_BOTTOM_GAP - displayed_size.y)
+	var group_center_y := DESIGN_SIZE.y - ACTION_BOTTOM_GAP - button.size.y / DISPLAY_SCALE * 0.5
+	center_x = DESIGN_SIZE.x * 0.5 + (center_x - DESIGN_SIZE.x * 0.5) * ACTION_SCALE
+	button.position = Vector2(center_x, group_center_y) - displayed_size * 0.5
 	button.mouse_default_cursor_shape = CURSOR_POINTING_HAND
 	button.focus_mode = FOCUS_NONE
 	canvas.add_child(button)
@@ -178,6 +293,18 @@ func present(event: Dictionary, enemy: PartyMemberState) -> void:
 	category_label.text = event.get("enemy_category", "")
 	category_label.get_parent().visible = not category_label.text.is_empty()
 	enemy_description.text = event.enemy_description
+	var equipment := enemy.inventory.get_instances()
+	for index in item_slots.size():
+		item_slots[index].show_item(enemy._registry.get_item(equipment[index].item_id) if index < equipment.size() else null)
+	var rows: Array = event.presentation.get("enemy_summary", []).duplicate(true)
+	for row: Dictionary in rows:
+		if row.get("stat") == "hp":
+			row.value = str(enemy.maximum("hp"))
+		elif row.get("stat") == "resources":
+			row.value = "%d / %d" % [enemy.maximum("hp"), enemy.maximum("stamina")]
+		elif row.get("stat") == "armor":
+			row.value = enemy.armor_type
+	_show_enemy_summary(rows)
 	error_label.text = ""
 	set_busy(false)
 	show()

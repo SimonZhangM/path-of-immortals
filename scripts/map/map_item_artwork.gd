@@ -8,6 +8,48 @@ const GLOW_SHADER = preload("res://scripts/map/map_item_glow.gdshader")
 # Only 下品 is currently authored; unknown qualities use the neutral fallback.
 const QUALITY_GLOW_COLORS := {"下品": Color("b4c6dc")}
 const OUTLINE_COLOR := Color("151515")
+const OUTLINE_SCREEN_WIDTH := 0.5
+var _outline_layers: Array[TextureRect] = []
+var _outline_basis := Transform2D(Vector2.ZERO, Vector2.ZERO, Vector2.ZERO)
+
+func _ready() -> void:
+	set_notify_transform(true)
+	get_viewport().size_changed.connect(_update_outline_offsets)
+	_update_outline_offsets()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSFORM_CHANGED:
+		_update_outline_offsets()
+
+func _update_outline_offsets() -> void:
+	if _outline_layers.is_empty() or not is_inside_tree():
+		return
+	var screen := get_screen_transform()
+	# Translation changes during dragging do not change the outline radius.
+	if screen.x == _outline_basis.x and screen.y == _outline_basis.y:
+		return
+	if is_zero_approx(screen.determinant()):
+		return
+	_outline_basis = screen
+	var inverse := screen.affine_inverse()
+	for step in _outline_layers.size():
+		var offset := inverse.basis_xform(Vector2.from_angle(TAU * step / 16.0) * OUTLINE_SCREEN_WIDTH)
+		var layer := _outline_layers[step]
+		layer.offset_left = offset.x
+		layer.offset_right = offset.x
+		layer.offset_top = offset.y
+		layer.offset_bottom = offset.y
+
+static func battle_record(game: GameManager, item: ItemData) -> Dictionary:
+	if game._durable_loadout != null and game._durable_loadout.records.has(item.id):
+		return game._durable_loadout.records[item.id]
+	return {"icon": item.icon_path, "name": item.display_name, "quality": item.quality, "art_outline_px": int(item.combat.get("art_outline_px", 0))}
+
+func place_on_board(footprint: Rect2, enlargement: float = 1.0) -> void:
+	var rect := ItemDragPreview.artwork_rect(footprint)
+	size = rect.size * enlargement
+	position = rect.get_center() - size * 0.5
+	center_visible_at(rect.get_center())
 
 func configure(record: Dictionary, storage_quality_glow: bool = false) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -68,24 +110,21 @@ func _add_outline(source: Texture2D, width: int) -> void:
 	outline.show_behind_parent = true
 	add_child(outline)
 	outline.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	# Two concentric rings with fractional directions form a smooth rounded
-	# silhouette while keeping the requested width in design pixels.
-	for radius in range(1, width + 1):
-		for step in 16:
-			var offset := Vector2.from_angle(TAU * step / 16.0) * radius
-			var layer := TextureRect.new()
-			layer.texture = source
-			layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			layer.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-			layer.self_modulate = OUTLINE_COLOR
-			layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			outline.add_child(layer)
-			layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			layer.offset_left += offset.x
-			layer.offset_right += offset.x
-			layer.offset_top += offset.y
-			layer.offset_bottom += offset.y
+	# Positive legacy widths opt in; presentation now uses one screen-space
+	# half-pixel ring, independent of card/board scale and artwork rotation.
+	for step in 16:
+		var layer := TextureRect.new()
+		layer.texture = source
+		layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		layer.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		layer.self_modulate = OUTLINE_COLOR
+		layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		outline.add_child(layer)
+		layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_outline_layers.append(layer)
+	_outline_basis = Transform2D(Vector2.ZERO, Vector2.ZERO, Vector2.ZERO)
+	_update_outline_offsets()
 
 func apply_inventory_pose(record: Dictionary) -> void:
 	if texture == null:

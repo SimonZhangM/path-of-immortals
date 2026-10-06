@@ -149,13 +149,15 @@ static func _box(fill: Color, border: Color, radius: int, padding: int) -> Style
 	return box
 
 static func effect_text(item: ItemData) -> String:
+	if item.category == "board": return ""
+	if item.category == "beast": return item.combat.get("description", "兽材，仅作材料，不能放入战斗阵盘。")
 	if item.category == "book":
 		var pending := "连携相关分支本轮暂缓。" if item.combat.has("deferred_branches") else ""
 		return "%s，共%d重。%s%s" % [item.combat.role,int(item.combat.max_level),item.combat.get("deferred","分支按已学重数生效；修炼进度另行接入。"),pending]
 	if item.category == "spell": return CultivationDescription.spell(item.combat)
 	var lines: PackedStringArray = []
 	if item.armor_capacity > 0:
-		lines.append("装备后，护甲上限 +%d。" % item.armor_capacity)
+		lines.append("上限：护甲+%d。" % item.armor_capacity)
 	if item.defense > 0:
 		lines.append("基础属性：防御 +%d。" % item.defense)
 	var active: PackedStringArray = []
@@ -166,6 +168,8 @@ static func effect_text(item: ItemData) -> String:
 		lines.append("同一具体物品仅一叠，每叠最多10份。" + ("首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。" if item.category == "pill" else "暗器首轮从完整CD开始，发动后消耗一件。"))
 	for effect: Dictionary in item.effects:
 		match effect.effect:
+			"prime_item_attack":
+				active.append("竖鬃蓄势：耗体%s，使下次%s的基础伤害增加%s，最多保留1次强化。" % [EffectSystem.number_text(item.stamina_cost), effect.target_name, EffectSystem.number_text(effect.value)])
 			"apply_status":
 				var target := "自身" if effect.target == "self" else "敌方"
 				var gate: String = {"always": "发动时", "hit": "命中后", "hp_damage": "实际伤及气血后"}[effect.gate]
@@ -207,6 +211,11 @@ static func effect_text(item: ItemData) -> String:
 		active.append("同时恢复%s。\n恢复上限：各自最大值的%d/%d（向下取整）。" % ["、".join(capped), cap.cap_numerator, cap.cap_denominator])
 	if not active.is_empty():
 		lines.insert(0, "冷却：%s秒，%s" % [str(item.cooldown_usec / 1_000_000.0), "\n".join(active)])
+	if item.combat.has("resource_threshold"):
+		var threshold: Dictionary = item.combat.resource_threshold
+		lines.insert(0, "%s不高于上限的%d/%d时启动；启动后每%s秒恢复，超过阈值停用，不耗体。" % [RESOURCES[threshold.resource], threshold.numerator, threshold.denominator, EffectSystem.number_text(item.cooldown_usec / 1000000.0)])
+	if not String(item.combat.get("equipment_note", "")).is_empty():
+		lines.append(item.combat.equipment_note)
 	if lines.is_empty():
 		lines.append("暂无战斗效果。")
 	return "\n".join(lines)
@@ -394,7 +403,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	var title := Label.new()
 	title.name = "ItemTitle"
 	title.text = item.display_name if identified else "？"
-	title.add_theme_font_override("font", _term_font)
+	title.add_theme_font_override("font", _bold_term_font)
 	title.add_theme_font_size_override("font_size", _px(30))
 	title.add_theme_color_override("font_color", Color("f9f8c8"))
 	heading.add_child(title)
@@ -403,7 +412,9 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	chips.add_theme_constant_override("h_separation", _px(7))
 	chips.add_theme_constant_override("v_separation", _px(5))
 	heading.add_child(chips)
-	var tags := [{"book":"功法书","spell":"法术"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
+	var tags := [{"book":"功法书","spell":"法术","beast":"兽材","board":"阵盘"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
+	if item.category == "board": tags = []
+	if item.category == "item" and "器官" in item.tags: tags[0] = "器官"
 	for tag: String in item.tags:
 		if not tag.is_empty() and tag not in tags and tag not in ["斩击", "穿刺", "钝击", "weapon", "armor", "pill", "item", "hp", "stamina", "spirit"]:
 			tags.append(tag)
@@ -415,7 +426,8 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	if not item.armor_type.is_empty():
 		tags.append(item.armor_type)
 	var footprint := Vector2i(1,2) if _entry.get("vertical_book",false) else item.grid_size
-	tags.append("占格 %d×%d" % [footprint.x, footprint.y])
+	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board"]:
+		tags.append("占格 %d×%d" % [footprint.x, footprint.y])
 	if not identified:
 		tags = ["？"]
 	for tag: String in tags:
@@ -429,9 +441,16 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	divider.add_theme_stylebox_override("separator", line)
 	content.add_child(divider)
 	description = str(_entry.get("effect_description",effect_text(item))) if identified else MapItemQuality.UNKNOWN_DESCRIPTION
+	if item.category == "board" and identified: description = ""
 	var meanings := keyword_meanings(item, description) if identified else {}
 	var highlighted := highlighted_keywords()
-	_rich_paragraphs(content, description, highlighted, 23, 22)
+	if item.category == "board" and identified:
+		var reserved := VBoxContainer.new()
+		reserved.name = "BoardDescriptionSlot"
+		reserved.custom_minimum_size.y = _px(170)
+		content.add_child(reserved)
+	else:
+		_rich_paragraphs(content, description, highlighted, 23, 22)
 	if identified and cooling_usec > 0:
 		_rich(content, "入场等待：%.1f秒" % (cooling_usec / 1_000_000.0), 17)
 	if not meanings.is_empty():
@@ -452,7 +471,9 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 		words.add_theme_constant_override("separation", HARD_BREAK_GAP)
 		glossary.add_child(words)
 		var caption := Label.new()
+		caption.name = "KeywordHeading"
 		caption.text = "关键词含义"
+		caption.add_theme_font_override("font", _bold_term_font)
 		caption.add_theme_font_size_override("font_size", _px(22))
 		caption.add_theme_color_override("font_color", Color("f1d4a2"))
 		words.add_child(caption)

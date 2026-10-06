@@ -63,7 +63,7 @@ func _run() -> void:
 	_check(not map.is_exit_open(), "moving click cannot open modal")
 	map.travel.advance(1000)
 	map.player.present(map.travel)
-	_check(map.travel.current_node_id == EXIT and not map.is_exit_open(), "reaching exit still requires another click")
+	_check(map.travel.current_node_id == EXIT and map.is_exit_open(), "reaching exit automatically opens confirmation")
 	_click(point)
 	await _settle()
 	var modal: MapExitDialog = map.exit_dialog
@@ -104,6 +104,15 @@ func _run() -> void:
 	await _settle()
 	_key(KEY_ESCAPE)
 	_check(not map.is_exit_open(), "escape cancels")
+	map._try_open_exit(EXIT)
+	var right_click := InputEventMouseButton.new()
+	right_click.button_index = MOUSE_BUTTON_RIGHT
+	right_click.pressed = true
+	right_click.position = modal.confirm_button.get_global_rect().get_center()
+	root.push_input(right_click,true)
+	_check(not map.is_exit_open() and not map.travel.paused and current_scene == map, "right click cancels over confirm button without leaving")
+	await _settle()
+	_check(not map.is_exit_open(), "cancel does not reopen while standing on exit")
 	_click(map.map_to_screen(map.travel.node_positions[EXIT]))
 	await _settle()
 	map.inventory_save_path = "res://artifacts/missing-exit-folder/inventory.json"
@@ -113,7 +122,7 @@ func _run() -> void:
 	map.inventory_save_path = SAVE
 	var before: Dictionary = map.loadout.snapshot()
 	_click(modal.confirm_button.get_global_rect().get_center())
-	await _settle()
+	await _wait_transition()
 	var destination = current_scene
 	_check(destination != map and destination.definition.id == "base.map.qingshizhen", "real confirm loads town")
 	_check(destination.startup_error.is_empty() and destination.travel.current_node_id == "base.map.qingshizhen.point.n25", "town starts at configured southwest bridge entrance")
@@ -130,7 +139,7 @@ func _run() -> void:
 	_check(not destination.is_exit_open() and destination.travel.mode != "idle", "remote town exit click travels first")
 	destination.travel.advance(1000)
 	destination.player.present(destination.travel)
-	_check(not destination.is_exit_open(), "arrival in town does not open return dialog")
+	_check(destination.is_exit_open(), "walking to town exit automatically opens return dialog")
 	_click(town_position)
 	await _settle()
 	var return_modal: MapExitDialog = destination.exit_dialog
@@ -153,7 +162,7 @@ func _run() -> void:
 	_click(town_position)
 	await _settle()
 	_click(return_modal.confirm_button.get_global_rect().get_center())
-	await _settle()
+	await _wait_transition()
 	var river = current_scene
 	river.set_process(false)
 	_check(river.definition.id == "base.map.qingshihewan" and river.travel.current_node_id == EXIT, "reverse confirmation returns exactly to paired river node")
@@ -174,7 +183,7 @@ func _run() -> void:
 	await _settle()
 	_check(river.exit_dialog.heading.text == "测试第二出口", "second node selects its own link")
 	_click(river.exit_dialog.confirm_button.get_global_rect().get_center())
-	await _settle()
+	await _wait_transition()
 	var second_destination = current_scene
 	_check(second_destination.travel.current_node_id == "base.map.qingshizhen.point.n30" and second_destination.definition.start_point == town_point, "explicit arrival overrides default spawn without changing it")
 	_check(second_destination.loadout.snapshot() == before, "second link preserves inventory too")
@@ -183,3 +192,10 @@ func _run() -> void:
 	_clean()
 	print("MAP EXIT DIALOG: ", checks, " checks, ", failures, " failures")
 	quit(1 if failures else 0)
+
+func _wait_transition() -> void:
+	await _settle()
+	var deadline := Time.get_ticks_msec() + 6500
+	while root.get_node("MapPresentation").transitioning and Time.get_ticks_msec() < deadline:
+		await process_frame
+	await _settle()

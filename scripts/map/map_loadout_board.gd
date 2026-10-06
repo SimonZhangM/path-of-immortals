@@ -1,8 +1,11 @@
 class_name MapLoadoutBoard
 extends TextureRect
 
+signal board_change_requested(data: Dictionary)
+
 var state: MapLoadoutState
 var layout: BoardLayout
+var _board_art: TextureRect
 var _items: Dictionary = {}
 var _hover_cell := Vector2i(-1, -1)
 var _hover_dimensions := Vector2i.ZERO
@@ -14,7 +17,13 @@ var _drag_active := false
 func configure(model: MapLoadoutState) -> void:
 	state = model
 	layout = state.board
-	texture = load(layout.texture_path)
+	_board_art = TextureRect.new()
+	_board_art.name = "BoardSurface"
+	_board_art.texture = load(layout.texture_path)
+	_board_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_board_art.mouse_filter = MOUSE_FILTER_IGNORE
+	_board_art.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	add_child(_board_art)
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -24,6 +33,10 @@ func configure(model: MapLoadoutState) -> void:
 	_refresh_items()
 
 func _refresh_items() -> void:
+	if layout != state.board:
+		layout = state.board
+		_board_art.texture = load(layout.texture_path)
+		_hover_dimensions = Vector2i.ZERO
 	for art in _items.values():
 		remove_child(art)
 		art.queue_free()
@@ -38,11 +51,11 @@ func _refresh_items() -> void:
 func _layout_items() -> void:
 	if state == null:
 		return
+	var art_rect := layout.art_rect(size)
+	_board_art.position = art_rect.position
+	_board_art.size = art_rect.size
 	for entry in state.inventory.get_instances():
-		var rect := ItemDragPreview.artwork_rect(layout.footprint_rect(entry.cell, state.registry.get_item(entry.item_id).grid_size, size))
-		_items[entry.instance_id].position = rect.position
-		_items[entry.instance_id].size = rect.size
-		_items[entry.instance_id].center_visible_at(rect.get_center())
+		_items[entry.instance_id].place_on_board(layout.footprint_rect(entry.cell, state.registry.get_item(entry.item_id).grid_size, size))
 	queue_redraw()
 
 func nearest_cell(point: Vector2, dimensions: Vector2i) -> Vector2i:
@@ -65,6 +78,17 @@ func make_preview(data: Dictionary) -> Control:
 	holder.name = "MapItemDragPreview"
 	holder.z_index = 100
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if state.records[entry.item_id].category == "board":
+		var preview := TextureRect.new()
+		preview.texture = load(state.records[entry.item_id].icon)
+		preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		preview.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		preview.mouse_filter = MOUSE_FILTER_IGNORE
+		preview.size = Vector2(180, 180) * get_global_transform().get_scale().abs()
+		preview.position = -preview.size * 0.5
+		holder.add_child(preview)
+		return holder
 	var art := MapItemArtwork.new()
 	art.configure(state.records[entry.item_id])
 	var dimensions := state.registry.get_item(entry.item_id).grid_size
@@ -114,6 +138,9 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 	_hover_valid = false
 	_hover_swap = false
 	var entry := state.drag_entry(data)
+	if not entry.is_empty() and state.records[entry.item_id].category == "board":
+		queue_redraw()
+		return Rect2(Vector2.ZERO, size).has_point(point) and can_request_board_change(data)
 	if entry.is_empty() or not layout.footprint_rect(Vector2i.ZERO, state.inventory.grid_size, size).has_point(point):
 		queue_redraw()
 		return false
@@ -127,9 +154,24 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
-		state.place(data, _hover_cell)
+		if state.records[state.drag_entry(data).item_id].category == "board":
+			request_board_change(data)
+		else:
+			state.place(data, _hover_cell)
 	_hover_dimensions = Vector2i.ZERO
 	queue_redraw()
+
+func can_request_board_change(data: Variant) -> bool:
+	if state == null or state.inventory.locked or not state.valid_drag(data) or data.source != "storage": return false
+	var entry := state.drag_entry(data)
+	var record: Dictionary = state.records.get(entry.item_id, {})
+	return record.get("category") == "board" and state.can_use_item(entry.item_id) and record.board_layout != state.board.id
+
+func request_board_change(data: Dictionary) -> void:
+	if can_request_board_change(data):
+		board_change_requested.emit(data.duplicate(true))
+	else:
+		state.interaction.emit("invalid")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:

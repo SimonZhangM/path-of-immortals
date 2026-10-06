@@ -3,6 +3,8 @@ extends Control
 
 signal selection_changed(item_id: String)
 signal feedback(message: String)
+signal board_change_requested(data: Dictionary)
+signal board_layout_changed
 
 const PULSE_DURATION := 0.24
 const FLASH_SHADER := preload("res://scripts/ui/item_flash.gdshader")
@@ -14,6 +16,7 @@ var member_index: int = 0
 var enemy_side: bool = false
 var compact: bool = false
 var display_side: float = 0.0
+var input_art_bounds_only := false
 var inventory: InventoryState:
 	get:
 		if manager == null:
@@ -29,6 +32,8 @@ var _drag_preview: ItemDragPreview
 var _generation: int = 0
 var _native_drag_active: bool = false
 var _textures: Dictionary = {}
+var _artworks: Dictionary = {}
+var _board_art: TextureRect
 var _last_time_usec: int = -1
 var board_layout := BoardLayout.plain()
 var board_texture: Texture2D
@@ -40,7 +45,7 @@ func _ready() -> void:
 		custom_minimum_size = Vector2.ONE * display_side
 	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	resized.connect(queue_redraw)
+	resized.connect(func(): _refresh_artworks(); queue_redraw())
 	mouse_exited.connect(func(): _hover_cell = Vector2i(-100, -100); queue_redraw())
 
 func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> void:
@@ -52,6 +57,7 @@ func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> voi
 	if mapped != null:
 		board_layout = mapped
 		board_texture = load(mapped.texture_path)
+		texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	manager.inventory_changed.connect(queue_redraw)
 	manager.battle_restarted.connect(reset_interaction)
 	manager.battle_started.connect(reset_interaction)
@@ -62,11 +68,22 @@ func bind_game(game: GameManager, index: int = 0, is_enemy: bool = false) -> voi
 		var item := manager.registry.get_item(instance["item_id"])
 		if not item.icon_path.is_empty():
 			_textures[item.id] = load(item.icon_path)
+	_refresh_artworks()
 	queue_redraw()
 
 func set_member(index: int) -> void:
 	member_index = index
 	reset_interaction()
+
+func visible_art_rect() -> Rect2:
+	if board_texture == null: return Rect2(Vector2.ZERO, size)
+	var used := Rect2(MapItemArtwork.TextureMetrics.inspect(board_texture).visible_rect)
+	return Rect2(board_layout.source_to_view(used.position, size), used.size * board_layout.scale_for(size))
+
+func _has_point(point: Vector2) -> bool:
+	# Fitting tall source images may extend transparent canvas over the status
+	# area. That invisible padding must not steal existing status hover input.
+	return (visible_art_rect() if input_art_bounds_only else Rect2(Vector2.ZERO, size)).has_point(point)
 
 func _process(delta: float) -> void:
 	for id in _pulses.keys():
@@ -80,6 +97,50 @@ func _process(delta: float) -> void:
 		if time_usec != _last_time_usec:
 			_last_time_usec = time_usec
 			queue_redraw()
+	_refresh_artworks()
+
+func _refresh_artworks() -> void:
+	if manager == null or inventory == null: return
+	var member: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
+	if member.board != null and member.board != board_layout:
+		board_layout = member.board
+		board_texture = load(board_layout.texture_path)
+		reset_interaction()
+		board_layout_changed.emit()
+	if _board_art == null:
+		_board_art = TextureRect.new()
+		_board_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_board_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_board_art.show_behind_parent = true
+		add_child(_board_art)
+		move_child(_board_art, 0)
+	_board_art.texture = board_texture
+	var board_rect := board_layout.art_rect(size)
+	_board_art.position = board_rect.position
+	_board_art.size = board_rect.size
+	var entries := inventory.get_instances()
+	for id in _pulses:
+		if inventory.get_instance(id).is_empty(): entries.append(_pulses[id].entry)
+	var visible_ids := {}
+	for instance: Dictionary in entries:
+		var id: String = instance.instance_id
+		visible_ids[id] = true
+		var item := manager.registry.get_item(instance.item_id)
+		if not _artworks.has(id):
+			var art := MapItemArtwork.new()
+			art.configure(MapItemArtwork.battle_record(manager, item))
+			art.show_behind_parent = true
+			add_child(art)
+			_artworks[id] = art
+		var footprint := board_layout.footprint_rect(instance.cell, Vector2i(1,2) if instance.get("vertical_book",false) else item.grid_size, size)
+		var enlargement := pulse_scale(_pulses[id].elapsed / PULSE_DURATION) if _pulses.has(id) else 1.0
+		_artworks[id].place_on_board(footprint, enlargement)
+		_artworks[id].modulate.a = 0.25 if _native_drag_active and _drag_instance == id else 1.0
+	for id in _artworks.keys():
+		if not visible_ids.has(id):
+			remove_child(_artworks[id])
+			_artworks[id].queue_free()
+			_artworks.erase(id)
 
 func _on_presentation_events(events: Array[Dictionary]) -> void:
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
@@ -94,7 +155,12 @@ func _on_presentation_events(events: Array[Dictionary]) -> void:
 		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		var icon_path := manager.registry.get_item(entry["item_id"]).icon_path
-		overlay.texture = null if icon_path.is_empty() else load(icon_path)
+		if not icon_path.is_empty():
+			var source: Texture2D = load(icon_path)
+			var trimmed := AtlasTexture.new()
+			trimmed.atlas = source
+			trimmed.region = MapItemArtwork.TextureMetrics.inspect(source).used_rect
+			overlay.texture = trimmed
 		var flash := ShaderMaterial.new()
 		flash.shader = FLASH_SHADER
 		overlay.material = flash
@@ -147,6 +213,9 @@ func make_drag_preview(item: ItemData, entry: Dictionary) -> Control:
 	holder.name = "CenteredItemDragPreview"
 	holder.z_index = 30
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Godot reparents drag previews to the viewport, outside MainUI's scale.
+	# Preserve the board's on-screen scale for both storage and board drags.
+	holder.scale = get_global_transform_with_canvas().get_scale()
 	_drag_preview = ItemDragPreview.new()
 	holder.add_child(_drag_preview)
 	_drag_preview.configure(manager, item, entry, board_layout.footprint_rect(entry.get("cell", Vector2i.ZERO), Vector2i(1,2) if entry.get("vertical_book",false) else item.grid_size, size).size)
@@ -155,8 +224,6 @@ func make_drag_preview(item: ItemData, entry: Dictionary) -> Control:
 func _draw() -> void:
 	if manager == null or inventory == null:
 		return
-	if board_texture != null:
-		draw_texture_rect(board_texture, board_layout.art_rect(size), false)
 	var visible_items := inventory.get_instances()
 	for id in _pulses:
 		if inventory.get_instance(id).is_empty():
@@ -178,15 +245,11 @@ func _draw() -> void:
 				pulse["overlay"].position = icon_draw_rect.position
 				pulse["overlay"].size = icon_draw_rect.size
 				pulse["overlay"].modulate.a = 0.26 * sin(PI * t)
-			draw_texture_rect(texture, icon_draw_rect, false)
-		else:
-			draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 18 if compact else 24, Color("eadbb9"))
 		if ghost:
 			continue
 		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
 		if remaining > 0:
-			draw_rect(rect, Color(0.25, 0.27, 0.29, 0.42))
-			draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y + 10), "%ds" % ceili(remaining / 1_000_000.0), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 24 if compact else 34, Color.WHITE)
+			CooldownRing.paint_text(self, rotation_ring_center(rect, item), str(ceili(remaining / 1_000_000.0)), 22 if compact else 32)
 		if remaining == 0 and item.cooldown_usec > 0:
 			var seconds := item.cooldown_usec / 1_000_000.0
 			var left := seconds if manager.simulation.state.phase == GameState.Phase.PREPARATION else seconds * (1.0 - cooldown_progress(id))
@@ -263,6 +326,8 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 	_hover_cell = Vector2i(-100, -100)
 	_hover_item = null
 	queue_redraw()
+	if data is Dictionary and data.get("kind") == "battle_board":
+		return visible_art_rect().has_point(point) and can_request_board_change(data)
 	if manager == null or enemy_side or not manager.can_edit_inventory() or not data is Dictionary or data.get("epoch") != manager.interaction_epoch or not grid_rect().has_point(point):
 		return false
 	if data.get("kind") == "storage":
@@ -293,7 +358,9 @@ func _can_drop_data(point: Vector2, data: Variant) -> bool:
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
-		if data.get("kind") == "storage":
+		if data.get("kind") == "battle_board":
+			request_board_change(data)
+		elif data.get("kind") == "storage":
 			manager.equip(data["storage_id"], member_index, _hover_cell, int(data.get("quantity", 1)))
 		else:
 			manager.move_item(member_index, data["instance_id"], _hover_cell)
@@ -301,6 +368,15 @@ func _drop_data(point: Vector2, data: Variant) -> void:
 	_drag_instance = ""
 	_hover_cell = Vector2i(-100, -100)
 	queue_redraw()
+
+func can_request_board_change(data: Dictionary) -> bool:
+	return manager != null and not enemy_side and member_index == 0 and data.get("kind") == "battle_board" and data.get("epoch") == manager.interaction_epoch and manager.board_change_error(data.get("storage_id", "")).is_empty()
+
+func request_board_change(data: Dictionary) -> void:
+	if can_request_board_change(data):
+		board_change_requested.emit(data.duplicate(true))
+	elif manager != null:
+		manager.feedback.emit(manager.board_change_error(data.get("storage_id", "")))
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:
@@ -337,4 +413,5 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 
 static func rotation_ring_center(rect: Rect2, item: ItemData) -> Vector2:
 	# Bottom left for stacks reserves bottom right for quantity; otherwise bottom right.
-	return Vector2(rect.position.x + 24 if item.is_consumable() else rect.end.x - 24, rect.end.y - 24)
+	var inset := 23.0 * CooldownRing.SIZE_SCALE + 2.0
+	return Vector2(rect.position.x + inset if item.is_consumable() else rect.end.x - inset, rect.end.y - inset)

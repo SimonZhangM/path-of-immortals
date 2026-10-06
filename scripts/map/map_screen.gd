@@ -31,6 +31,7 @@ var exits_by_point: Dictionary = {}
 var _active_exit: Dictionary = {}
 var arrival_point_id := ""
 var arrival_facing := ""
+var defer_map_music := false
 var sign_motion: MapSignMotion
 var player_status: MapPlayerStatus
 var status_header: MapStatusHeader
@@ -60,6 +61,10 @@ func _ready() -> void:
 			_setup_events()
 		if startup_error.is_empty():
 			_setup_status_header()
+		if startup_error.is_empty():
+			startup_error = MapPresentation.validate_music(definition)
+		if startup_error.is_empty() and not defer_map_music:
+			MapPresentation.enter_map(definition)
 
 func _setup_status_header() -> void:
 	var registry := ContentRegistry.new()
@@ -72,8 +77,10 @@ func _setup_status_header() -> void:
 		startup_error = "地图顶部栏配置无效。"
 		push_error(startup_error)
 		return
-	player_status = MapPlayerStatus.new()
-	startup_error = player_status.configure(registry, config)
+	# Scene changes carry the current model; only a fresh session initializes it.
+	if player_status == null:
+		player_status = MapPlayerStatus.new()
+		startup_error = player_status.configure(registry, config)
 	if not startup_error.is_empty():
 		push_error(startup_error)
 		return
@@ -115,11 +122,14 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 				push_error(startup_error)
 				return
 			_encounter_enemies[event.id] = PartyMemberState.new(enemy, registry)
+			_encounter_enemies[event.id].equip_definition_loadout()
 		if event.has("reward") and not loadout.records.has(event.reward.item_id):
 			startup_error = "剧情奖励引用了未知物品。"
 			push_error(startup_error)
 			return
 	inventory_catalog.replace_entries(loadout.storage_records())
+	player_status.apply_board(loadout.board)
+	loadout.changed.connect(func(): player_status.apply_board(loadout.board))
 	inventory_screen = MapInventoryScreen.new()
 	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout, player_status)
 	inventory_screen.formation_save_callback = _save_loadout
@@ -142,6 +152,7 @@ func set_inventory_open(open: bool) -> void:
 	if is_inventory_open() == open:
 		return
 	if not open:
+		inventory_screen.close_board_change_dialog()
 		inventory_screen.close_formation_dialog()
 		inventory_screen.cancel_item_drag()
 		var save_error := _save_loadout()
@@ -176,6 +187,11 @@ func _exit_tree() -> void:
 		push_error(error)
 
 func _input(event: InputEvent) -> void:
+	if not Engine.is_editor_hint() and is_exit_open() and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed:
+			_cancel_exit()
+		get_viewport().set_input_as_handled()
+		return
 	if Engine.is_editor_hint() or not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if is_exit_open():
@@ -192,6 +208,11 @@ func _input(event: InputEvent) -> void:
 		if (event.keycode == KEY_SPACE or event.physical_keycode == KEY_SPACE) and dialogue != null and dialogue.visible:
 			_advance_dialogue()
 			get_viewport().set_input_as_handled()
+		return
+	if is_inventory_open() and inventory_screen.is_board_change_dialog_open():
+		if event.keycode == KEY_ESCAPE or event.is_action_pressed("map_inventory"):
+			inventory_screen.close_board_change_dialog()
+		get_viewport().set_input_as_handled()
 		return
 	if is_inventory_open() and inventory_screen.is_formation_dialog_open():
 		if event.keycode == KEY_ESCAPE or (event.is_action_pressed("map_inventory") and not (get_viewport().gui_get_focus_owner() is LineEdit)):
@@ -341,6 +362,10 @@ func _accept_reward() -> void:
 	_present_event_progress(event_state.accept_reward())
 
 func _on_node_arrived(point_id: String) -> void:
+	if exits_by_point.has(point_id) and not event_state.is_active():
+		travel.stop_at_current_node()
+		if _try_open_exit(point_id):
+			return
 	_try_start_event(point_id, "arrival", true)
 
 func _retreat_encounter() -> void:
@@ -383,6 +408,7 @@ func _start_encounter_battle() -> void:
 		_encounter_error("战斗入口配置无效。")
 		return
 	manager.enemy_id = event.enemy_id
+	manager.player_snapshot = player_status.battle_snapshot()
 	manager.use_saved_loadout = true
 	manager.loadout_save_path = inventory_save_path
 	var battle_ui := battle.get_node_or_null("MainUI")
@@ -395,6 +421,7 @@ func _start_encounter_battle() -> void:
 	var return_flow := MapBattleReturn.new()
 	return_flow.name = "MapBattleReturn"
 	return_flow.manager = manager
+	return_flow.player_status = player_status
 	return_flow.events = event_state
 	return_flow.event_id = event.id
 	return_flow.map_scene_path = scene_file_path
@@ -403,18 +430,19 @@ func _start_encounter_battle() -> void:
 	return_flow.save_path = inventory_save_path
 	battle.add_child(return_flow)
 	battle_ui.battle_exit_handler = return_flow.return_to_map
+	battle_ui.defer_battle_music = true
+	battle_ui.hide()
+	battle.process_mode = Node.PROCESS_MODE_DISABLED
 	get_tree().root.add_child(battle)
 	if not manager.startup_error.is_empty():
 		battle.queue_free()
 		_encounter_error("战斗载入失败：" + manager.startup_error)
+		MapPresentation.enter_map(definition)
 		return
-	manager.start_battle()
-	if manager.simulation.state.phase != GameState.Phase.BATTLE:
-		var reason := manager.simulation.configuration_error
-		battle.queue_free()
-		_encounter_error("暂时无法开战。" + reason)
-		return
-	get_tree().current_scene = battle
+	# Keep PREPARATION until the player explicitly presses 战斗开始.
+	# Board artwork is initialized during binding/resizing, even while disabled.
+	encounter_dialog.hide()
+	await MapPresentation.change_battle_scene(self, battle, self, battle_ui, true, battle_ui.game_audio)
 	queue_free()
 
 func _try_open_exit(point_id: String) -> bool:
@@ -457,6 +485,9 @@ func _complete_exit() -> void:
 		return
 	# Preserve the configured inventory path (including isolated test saves).
 	var destination = scene.instantiate()
+	destination.player_status = player_status
+	destination.defer_map_music = true
+	destination.hide()
 	destination.inventory_save_path = inventory_save_path
 	destination.arrival_point_id = _active_exit.target_point
 	destination.arrival_facing = _active_exit.get("target_facing", "")
@@ -479,7 +510,10 @@ func _complete_exit() -> void:
 		exit_dialog.set_busy(false)
 		destination.queue_free()
 		return
-	get_tree().current_scene = destination
+	exit_dialog.hide()
+	var outgoing := MapPresentation.direction(travel.node_positions[_active_exit.point_id], _source_size(), false)
+	var incoming := MapPresentation.direction(destination.travel.node_positions[destination.arrival_point_id], destination._source_size(), true)
+	await MapPresentation.change_map(self, destination, outgoing, incoming)
 	queue_free()
 
 func _try_start_event(point_id: String, trigger: String, stationary: bool) -> bool:

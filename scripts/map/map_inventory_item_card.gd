@@ -31,6 +31,13 @@ func bind_loadout(model: MapLoadoutState, board: MapLoadoutBoard) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if loadout == null or not event is InputEventMouseButton or not event.pressed:
 		return
+	if entry.category == "board":
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			target_board.request_board_change(loadout.drag_data("storage", entry.get("storage_id", "")))
+		elif event.button_index == MOUSE_BUTTON_LEFT:
+			_begin_drag.call_deferred(loadout.drag_data("storage", entry.get("storage_id", "")))
+		accept_event()
+		return
 	if event.button_index == MOUSE_BUTTON_RIGHT:
 		loadout.equip_random(entry.get("storage_id", ""), selected_quantity())
 		accept_event()
@@ -103,6 +110,7 @@ func configure(record: Dictionary, category_name: String) -> void:
 	tags.size = Vector2(160, 26)
 	canvas.add_child(tags)
 	var categories: Array[String] = [category_name]
+	if entry.category == "board": categories = [entry.get("board_level", "")]
 	var subcategory: String = entry.get("subcategory", "")
 	if entry.category == "armor" and subcategory.begins_with("护具·"):
 		subcategory = "护具"
@@ -112,9 +120,11 @@ func configure(record: Dictionary, category_name: String) -> void:
 		categories.append(entry.damage_type)
 	if entry.has("armor_type"):
 		categories.append(entry.armor_type)
+	var seen_tags := {}
 	for caption: String in categories:
-		if caption.is_empty():
+		if caption.is_empty() or seen_tags.has(caption):
 			continue
+		seen_tags[caption] = true
 		var tag := Label.new()
 		tag.text = caption
 		tag.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -237,7 +247,7 @@ func _layout() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if frame == null:
+	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board"]:
 		return
 	var artwork := artwork_rect()
 	var factor := artwork.size.x / DESIGN_WIDTH

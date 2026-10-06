@@ -9,6 +9,20 @@ static var _alignment_overrides: Dictionary = JSON.parse_string(FileAccess.get_f
 static func alignment_center(texture: Texture2D) -> Vector2:
 	var center := Rect2(inspect(texture).visible_rect).get_center()
 	var authored: Dictionary = _alignment_overrides.get(texture.resource_path, {})
+	if authored.get("optical_centroid", false):
+		var metrics := inspect(texture)
+		if not metrics.has("optical_center"):
+			var source := texture.get_image()
+			var weighted := Vector2.ZERO
+			var weight := 0.0
+			for y in range(0, source.get_height(), 2):
+				for x in range(0, source.get_width(), 2):
+					var alpha := source.get_pixel(x,y).a
+					if alpha <= 0.02: continue
+					weighted += Vector2(x + 0.5,y + 0.5) * alpha
+					weight += alpha
+			metrics.optical_center = weighted / weight if weight > 0 else center
+		center = metrics.optical_center
 	if authored.has("horizontal_center"):
 		center.x = float(authored.horizontal_center) * texture.get_width()
 	return center

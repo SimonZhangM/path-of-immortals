@@ -14,6 +14,7 @@ var _effects := EffectSystem.new()
 var _pending_events: Array[Dictionary] = []
 var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
+var _paused_returns: Dictionary = {}
 var _scheduled_toxins: Dictionary = {}
 var configuration_error: String = ""
 var t01: T01CombatRules
@@ -146,6 +147,24 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 		member.armor_capacity_sources[id] = item.armor_capacity
 	if not item.armor_type.is_empty():
 		member.armor_type_sources[id] = item.armor_type
+	var saved := _paused_return(member, entry.units[0].id) if inserted_during_battle else {}
+	if not saved.is_empty():
+		register_inserted_units(entry.units)
+		state.item_runtime[id] = saved.runtime.duplicate(true)
+		if timeline != null:
+			timeline.timers[id] = saved.timer.duplicate(true)
+			t01.refresh_equipment(member)
+			timeline.sync(id, state.time_usec)
+		elif int(state.item_runtime[id].next_activation_usec) > 0:
+			queue.schedule(maxi(state.time_usec, state.item_runtime[id].next_activation_usec), "activate", {"instance_id": id, "version": _versions[id]})
+		if saved.defense > 0:
+			member.defense_sources[id] = saved.defense
+		if not state.item_runtime[id].entered:
+			queue.schedule(_entry_deadline(id), "enter", {"instance_id": id, "version": _versions[id]}, -1)
+		for unit: Dictionary in entry.units:
+			_paused_returns.erase(unit.id)
+		state.revision += 1
+		return
 	var frozen_until := state.time_usec + insertion_cooldown_usec if inserted_during_battle else 0
 	if inserted_during_battle:
 		register_inserted_units(entry["units"])
@@ -166,7 +185,26 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 
 func register_inserted_units(units: Array) -> void:
 	for unit in units:
+		if clock.paused and _paused_returns.has(unit.id) and _paused_returns[unit.id].at == state.time_usec:
+			continue
 		_unit_entry_until[unit["id"]] = state.time_usec + insertion_cooldown_usec
+
+# A temporary inventory round trip within one pause is not a new insertion.
+# Preserve per-instance clocks/modes, never another copy of the same definition.
+func remember_paused_item(id: String, units: Array) -> void:
+	if state.phase != GameState.Phase.BATTLE or not clock.paused or not state.item_runtime.has(id): return
+	if timeline != null: timeline.settle(id, state.time_usec)
+	var saved := {"at": state.time_usec, "owner": _owners[id], "runtime": state.item_runtime[id].duplicate(true), "timer": timeline.timers[id].duplicate(true) if timeline != null else {}, "defense": _owners[id].defense_sources.get(id,0)}
+	for unit: Dictionary in units:
+		_paused_returns[unit.id] = saved
+
+func _paused_return(member: PartyMemberState, unit_id: String) -> Dictionary:
+	var saved: Dictionary = _paused_returns.get(unit_id, {})
+	if not clock.paused or saved.is_empty() or saved.at != state.time_usec or saved.owner != member: return {}
+	return saved
+
+func clear_paused_returns() -> void:
+	_paused_returns.clear()
 
 func _entry_deadline(id: String) -> int:
 	var deadline: int = state.item_runtime[id]["frozen_until_usec"]
@@ -197,7 +235,9 @@ func start() -> bool:
 	if t01 != null:
 		for team: Array in state.teams:
 			t01.refresh_equipment(team[0])
-			team[0].armor = team[0].maximum("armor")
+			# Equipment grants capacity, not current armor. Only an explicit
+			# starting grant can bypass waiting for armor-restoration cooldowns.
+			team[0].armor = clampf(float(team[0].definition.get("initial_armor", 0)), 0.0, team[0].maximum("armor"))
 	_sync_toxins()
 	if timeline != null:
 		for id: String in _definitions: timeline.sync(id, 0)
@@ -578,6 +618,8 @@ func _check_result(at_usec: int) -> void:
 		_finish("draw", at_usec)
 
 func _finish(result: String, at_usec: int) -> void:
+	state.finish_reason = result
+	if result == "retreat": result = "defeat"
 	state.result = result
 	state.retreat_at_usec = -1
 	state.phase = GameState.Phase.FINISHED

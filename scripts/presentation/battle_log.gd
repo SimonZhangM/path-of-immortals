@@ -57,7 +57,7 @@ func consume(events: Array[Dictionary], registry: ContentRegistry) -> String:
 			"fallen":
 				_lines.append("%s %s阵亡。" % [stamp, event["target_name"]])
 			"finished":
-				_lines.append("%s %s" % [stamp, {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "体力耗尽，平局", "retreat": "已成功撤退"}[event["result"]]])
+				_lines.append("%s %s" % [stamp, {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "体力耗尽，平局", "retreat": "战斗失败"}[event["result"]]])
 	while _lines.size() > MAX_LINES:
 		_lines.remove_at(0)
 	return "\n".join(_lines)

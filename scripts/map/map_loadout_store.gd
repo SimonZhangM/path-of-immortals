@@ -16,7 +16,29 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 	if not error.is_empty():
 		return {"state": null, "error": error}
 	var state := MapLoadoutState.new()
-	error = state.configure(registry, board, catalog.visible_entries())
+	var definitions := catalog.visible_entries()
+	var materials: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/enemy_materials.json"))
+	if not materials is Array: return {"state": null, "error": "兽材目录必须为数组。"}
+	var resolved: Array[Dictionary] = []
+	for raw: Variant in materials:
+		if not raw is Dictionary: return {"state": null, "error": "兽材定义必须为对象。"}
+		var record := MapItemQuality.material_record(raw, registry)
+		if record.is_empty(): return {"state": null, "error": "兽材来源怪物境界／品级无效。"}
+		resolved.append(record)
+	error = catalog.replace_entries(resolved)
+	if not error.is_empty(): return {"state": null, "error": error}
+	definitions.append_array(catalog.visible_entries())
+	var boards: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/qinglan_boards.json"))
+	if not boards is Array: return {"state": null, "error": "阵盘目录必须为数组。"}
+	error = catalog.replace_entries(boards)
+	if not error.is_empty(): return {"state": null, "error": error}
+	definitions.append_array(catalog.visible_entries())
+	error = state.configure(registry, board, definitions)
+	if error.is_empty():
+		for enemy: Dictionary in registry._enemies.values():
+			for row: Dictionary in enemy.get("loot", []):
+				if not state.records.has(row.item_id) or state.records[row.item_id].category != "beast":
+					error = "敌方掉落引用了未知兽材：" + row.item_id
 	return {"state": state, "error": error}
 
 static func load_into(state: MapLoadoutState, path: String) -> String:
@@ -37,7 +59,7 @@ static func load_into(state: MapLoadoutState, path: String) -> String:
 	if parser.parse(saved_text) != OK:
 		return "行囊存档内容不完整，原文件已保留。"
 	var error := state.restore(parser.data)
-	if error.is_empty() and (path != target_path or parser.data.get("version", 1) == 1 or not parser.data.get("content_grants", {}).get("t01.115.v1", false)):
+	if error.is_empty() and (path != target_path or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants):
 		error = save(state, target_path)
 	return error
 

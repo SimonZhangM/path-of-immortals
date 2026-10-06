@@ -12,7 +12,7 @@ const STREAMS := {
 var players: Dictionary = {}
 var music: AudioStreamPlayer
 
-func configure(manager: GameManager) -> void:
+func configure(manager: GameManager, defer_music: bool = false) -> void:
 	for kind in STREAMS:
 		var player := AudioStreamPlayer.new()
 		player.stream = STREAMS[kind]
@@ -36,6 +36,11 @@ func configure(manager: GameManager) -> void:
 	music.volume_db = -6
 	music.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(music)
+	if not defer_music:
+		start_music()
+
+func start_music() -> void:
+	music.volume_db = -6.0
 	music.play()
 
 func play(kind: String) -> void:

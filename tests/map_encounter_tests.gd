@@ -100,17 +100,17 @@ func _run() -> void:
 	_check(modal.visible and map.event_state.active_id == EVENT, "arrival automatically opens modal")
 	_check(map.travel.paused and map.player.animation == "idle", "arrival pauses travel and stands")
 	_check(modal.heading.text == "夹壁山径" and modal.description.text == raw.description, "exact requested story content")
-	_check(modal.enemy_name.text == "赤鬃獠猪" and modal.rank_label.text == "一级中阶" and modal.category_label.text == "野兽类", "enemy name rank and category")
+	_check(modal.enemy_name.text == "赤鬃獠猪" and modal.rank_label.text == "凡人级·首领" and modal.category_label.text == "野兽类", "enemy name rank and category")
 	_check(modal.enemy_description.text == raw.enemy_description, "enemy introduction from data")
 	_check(modal.portrait.texture.resource_path == "res://assets/enemy-qshw-chisongliaozhu.webp", "requested portrait")
-	for path in ["battle-tanchuang", "enemy-qshw-chisongliaozhu", "enemy-level"]:
+	for path in ["battle-tanchuang-full", "enemy-qshw-chisongliaozhu", "enemy-level", "icon-enemy-health", "icon-enemy-attack", "icon-enemy-defense", "icon-enemy-chara"]:
 		_check((load("res://assets/" + path + ".webp") as Texture2D).get_image().has_mipmaps(), "mipmap enabled: " + path)
 	_check(is_equal_approx(modal.canvas.get_global_rect().size.x / map.exit_dialog.canvas.get_global_rect().size.x, 4.0 / 3.0 * 0.8), "encounter scales down20percent from prior size")
 	_check(Rect2(Vector2.ZERO, map.size).encloses(modal.canvas.get_global_rect()), "entire encounter frame fits native viewport")
 	for label in [modal.heading, modal.description, modal.enemy_name, modal.rank_label, modal.category_label, modal.enemy_description]:
 		_check(label.size.y >= label.get_minimum_size().y, "label height fits content: " + label.text)
 	for button in [modal.fight_button, modal.retreat_button]:
-		_check(button.get_global_rect().size.is_equal_approx(map.exit_dialog.confirm_button.get_global_rect().size), "buttons match exit dialog display size")
+		_check(button.get_global_rect().size.is_equal_approx(map.exit_dialog.confirm_button.get_global_rect().size * 0.8), "buttons are 80percent of exit dialog display size")
 		_check(button.get_node("Caption").get_global_rect().get_center().is_equal_approx(button.get_global_rect().get_center()), "button caption centered")
 	_check(modal.fight_button.get_node("Caption").text == "开战" and modal.retreat_button.get_node("Caption").text == "撤退", "requested actions")
 	_check(modal.fight_button.texture_normal.resource_path.ends_with("button-queren.webp") and modal.retreat_button.texture_normal.resource_path.ends_with("button-quxiao.webp"), "correct action textures")
@@ -154,24 +154,29 @@ func _run() -> void:
 	_click(modal.fight_button.get_global_rect().get_center())
 	# Duplicate signal in the same frame must not launch a second battle.
 	map._confirm_encounter()
-	await _settle()
+	await _wait_for_battle()
 	var battle := current_scene
 	_check(battle != map and battle.has_node("GameManager"), "real fight click transitions to battle scene")
 	var manager: GameManager = battle.get_node("GameManager")
 	manager.set_process(false)
 	_check(manager.startup_error.is_empty() and manager.enemy_id == ENEMY, "actual manager selects boar")
-	_check(manager.enemies[0].definition.name == "赤鬃獠猪" and manager.enemies[0].hp == 80 and manager.enemies[0].maximum("hp") == 80, "actual boar starts with exactly80 health: %s/%s" % [manager.enemies[0].hp, manager.enemies[0].maximum("hp")])
-	_check(manager.enemies[0].inventory.get_instances()[0].item_id == GameManager.CLAW_ID, "enemy reuses dog attack item")
+	_check(manager.enemies[0].definition.name == "赤鬃獠猪" and manager.enemies[0].hp == 96 and manager.enemies[0].maximum("hp") == 96, "actual boar starts with exactly96 health: %s/%s" % [manager.enemies[0].hp, manager.enemies[0].maximum("hp")])
+	_check(manager.enemies[0].inventory.get_instances().size() == 5 and manager.enemies[0].inventory.get_instances().all(func(entry: Dictionary): return entry.item_id.begins_with("base.organ.cslz_")), "enemy uses five own organs instead of dog claw")
 	var dog := manager.registry.get_enemy(GameManager.ENEMY_ID)
-	for key in ["max_stamina", "max_spirit"]:
+	for key in ["max_spirit"]:
 		_check(manager.enemies[0].definition[key] == dog[key], "unchanged dog parameter: " + key)
-	_check(manager.enemies[0].definition.max_hp == 80 and manager.enemies[0].board.resource_bonuses.is_empty() and manager.enemies[0].maximum("stamina") == 100, "boar has no board bonuses")
-	_check(manager.simulation.state.phase == GameState.Phase.BATTLE, "fight enters active battle without another start click")
+	_check(manager.enemies[0].definition.max_hp == 96 and manager.enemies[0].board.resource_bonuses.is_empty() and manager.enemies[0].maximum("stamina") == 98, "boar has no board bonuses")
+	_check(manager.enemies[0].armor_type == "轻甲" and manager.enemies[0].armor == 0 and manager.enemies[0].maximum("armor") == 6, "actual boar armor matches preview")
+	_check(manager.simulation.state.phase == GameState.Phase.PREPARATION, "encounter waits for explicit battle start")
+	manager.start_battle()
 	_check(manager.loadout_save_path == SAVE and manager._durable_snapshot == before, "battle receives same inventory and isolated path")
 	_check(root.get_children().filter(func(child: Node): return child.has_node("GameManager")).size() == 1, "only one battle scene created")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://artifacts/map-encounter-battle-2k.png")
+	# Isolate victory/return wiring from combat balance. The real roster is now
+	# empty, so this fixture no longer has two free test allies to win the fight.
+	manager.enemies[0].hp = 1
 	for second in 180:
 		if manager.simulation.state.is_finished():
 			break
@@ -222,7 +227,7 @@ func _run() -> void:
 	_check(reentered.travel.current_node_id == POINT and reentered.encounter_dialog.visible, "passing respawned enemy auto encounters again")
 	_check(not reentered.event_state.respawn_encounter(EVENT), "cannot respawn during active encounter")
 	_click(reentered.encounter_dialog.fight_button.get_global_rect().get_center())
-	await _settle()
+	await _wait_for_battle()
 	var retreat_battle := current_scene
 	var retreat_manager: GameManager = retreat_battle.get_node("GameManager")
 	retreat_manager.set_process(false)
@@ -231,7 +236,7 @@ func _run() -> void:
 		if retreat_manager.simulation.state.is_finished():
 			break
 		retreat_manager._process(1.0)
-	_check(retreat_manager.simulation.state.result == "retreat" and not MapEventState.session_completed.has(EVENT), "combat retreat does not defeat enemy")
+	_check(retreat_manager.simulation.state.result == "defeat" and retreat_manager.simulation.state.finish_reason == "retreat" and not MapEventState.session_completed.has(EVENT), "combat retreat loses without removing enemy")
 	var retreat_ui = retreat_battle.get_node("MainUI")
 	retreat_ui._refresh()
 	_click(retreat_ui._exit_button.get_global_rect().get_center())
@@ -247,9 +252,17 @@ func _run() -> void:
 	print("MAP ENCOUNTER: ", checks, " checks, ", failures, " failures")
 	quit(1 if failures else 0)
 
+func _wait_for_battle() -> void:
+	var deadline := Time.get_ticks_msec() + 5000
+	while Time.get_ticks_msec() < deadline:
+		if current_scene != null and current_scene.has_node("GameManager") and not root.get_node("MapPresentation").transitioning:
+			return
+		await process_frame
+
 func _wait_for_map() -> void:
-	for attempt in 200:
-		if current_scene != null and current_scene.has_method("_try_start_event"):
+	var deadline := Time.get_ticks_msec() + 6000
+	while Time.get_ticks_msec() < deadline:
+		if current_scene != null and current_scene.has_method("_try_start_event") and not root.get_node("MapPresentation").transitioning:
 			await _settle()
 			return
 		await create_timer(0.01).timeout

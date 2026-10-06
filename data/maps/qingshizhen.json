@@ -1,6 +1,7 @@
 {
   "id": "base.map.qingshizhen",
   "name": "青石镇",
+  "music": ["res://assets/bgm-qingshizhen-1.mp3", "res://assets/bgm-qingshizhen-2.mp3"],
   "background": "res://assets/map-qingshizhen.webp",
   "marker": "res://assets/mapdot.webp",
   "source_size": [3317, 1865],

@@ -23,7 +23,7 @@ func click(point: Vector2, button: MouseButton = MOUSE_BUTTON_LEFT) -> void:
 		event.global_position = point
 		event.button_index = button
 		event.pressed = pressed
-		Input.parse_input_event(event)
+		root.push_input(event, true)
 		await process_frame
 	await settle()
 
@@ -33,8 +33,9 @@ func capture(label: String) -> void:
 		root.get_texture().get_image().save_png("res://artifacts/t01-" + label + ".png")
 
 func run() -> void:
+	create_timer(45).timeout.connect(func(): quit(2))
 	AudioServer.set_bus_mute(0,true)
-	root.size = Vector2i(1920,1080)
+	root.size = Vector2i(2560,1440)
 	for suffix in ["", ".tmp", ".bak"]:
 		if FileAccess.file_exists(SAVE + suffix): DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE + suffix))
 	var map: Control = load("res://scenes/maps/qingshihewan.tscn").instantiate()
@@ -49,7 +50,7 @@ func run() -> void:
 	var key := InputEventKey.new()
 	key.physical_keycode = KEY_I
 	key.pressed = true
-	Input.parse_input_event(key)
+	root.push_input(key, true)
 	await settle()
 	check(map.is_inventory_open(), "I opens real inventory")
 	check(map.inventory_catalog.visible_entries().size() == 115, "actual inventory lists115")
@@ -79,14 +80,14 @@ func run() -> void:
 	check(manager.startup_error.is_empty() and manager.simulation.t01 != null, "F6 loads shared rules and saved map layout")
 	check(manager.party[0].spirit == 50 and manager.party[0].definition.max_stamina == 50 and manager.party[0].stamina == 55, "approved spirit50; original stamina50 plus board5 unchanged")
 	manager.set_adjustment(true)
-	ui.storage_panel.set_category("pill")
+	ui.storage_panel.catalog.set_filter("category", "pill")
 	await settle()
 	var stock_id := "owned.base.map_item.hemostatic_pill.0"
-	var storage_card: StorageItemCard
-	for entry: StorageItemCard in ui.storage_panel.cards.values():
-		if entry.item.id == "base.map_item.hemostatic_pill": storage_card = entry
+	var storage_card: BattleInventoryItemCard
+	for entry: BattleInventoryItemCard in ui.storage_panel.cards.values():
+		if entry.entry.id == "base.map_item.hemostatic_pill": storage_card = entry
 	check(storage_card != null and storage_card.quantity_picker != null, "battle quantity picker")
-	(ui.storage_panel._grid.get_parent() as ScrollContainer).ensure_control_visible(storage_card)
+	(ui.storage_panel.grid.get_parent() as ScrollContainer).ensure_control_visible(storage_card)
 	await settle()
 	storage_card.quantity_picker.value = 1
 	rect = storage_card.quantity_picker.get_global_rect()
@@ -94,7 +95,7 @@ func run() -> void:
 	check(storage_card.selected_quantity() == 2 and not root.gui_is_dragging(), "battle spin selects2 without dragging")
 	await click(storage_card.get_global_rect().get_center(), MOUSE_BUTTON_RIGHT)
 	check(manager.party[0].inventory.get_instances()[0].units.size() == 7, "battle chosen quantity merges into same item cell")
-	ui.storage_panel.set_category("throwable")
+	ui.storage_panel.catalog.set_filter("category", "throwable")
 	await settle()
 	check(ui.storage_panel.cards.size() == 5, "five blank-image throwable cards accessible")
 	await capture("battle-storage")

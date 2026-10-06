@@ -1447,7 +1447,13 @@
     "spirit_cost": 0,
     "source_location": "t01-08-物品资产主表-260928.xlsx::03_防具!A6",
     "uses_per_unit": 0,
-    "lineage": "t01.lineage.cloth_water"
+    "lineage": "t01.lineage.cloth_water",
+    "link_reward": {
+      "capacity": 3,
+      "recovery": 2,
+      "stamina": 2
+    },
+    "equipment_note": "套装：布护臂和布护腿同时与粗布甲紧贴，粗布甲护甲上限额外+3，粗布甲恢复护甲额外+2，且额外恢复2体力。"
   },
   {
     "id": "base.map_item.t01_0011",
@@ -1481,6 +1487,7 @@
     "armor_capacity": 10,
     "armor_gain": 5,
     "lineage": "t01.lineage.iron_armor",
+    "equipment_note": "套装：铁护臂和铁护腿同时与铁甲紧贴，铁甲护甲上限额外+3，铁甲恢复护甲额外+2。",
     "art_outline_px": 1
   },
   {

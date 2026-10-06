@@ -19,7 +19,7 @@
     "id": "bleed",
     "name": "流血",
     "kind": "debuff",
-    "icon": "res://assets/debuff-jin.webp",
+    "icon": "res://assets/debuff-jin-2.webp",
     "color": "ffe98c",
     "description": "首次2秒后开始，每秒按当前层数直接扣气血，绕过盾甲；生效起持续5秒，追加刷新到期但保留下一跳。"
   },
@@ -43,7 +43,7 @@
     "id": "entangle",
     "name": "缠绕",
     "kind": "debuff",
-    "icon": "res://assets/debuff-mu.webp",
+    "icon": "res://assets/debuff-mu-2.webp",
     "color": "72efa5",
     "description": "合格主动火伤或雷伤每层增加2个百分点伤害；对应元素每轮触发一次并消耗1层。"
   },
@@ -67,7 +67,7 @@
     "id": "frost",
     "name": "寒霜",
     "kind": "debuff",
-    "icon": "res://assets/debuff-shui.webp",
+    "icon": "res://assets/debuff-shui-2.webp",
     "color": "9befff",
     "description": "合格主动水攻成功命中时，先施加再消耗1层，冻结全阵盘CD与发动0.5秒；不同攻击的冻结可累加。"
   },
@@ -91,7 +91,7 @@
     "id": "armor_break",
     "name": "破甲",
     "kind": "debuff",
-    "icon": "res://assets/debuff-huo.webp",
+    "icon": "res://assets/debuff-huo-2.webp",
     "color": "ffca72",
     "description": "主动火伤经盾后，按每层1%绕过护甲扣气血；施加后保持10秒，再每秒减1层。"
   },
@@ -115,7 +115,7 @@
     "id": "injury",
     "name": "重伤",
     "kind": "debuff",
-    "icon": "res://assets/debuff-tu.webp",
+    "icon": "res://assets/debuff-tu-2.webp",
     "color": "f6b86a",
     "description": "首次2秒后生效，减少等同层数的每次气血恢复，并增加原本非零的体力和灵力费用；第3秒起每秒减1层。"
   },
@@ -139,7 +139,7 @@
     "id": "dispel",
     "name": "驱散",
     "kind": "debuff",
-    "icon": "res://assets/debuff-feng.webp",
+    "icon": "res://assets/debuff-feng-2.webp",
     "color": "a2f7dc",
     "description": "首次2秒后随机拆除Buff；核心Buff逐层、持续药效和免疫按整份扣除。余层无目标时暂存5秒，有新目标后1秒再结算。"
   },
@@ -164,7 +164,7 @@
     "id": "chain",
     "name": "连环",
     "kind": "debuff",
-    "icon": "res://assets/debuff-lei.webp",
+    "icon": "res://assets/debuff-lei-2.webp",
     "color": "e2b3ff",
     "description": "未引雷的合格主动雷攻触发一记雷属性派生闪电，基础伤害为扣层前层数的2倍，消耗1层；派生闪电不递归引雷或连环。"
   }

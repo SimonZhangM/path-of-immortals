@@ -24,6 +24,25 @@ func full_cd(id: String) -> int:
 func attach(id: String, inserted: bool) -> void:
 	var item: ItemData = sim._definitions[id]
 	timers[id] = {"reactive": 9_000_000.0, "entry": float(sim.insertion_cooldown_usec if inserted else 0), "cd": float(0 if item.combat.get("first_ready", false) else full_cd(id)), "at": sim.state.time_usec, "speed": 1.0, "token": 0, "auto": true, "enabled": true, "request": false, "selection": "", "speed_modifiers": {}}
+	if item.combat.has("resource_threshold"):
+		timers[id].threshold_active = false
+		timers[id].speed = 0.0
+
+func threshold_met(id: String) -> bool:
+	var threshold: Dictionary = sim._definitions[id].combat.get("resource_threshold", {})
+	if threshold.is_empty(): return true
+	var owner: PartyMemberState = sim._owners[id]
+	return float(owner.get(threshold.resource)) * threshold.denominator <= owner.maximum(threshold.resource) * threshold.numerator
+
+func update_threshold(id: String, at: int) -> void:
+	var t: Dictionary = timers[id]
+	if not t.has("threshold_active"): return
+	var active := threshold_met(id)
+	if t.threshold_active == active: return
+	settle(id, at)
+	t.threshold_active = active
+	t.cd = float(full_cd(id))
+	sync(id, at)
 
 func settle(id: String, at: int) -> void:
 	var t: Dictionary = timers[id]
@@ -47,6 +66,7 @@ func blocked(id: String, at: int, listener := false) -> bool:
 	return listener and not sim.state.item_runtime[id].entered
 
 func speed(id: String, at: int) -> float:
+	if not timers[id].get("threshold_active", true) and timers[id].entry <= 0: return 0
 	if blocked(id, at) or sim.state.item_runtime[id].get("barrier_stopped", false): return 0
 	var value := 1.0
 	for modifier: float in timers[id].speed_modifiers.values(): value += modifier
@@ -91,20 +111,34 @@ func wake(at: int) -> void:
 		var rt: Dictionary = sim.state.item_runtime[id]
 		var item: ItemData = sim._definitions[id]
 		var member: PartyMemberState = sim._owners[id]
+		update_threshold(id, at)
 		if item.combat.get("barrier_full_stop", false) and member.barrier >= T01CombatRules.barrier_capacity(member):
 			rt.barrier_stopped = true
 		if t.speed != speed(id, at): sync(id, at)
-		if blocked(id, at) or rt.get("barrier_stopped", false) or t.entry > 0 or t.cd > 0: continue
+		if blocked(id, at) or not t.get("threshold_active", true) or rt.get("barrier_stopped", false) or t.entry > 0 or t.cd > 0: continue
 		rt.entered = true
 		if item.cooldown_usec <= 0: continue
 		if item.combat.get("prepared", false):
 			rt.prepared = t.enabled
 			continue
 		if not t.auto and not t.request: continue
-		if member.paralyzed_until > at or not sim._can_activate(id): continue
+		if member.paralyzed_until > at: continue
+		if not sim._can_activate(id):
+			# Ordinary automatic weapons waste this cycle when they cannot pay.
+			# Recovery later in the cycle must not release a saved attack.
+			if (item.category == "weapon" or item.combat.get("waste_on_insufficient", false)) and t.auto:
+				var fee := sim.t01.costs(member, item, at)
+				if member.stamina < fee.x or member.spirit < fee.y:
+					t.request = false
+					restart(id, at)
+			continue
 		t.request = false
 		if consume_block(id, at): continue
 		sim._activate({"instance_id": id, "version": sim._versions[id]}, at)
+	# Re-evaluate only after discrete actions, including resource changes made
+	# by an item later in row order. No frame-driven threshold polling.
+	for id: String in ids:
+		if timers.has(id): update_threshold(id, at)
 
 func event(payload: Dictionary, at: int) -> void:
 	var id: String = payload.id
@@ -239,6 +273,7 @@ func has_future_action(id: String, at: int) -> bool:
 		for status: Dictionary in p.get("statuses",[]):
 			if status.status in ["流血","灼烧","毒蚀","润脉"]: meaningful = true
 	if not meaningful: return false
+	if item.combat.has("resource_threshold") and not threshold_met(id): return false
 	var cost := sim.t01.costs(member, item, at)
 	cost += sim.cultivation.participant_cost(member,id,at)
 	if member.stamina < cost.x or member.spirit < cost.y:

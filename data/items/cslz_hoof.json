@@ -1,0 +1,33 @@
+{
+  "id": "base.organ.cslz_hoof",
+  "name": "獠猪铁蹄",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-cslz-3.webp",
+  "cooldown": 3,
+  "stamina_cost": 3,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "用户确认：赤鬃獠猪五件器官 2026-10-05",
+    "hit_chance": 0.9,
+    "waste_on_insufficient": true
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 3,
+      "damage_type": "钝击"
+    }
+  ]
+}

@@ -17,7 +17,8 @@ var formation_icons: Array[String] = []
 var _owned: Dictionary = {}
 var _seed_owned: Dictionary = {}
 var granted_rewards: Dictionary = {}
-var content_grants: Dictionary = {"t01.115.v1": true}
+var battle_rewards: Dictionary = {}
+var content_grants: Dictionary = {"t01.115.v1": true, "qinglan.boards.v1": true, "starter.bag.v1": true}
 var _rng := RandomNumberGenerator.new()
 
 # Explicitly retired test definitions only; unrelated unknown save IDs still fail.
@@ -43,7 +44,7 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 	for record: Dictionary in definitions:
 		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(record.get("buff_bonuses", {})):
 			return "物品常驻增益加成无效。"
-		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable"]:
+		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable", "beast", "board"]:
 			return "此物品尚未接入行囊战斗：" + String(record.name)
 		if record.get("rule_version", 0) == 0 and record.category in ["artifact", "pill"] and (not record.get("effects") is Array or not ContentRegistry._positive_number(record.get("cooldown"))):
 			return "法器／丹药缺少战斗效果或轮转：" + String(record.name)
@@ -67,10 +68,16 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 		else:
 			raw.effects = record.effects.duplicate(true)
 			raw.uses_per_unit = record.get("uses_per_unit", 0)
+		if record.category == "board":
+			if registry.get_board(record.get("board_layout", "")) == null or registry.get_cultivation(record.get("required_cultivation", "")).is_empty():
+				return "阵盘引用或境界无效。"
+			raw.combat = {"description": record.description}
+			raw.tags = [record.get("board_level", registry.get_cultivation(record.required_cultivation).name)]
+			if not String(record.get("faction", "")).is_empty(): raw.tags.append(record.faction)
 		if not registry.register_item(raw):
 			return "行囊物品无效：" + String(record.name) + "\n" + "\n".join(registry.errors)
 		records[record.id] = record.duplicate(true)
-		for index in int(record.quantity):
+		for index in (int(record.quantity) if record.get("grant_on_start", true) else 0):
 			var id := "owned.%s.%d" % [record.id, index]
 			_owned[id] = String(record.id)
 			storage.put(_unit(id, record.id))
@@ -131,12 +138,35 @@ func storage_records() -> Array:
 		record.quantity = entry.units.size()
 		record.storage_id = entry.instance_id
 		record.identified = can_use_item(entry.item_id)
+		if record.category == "board": record.active_board = record.board_layout == board.id
 		result.append(record)
 	return result
 
 func can_use_item(item_id: String) -> bool:
 	var item := registry.get_item(item_id)
+	if item != null and item.category == "board":
+		var required := registry.get_cultivation(records[item_id].required_cultivation)
+		return int(registry.get_cultivation(cultivation_rank_id).get("order", -1)) >= int(required.order)
 	return item != null and MapItemQuality.usable(item.quality, registry.get_cultivation(cultivation_rank_id))
+
+func select_board(item_id: String) -> String:
+	if inventory.locked: return "当前不能更换阵盘。"
+	var record: Dictionary = records.get(item_id, {})
+	if record.get("category") != "board" or item_id not in _owned.values(): return "未持有此阵盘。"
+	if not can_use_item(item_id): return "尚未达到此阵盘要求的境界。"
+	var selected := registry.get_board(record.board_layout)
+	if selected == board: return ""
+	var next_inventory := InventoryState.new(registry, selected.grid_size)
+	var next_storage := SharedStorage.new()
+	for entry: Dictionary in storage.entries(): next_storage.put(entry)
+	for entry: Dictionary in inventory.get_instances():
+		if next_inventory.put(entry, entry.cell).is_empty(): next_storage.put(entry)
+	board = selected
+	inventory = next_inventory
+	storage = next_storage
+	revision += 1
+	changed.emit()
+	return ""
 
 func drag_data(source: String, id: String, quantity: int = 1) -> Dictionary:
 	var entry := storage.get_entry(id) if source == "storage" else inventory.get_instance(id)
@@ -160,8 +190,10 @@ func placement_kind(data: Variant, cell: Vector2i) -> String:
 	if entry.is_empty() or inventory.locked or not can_use_item(entry.item_id):
 		return "invalid"
 	if data.source == "board":
+		if not inventory.swap_target(data.id, cell).is_empty(): return "swap"
 		return "place" if inventory.can_move(data.id, cell) else "invalid"
 	var item := registry.get_item(entry.item_id)
+	if item.category in ["beast", "board"]: return "invalid"
 	if item.is_consumable():
 		var matching := inventory.matching_stack(item.id)
 		if entry.units.size() > 10:
@@ -243,6 +275,7 @@ func snapshot() -> Dictionary:
 		for unit: Dictionary in entry.units:
 			result.owned_units[unit.id] = entry.item_id
 	result.content_grants = content_grants.duplicate()
+	if not battle_rewards.is_empty(): result.battle_rewards = battle_rewards.duplicate(true)
 	if not granted_rewards.is_empty():
 		result.granted_rewards = granted_rewards.duplicate(true)
 	if not formations.is_empty():
@@ -263,6 +296,9 @@ func restore(raw: Variant) -> String:
 	if not raw is Dictionary:
 		return "行囊存档格式无效。"
 	var grants: Variant = raw.get("granted_rewards", {})
+	var battle_receipts: Variant = raw.get("battle_rewards", {})
+	if not BattleLoot.validate_receipts(battle_receipts, records, registry):
+		return "战斗掉落凭证无效。"
 	if not grants is Dictionary:
 		return "剧情奖励存档格式无效。"
 	var owned := _seed_owned.duplicate()
@@ -289,7 +325,24 @@ func restore(raw: Variant) -> String:
 		if raw.get("version", 1) == 1:
 			for index in int(grant.quantity):
 				owned["reward.%s.%d" % [reward_id, index]] = grant.item_id
-	var checked := _validate_layout(raw, owned, true)
+	if not receipts.get("qinglan.boards.v1", false):
+		for unit_id: String in _seed_owned:
+			if records[_seed_owned[unit_id]].category == "board" and _seed_owned[unit_id] not in owned.values():
+				owned[unit_id] = _seed_owned[unit_id]
+	var selected := registry.get_board(raw.get("board_id", ""))
+	if not receipts.get("starter.bag.v1", false):
+		for unit_id: String in _seed_owned:
+			if _seed_owned[unit_id] == "base.map_item.bag_board" and _seed_owned[unit_id] not in owned.values():
+				owned[unit_id] = _seed_owned[unit_id]
+	if selected == null: return "存档阵盘不存在。"
+	if not selected.required_cultivation.is_empty() and int(registry.get_cultivation(cultivation_rank_id).get("order", -1)) < int(registry.get_cultivation(selected.required_cultivation).get("order", 0)):
+		return "尚未达到存档阵盘要求的境界。"
+	if selected.id != board.id and selected.id != "base.board.bag":
+		var owned_board := false
+		for item_id: String in owned.values():
+			if records[item_id].get("board_layout", "") == selected.id: owned_board = true
+		if not owned_board: return "未持有存档中的阵盘。"
+	var checked := _validate_layout(raw, owned, true, selected)
 	if not checked.error.is_empty():
 		return checked.error
 	if not raw.get("formations", []) is Array:
@@ -310,10 +363,14 @@ func restore(raw: Variant) -> String:
 	_owned = owned
 	content_grants = receipts.duplicate()
 	content_grants["t01.115.v1"] = true
+	content_grants["qinglan.boards.v1"] = true
+	content_grants["starter.bag.v1"] = true
 	granted_rewards = grants.duplicate(true)
+	battle_rewards = battle_receipts.duplicate(true)
 	for grant: Dictionary in granted_rewards.values():
 		grant.quantity = int(grant.quantity)
 	formations = restored_formations
+	board = selected
 	_apply_checked_layout(checked)
 	formations_changed.emit()
 	return ""
@@ -345,11 +402,12 @@ func _validate_formation_layout(raw: Variant) -> Dictionary:
 	_sort_placements(placements)
 	return {"error": "", "layout": {"placements": placements}}
 
-func _validate_layout(raw: Variant, available_owned: Variant = null, return_unusable: bool = false) -> Dictionary:
+func _validate_layout(raw: Variant, available_owned: Variant = null, return_unusable: bool = false, selected: BoardLayout = null) -> Dictionary:
 	var owned: Dictionary = _owned if available_owned == null else available_owned
-	if not raw is Dictionary or (raw.get("version") != 1 and raw.get("version") != 2) or raw.get("board_id") != board.id or not raw.get("placements") is Array:
+	if selected == null: selected = board
+	if not raw is Dictionary or (raw.get("version") != 1 and raw.get("version") != 2) or raw.get("board_id") != selected.id or not raw.get("placements") is Array:
 		return {"error": "行囊存档格式、阵盘或版本无效。"}
-	var restored := InventoryState.new(registry, board.grid_size)
+	var restored := InventoryState.new(registry, selected.grid_size)
 	var placements: Array = []
 	var used := {}
 	var seen := {}
@@ -390,7 +448,7 @@ func _validate_layout(raw: Variant, available_owned: Variant = null, return_unus
 	for id: String in owned:
 		if not used.has(id):
 			remaining.put(_unit(id, owned[id]))
-	return {"error": "", "inventory": restored, "storage": remaining, "layout": {"version": 1, "board_id": board.id, "placements": placements}}
+	return {"error": "", "inventory": restored, "storage": remaining, "layout": {"version": 1, "board_id": selected.id, "placements": placements}}
 
 func _apply_checked_layout(checked: Dictionary) -> void:
 	inventory = checked.inventory

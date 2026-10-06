@@ -1,6 +1,7 @@
 {
   "id": "base.map.qingshihewan",
   "name": "青石河湾",
+  "music": ["res://assets/bgm-qingshihewan-1.mp3"],
   "background": "res://assets/gamemap-qingshihewan.webp",
   "marker": "res://assets/mapdot.webp",
   "source_size": [3215, 1835],

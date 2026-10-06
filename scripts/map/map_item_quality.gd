@@ -19,5 +19,20 @@ static func index(quality: String) -> int:
 static func background_path(quality: String) -> String:
 	return "res://assets/level-%d.webp" % (index(quality) + 1)
 
+# Enemy realm starts at mortal (order 0), which maps to 下品, not 凡品.
+# An authored quality is an explicit exception to the source-based default.
+static func material_record(raw: Dictionary, registry: ContentRegistry) -> Dictionary:
+	var record := raw.duplicate(true)
+	if not record.has("quality"):
+		var enemy := registry.get_enemy(record.get("source_enemy_id", ""))
+		var realm := registry.get_cultivation(enemy.get("cultivation_rank", ""))
+		if realm.is_empty(): return {}
+		var order := int(realm.order)
+		if order < 0 or order >= QUALITIES.size(): return {}
+		record.quality = QUALITIES[order]
+	if level(record.quality) == 0: return {}
+	record.card_frame = background_path(record.quality)
+	return record
+
 static func color(quality: String) -> Color:
 	return COLORS[index(quality)]

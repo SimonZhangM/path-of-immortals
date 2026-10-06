@@ -7,6 +7,7 @@ var manager: GameManager
 var item: ItemData
 var entry: Dictionary
 var texture: Texture2D
+var artwork: MapItemArtwork
 
 func configure(game: GameManager, definition: ItemData, instance: Dictionary, footprint: Vector2) -> void:
 	manager = game
@@ -14,11 +15,17 @@ func configure(game: GameManager, definition: ItemData, instance: Dictionary, fo
 	entry = instance.duplicate(true)
 	texture = null if item.icon_path.is_empty() else load(item.icon_path)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	artwork = MapItemArtwork.new()
+	artwork.configure(MapItemArtwork.battle_record(manager, item))
+	artwork.show_behind_parent = true
+	add_child(artwork)
 	set_footprint(footprint)
 
 func set_footprint(footprint: Vector2) -> void:
 	size = footprint
 	position = -size * 0.5
+	if artwork != null: artwork.place_on_board(Rect2(Vector2.ZERO, size))
 	queue_redraw()
 
 static func artwork_rect(footprint: Rect2) -> Rect2:
@@ -28,27 +35,23 @@ static func artwork_rect(footprint: Rect2) -> Rect2:
 
 static func fitted_icon_rect(texture_value: Texture2D, footprint: Rect2, visual_scale: float = 1.0) -> Rect2:
 	var interior := artwork_rect(footprint)
-	var factor := minf(interior.size.x / texture_value.get_width(), interior.size.y / texture_value.get_height()) * visual_scale
-	var dimensions := texture_value.get_size() * factor
-	var center := MapItemArtwork.TextureMetrics.alignment_center(texture_value)
+	var used := Rect2(MapItemArtwork.TextureMetrics.inspect(texture_value).used_rect)
+	var factor := minf(interior.size.x / used.size.x, interior.size.y / used.size.y) * visual_scale
+	var dimensions := used.size * factor
+	var center := MapItemArtwork.TextureMetrics.alignment_center(texture_value) - used.position
 	return Rect2(interior.get_center() - center * factor, dimensions)
 
 func _draw() -> void:
-	if texture == null:
-		draw_string(get_theme_default_font(), Vector2(0, size.y * 0.5), item.display_name, HORIZONTAL_ALIGNMENT_CENTER, size.x, 24, Color("eadbb9"))
-	else:
-		draw_texture_rect(texture, fitted_icon_rect(texture, Rect2(Vector2.ZERO, size)), false)
 	var rect := Rect2(Vector2.ZERO, size).grow(-4)
 	var id: String = entry.get("instance_id", "")
 	var remaining := manager.simulation.cooling_remaining_usec(id)
 	if remaining > 0:
-		draw_rect(rect, Color(0.25, 0.27, 0.29, 0.42))
-		draw_string(get_theme_default_font(), Vector2(rect.position.x, rect.get_center().y + 10), "%ds" % ceili(remaining / 1_000_000.0), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 34, Color.WHITE)
+		CooldownRing.paint_text(self, InventoryView.rotation_ring_center(rect, item), str(ceili(remaining / 1_000_000.0)), 32)
 	elif item.cooldown_usec > 0:
 		var seconds := item.cooldown_usec / 1_000_000.0
 		var progress := manager.simulation.activation_progress(id) if manager.simulation.state.item_runtime.has(id) else 0.0
 		var left := seconds if manager.simulation.state.phase == GameState.Phase.PREPARATION else seconds * (1.0 - progress)
-		var center := Vector2(rect.position.x + 24 if item.is_consumable() else rect.end.x - 24, rect.end.y - 24)
+		var center := InventoryView.rotation_ring_center(rect, item)
 		CooldownRing.paint(self, center, 23, left, seconds, CooldownRing.tint(manager.registry, item.element))
 	if item.is_consumable():
 		var badge := Rect2(rect.end - Vector2(28, 25), Vector2(28, 25))

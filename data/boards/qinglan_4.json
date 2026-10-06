@@ -1,0 +1,29 @@
+{
+  "id": "base.board.qinglan_4",
+  "name": "青岚 · 流霞",
+  "texture": "res://assets/zhenpan-qlz-4.webp",
+  "source_size": [
+    1254,
+    1400
+  ],
+  "x_lines": [
+    137,
+    328,
+    529,
+    726,
+    926,
+    1119
+  ],
+  "y_lines": [
+    231,
+    430,
+    630,
+    830,
+    1031,
+    1235
+  ],
+  "faction": "青岚宗",
+  "required_cultivation": "base.cultivation.golden_core",
+  "resource_bonuses": {},
+  "buff_bonuses": {}
+}

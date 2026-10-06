@@ -1,0 +1,9 @@
+{
+  "id": "base.board.qingshihewan_chisong_liaozhu",
+  "name": "赤鬃獠猪阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-qshw-cslz.webp",
+  "source_size": [1254, 1254],
+  "x_lines": [178, 476, 778, 1080],
+  "y_lines": [191, 477, 767, 1037]
+}

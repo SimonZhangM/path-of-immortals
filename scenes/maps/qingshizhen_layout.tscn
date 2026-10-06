@@ -1,4 +1,4 @@
-[gd_scene load_steps=84 format=3]
+[gd_scene load_steps=85 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/map-qingshizhen.webp" id="1_bg"]
 [ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="2_dot"]
@@ -332,9 +332,16 @@ point_count = 5
 [sub_resource type="Curve2D" id="Curve_33"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -52.56, 3.96, 1242, 1458, 86.76, 4.14, -86.76, -4.14, 950, 1480, 70.2, 10.8, -70.2, -10.8, 760, 1435, 66.6, 0.9, -66.6, -0.9, 560, 1420, 67.14, -8.82, -67.14, 8.82, 390, 1430, 36.54, -7.02, 0, 0, 187, 1469)
+"points": PackedVector2Array(0, 0, -52.56, 3.96, 1242, 1458, 86.76, 4.14, -57.933355, -2.764455, 950, 1480, 37.085979, 12.427298, 0, 0, 821, 1450.486575)
 }
-point_count = 6
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve_40"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -18.453348, -6.183611, 821, 1450.486575, 23.324464, 3.588379, -70.2, -10.8, 760, 1435, 66.6, 0.9, -66.6, -0.9, 560, 1420, 67.14, -8.82, -67.14, 8.82, 390, 1430, 36.54, -7.02, 0, 0, 187, 1469)
+}
+point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_34"]
 bake_interval = 4.0
@@ -611,11 +618,18 @@ route_id = "base.map.qingshizhen.route.r32"
 start_point = NodePath("../../Points/N23")
 end_point = NodePath("../../Points/N26")
 
-[node name="R33_N24_N25" type="Path2D" parent="Routes"]
+[node name="R33_N24_N31" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_33")
 script = ExtResource("4_route")
 route_id = "base.map.qingshizhen.route.r33"
 start_point = NodePath("../../Points/N24")
+end_point = NodePath("../../Points/N31")
+
+[node name="R40_N31_N25" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_40")
+script = ExtResource("4_route")
+route_id = "base.map.qingshizhen.route.r40"
+start_point = NodePath("../../Points/N31")
 end_point = NodePath("../../Points/N25")
 
 [node name="R34_N24_N26" type="Path2D" parent="Routes"]
@@ -856,6 +870,13 @@ texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n25"
 location_note = "西南出口"
+
+[node name="N31" type="Sprite2D" parent="Points"]
+position = Vector2(821, 1450.486575)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshizhen.point.n31"
 
 [node name="N26" type="Sprite2D" parent="Points"]
 position = Vector2(1654, 1521)

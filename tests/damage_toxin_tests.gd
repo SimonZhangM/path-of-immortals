@@ -189,7 +189,7 @@ func _test_effect_pipeline() -> void:
 	_check(f.hero.toxin_stacks == 0 and f.hero.inventory.get_instance("detox").is_empty(), "real detox consumes bottle and clears toxin")
 	f.battle.request_retreat()
 	f.battle.advance(3)
-	_check(f.battle.state.result == "retreat", "retreat stops battle normally")
+	_check(f.battle.state.result == "defeat" and f.battle.state.finish_reason == "retreat", "retreat stops battle as defeat")
 	var hp: float = f.hero.hp
 	f.battle.advance(100)
 	_near(f.hero.hp, hp, "no effects execute after finish")

@@ -218,11 +218,12 @@ func refresh() -> void:
 	cultivation_caption.text = "修为 %d%%" % roundi(100.0 * state.cultivation_progress / state.cultivation_required)
 	for key in bars:
 		var maximum: int = state.cultivation_required if key == "cultivation" else state.maxima[key]
-		var current: int = state.cultivation_progress if key == "cultivation" else state.resources[key]
+		var current: float = state.cultivation_progress if key == "cultivation" else state.resources[key]
 		# Range treats a collapsed 0..0 interval as full; zero-capacity spirit must be empty.
 		bars[key].max_value = maxi(1, maximum)
+		bars[key].step = 0.0
 		bars[key].value = current
-		values[key].text = "%d/%d" % [current, maximum]
+		values[key].text = "%s/%d" % [EffectSystem.number_text(current), maximum]
 
 func _layout() -> void:
 	if content == null:

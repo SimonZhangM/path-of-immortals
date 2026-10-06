@@ -1,0 +1,32 @@
+{
+  "id": "base.board.qinglan_6",
+  "name": "青岚 · 太虚",
+  "display_scale": 1.1,
+  "texture": "res://assets/zhenpan-qlz-6.webp",
+  "source_size": [
+    1086,
+    1448
+  ],
+  "x_lines": [
+    108,
+    254,
+    399,
+    544,
+    690,
+    834,
+    976
+  ],
+  "y_lines": [
+    266,
+    416,
+    567,
+    718,
+    870,
+    1021,
+    1172
+  ],
+  "faction": "青岚宗",
+  "required_cultivation": "base.cultivation.spirit_transformation",
+  "resource_bonuses": {},
+  "buff_bonuses": {}
+}

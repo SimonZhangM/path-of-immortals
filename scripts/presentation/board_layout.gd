@@ -9,6 +9,9 @@ var x_lines: Array
 var y_lines: Array
 var resource_bonuses: Dictionary
 var buff_bonuses: Dictionary
+var faction: String
+var required_cultivation: String
+var display_scale: float
 var grid_size: Vector2i:
 	get:
 		return Vector2i(x_lines.size() - 1, y_lines.size() - 1)
@@ -22,11 +25,17 @@ func _init(raw: Dictionary) -> void:
 	y_lines = raw["y_lines"].duplicate()
 	resource_bonuses = raw.get("resource_bonuses", {}).duplicate(true)
 	buff_bonuses = raw.get("buff_bonuses", {}).duplicate(true)
+	faction = raw.get("faction", "")
+	required_cultivation = raw.get("required_cultivation", "")
+	display_scale = float(raw.get("display_scale", 1.0))
 
 func resource_bonus(resource: String) -> int:
 	return int(resource_bonuses.get(resource, 0))
 
 static func validate(raw: Dictionary) -> bool:
+	if not ContentRegistry._positive_number(raw.get("display_scale", 1.0)): return false
+	for key in ["faction", "required_cultivation"]:
+		if not raw.get(key, "") is String: return false
 	if not preload("res://scripts/map/map_buff_bonuses.gd").valid(raw.get("buff_bonuses", {})):
 		return false
 	var bonuses: Variant = raw.get("resource_bonuses", {})
@@ -58,7 +67,7 @@ static func plain() -> BoardLayout:
 	return BoardLayout.new({"id": "base.board.plain", "source_size": [1000, 1000], "x_lines": [16, 258, 500, 742, 984], "y_lines": [16, 258, 500, 742, 984]})
 
 func scale_for(view_size: Vector2) -> float:
-	return minf(view_size.x / source_size.x, view_size.y / source_size.y)
+	return minf(view_size.x / source_size.x, view_size.y / source_size.y) * display_scale
 
 func art_rect(view_size: Vector2) -> Rect2:
 	var dimensions := source_size * scale_for(view_size)

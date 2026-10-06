@@ -11,7 +11,9 @@ var stat_bars: Dictionary = {}
 var stat_values: Dictionary = {}
 var stat_icons: Dictionary = {}
 var resources: VBoxContainer
-var armor_status: Label
+var defense_resources: VBoxContainer
+var armor_status: DefenseResourceRow
+var barrier_status: DefenseResourceRow
 var _title: Label
 var portrait: TextureRect
 var portrait_frame: TextureRect
@@ -24,6 +26,7 @@ var _frame_override: Dictionary = {}
 var nameplate: TextureRect
 var name_label: Label
 var hit_effects: Array[HitFeedback] = []
+var portrait_vertical_offset := 0.0
 
 func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) -> void:
 	_frame_override = frame_override.duplicate(true)
@@ -39,13 +42,20 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 	add_child(_content)
 	portrait = TextureRect.new()
 	portrait.texture = load(member.definition["portrait"])
+	if member.definition.has("portrait_region"):
+		var region: Array = member.definition.portrait_region
+		var cropped := AtlasTexture.new()
+		cropped.atlas = portrait.texture
+		cropped.region = Rect2(region[0], region[1], region[2], region[3])
+		portrait.texture = cropped
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var cultivation: Dictionary = member.cultivation if _frame_override.is_empty() else _frame_override
+	if member.definition.get("portrait_includes_frame", false): cultivation = {}
 	if not cultivation.is_empty():
 		_portrait_slot = Control.new()
 		_portrait_slot.custom_minimum_size = Vector2(236, 236)
-		_portrait_slot.clip_contents = true
+		_portrait_slot.clip_contents = is_zero_approx(portrait_vertical_offset)
 		_content.add_child(_portrait_slot)
 		_portrait_slot.add_child(portrait)
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -53,7 +63,8 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 		mask.shader = preload("res://scripts/ui/portrait_mask.gdshader")
 		portrait.material = mask
 		portrait_frame = TextureRect.new()
-		portrait_frame.texture = load(cultivation["portrait_frame"])
+		portrait_frame.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		portrait_frame.texture = _frame_texture(cultivation)
 		portrait_frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		portrait_frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		portrait_frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -67,10 +78,12 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 		image_slot.custom_minimum_size = Vector2(236, 236)
 		_content.add_child(image_slot)
 		image_slot.add_child(portrait)
-		portrait.position = Vector2(-18, -18)
+		portrait.position = Vector2(-18, -18 + portrait_vertical_offset)
 		portrait.size = Vector2(272, 272)
-	var details := VBoxContainer.new()
-	details.alignment = BoxContainer.ALIGNMENT_CENTER
+	# Fixed resource origin: extra armor/status lines never recenter the bars
+	# or enlarge the portrait's HBox minimum height.
+	var details := Control.new()
+	details.custom_minimum_size.x = 154
 	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content.add_child(details)
 	var title := Label.new()
@@ -112,6 +125,15 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 	resources = VBoxContainer.new()
 	resources.add_theme_constant_override("separation", 3)
 	details.add_child(resources)
+	resources.anchor_right = 1
+	resources.offset_top = 67
+	resources.offset_bottom = 67
+	defense_resources = VBoxContainer.new()
+	defense_resources.name = "DefenseResources"
+	defense_resources.add_theme_constant_override("separation",3)
+	defense_resources.anchor_right = 1
+	details.add_child(defense_resources)
+	defense_resources.minimum_size_changed.connect(_layout_defense_rows)
 	var keys := ["hp", "stamina", "spirit"]
 	var icons := ["res://assets/zhuangtai-qx.webp", "res://assets/zhuangtai-tl.webp", "res://assets/zhuangtai-ll.webp"]
 	var colors := [Color("af3549"), Color("8cd259"), Color("5598eb")]
@@ -133,16 +155,17 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 		trimmed.atlas = source
 		trimmed.region = source.get_image().get_used_rect()
 		icon.texture = trimmed
+		icon.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon.size = Vector2(32, 32)
 		icon.z_index = 1
 		row.add_child(icon)
 		stat_icons[key] = icon
-		var value := Label.new()
+		var value := preload("res://scripts/ui/fixed_separator_value.gd").new()
 		value.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		value.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		value.left_inset = 15 # Exclude the part of the bar covered by the 32px icon.
+		value.shadow = true
 		value.add_theme_font_size_override("font_size", 16)
 		value.add_theme_color_override("font_color", Color("fff9e9"))
 		value.add_theme_color_override("font_shadow_color", Color("000000", 0.9))
@@ -150,17 +173,42 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 		bar.add_child(value)
 		stat_bars[key] = bar
 		stat_values[key] = value
+	barrier_status = DefenseResourceRow.new()
+	defense_resources.add_child(barrier_status)
+	barrier_status.configure("灵盾", "res://assets/player-status-sheild.webp", Color("aebbbd"))
+	armor_status = DefenseResourceRow.new()
+	defense_resources.add_child(armor_status)
+	armor_status.configure("护甲", "res://assets/player-status-armor.webp", Color("c5ae78"))
 	_ignore_mouse(_content)
 	refresh(member)
+	_layout_defense_rows.call_deferred()
+
+func _layout_defense_rows() -> void:
+	# Stack upward from the fixed health row; hide/show never shifts health.
+	defense_resources.offset_bottom = resources.position.y - 3
+	defense_resources.offset_top = defense_resources.offset_bottom - defense_resources.get_combined_minimum_size().y
 
 func _layout_portrait() -> void:
 	var source := portrait_frame.texture.get_size()
 	var frame_size := source * minf(_portrait_slot.size.x / source.x, _portrait_slot.size.y / source.y)
 	var origin := (_portrait_slot.size - frame_size) * 0.5
 	portrait.position = origin + _portrait_window.position * frame_size
+	portrait.position.y += portrait_vertical_offset
+	portrait_frame.offset_top = portrait_vertical_offset
+	portrait_frame.offset_bottom = portrait_vertical_offset
 	portrait.size = _portrait_window.size * frame_size
 	portrait.material.set_shader_parameter("portrait_size", portrait.size)
 	_layout_nameplate()
+
+func _frame_texture(style: Dictionary) -> Texture2D:
+	var source: Texture2D = load(style.portrait_frame)
+	if not style.has("portrait_frame_region"):
+		return source
+	var region: Array = style.portrait_frame_region
+	var atlas := AtlasTexture.new()
+	atlas.atlas = source
+	atlas.region = Rect2(region[0], region[1], region[2], region[3])
+	return atlas
 
 func _layout_nameplate() -> void:
 	if nameplate != null:
@@ -168,7 +216,7 @@ func _layout_nameplate() -> void:
 		nameplate.size = Vector2(210, 48) * display_scale
 		nameplate.position = Vector2(portrait.position.x + portrait.size.x * 0.5, portrait.position.y + portrait.size.y - 7) * display_scale - Vector2(nameplate.size.x * 0.5, 0)
 		if _frame_override.is_empty():
-			nameplate.position.y = 200
+			nameplate.position.y = 200 + portrait_vertical_offset * display_scale
 
 func _draw() -> void:
 	if resources != null:
@@ -188,7 +236,7 @@ func set_primary(primary: bool) -> void:
 
 func refresh(member: RefCounted) -> void:
 	name_label.text = "队友 · %s" % member.definition["name"] if member is CompanionState else str(member.definition["name"])
-	if member is not CompanionState and not member.cultivation.is_empty():
+	if member is not CompanionState and not member.cultivation.is_empty() and not member.definition.get("portrait_includes_frame", false):
 		name_label.text += " · %s" % member.cultivation["name"]
 	if member.cultivation_rank_id != _last_cultivation_id:
 		_last_cultivation_id = member.cultivation_rank_id
@@ -198,22 +246,14 @@ func refresh(member: RefCounted) -> void:
 			_title.text += "（%s）" % cultivation["name"]
 			if portrait_frame != null:
 				var frame_style: Dictionary = cultivation if _frame_override.is_empty() else _frame_override
-				portrait_frame.texture = load(frame_style["portrait_frame"])
+				portrait_frame.texture = _frame_texture(frame_style)
 				var window: Array = frame_style["portrait_window"]
 				_portrait_window = Rect2(window[0], window[1], window[2], window[3])
 				_layout_portrait()
 	if member is CompanionState:
 		return
-	if armor_status == null:
-		armor_status = Label.new()
-		armor_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		armor_status.add_theme_font_size_override("font_size", 16)
-		armor_status.add_theme_color_override("font_color", Color("dec995"))
-		resources.add_child(armor_status)
-	armor_status.visible = member.maximum("armor") > 0
-	armor_status.text = "护甲 %s / %d" % [EffectSystem.number_text(member.armor), member.maximum("armor")]
-	if member.armor_type != "无甲":
-		armor_status.text += " · " + member.armor_type
+	barrier_status.refresh(member.barrier, T01CombatRules.barrier_capacity(member), member.has_defense_item("barrier"))
+	armor_status.refresh(member.armor, member.maximum("armor"), member.has_defense_item("armor"))
 	var values := [member.hp, member.stamina, member.spirit, member.maximum("hp")]
 	if values == _last_values:
 		return

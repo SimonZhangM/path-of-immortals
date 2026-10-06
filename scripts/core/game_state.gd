@@ -8,6 +8,7 @@ var legacy_fixed_defense := false
 var time_usec: int = 0
 var finished_at_usec: int = -1
 var result: String = ""
+var finish_reason: String = ""
 var retreat_at_usec: int = -1
 var revision: int = 0
 var teams: Array = []

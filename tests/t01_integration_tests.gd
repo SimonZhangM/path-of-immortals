@@ -44,16 +44,16 @@ func run() -> void:
 		finish()
 		return
 	loadout = created.state
-	check(loadout.records.size() == 115 and loadout.storage_records().size() == 115, "115 real inventory kinds")
+	check(loadout.records.size() == 120 and loadout.storage_records().size() == 115, "115 initial inventory kinds plus five unowned beast materials")
 	var empty_icons := 0
 	var lower := 0
 	for record: Dictionary in loadout.records.values():
 		if record.icon.is_empty(): empty_icons += 1
-		if record.quality == "下品": lower += 1
+		if record.quality == "下品" and record.get("grant_on_start", true): lower += 1
 		var item := registry.get_item(record.id)
 		check(item != null and item.effects == record.effects and item.element == record.element and item.spirit_cost == record.spirit_cost, "lossless mapping " + record.id)
 		check(not ItemTooltip.effect_text(item).is_empty(), "tooltip " + record.id)
-	check(empty_icons == 105 and lower == 27, "105 blank new images / 27 r1")
+	check(empty_icons == 61 and lower == 27, "61 remaining blank images / 27 r1")
 	check(not EffectSystem.validate_definition({"trigger":"on_activate", "effect":"unknown", "value":1}), "unknown effect rejected")
 	check(not EffectSystem.validate_definition({"trigger":"on_activate", "effect":"apply_status", "status":"未知", "value":1,"target":"enemy","gate":"hit"}), "unknown status rejected")
 	var invalid := T01Definition.item_record(loadout.records["base.map_item.qingshi_short_sword"])
@@ -149,7 +149,7 @@ func test_rules() -> void:
 	check(p.hp == 103, "first tick exactly2s despite removed source")
 	var sim2 := make_battle("base.map_item.qingshi_short_sword", [["armor","base.map_item.coarse_cloth_armor",Vector2i(1,0)]])
 	sim2.start()
-	check(sim2.state.teams[0][0].armor == 7, "C17 armor starts equipment baseline")
+	check(sim2.state.teams[0][0].armor == 0 and sim2.state.teams[0][0].maximum("armor") == 7, "C17 equipment grants capacity only; current armor starts at zero")
 	var buffs := make_battle("base.map_item.t01_0088")
 	var owner: PartyMemberState = buffs.state.teams[0][0]
 	check(buffs.t01.apply_status(owner,"生机",5,owner,0), "apply regen")
@@ -158,7 +158,7 @@ func test_rules() -> void:
 	check(buffs.t01.apply_status(owner,"雷蕴",10,owner,0) and owner.thunder_shields.size() == 1 and buffs.t01.layers(owner,"雷蕴") == 0, "thunder grant success even net stacks0")
 	# Explicit mixed-grade member identity and actual adjacency.
 	var linked := make_battle("base.map_item.coarse_cloth_armor", [["arm","base.map_item.t01_0066",Vector2i(1,0)],["leg","base.map_item.t01_0015",Vector2i(1,1)]])
-	check(linked.state.teams[0][0].maximum("armor") == 14, "mixed link lowest reward once (7+3+2+2)")
+	check(linked.state.teams[0][0].maximum("armor") == 15, "mixed link coarse cloth reward once (7+3+2+3)")
 
 func tick(rules: T01CombatRules, member: PartyMemberState, status: String, at: int) -> void:
 	rules.tick_status({"member": member, "status": status}, at)
@@ -350,7 +350,9 @@ func test_stacks_and_control() -> void:
 	a.stamina = 50
 	sim._wake_items(sim.state.time_usec)
 	sim.advance(0.001)
-	check(sim.state.item_runtime["test.item"].activation_count == 1,"ready attack wakes immediately after resource recovery")
+	check(sim.state.item_runtime["test.item"].activation_count == 0,"resource recovery cannot release a wasted weapon cycle")
+	sim.advance(5.499)
+	check(sim.state.item_runtime["test.item"].activation_count == 1,"weapon attacks after the next complete cooldown")
 	var frozen := make_battle("base.map_item.qingshi_short_sword")
 	frozen.start()
 	var p: PartyMemberState = frozen.state.teams[0][0]
@@ -376,6 +378,9 @@ func test_stacks_and_control() -> void:
 
 func test_assets() -> void:
 	for record: Dictionary in loadout.records.values():
+		if record.category == "beast":
+			check(not InventoryState.new(registry).add_item("material", record.id, Vector2i.ZERO), "material cannot equip " + record.name)
+			continue
 		var battle := make_battle(record.id)
 		for index in 100: battle.t01.forced_rolls.append(0.5)
 		var member: PartyMemberState = battle.state.teams[0][0]

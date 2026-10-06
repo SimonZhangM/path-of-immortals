@@ -1,0 +1,26 @@
+{
+  "id": "base.board.qinglan_1",
+  "name": "青岚 · 晓岚",
+  "texture": "res://assets/zhenpan-qlz-1.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    124,
+    375,
+    628,
+    881,
+    1131
+  ],
+  "y_lines": [
+    245,
+    495,
+    747,
+    999
+  ],
+  "faction": "青岚宗",
+  "required_cultivation": "base.cultivation.mortal",
+  "resource_bonuses": {},
+  "buff_bonuses": {}
+}

@@ -288,11 +288,18 @@ func activate(id: String, at: int) -> void:
 	var hit := false
 	var hp_loss := 0.0
 	if not attack.is_empty() and target != null:
+		# One pending enhancement per concrete target item, consumed on an actual
+		# attack attempt (including a miss), never on an unaffordable cycle.
+		attack.value += float(owner.pending_item_attacks.get(item.id, 0))
+		owner.pending_item_attacks.erase(item.id)
 		var result := attack_item(owner, target, item, attack, at, source)
 		hit = result.hit
 		hp_loss = result.hp_loss
 	for e: Dictionary in item.effects_for("on_activate"):
 		match e.effect:
+			"prime_item_attack":
+				owner.pending_item_attacks[e.target_item] = e.value
+				emit("attack_primed", at, {"owner_name": owner.definition.name, "item_id": e.target_item, "value": e.value})
 			"damage": pass
 			"apply_status":
 				if e.status == "寒霜" and not attack.is_empty():
@@ -302,7 +309,11 @@ func activate(id: String, at: int) -> void:
 			"restore_capped":
 				restore(owner, e.resource, e.value, at, floorf(float(owner.maximum(e.resource)) * e.cap_numerator / e.cap_denominator))
 			"restore_instant": restore(owner, e.resource, e.value, at)
-			"restore_armor": restore(owner, "armor", e.value + (link_bonus(owner).get("recovery", {}).get(id, 0)), at)
+			"restore_armor":
+				var bonus := link_bonus(owner)
+				restore(owner, "armor", e.value + bonus.recovery.get(id, 0), at)
+				var stamina_bonus: int = bonus.stamina_recovery.get(id, 0)
+				if stamina_bonus > 0: restore(owner, "stamina", stamina_bonus, at)
 			"restore_ticks":
 				_serial += 1
 				owner.temporary_effects[item.id] = {"until": at + roundi(e.interval * e.ticks * 1_000_000), "token": _serial}
@@ -711,7 +722,7 @@ func refresh_equipment(member: PartyMemberState, excluded_id: String = "") -> vo
 		if item.armor_slot in ["身甲", "衣甲"]:
 			body = item.armor_type
 			member.body_element=item.element
-	var selected := "无甲"
+	var selected := String(member.definition.get("innate_armor_type", "无甲"))
 	var largest := 0
 	for armor: String in armor_weights:
 		if armor_weights[armor] > largest or armor_weights[armor] == largest and armor == body:
@@ -734,7 +745,7 @@ func refresh_equipment(member: PartyMemberState, excluded_id: String = "") -> vo
 	member.armor = minf(member.armor, member.maximum("armor"))
 
 func link_bonus(member: PartyMemberState, excluded_id: String = "") -> Dictionary:
-	var result := {"capacity": 0, "recovery": {}}
+	var result := {"capacity": 0, "recovery": {}, "stamina_recovery": {}}
 	var groups := {}
 	for entry: Dictionary in member.inventory.get_instances():
 		if entry.instance_id == excluded_id: continue
@@ -742,26 +753,40 @@ func link_bonus(member: PartyMemberState, excluded_id: String = "") -> Dictionar
 		var lineage: String = item.combat.get("lineage", "")
 		if lineage.is_empty(): continue
 		if not groups.has(lineage): groups[lineage] = {}
-		groups[lineage][item.armor_slot] = {"entry": entry, "item": item}
+		if not groups[lineage].has(item.armor_slot): groups[lineage][item.armor_slot] = []
+		groups[lineage][item.armor_slot].append({"entry": entry, "item": item})
 	for lineage: String in groups:
 		var group: Dictionary = groups[lineage]
 		if not group.has_all(["身甲", "护具·臂", "护具·腿"]): continue
-		var body: Dictionary = group["身甲"]
+		var body: Dictionary = group["身甲"][0]
 		var low: bool = body.item.quality == "下品"
 		var valid := true
 		for slot in ["护具·臂", "护具·腿"]:
-			var part: Dictionary = group[slot]
-			low = low or part.item.quality == "下品"
-			var body_rect := Rect2i(body.entry.cell, body.item.grid_size)
-			var part_rect := Rect2i(part.entry.cell, part.item.grid_size)
-			var adjacent := false
-			for y in body_rect.size.y:
-				for x in body_rect.size.x:
-					for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
-						if part_rect.has_point(body_rect.position + Vector2i(x, y) + offset): adjacent = true
-			valid = valid and adjacent
+			var selected: Dictionary = {}
+			# Keep all same-slot accessories; a remote extra must not mask a
+			# touching member. Inventory order selects one stable valid trio.
+			for part: Dictionary in group[slot]:
+				if _link_adjacent(body, part):
+					selected = part
+					break
+			if selected.is_empty():
+				valid = false
+				break
+			low = low or selected.item.quality == "下品"
 		if valid:
 			var iron := lineage == "t01.lineage.iron_armor"
-			result.capacity += (3 if low else 4) if iron else (2 if low else 3)
-			result.recovery[body.entry.instance_id] = 2 if iron else 1
+			var reward: Dictionary = body.item.combat.get("link_reward", {})
+			result.capacity += int(reward.get("capacity", (3 if low else 4) if iron else (2 if low else 3)))
+			result.recovery[body.entry.instance_id] = int(reward.get("recovery", 2 if iron else 1))
+			if int(reward.get("stamina",0)) > 0:
+				result.stamina_recovery[body.entry.instance_id] = int(reward.stamina)
 	return result
+
+static func _link_adjacent(body: Dictionary, part: Dictionary) -> bool:
+	var body_rect := Rect2i(body.entry.cell, body.item.grid_size)
+	var part_rect := Rect2i(part.entry.cell, part.item.grid_size)
+	for y in body_rect.size.y:
+		for x in body_rect.size.x:
+			for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				if part_rect.has_point(body_rect.position + Vector2i(x, y) + offset): return true
+	return false

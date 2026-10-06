@@ -2,6 +2,8 @@ class_name BattleActionButton
 extends Button
 
 var artwork: Texture2D
+var caption_reference := ""
+var icon_reference: Texture2D
 var action_icon: Texture2D:
 	set(value):
 		if action_icon != value:
@@ -24,6 +26,7 @@ static func trimmed_art(path: String) -> Texture2D:
 	return trimmed
 
 func configure(path: String, minimum: Vector2) -> void:
+	texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	artwork = trimmed_art(path)
 	custom_minimum_size = minimum
 	focus_mode = Control.FOCUS_NONE
@@ -53,6 +56,15 @@ func _process(delta: float) -> void:
 	if not is_equal_approx(previous, press_depth):
 		queue_redraw()
 
+func caption_origin() -> Vector2:
+	var font := get_theme_default_font()
+	var label := caption if caption_reference.is_empty() else caption_reference
+	var reference := action_icon if icon_reference == null else icon_reference
+	var width := font.get_string_size(label,HORIZONTAL_ALIGNMENT_LEFT,-1,25).x
+	var icon_width := 0.0 if reference == null else reference.get_width() * (36.0 / maxf(reference.get_width(), reference.get_height()))
+	var gap := 17.0 if reference != null else 0.0
+	return Vector2((size.x - width + icon_width + gap) * .5, (size.y - font.get_height(25)) * .5 + font.get_ascent(25))
+
 func _draw() -> void:
 	if artwork == null:
 		return
@@ -67,14 +79,14 @@ func _draw() -> void:
 		return
 	var font := get_theme_default_font()
 	var font_size := 25
-	var text_width := font.get_string_size(caption, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 	var icon_size := Vector2.ZERO
 	if action_icon != null:
 		icon_size = action_icon.get_size() * (36.0 / maxf(action_icon.get_width(), action_icon.get_height()))
 	var gap := 17.0 if action_icon != null else 0.0
-	var group_left := (size.x - text_width - icon_size.x - gap) * 0.5
-	var baseline := (size.y - font.get_height(font_size)) * 0.5 + font.get_ascent(font_size)
-	var text_origin := Vector2(group_left + icon_size.x + gap, baseline)
+	var text_origin := caption_origin()
+	var reference := action_icon if icon_reference == null else icon_reference
+	var slot_width := 0.0 if reference == null else reference.get_width() * (36.0 / maxf(reference.get_width(), reference.get_height()))
+	var group_left := text_origin.x - gap - slot_width + (slot_width - icon_size.x) * .5
 	draw_string(font, text_origin + Vector2(1, 1), caption, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color("071b20", tint.a))
 	draw_string(font, text_origin, caption, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color("fff5da") * tint)
 	if action_icon != null:

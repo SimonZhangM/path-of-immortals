@@ -30,13 +30,16 @@ const STORAGE_SEARCH_WIDTH := 200.0
 const STORAGE_CONTENT_INSET := 22
 const STORAGE_TITLE_ICON_X_OFFSET := -42.0 / 300.0 * 26.0
 const MIDDLE_GAP := 18.0
-const MIDDLE_WIDTH := BODY_HEIGHT - FORMATION_HEIGHT - MIDDLE_GAP
+const STORAGE_WIDTH := 763.1666667 # Remove one original 131.8333px card plus its 15px gap.
+const MIDDLE_WIDTH := 718.0 + (910.0 - STORAGE_WIDTH)
 const BOARD_PANEL_RADIUS := 13.0
 const BOARD_BACKGROUND_BORDER_INSET := 72.0
 const BOARD_BACKGROUND_TOP_REFERENCE_SCALE := 0.9801
 const BOARD_BACKGROUND_CONTENT_SCALE := 0.970299
 const BOARD_BACKGROUND_LEFT_EXTENSION := 1.0
-const BOARD_BACKGROUND_X_SHIFT := -1.0
+const BOARD_BACKGROUND_X_SHIFT := -7.5
+const BOARD_BACKGROUND_ZOOM := 1.05
+const BOARD_BACKGROUND_LINE_SOURCE_X := 638.0
 const BOARD_BACKGROUND_HORIZONTAL_EXTENSION := 5.0
 const BOARD_BACKGROUND_BOTTOM_EXTENSION := 5.0
 const STORAGE_CARD_GAP := 15
@@ -50,6 +53,8 @@ const CATEGORY_SELECTED_BORDER := Color("78aef0")
 var catalog: MapInventoryCatalog
 var loadout: MapLoadoutState
 var loadout_board: MapLoadoutBoard
+var board_change_dialog: MapExitDialog
+var _pending_board_change: Dictionary = {}
 var config: Dictionary
 var stage: Control
 var background_art: TextureRect
@@ -110,6 +115,7 @@ var _category_rule: Control
 var _quality_values: Array[String] = []
 
 func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLayout, equipment: MapLoadoutState = null, player_status: MapPlayerStatus = null) -> void:
+	if equipment != null: board = equipment.board
 	catalog = model
 	loadout = equipment
 	_bonus_board = board
@@ -151,15 +157,22 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 	middle.add_theme_constant_override("separation", int(MIDDLE_GAP))
 	body.add_child(middle)
 	_build_board(middle, board)
-	_build_formations(middle)
 	_build_storage()
-	_build_formation_dialog()
+	if loadout != null:
+		board_change_dialog = MapExitDialog.new()
+		board_change_dialog.name = "BoardChangeDialog"
+		board_change_dialog.message.text = "确定更换阵盘吗？"
+		board_change_dialog.confirm_button.get_node("Caption").text = "确认"
+		add_child(board_change_dialog)
+		board_change_dialog.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+		board_change_dialog.confirmed.connect(_confirm_board_change)
+		board_change_dialog.cancelled.connect(close_board_change_dialog)
+		loadout_board.board_change_requested.connect(_open_board_change_dialog)
 	catalog.changed.connect(_refresh)
 	resized.connect(_layout)
 	_refresh()
 	_layout()
 	if loadout != null:
-		loadout.formations_changed.connect(_refresh_formations)
 		loadout.changed.connect(func(): catalog.replace_entries(loadout.storage_records()))
 		loadout.changed.connect(_refresh_board_capacity)
 		loadout.changed.connect(_refresh_buff_bonuses)
@@ -171,6 +184,32 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 			add_child(player)
 			sounds[kind] = player
 		loadout.interaction.connect(func(kind: String): sounds[kind].play())
+
+func is_board_change_dialog_open() -> bool:
+	return board_change_dialog != null and board_change_dialog.visible
+
+func _open_board_change_dialog(data: Dictionary) -> void:
+	if not visible or is_board_change_dialog_open() or not loadout_board.can_request_board_change(data): return
+	_pending_board_change = data.duplicate(true)
+	search.release_focus()
+	board_change_dialog.present(loadout.records[loadout.drag_entry(data).item_id].name)
+
+func close_board_change_dialog() -> void:
+	_pending_board_change.clear()
+	if board_change_dialog != null: board_change_dialog.hide()
+
+func _confirm_board_change() -> void:
+	if not is_board_change_dialog_open(): return
+	if not loadout_board.can_request_board_change(_pending_board_change):
+		board_change_dialog.error_label.text = "阵盘状态已变化，请取消后重试。"
+		board_change_dialog.confirm_button.disabled = true
+		return
+	var error := loadout.select_board(loadout.drag_entry(_pending_board_change).item_id)
+	if not error.is_empty():
+		board_change_dialog.error_label.text = error
+		return
+	loadout.interaction.emit("place")
+	close_board_change_dialog()
 
 func _theme() -> Theme:
 	var result := Theme.new()
@@ -474,9 +513,13 @@ func _build_sidebar(board: BoardLayout) -> void:
 	cultivation_bonus_value = _attribute_row(properties, "cultivation", "修为", load("res://assets/player-status-level.webp"), "修炼速度的额外加成，可由阵盘提供。", "+0%", kai, true)
 	var buffs: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_buffs.json"))
 	for buff: Dictionary in buffs:
-		if buff.id == "counter":
-			_rule(properties)
+		if buff.id not in ["armor", "shield"]: continue
 		buff_bonus_values[buff.id] = _attribute_row(properties, buff.id, buff.name, load("res://assets/buff-%s.webp" % buff.icon), buff.description, "+0", kai)
+	# Preserve the remaining heading/resource rows' positions after removing 7 buffs.
+	var removed_rows_space := Control.new()
+	removed_rows_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	removed_rows_space.custom_minimum_size.y = 7 * 42 + 1
+	properties.add_child(removed_rows_space)
 	_add_panel_border(sidebar, 18.0)
 	_layout_sidebar_art()
 
@@ -531,6 +574,8 @@ func _refresh_buff_bonuses() -> void:
 	var rank := {}
 	var equipped: Array = []
 	var board := loadout.board if loadout != null else _bonus_board
+	for key in board_bonus_values:
+		board_bonus_values[key].text = "+%d" % board.resource_bonus(key)
 	if loadout != null:
 		if _bonus_player != null:
 			rank = loadout.registry.get_cultivation(_bonus_player.cultivation_rank_id)
@@ -603,9 +648,14 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 			BOARD_BACKGROUND_LEFT_EXTENSION + BOARD_BACKGROUND_HORIZONTAL_EXTENSION * 2.0,
 			BOARD_BACKGROUND_BOTTOM_EXTENSION
 		)
+		# Lock the authored vertical line after translation, not the image center.
+		var pivot_uv := Vector2((BOARD_BACKGROUND_LINE_SOURCE_X - scaled_region_position.x) / scaled_region_size.x, 0.5)
+		backdrop.position -= backdrop.size * pivot_uv * (BOARD_BACKGROUND_ZOOM - 1.0)
+		backdrop.size *= BOARD_BACKGROUND_ZOOM
 		_layout_panel_art(backdrop, board_panel, BOARD_PANEL_RADIUS)
 	)
-	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	board_panel.custom_minimum_size.y = MIDDLE_WIDTH
 	var column := _column(board_panel, 10)
 	var row := _section_heading(column, "阵盘", "res://assets/title-zhenpan.webp")
 	var capacity_row := HBoxContainer.new()
@@ -628,7 +678,7 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 		loadout_board.configure(loadout)
 		board_art = loadout_board
 	board_art.name = "BoardArtwork"
-	board_art.texture = load(board.texture_path)
+	if loadout == null: board_art.texture = load(board.texture_path)
 	board_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	board_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	board_art.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -665,6 +715,7 @@ func _layout_panel_border(panel: Control, rim: ColorRect) -> void:
 	(rim.material as ShaderMaterial).set_shader_parameter("panel_size", panel.size)
 
 func _refresh_board_capacity() -> void:
+	if loadout != null: _board_total_cells = loadout.board.grid_size.x * loadout.board.grid_size.y
 	var occupied := loadout.inventory.occupied_cells() if loadout != null else 0
 	board_capacity.text = "%d/%d" % [occupied, _board_total_cells]
 
@@ -1229,7 +1280,7 @@ func _build_storage() -> void:
 	content_stack.add_child(scroll)
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	grid = InventoryGrid.new()
-	grid.columns = 6
+	grid.columns = 5
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", STORAGE_CARD_GAP)
 	grid.add_theme_constant_override("v_separation", STORAGE_CARD_ROW_GAP)
@@ -1372,6 +1423,14 @@ func _layout() -> void:
 	body.size = Vector2(BODY_WIDTH + extra_width, BODY_HEIGHT)
 
 func _input(event: InputEvent) -> void:
+	if visible and is_board_change_dialog_open():
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed: close_board_change_dialog()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventKey and event.pressed:
+			if event.keycode == KEY_ESCAPE or event.is_action_pressed("map_inventory"): close_board_change_dialog()
+			get_viewport().set_input_as_handled()
+		return
 	if not visible or not event is InputEventMouseButton or event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:
 		return
 	if is_formation_dialog_open():
@@ -1390,7 +1449,7 @@ func _input(event: InputEvent) -> void:
 		return
 	# Route the small edit target before the enclosing card, matching the modal
 	# buttons above. Limit hit testing to the visible scroll area.
-	if not formation_scroll.get_global_rect().has_point(event.position):
+	if formation_scroll == null or not formation_scroll.get_global_rect().has_point(event.position):
 		return
 	for card in formation_cards.get_children():
 		if not card.has_meta("formation_id") or not card.get_global_rect().has_point(event.position):

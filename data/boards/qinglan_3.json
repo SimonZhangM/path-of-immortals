@@ -1,0 +1,28 @@
+{
+  "id": "base.board.qinglan_3",
+  "name": "青岚 · 凝翠",
+  "texture": "res://assets/zhenpan-qlz-3.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    113,
+    322,
+    526,
+    731,
+    935,
+    1140
+  ],
+  "y_lines": [
+    218,
+    422,
+    631,
+    834,
+    1043
+  ],
+  "faction": "青岚宗",
+  "required_cultivation": "base.cultivation.foundation",
+  "resource_bonuses": {},
+  "buff_bonuses": {}
+}

@@ -33,7 +33,7 @@ static func is_buff(status: String) -> bool:
 	return not element.is_empty() and STATUS_GROUPS[element][0] == status
 
 static func runtime_error(raw: Dictionary) -> String:
-	if raw.get("rule_version", 0) not in [0, 1]:
+	if raw.get("rule_version", 0) != 0 and raw.get("rule_version", 0) != 1:
 		return "unsupported rule_version"
 	if raw.get("rule_version", 0) == 0:
 		return ""
@@ -48,8 +48,24 @@ static func runtime_error(raw: Dictionary) -> String:
 	for flag in ["first_ready", "barrier_full_stop"]:
 		if not combat.get(flag, false) is bool:
 			return "T01 flag must be boolean: " + flag
+	if not combat.get("waste_on_insufficient", false) is bool:
+		return "waste_on_insufficient must be boolean"
+	if combat.has("link_reward"):
+		var reward: Variant = combat.link_reward
+		if raw.get("category") != "armor" or raw.get("armor_slot") != "身甲" or String(combat.get("lineage", "")).is_empty() or not reward is Dictionary:
+			return "link_reward requires a lineage body armor"
+		for key in ["capacity", "recovery", "stamina"]:
+			var amount: Variant = reward.get(key, 0)
+			if not (amount is int or amount is float) or not is_finite(amount) or amount < 0 or amount != floorf(amount):
+				return "link_reward must contain nonnegative integers: " + key
+	if combat.has("resource_threshold"):
+		var threshold: Variant = combat.resource_threshold
+		if not threshold is Dictionary or threshold.get("resource") not in ["hp", "stamina", "spirit"]:
+			return "invalid resource threshold"
+		if not ContentRegistry._positive_integer(threshold.get("numerator")) or not ContentRegistry._positive_integer(threshold.get("denominator")) or threshold.numerator > threshold.denominator:
+			return "invalid resource threshold fraction"
 	for effect: Dictionary in raw.effects:
-		if effect.get("effect") not in ["damage", "apply_status", "restore_capped", "restore_ticks", "restore_instant", "restore_armor", "cleanse_toxin", "barrier", "resistance", "cast_spell"]:
+		if effect.get("effect") not in ["damage", "apply_status", "restore_capped", "restore_ticks", "restore_instant", "restore_armor", "cleanse_toxin", "barrier", "resistance", "cast_spell", "prime_item_attack"]:
 			return "T01 effect is not implemented: " + str(effect.get("effect"))
 		if effect.get("effect") == "damage":
 			var chance: Variant = combat.get("hit_chance")
@@ -63,6 +79,8 @@ static func valid_effect(e: Dictionary) -> bool:
 	if e.get("trigger") == "on_attacked" and (e.get("effect") != "apply_status" or not ContentRegistry._positive_number(e.get("cooldown"))):
 		return false
 	match e.get("effect"):
+		"prime_item_attack":
+			return e.get("trigger") == "on_activate" and e.get("target_item") is String and e.target_item.begins_with("base.") and e.get("target_name") is String and ContentRegistry._positive_number(e.get("value"))
 		"cast_spell":
 			return e.get("trigger") == "on_activate" and e.get("opcode") in CultivationLibrary.OPCODES
 		"apply_status":

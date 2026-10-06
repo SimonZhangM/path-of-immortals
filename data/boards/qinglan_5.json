@@ -1,0 +1,30 @@
+{
+  "id": "base.board.qinglan_5",
+  "name": "青岚 · 凌霄",
+  "texture": "res://assets/zhenpan-qlz-5.webp",
+  "source_size": [
+    1254,
+    1454
+  ],
+  "x_lines": [
+    106,
+    276,
+    449,
+    624,
+    798,
+    971,
+    1142
+  ],
+  "y_lines": [
+    347,
+    516,
+    691,
+    865,
+    1037,
+    1212
+  ],
+  "faction": "青岚宗",
+  "required_cultivation": "base.cultivation.nascent_soul",
+  "resource_bonuses": {},
+  "buff_bonuses": {}
+}

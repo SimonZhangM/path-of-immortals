@@ -1,0 +1,27 @@
+{
+  "id": "base.board.qinglan_2",
+  "name": "青岚 · 听风",
+  "texture": "res://assets/zhenpan-qlz-2.webp",
+  "source_size": [
+    1254,
+    1454
+  ],
+  "x_lines": [
+    124,
+    374,
+    627,
+    880,
+    1130
+  ],
+  "y_lines": [
+    219,
+    470,
+    726,
+    980,
+    1231
+  ],
+  "faction": "青岚宗",
+  "required_cultivation": "base.cultivation.qi_refining",
+  "resource_bonuses": {},
+  "buff_bonuses": {}
+}
