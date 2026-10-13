@@ -3,7 +3,7 @@ extends SceneTree
 const RIVER := "res://scenes/maps/qingshihewan.tscn"
 const EAST := "base.map.qingshihewan.point.east_exit"
 const TOWN := "base.map.qingshizhen.point.n25"
-const ENCOUNTER := "base.map.qingshihewan.point.n12"
+const ENCOUNTER := "base.map.qingshihewan.point.n30"
 var checks := 0
 var failures := 0
 var presentation: Node
@@ -114,13 +114,13 @@ func _run() -> void:
 	map._confirm_encounter()
 	while not presentation.transitioning: await process_frame
 	var battle_started := Time.get_ticks_msec()
-	await wait_seconds(0.5)
+	await wait_seconds(0.25)
 	check(current_scene == map and presentation.music_state == "pausing" and presentation.transitioning and presentation._cover.material == null, "battle entry fades picture and audio uniformly")
 	var deadline := Time.get_ticks_msec() + 4000
 	while current_scene == map and Time.get_ticks_msec() < deadline:
 		await process_frame
 	var battle := current_scene
-	check(absf((Time.get_ticks_msec()-battle_started)/1000.0-1.0)<.2, "battle midpoint at one second")
+	check(absf((Time.get_ticks_msec()-battle_started)/1000.0-0.5)<.2, "battle midpoint at half a second")
 	check(battle.has_node("GameManager"), "battle starts after map audio fades")
 	if not battle.has_node("GameManager"):
 		quit(1)
@@ -128,7 +128,7 @@ func _run() -> void:
 	var manager: GameManager = battle.get_node("GameManager")
 	manager.set_process(false)
 	while presentation.transitioning: await process_frame
-	check(absf((Time.get_ticks_msec()-battle_started)/1000.0-2.0)<.3, "battle entry picture and music complete in two seconds")
+	check(absf((Time.get_ticks_msec()-battle_started)/1000.0-1.0)<.3, "battle entry picture and music complete in one second")
 	check(presentation.music.stream_paused and presentation.music_state == "paused", "map stream paused, not stopped")
 	check(manager.enemies[0].hp == 96 and manager.enemies[0].maximum("stamina") == 98 and manager.enemies[0].armor == 0 and manager.enemies[0].maximum("armor") == 6, "real battle matches popup stats")
 	offset = presentation.music.get_playback_position()

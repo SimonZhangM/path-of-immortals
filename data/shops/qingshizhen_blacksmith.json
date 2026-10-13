@@ -1,0 +1,20 @@
+{
+  "id": "base.shop.qingshizhen.blacksmith",
+  "profile": "base.shop_profile.blacksmith",
+  "title": "铁匠铺",
+  "leave_label": "离开铁匠铺",
+  "crafting_tab": true,
+  "description": "以装备打造为主，材料交易为辅。",
+  "products": [
+    {"item_id":"base.material.cutiekuang","category":"ore"},
+    {"item_id":"base.material.chitongkuang","category":"ore"},
+    {
+      "item_id": "base.map_item.t01_0111",
+      "category": "throwable"
+    },
+    {
+      "item_id": "base.map_item.t01_0112",
+      "category": "throwable"
+    }
+  ]
+}

@@ -3,7 +3,10 @@ extends RefCounted
 
 # Authored rarity order; independent of item enhancement level.
 const QUALITIES := ["下品", "凡品", "良品", "上品", "灵品", "玄品", "仙品"]
-const COLORS := [Color("a5a5a5"), Color("51b879"), Color("3296ed"), Color("ed8b28"), Color("b65cde"), Color("e9bd47"), Color("e33d3d")]
+const COLORS := [Color("a5a5a5"), Color("51b879"), Color("3296ed"), Color("ed8b28"), Color("b65cde"), Color("e33d3d"), Color("e9bd47")]
+# Background source numbering differs from rarity/badge order: 7 is red,
+# 6 is gold. Keep progression order independent of artwork filenames.
+const BACKGROUND_LEVELS := [1, 2, 3, 4, 5, 7, 6]
 const UNKNOWN_DESCRIPTION := "此物灵机深藏，你的修为尚不足以参透，暂不可使用。待境界提升后再行探究。"
 
 static func level(quality: String) -> int:
@@ -17,7 +20,7 @@ static func index(quality: String) -> int:
 	return maxi(0, QUALITIES.find(quality))
 
 static func background_path(quality: String) -> String:
-	return "res://assets/level-%d.webp" % (index(quality) + 1)
+	return "res://assets/level-%d.webp" % BACKGROUND_LEVELS[index(quality)]
 
 # Enemy realm starts at mortal (order 0), which maps to 下品, not 凡品.
 # An authored quality is an explicit exception to the source-based default.

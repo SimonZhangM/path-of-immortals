@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n17",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n17",
+  "title": "翻车商道",
+  "description": "商道旁一辆货车翻倒，木箱与货物散落满地。一头赤鬃獠猪正在残骸间徘徊，见你靠近，立即竖起鬃毛，发出低沉的怒吼。",
+  "enemy_id": "base.enemy.chisong_liaozhu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-10.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

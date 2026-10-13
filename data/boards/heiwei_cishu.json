@@ -1,0 +1,22 @@
+{
+  "id": "base.board.heiwei_cishu",
+  "name": "黑尾祠鼠阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-heiweicishu.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    183,
+    474,
+    774,
+    1072
+  ],
+  "y_lines": [
+    188,
+    467,
+    764,
+    1042
+  ]
+}

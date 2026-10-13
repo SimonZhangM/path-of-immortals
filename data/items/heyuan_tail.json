@@ -1,0 +1,34 @@
+{
+  "id": "base.organ.heyuan_tail",
+  "name": "河鼋尾骨",
+  "type": "item",
+  "category": "item",
+  "quality": "下品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    2
+  ],
+  "icon": "res://assets/item-enemy-qingkeheyuan-heyuanweigu.webp",
+  "cooldown": 4.5,
+  "stamina_cost": 3,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "用户确认：青石河湾四怪数据 2026-10-08",
+    "hit_chance": 0.9,
+    "waste_on_insufficient": true,
+    "art_outline_px": 1
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 6,
+      "damage_type": "钝击"
+    }
+  ]
+}

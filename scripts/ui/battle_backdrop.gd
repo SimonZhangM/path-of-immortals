@@ -2,7 +2,13 @@ extends TextureRect
 
 func _ready() -> void:
 	if texture == null:
-		texture = preload("res://assets/backgroundtest.png")
+		# Legacy test enemies without art use a neutral fill, never another enemy's scene.
+		var fill := GradientTexture2D.new()
+		fill.gradient = Gradient.new()
+		fill.gradient.colors = PackedColorArray([Color("18232b"), Color("18232b")])
+		fill.width = 2
+		fill.height = 2
+		texture = fill
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED

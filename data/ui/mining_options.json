@@ -1,0 +1,38 @@
+{
+  "background": "res://assets/tanchuang-wakuang1.webp",
+  "illustration_frame": "res://assets/tanchuang-neiqianbiankuang.webp",
+  "activity": "采矿",
+  "unit": "块",
+  "location_font_size": 23,
+  "item_name_offset_y": -2,
+  "item_tags_offset_y": -1,
+  "method_name_offset_y": 2,
+  "text_buttons": false,
+  "methods": [
+    {"id": "base.gathering.mining_shallow", "name": "浅层敲取", "base": 1, "extra_min": 0, "extra_max": 1, "days": 1, "color": "f1cc72", "button_idle": "res://assets/tanchuang-wakuang-qiancengqiaoqu1.webp", "button_selected": "res://assets/tanchuang-wakuang-qiancengqiaoqu2.webp"},
+    {"id": "base.gathering.mining_vein", "name": "循脉开采", "base": 2, "extra_min": 0, "extra_max": 1, "days": 2, "color": "85c9fa", "button_idle": "res://assets/tanchuang-wakuang-xunmaikaicai1.webp", "button_selected": "res://assets/tanchuang-wakuang-xunmaikaicai2.webp"},
+    {"id": "base.gathering.mining_deep", "name": "深层开凿", "base": 3, "extra_min": 0, "extra_max": 1, "days": 3, "color": "c7a0fa", "button_idle": "res://assets/tanchuang-wakuang-shencengkaizao1.webp", "button_selected": "res://assets/tanchuang-wakuang-shencengkaizao2.webp"}
+  ],
+  "locations": {
+    "base.material.cutiekuang": {
+      "illustration": "res://assets/tanchuang-wakuang-cutiekuang1.webp",
+      "title": "溪湾砂矿",
+      "description": "溪水常年冲刷河滩，黑灰色铁矿散落于砂石之间。",
+      "notes": {
+        "base.gathering.mining_shallow": "拣取浅层矿石，\n省时省力。",
+        "base.gathering.mining_vein": "循着矿石分布，\n逐层挖取。",
+        "base.gathering.mining_deep": "深挖河滩砂层，\n搜寻更多铁矿。"
+      }
+    },
+    "base.material.chitongkuang": {
+      "illustration": "res://assets/tanchuang-wakuang-chitongkuang1.webp",
+      "title": "西崖矿隙",
+      "description": "西侧岩壁裂隙纵横，赤褐色铜矿隐露于碎岩之中。",
+      "notes": {
+        "base.gathering.mining_shallow": "敲取岩壁\n外露的铜矿。",
+        "base.gathering.mining_vein": "顺着赤铜矿脉，\n仔细开采。",
+        "base.gathering.mining_deep": "凿开深处岩层，\n探寻隐蔽矿脉。"
+      }
+    }
+  }
+}

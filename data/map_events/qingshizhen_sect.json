@@ -1,0 +1,13 @@
+{
+  "id": "base.map_event.qingshizhen.sect",
+  "type": "shop",
+  "point_id": "base.map.qingshizhen.point.n01",
+  "trigger": "click",
+  "catalog": "res://data/shops/qingshizhen_sect.json",
+  "presentation": {
+    "title_center_y": 132.5,
+    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-zongmenshangpu.webp",
+    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-zongmenshangpu-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
+  }
+}

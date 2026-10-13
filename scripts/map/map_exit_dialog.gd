@@ -11,6 +11,7 @@ const INNER_WIDTH := 480.0
 const CONTENT_OFFSET_X := -3.0
 const ACTION_GAP := (INNER_WIDTH * 0.5 - MapRewardDialog.ACTION_SIZE.x) * 2.0 / 3.0
 var canvas: Control
+var backing: TextureRect
 var heading: Label
 var message: Label
 var confirm_button: TextureButton
@@ -32,7 +33,7 @@ func _init() -> void:
 	canvas.size = DESIGN_SIZE
 	canvas.mouse_filter = MOUSE_FILTER_IGNORE
 	add_child(canvas)
-	var backing := TextureRect.new()
+	backing = TextureRect.new()
 	var atlas := AtlasTexture.new()
 	atlas.atlas = load("res://assets/UI-jiaohu-size0.webp")
 	# Keep the original display footprint while aligning the new 940px artwork.
@@ -51,6 +52,21 @@ func _init() -> void:
 	cancel_button.pressed.connect(func(): cancelled.emit())
 	error_label = _label("", Rect2(45, 205, 450, 30), 17, Color("ffb9a8"))
 	resized.connect(_layout)
+
+func use_map_exit_art() -> void:
+	# Board-change confirmations share this class but retain their original art.
+	var source: Texture2D = load("res://assets/UI-jiaohu-size-m.webp")
+	var atlas := AtlasTexture.new()
+	atlas.atlas = source
+	atlas.region = preload("res://scripts/map/map_texture_metrics.gd").inspect(source).visible_rect
+	backing.texture = atlas
+	var factor := DESIGN_SIZE.y / atlas.get_height()
+	backing.size = atlas.get_size()*factor
+	backing.position = (DESIGN_SIZE-backing.size)*0.5
+	# The new upper divider is at source y185. Center the old title in its new
+	# header band, without moving the message or either existing action button.
+	var title_center := backing.position.y+((38.0+185.0)*0.5-atlas.region.position.y)*factor
+	heading.position.y = title_center-heading.size.y*0.5
 
 func _label(text: String, rect: Rect2, font_size: int, color: Color, parent: Control = null) -> Label:
 	var label := Label.new()

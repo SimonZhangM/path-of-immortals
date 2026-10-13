@@ -1,0 +1,781 @@
+{
+  "id": "base.npc.suqinghe",
+  "name": "苏清禾",
+  "age": 18,
+  "portrait": "res://assets/UI-portrait-suqinghe.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.suqinghe.welcome",
+  "topics": [
+    {
+      "id": "medical",
+      "label": "医馆近况",
+      "initial": [
+        "base.dialogue.suqinghe.medical.01",
+        "base.dialogue.suqinghe.medical.02",
+        "base.dialogue.suqinghe.medical.03",
+        "base.dialogue.suqinghe.medical.04"
+      ],
+      "revisits": [],
+      "story": []
+    },
+    {
+      "id": "family",
+      "label": "叶伯近况",
+      "initial": [
+        "base.dialogue.suqinghe.family.01",
+        "base.dialogue.suqinghe.family.02",
+        "base.dialogue.suqinghe.family.03"
+      ],
+      "revisits": [],
+      "story": []
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.suqinghe.chat.01",
+        "base.dialogue.suqinghe.chat.02",
+        "base.dialogue.suqinghe.chat.03"
+      ],
+      "revisits": [
+        "base.dialogue.suqinghe.visit.01",
+        "base.dialogue.suqinghe.visit.02",
+        "base.dialogue.suqinghe.visit.03",
+        "base.dialogue.suqinghe.visit.04",
+        "base.dialogue.suqinghe.visit.05",
+        "base.dialogue.suqinghe.visit.06",
+        "base.dialogue.suqinghe.visit.07",
+        "base.dialogue.suqinghe.visit.08"
+      ],
+      "story": [
+        "base.dialogue.suqinghe.story.depart",
+        "base.dialogue.suqinghe.story.return"
+      ]
+    }
+  ],
+  "clues": {
+    "base.clue.qingshihewan.herb_anomaly": "青石河湾药材异常"
+  },
+  "segments": {
+    "base.dialogue.suqinghe.welcome": {
+      "topic": "welcome",
+      "label": "初次相见",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}？你来啦。"
+        },
+        {
+          "speaker": "npc",
+          "text": "先别急，让我瞧瞧……嗯，今天倒没添什么新伤。🙂"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑了笑）怎么，今天不用帮外公忙了？来，先坐。茶刚泡好，还温着呢。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.medical.01": {
+      "topic": "medical",
+      "label": "医馆近况",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "你来得正好，我最近遇着件怪事，还想问问药铺那边有没有察觉。"
+        },
+        {
+          "speaker": "player",
+          "text": "什么事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有几个病人的伤势不重，用的也都是寻常药方，可恢复得比往年慢了些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我重新核对过药方和火候，都没发现什么差错。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.medical.02": {
+      "topic": "medical",
+      "label": "病人为何难愈？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "会不会是他们身子本来就弱？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我起初也是这么想的。可这些病人年岁不同，伤情也不一样，总不能个个都恰巧体弱吧。"
+        },
+        {
+          "speaker": "player",
+          "text": "那会不会是药的问题？"
+        },
+        {
+          "speaker": "npc",
+          "text": "还不好说。我正在把近来几批药材逐一对照，想看看是不是哪里有了变化。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.medical.03": {
+      "topic": "medical",
+      "label": "药材有何变化？",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "说起来，有几味药材确实让我有些在意。"
+        },
+        {
+          "speaker": "npc",
+          "text": "外形看着与往常差不多，可研开以后，药香似乎淡了些。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯最近也在翻以前的收药账簿，会不会是同一回事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那倒值得向外公请教。他识药几十年，比我有经验得多。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过眼下还不能断定，单凭药香变淡，也说不准药性究竟如何。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.medical.04": {
+      "topic": "medical",
+      "label": "药材从何处采来？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "这些药材是从哪里采来的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那些草药有几批是从青石河湾收来的。你平日不是常去那里吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "若是顺路，替我留意一下溪水和岸边草木有没有什么异常。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我下次去时，采几株给你看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好呀。不过先说好了，顺路就行，别为了这点事专门往险处跑。"
+        },
+        {
+          "speaker": "player",
+          "text": "知道了，清禾姐。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（轻轻叹气）你每次都这么说。哪回真让我省心过？😌"
+        }
+      ],
+      "clues": [
+        "base.clue.qingshihewan.herb_anomaly"
+      ]
+    },
+    "base.dialogue.suqinghe.family.01": {
+      "topic": "family",
+      "label": "叶伯近况",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "说起来，外公昨天还念叨你呢。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯又嫌我把药柜摆乱了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这回倒不是。他说你最近认药进步很快，有些生僻的药材，看过两遍就能记住。"
+        },
+        {
+          "speaker": "player",
+          "text": "他当着我的面可没这么说过。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那你就当不知道吧。外公那脾气，你又不是不清楚。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.family.02": {
+      "topic": "family",
+      "label": "叶伯最近忙什么？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "最近叶伯总是翻旧账簿，也不知在查些什么。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你天天在铺子里，反倒跑来问我？"
+        },
+        {
+          "speaker": "player",
+          "text": "我问过，他只让我把每批药材的来处和日期记清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "外公大概在对照往年的收药记录吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "他前阵子也和我说过，山里有几味草药，长势似乎不如从前。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来我得认真帮他查查。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.family.03": {
+      "topic": "family",
+      "label": "我能帮叶伯什么？",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "先把药材的来处、采收时日记清楚，就已经帮上大忙了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为你会让我多进山采几趟药。"
+        },
+        {
+          "speaker": "npc",
+          "text": "采药谁不会呀？能把账记明白才难呢。"
+        },
+        {
+          "speaker": "player",
+          "text": "清禾姐，你怎么也学会拿我说笑了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "跟你从小认识这么多年，还不许我说你两句？"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "难得见你来医馆不是为了药材，也不是为了瞧伤。"
+        },
+        {
+          "speaker": "player",
+          "text": "怎么，我就不能来找你说说话？"
+        },
+        {
+          "speaker": "npc",
+          "text": "能呀，我又没说不行。"
+        },
+        {
+          "speaker": "npc",
+          "text": "壶里还有些热茶，你坐着，我给你倒一杯。"
+        },
+        {
+          "speaker": "player",
+          "text": "清禾姐，你倒是越来越会招待人了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "小时候你哪次过来，不是先找水喝，再问有什么吃的？"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.chat.02": {
+      "topic": "chat",
+      "label": "说起小时候",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "你不会又要提我当年掉进溪里的事吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我可还没提呢，是你自己说的。"
+        },
+        {
+          "speaker": "player",
+          "text": "那次是为了帮你捞药篓。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是呀。药篓倒是捞上来了，你自己的鞋却被水冲走了一只。"
+        },
+        {
+          "speaker": "npc",
+          "text": "明明冻得直打哆嗦，还非说河水一点都不冷。"
+        },
+        {
+          "speaker": "player",
+          "text": "你怎么记得这么清楚……"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑了笑）有些事，就是记得住嘛。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.chat.03": {
+      "topic": "chat",
+      "label": "你也该歇歇了",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "清禾姐，你这医馆总是忙个不停，自己也该歇歇了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这话该我对你说才是。最近你出镇的次数可比从前多了。"
+        },
+        {
+          "speaker": "player",
+          "text": "总不能一辈子都待在药铺里吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我知道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你从小就喜欢听那些仙门修士的故事。如今有机会出去闯闯，自然不会甘心一直留在镇上。"
+        },
+        {
+          "speaker": "player",
+          "text": "你不劝我留下？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（停了停）劝你有用吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过，不管以后走到哪儿，都记得好好照顾自己。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.01": {
+      "topic": "chat",
+      "label": "多泡的一杯茶",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "来得正好，茶还温着呢。"
+        },
+        {
+          "speaker": "player",
+          "text": "你怎么知道我要来？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不知道呀。只是今日多泡了一杯。"
+        },
+        {
+          "speaker": "player",
+          "text": "每天都多泡？"
+        },
+        {
+          "speaker": "npc",
+          "text": "……你问这么细做什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（把茶杯往他面前推了推）喝你的茶吧。🍵"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.02": {
+      "topic": "chat",
+      "label": "衣袖上的破口",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，过来些。"
+        },
+        {
+          "speaker": "player",
+          "text": "怎么了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你袖口都磨破了，自己没瞧见？"
+        },
+        {
+          "speaker": "player",
+          "text": "可能是上山时被树枝勾了一下。"
+        },
+        {
+          "speaker": "npc",
+          "text": "又是树枝。上回划破手背，你也是这么说的。"
+        },
+        {
+          "speaker": "player",
+          "text": "这回真的没受伤。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就好。衣裳破了还能补，人若伤着了，可就要受罪了。"
+        },
+        {
+          "speaker": "player",
+          "text": "清禾姐，你说话越来越像叶伯了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那也是跟你学的。谁让你总叫人操心。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.03": {
+      "topic": "chat",
+      "label": "街口的枣糕",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "清禾姐，今日医馆倒安静。"
+        },
+        {
+          "speaker": "npc",
+          "text": "病人刚走，你来得巧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对了，桌上还有块枣糕，街口新蒸的，你尝尝。"
+        },
+        {
+          "speaker": "player",
+          "text": "你不吃？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我已经吃过啦。"
+        },
+        {
+          "speaker": "player",
+          "text": "怎么每回过来，你这儿总有吃的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑）那还不是有人从小就嘴馋。"
+        },
+        {
+          "speaker": "player",
+          "text": "我什么时候嘴馋了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不嘴馋？小时候药铺的蜜饯是谁偷吃的？"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.04": {
+      "topic": "chat",
+      "label": "认得你的脚步",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，今日怎么来得这么早？"
+        },
+        {
+          "speaker": "player",
+          "text": "我还没进门，你就知道是我？"
+        },
+        {
+          "speaker": "npc",
+          "text": "听脚步就知道啦。"
+        },
+        {
+          "speaker": "player",
+          "text": "这么厉害？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你从小走到门口，总喜欢在门槛前停一下。长这么大，也没改。"
+        },
+        {
+          "speaker": "player",
+          "text": "我自己都没留意。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑了笑）有些小习惯，自己反倒不容易察觉。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.05": {
+      "topic": "chat",
+      "label": "为何学医",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "清禾姐，你每天瞧病、配药，不觉得辛苦吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "偶尔也会呀。尤其遇上拿不准的病症，一整夜都睡不踏实。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你当初怎么还想学医？"
+        },
+        {
+          "speaker": "npc",
+          "text": "小时候总觉得，能把病人治好，是件很了不起的事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "后来真正学了才知道，医术没有尽头。好多病，我现在也束手无策。"
+        },
+        {
+          "speaker": "player",
+          "text": "但你已经帮了很多人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。所以我还想再多学些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "等哪天有人来求医，我希望自己能少说几句“没有办法”。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.06": {
+      "topic": "chat",
+      "label": "一阵清闲",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "今日倒难得清静。"
+        },
+        {
+          "speaker": "player",
+          "text": "清静还不好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然好呀。只是平日忙惯了，突然没了病人，倒不知道该做些什么。"
+        },
+        {
+          "speaker": "player",
+          "text": "那就歇会儿，别总惦记药方。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好，听你的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（她放下手里的医书，望向窗外。）你也坐会儿吧。难得有这样的好天气。"
+        },
+        {
+          "speaker": "player",
+          "text": "嗯。"
+        },
+        {
+          "speaker": "npc",
+          "text": "……就这么坐着，也挺好的。🌿"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.07": {
+      "topic": "chat",
+      "label": "镇外的山",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "清禾姐，你有没有想过去青石镇以外的地方看看？"
+        },
+        {
+          "speaker": "npc",
+          "text": "想过呀。听说河川王城的医馆藏书很多，还有不少地方名医的手札。"
+        },
+        {
+          "speaker": "player",
+          "text": "那以后可以一起去。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（微微一怔）好呀。不过你不是一直想去仙门修炼吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "修炼又不是一辈子不能下山。"
+        },
+        {
+          "speaker": "npc",
+          "text": "也是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（她低头整理了整理桌上的医书。）那我可得好好学医，免得以后真去了王城，连人家的医书都读不明白。🙂"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.visit.08": {
+      "topic": "chat",
+      "label": "不用什么事都一个人扛",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，你近来是不是有心事？"
+        },
+        {
+          "speaker": "player",
+          "text": "没什么，就是有些事还没想明白。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就慢慢想。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你呀，从小就是这样。遇着难事，总想自己先琢磨透了，才肯跟别人说。"
+        },
+        {
+          "speaker": "player",
+          "text": "我只是不想让你们担心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可你什么都不说，人家也会担心呀。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（她放轻了声音。）我不一定能替你解决什么。不过你若想找个人说说，我总是愿意听的。"
+        },
+        {
+          "speaker": "player",
+          "text": "谢谢你，清禾姐。"
+        },
+        {
+          "speaker": "npc",
+          "text": "跟我还说什么谢呀。"
+        }
+      ]
+    },
+    "base.dialogue.suqinghe.story.depart": {
+      "topic": "chat",
+      "label": "即将进入青岚宗",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "听外公说，你要去青岚宗了？"
+        },
+        {
+          "speaker": "player",
+          "text": "嗯，想去试试。"
+        },
+        {
+          "speaker": "npc",
+          "text": "挺好的呀。你小时候不就总盼着这一天吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "清禾姐，你倒一点也不意外。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有什么好意外的？我早知道你不肯一直待在镇上。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（她笑了笑，过了一会儿又开口。）只是到了宗门，恐怕就不像在家里这样自在了。吃饭、歇息，都得自己留心。"
+        },
+        {
+          "speaker": "player",
+          "text": "你怎么又说起这些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么，不爱听啦？"
+        },
+        {
+          "speaker": "player",
+          "text": "没有。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就好。到了那边，记得给外公报个平安。"
+        },
+        {
+          "speaker": "npc",
+          "text": "……有空，也跟我说说山上的事。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.departure_ready"
+      ]
+    },
+    "base.dialogue.suqinghe.story.return": {
+      "topic": "chat",
+      "label": "入宗后第一次回镇",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（她放下手中的药包，眼睛亮了一下。）什么时候回来的？怎么也不提前说一声？"
+        },
+        {
+          "speaker": "player",
+          "text": "刚回镇上，就过来看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑）出去了一趟，倒比从前会说话了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我以前不会说话？"
+        },
+        {
+          "speaker": "npc",
+          "text": "以前呀，三句话里有两句是问有没有吃的。"
+        },
+        {
+          "speaker": "player",
+          "text": "那现在呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "现在……"
+        },
+        {
+          "speaker": "npc",
+          "text": "（她仔细看了看他。）好像长高了些。"
+        },
+        {
+          "speaker": "player",
+          "text": "才多久，哪有那么快。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是吗？那大概是我看错了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "来，先坐着。跟我说说，宗门里是什么模样？"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined",
+        "base.story.qinglan.first_town_return"
+      ]
+    }
+  }
+}

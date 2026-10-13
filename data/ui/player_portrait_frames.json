@@ -1,0 +1,8 @@
+{
+  "base.cultivation.mortal": "res://assets/player-level-1.webp",
+  "base.cultivation.qi_refining": "res://assets/player-level-2.webp",
+  "base.cultivation.foundation": "res://assets/player-level-3.webp",
+  "base.cultivation.golden_core": "res://assets/player-level-4.webp",
+  "base.cultivation.nascent_soul": "res://assets/player-level-5.webp",
+  "base.cultivation.spirit_transformation": "res://assets/player-level-6.webp"
+}

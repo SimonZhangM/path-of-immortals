@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.qingshihewan.chest_n14",
+  "type": "chest",
+  "point_id": "base.map.qingshihewan.point.n39",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.qingshihewan.chest_n14",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-qiaodongshitan1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-qiaodongshitan0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-qiaodongshitan2.webp"
+  },
+  "observation": {
+    "location_name": "桥东石滩",
+    "location_description": "石桥横跨溪流，桥头水势渐缓。岸边碎石与枯木堆积，几块巨石之间留有狭窄的空隙。",
+    "chest_name": "桥畔铁匣",
+    "description": "一只包着铁边的厚木匣靠在岩石旁，匣身坚实，金属表面略有锈迹。双格机关似乎仍在正常运转。",
+    "result_description": "你转动铁匣上的机关，伴随一声沉闷的咔响，左右两格打开，各自露出一件物品。"
+  },
+  "respawn_days": 40
+}

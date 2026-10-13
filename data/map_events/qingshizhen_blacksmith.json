@@ -1,0 +1,13 @@
+{
+  "id": "base.map_event.qingshizhen.blacksmith",
+  "type": "shop",
+  "point_id": "base.map.qingshizhen.point.n23",
+  "trigger": "click",
+  "catalog": "res://data/shops/qingshizhen_blacksmith.json",
+  "presentation": {
+    "title_center_y": 133.0,
+    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-tiejiangpu.webp",
+    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-tiejiangpu-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
+  }
+}

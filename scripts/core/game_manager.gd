@@ -43,6 +43,8 @@ var player_snapshot: Dictionary = {}
 @export var preview_branch := ""
 var legacy_fixed_defense := false
 var loot_summary := ""
+var loot_item_ids: Array[String] = []
+var loot_error := ""
 @export var loadout_save_path := MapLoadoutStore.DEFAULT_PATH
 
 func _ready() -> void:
@@ -50,6 +52,8 @@ func _ready() -> void:
 		startup_error = "\n".join(registry.errors)
 	elif registry.get_item(ITEM_ID) == null or registry.get_item(ARMOR_ID) == null or registry.get_item(CLAW_ID) == null or registry.get_enemy(enemy_id).is_empty():
 		startup_error = "缺少原型所需的装备或敌人配置。"
+	else:
+		startup_error = registry.enemy_battle_error(enemy_id)
 	for id in PARTY_IDS:
 		if registry.get_character(id).is_empty():
 			startup_error += "\n缺少角色配置：" + id
@@ -149,6 +153,9 @@ func persist_consumption() -> bool:
 		for unit: Dictionary in entry.units:
 			surviving[unit.id] = true
 	var next := _durable_snapshot.duplicate(true)
+	# Home inventory is absent from battle storage, not consumed in combat.
+	for units: Dictionary in next.get("warehouses", {}).values():
+		for unit_id: String in units: surviving[unit_id] = true
 	var removed := false
 	for unit_id: String in next.owned_units.keys():
 		if not surviving.has(unit_id):
@@ -188,6 +195,8 @@ func restart() -> void:
 		member.reset_resources()
 		member.inventory.locked = member in enemies
 	loot_summary = ""
+	loot_item_ids.clear()
+	loot_error = ""
 	adjustment_open = false
 	interaction_epoch += 1
 	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense)
@@ -275,7 +284,9 @@ func change_board(storage_id: String) -> bool:
 		simulation.detach(returned.instance_id)
 		if registry.get_item(returned.item_id).category not in ["spell", "book"]:
 			storage.put(returned)
-	if simulation.t01 != null: simulation.t01.refresh_equipment(member)
+	if simulation.t01 != null:
+		simulation.t01.refresh_equipment(member)
+		simulation.t01.clamp_buff_capacities(member)
 	for resource: String in ["hp", "stamina", "spirit"]:
 		member.set(resource, minf(float(member.get(resource)), member.maximum(resource)))
 	simulation.state.revision += 1

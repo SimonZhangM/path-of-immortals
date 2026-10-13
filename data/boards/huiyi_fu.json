@@ -1,0 +1,22 @@
+{
+  "id": "base.board.huiyi_fu",
+  "name": "灰翼蝠阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-huiyifu.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    175,
+    473,
+    781,
+    1079
+  ],
+  "y_lines": [
+    185,
+    469,
+    765,
+    1048
+  ]
+}

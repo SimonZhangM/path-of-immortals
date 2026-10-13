@@ -27,6 +27,7 @@
   ],
   "faction": "青岚宗",
   "required_cultivation": "base.cultivation.spirit_transformation",
-  "resource_bonuses": {},
+  "resource_bonuses": {"hp": 60, "stamina": 40, "spirit": 60},
+  "status_capacity_bonuses": {"生机": 24, "轻灵": 12, "坚韧": 10, "失衡": 8, "驱散": 8},
   "buff_bonuses": {}
 }

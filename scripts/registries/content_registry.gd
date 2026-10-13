@@ -5,6 +5,7 @@ var _elements: Dictionary = {}
 var _traits: Dictionary = {}
 var _items: Dictionary = {}
 var _enemies: Dictionary = {}
+var _enemy_art: Dictionary = {}
 var _characters: Dictionary = {}
 var _boards: Dictionary = {}
 var _cultivation: Dictionary = {}
@@ -16,6 +17,7 @@ func load_base_content() -> bool:
 	_traits.clear()
 	_items.clear()
 	_enemies.clear()
+	_enemy_art.clear()
 	_characters.clear()
 	_boards.clear()
 	_cultivation.clear()
@@ -24,6 +26,7 @@ func load_base_content() -> bool:
 	_load_directory("res://data/traits", "trait")
 	_load_directory("res://data/items", "item")
 	_load_directory("res://data/boards", "board")
+	_load_enemy_art()
 	_load_directory("res://data/cultivation", "cultivation")
 	_load_directory("res://data/enemies", "enemy")
 	_load_directory("res://data/characters", "character")
@@ -40,7 +43,7 @@ func load_base_content() -> bool:
 	for board in _boards.values():
 		if not board.required_cultivation.is_empty() and not _cultivation.has(board.required_cultivation):
 			errors.append("Unknown board cultivation: " + board.id)
-		if not FileAccess.file_exists(board.texture_path):
+		if (not board.pending_art or not board.texture_path.is_empty()) and not FileAccess.file_exists(board.texture_path):
 			errors.append("Missing board texture: " + board.texture_path)
 	for item: ItemData in _items.values():
 		for effect: Dictionary in item.effects:
@@ -49,7 +52,23 @@ func load_base_content() -> bool:
 	for enemy: Dictionary in _enemies.values():
 		var issue := enemy_loadout_error(enemy)
 		if not issue.is_empty(): errors.append(enemy.id + ": " + issue)
+		if enemy.get("battle_enabled", true) and enemy.has("presentation"):
+			issue = enemy_battle_error(enemy.id)
+			if not issue.is_empty(): errors.append(enemy.id + ": " + issue)
 	return errors.is_empty()
+
+func enemy_battle_error(id: String) -> String:
+	var enemy := get_enemy(id)
+	if enemy.is_empty(): return "未知敌人。"
+	if not enemy.get("battle_enabled", true): return "敌人正式素材待补，战斗尚未开放。"
+	if enemy.has("presentation"):
+		var issue := EnemyPresentation.validation_error(enemy.presentation)
+		if not issue.is_empty(): return issue
+		if not ResourceLoader.exists(enemy.get("portrait", ""), "Texture2D"): return "敌人头像尚未配置。"
+		var board := get_board(enemy.get("board_layout", ""))
+		if board == null or board.pending_art or not ResourceLoader.exists(board.texture_path, "Texture2D"):
+			return "敌人阵盘正式素材尚未配置。"
+	return ""
 
 func enemy_loadout_error(enemy: Dictionary) -> String:
 	if not enemy.get("loadout", []) is Array: return "loadout must be an array"
@@ -115,6 +134,26 @@ func get_item(id: String) -> ItemData:
 
 func get_enemy(id: String) -> Dictionary:
 	return _enemies.get(id, {}).duplicate(true)
+
+func get_enemy_art(id: String) -> Dictionary:
+	return _enemy_art.get(id, {}).duplicate(true)
+
+func _load_enemy_art() -> void:
+	var profiles: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/enemy_art.json"))
+	if not profiles is Array:
+		errors.append("Enemy art catalog must be an array")
+		return
+	for profile: Variant in profiles:
+		if not profile is Dictionary or not profile.get("id") is String or not profile.id.begins_with("base.enemy.") or _enemy_art.has(profile.id):
+			errors.append("Invalid or duplicate enemy art ID")
+			continue
+		if not profile.get("name") is String or not profile.get("portrait") is String or not ResourceLoader.exists(profile.portrait, "Texture2D"):
+			errors.append("Enemy art requires a name and portrait: " + profile.id)
+			continue
+		if not profile.get("portrait_includes_frame", false) is bool or not profile.get("board_layout") is String or not _boards.has(profile.board_layout):
+			errors.append("Enemy art requires a valid frame flag and board: " + profile.id)
+			continue
+		_enemy_art[profile.id] = profile.duplicate(true)
 
 func get_character(id: String) -> Dictionary:
 	return _characters.get(id, {}).duplicate(true)
@@ -227,7 +266,7 @@ func register_item(raw: Dictionary) -> bool:
 		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
-	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "beast", "board"]:
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "plant", "beast", "mineral", "board"]:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"
@@ -252,7 +291,29 @@ func register_item(raw: Dictionary) -> bool:
 	return true
 
 func register_enemy(raw: Dictionary) -> bool:
+	if raw.has("art_profile"):
+		if not raw.art_profile is String or not _enemy_art.has(raw.art_profile):
+			return _reject(raw, "unknown enemy art profile")
+		if raw.has("portrait") or raw.has("portrait_includes_frame") or raw.has("board_layout"):
+			return _reject(raw, "enemy art fields must live in the referenced profile")
+		raw = raw.duplicate(true)
+		var art: Dictionary = _enemy_art[raw.art_profile]
+		for field in ["portrait", "portrait_includes_frame", "board_layout"]: raw[field] = art[field]
+		# Runtime definitions remain self-contained and can be reused as fixtures.
+		raw.erase("art_profile")
 	var error := _validate_identity(raw)
+	if error.is_empty() and not raw.get("battle_enabled", true) is bool:
+		error = "battle_enabled must be boolean"
+	if error.is_empty() and raw.has("presentation"):
+		error = EnemyPresentation.validation_error(raw.presentation, raw.get("battle_enabled", true))
+	if error.is_empty() and raw.has("encounter_descriptions"):
+		if not raw.encounter_descriptions is Array or raw.encounter_descriptions.is_empty():
+			error = "encounter descriptions must be a nonempty array"
+		else:
+			for line: Variant in raw.encounter_descriptions:
+				if not line is String or line.strip_edges().is_empty(): error = "invalid encounter description"
+	var rewards: Variant = raw.get("progression_rewards", {})
+	if error.is_empty(): error = progression_rewards_error(rewards)
 	if error.is_empty() and raw.get("innate_armor_type", "无甲") not in ["无甲", "轻甲", "重甲", "灵甲"]:
 		error = "invalid innate armor type"
 	for stat in ["innate_armor_capacity", "initial_armor"]:
@@ -272,6 +333,13 @@ func register_enemy(raw: Dictionary) -> bool:
 		return _reject(raw, error)
 	_enemies[raw["id"]] = raw.duplicate(true)
 	return true
+
+static func progression_rewards_error(rewards: Variant) -> String:
+	if not rewards is Dictionary: return "progression_rewards must be an object"
+	for key: Variant in rewards:
+		if key not in ["cultivation", "experience"] or not _nonnegative_integer(rewards[key]):
+			return "progression reward must be a known nonnegative integer"
+	return ""
 
 func _validate_identity(raw: Dictionary) -> String:
 	if not raw.get("id") is String or str(raw.get("id", "")).split(".").size() < 3:

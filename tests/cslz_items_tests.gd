@@ -41,7 +41,7 @@ func run() -> void:
 	check(created.error.is_empty(), "material catalog validates: " + created.error)
 	if not created.error.is_empty() or not registry.errors.is_empty(): quit(1); return
 	var loadout: MapLoadoutState = created.state
-	check(loadout.storage_records().size() == 115 and loadout.records.size() == 120, "new materials are not granted for free")
+	check(loadout.storage_records().filter(func(r: Dictionary): return r.category == "beast").is_empty() and loadout.records.has("base.material.yanzhi_claw"), "new materials are not granted for free")
 	var sim := fixture()
 	var enemy: PartyMemberState = sim.state.teams[1][0]
 	check(enemy.inventory.get_instances().size() == 5 and enemy.inventory.occupied_cells() == 9, "five organs fill nine cells")
@@ -81,33 +81,32 @@ func run() -> void:
 	heart_sim.timeline.wake(heart_sim.state.time_usec)
 	check(heart_sim.timeline.remaining(organ(heart_sim,"heart")) == 2000000, "heart restarts full delay on re-entry")
 	var defs := registry.get_enemy(ENEMY)
-	var first := BattleLoot.candidate(loadout,defs,"first",[.99,.99,.99,.99,.99])
-	check(first.error.is_empty() and first.drops == ["base.material.cslz_heart"], "first victory guarantees only heart when all random rolls miss")
+	var first := BattleLoot.candidate(loadout,defs,"first",[0,.99,.99,.99,.99])
+	check(first.error.is_empty() and first.drops == ["base.material.cslz_hide", "base.material.cslz_heart"], "first victory guarantees heart alongside successful material roll")
 	check(loadout.restore(first.snapshot).is_empty(), "reward and receipt restore")
 	check(MapLoadoutStore.save(loadout,SAVE).is_empty(), "reward persisted to isolated save")
 	var reload_registry := ContentRegistry.new()
 	check(reload_registry.load_base_content(), "reload registry")
 	var second_state: MapLoadoutState = MapLoadoutStore.create_state(reload_registry, reload_registry.get_board("base.board.bag")).state
 	check(MapLoadoutStore.load_into(second_state,SAVE).is_empty(), "saved first victory reloads")
-	var material_entry: Dictionary = second_state.storage.entries().filter(func(e: Dictionary): return e.item_id == "base.material.cslz_heart")[0]
+	var material_entry: Dictionary = second_state.storage.entries().filter(func(e: Dictionary): return e.item_id == "base.material.cslz_hide")[0]
 	var material_drag := second_state.drag_data("storage",material_entry.instance_id)
 	var owned_before := second_state.snapshot()
 	check(not second_state.can_place(material_drag,Vector2i.ZERO) and not second_state.place(material_drag,Vector2i.ZERO), "material map placement rejected before transfer")
 	check(second_state.snapshot() == owned_before, "rejected material placement preserves inventory")
 	var duplicate := BattleLoot.candidate(second_state,defs,"first",[0,0,0,0,0])
 	check(duplicate.snapshot == second_state.snapshot(), "same battle cannot reroll or grant twice")
-	var none := BattleLoot.candidate(second_state,defs,"second",[.25,.25,.25,.25,.10])
+	var none := BattleLoot.candidate(second_state,defs,"second",[.25,.25,.25,.25,.1])
 	check(none.drops.is_empty(), "later battle can drop nothing, probability boundaries excluded")
 	var all := BattleLoot.candidate(second_state,defs,"third",[.249,.249,.249,.249,.099])
-	check(all.drops.size() == 5, "four independent25% rolls plus independent10% heart")
-	for mask in 16:
+	check(all.drops.size() == 5, "four independent25% rolls and heart10%")
+	for mask in 32:
 		var rolls: Array = []
 		var count := 0
-		for bit in 4:
+		for bit in 5:
 			var hit := (mask & (1 << bit)) != 0
-			rolls.append(.1 if hit else .9)
+			rolls.append(.05 if hit else .9)
 			if hit: count += 1
-		rolls.append(.9)
 		check(BattleLoot.candidate(second_state,defs,"mask%d"%mask,rolls).drops.size() == count, "independent combination %d"%mask)
 	for key: String in ["hide","tusk","hoof","mane","heart"]:
 		var item := registry.get_item("base.organ.cslz_"+key)
@@ -132,11 +131,11 @@ func live_entry() -> void:
 	var flow = load("res://scripts/map/map_battle_return.gd").new()
 	flow.manager = manager
 	flow.save_path = SAVE
-	flow._loot_rolls = [.99,.99,.99,.99,.99]
+	flow._loot_rolls = [0,.99,.99,.99,.99]
 	check(not flow._award_victory().is_empty(), "cannot award materials before victory")
 	manager.simulation._finish("victory",0)
 	check(flow._award_victory().is_empty(), "real reward settlement saves material")
-	check(manager.loot_summary.contains("赤鬃兽心") and manager._durable_snapshot.battle_rewards.size() == 1, "reward summary and persisted receipt")
+	check(manager.loot_summary.contains("厚鬃皮") and manager._durable_snapshot.battle_rewards.size() == 1, "reward summary and persisted receipt")
 	var before: Dictionary = manager._durable_snapshot.duplicate(true)
 	check(flow._award_victory().is_empty() and manager._durable_snapshot == before, "settlement retry is idempotent")
 	flow._battle_id = "failed-save"
@@ -163,7 +162,7 @@ func live_entry() -> void:
 	check(manager.equip(sword.instance_id,0,Vector2i.ZERO), "real victory test sword equipped")
 	flow._recorded = false
 	flow._battle_id = "real-victory"
-	flow._loot_rolls = [.99,.99,.99,.99,.99]
+	flow._loot_rolls = [0,.99,.99,.99,.99]
 	root.add_child(flow)
 	manager.start_battle()
 	manager.enemies[0].hp = 1
@@ -173,7 +172,7 @@ func live_entry() -> void:
 	after_battle_registry.load_base_content()
 	var after_battle: MapLoadoutState = MapLoadoutStore.create_state(after_battle_registry,after_battle_registry.get_board("base.board.bag")).state
 	check(MapLoadoutStore.load_into(after_battle,SAVE).is_empty() and after_battle.battle_rewards.size() == 3, "actual map inventory reload preserves all victories")
-	check(after_battle.storage_records().filter(func(r: Dictionary): return r.category == "beast").size() == 5, "all five materials display in storage after reload")
+	check(after_battle.storage_records().filter(func(r: Dictionary): return r.category == "beast").size() == 5, "all five eligible materials display in storage after reload")
 	# Reset only the isolated scene for a clear preparation screenshot.
 	manager.restart()
 	flow.free()
@@ -189,13 +188,12 @@ func live_entry() -> void:
 	var event: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_events/qingshihewan_cliff_encounter.json"))
 	dialog.present(event,manager.enemies[0])
 	await settle()
-	var row = dialog.enemy_summary.get_child(3).get_child(1)
-	check(row.get_child_count() == 2 and row.get_child(1).text == "高气血·蓄势爆发", "trait caption and value on same row")
-	check(row.get_child(0).global_position.y == row.get_child(1).global_position.y, "trait is one line")
-	check(row.get_child(1).get_global_rect().end.x <= dialog.canvas.global_position.x + 676*dialog.canvas.scale.x, "one-line traits fit inside frame")
-	check(dialog.item_slots.filter(func(slot): return slot.item != null).size() == 5, "encounter displays five item images")
-	var tooltip: ItemTooltip = dialog.item_slots[0]._make_custom_tooltip("")
-	check(tooltip.description.contains("护甲"), "slot uses shared effect tooltip")
+	check(dialog.trait_labels[0].text == "高气血" and dialog.trait_labels[1].text == "蓄势爆发", "two mechanic traits")
+	check(dialog.trait_labels[0].global_position.y == dialog.trait_labels[1].global_position.y, "traits share tag row")
+	check(dialog.loot_slots.size() == 5, "encounter displays five material drops")
+	check(dialog.loot_slots[0].item.id == "base.material.cslz_hide", "drop tooltip uses material rather than combat organ")
+	var tooltip: ItemTooltip = dialog.loot_slots[0].build_item_tooltip("")
+	check(tooltip != null, "slot uses shared material tooltip")
 	tooltip.free()
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw

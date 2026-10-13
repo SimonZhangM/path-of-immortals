@@ -2,6 +2,20 @@ class_name MapInventoryScreen
 extends Control
 
 signal close_requested
+signal warehouse_transfer_requested(id: String, item_id: String, withdraw: bool)
+signal warehouse_bulk_transfer_requested(id: String, withdraw: bool)
+signal warehouse_selection_changed
+signal warehouse_quantity_transfer_requested(id: String, item_id: String, withdraw: bool, quantity: int)
+signal warehouse_undo_requested(operation_id: int)
+
+# Reuse the bag and layout for home storage; its other two columns are reserved.
+var warehouse_id := ""
+var warehouse_pane: MapInventoryScreen
+var is_warehouse_pane := false
+var warehouse_actions: Control
+var warehouse_sidebar: VBoxContainer
+var warehouse_history_provider: Callable
+var _equipment_sections: Array[Control] = []
 
 const GOLD := Color("dec995")
 const MUTED := Color("85989f")
@@ -26,7 +40,6 @@ const STORAGE_BACKGROUND_REGION := Rect2(33, 32, 1192, 1196)
 const STORAGE_BACKGROUND_SCALE := 1.0404 * 1.15
 const STORAGE_BACKGROUND_X_SHIFT := 2.0
 const STORAGE_BACKGROUND_Y_SHIFT := 2.0
-const STORAGE_SEARCH_WIDTH := 200.0
 const STORAGE_CONTENT_INSET := 22
 const STORAGE_TITLE_ICON_X_OFFSET := -42.0 / 300.0 * 26.0
 const MIDDLE_GAP := 18.0
@@ -43,7 +56,7 @@ const BOARD_BACKGROUND_LINE_SOURCE_X := 638.0
 const BOARD_BACKGROUND_HORIZONTAL_EXTENSION := 5.0
 const BOARD_BACKGROUND_BOTTOM_EXTENSION := 5.0
 const STORAGE_CARD_GAP := 15
-const STORAGE_CARD_ROW_GAP := 24
+const STORAGE_CARD_ROW_GAP := STORAGE_CARD_GAP
 const STORAGE_CARD_INSET := STORAGE_CONTENT_INSET
 const BOARD_HEALTH_ICON_SCALE := 1.1
 const COLLECTION_SELECTED_FILL := Color("313126")
@@ -63,7 +76,6 @@ var sidebar_spacer: Control
 var sidebar: PanelContainer
 var sidebar_art: TextureRect
 var faction_slot: Control
-var bag_caption: Label
 var board_bonus_values: Dictionary = {}
 var cultivation_bonus_value: Label
 var buff_bonus_values: Dictionary = {}
@@ -78,8 +90,8 @@ const BuffBonuses := preload("res://scripts/map/map_buff_bonuses.gd")
 var _bonus_board: BoardLayout
 var _bonus_player: MapPlayerStatus
 var board_panel: PanelContainer
-var board_capacity_caption: Label
-var board_capacity: Label
+const BoardCapacityArtwork := preload("res://scripts/map/map_board_capacity.gd")
+var board_capacity: BoardCapacityArtwork
 var _board_total_cells := 0
 var formation_panel: PanelContainer
 var formation_scroll: ScrollContainer
@@ -98,10 +110,15 @@ var _selected_formation_icon := 0
 var storage_panel: PanelContainer
 var board_art: TextureRect
 var return_button: Button
-var search: LineEdit
+var storage_capacity: BoardCapacityArtwork
+var storage_heading: HBoxContainer
 var quality_picker: OptionButton
 var order_picker: Button
-var level_sort: Button
+var level_sort: OptionButton
+var search_box: LineEdit
+var _level_values: Array[int] = []
+const STORAGE_CAPACITY_DISPLAY_PREVIEW := Vector2i(100,100) # Visual test only; use (-1,-1) to restore live numbers.
+const BOARD_CAPACITY_DISPLAY_PREVIEW := Vector2i(99,99) # Visual test only; use (-1,-1) to restore live occupancy.
 var storage_toolbar: VBoxContainer
 var empty_state: VBoxContainer
 var empty_title: Label
@@ -152,12 +169,17 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 	sidebar_spacer = Control.new()
 	sidebar_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	sidebar.get_parent().add_child(sidebar_spacer)
-	var middle := VBoxContainer.new()
-	middle.custom_minimum_size.x = MIDDLE_WIDTH
-	middle.add_theme_constant_override("separation", int(MIDDLE_GAP))
+	# Keep the middle column's footprint fixed when its warehouse panel narrows.
+	# The unused right side is reserved space, not space for the bag to absorb.
+	var middle := Control.new()
+	middle.name = "MiddleColumn"
+	middle.custom_minimum_size = Vector2(MIDDLE_WIDTH, BODY_HEIGHT)
 	body.add_child(middle)
 	_build_board(middle, board)
+	board_panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_build_storage()
+	storage_panel.item_rect_changed.connect(_layout_warehouse_panel, CONNECT_DEFERRED)
+	warehouse_selection_changed.connect(_refresh_warehouse_actions, CONNECT_DEFERRED)
 	if loadout != null:
 		board_change_dialog = MapExitDialog.new()
 		board_change_dialog.name = "BoardChangeDialog"
@@ -188,10 +210,119 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 func is_board_change_dialog_open() -> bool:
 	return board_change_dialog != null and board_change_dialog.visible
 
+func set_warehouse(id: String = "") -> void:
+	cancel_item_drag()
+	close_board_change_dialog()
+	close_formation_dialog()
+	ItemTooltipHost.for_control(self).dismiss()
+	warehouse_id = id
+	if not id.is_empty() and warehouse_pane == null:
+		warehouse_pane = MapInventoryScreen.new()
+		warehouse_pane.name = "WarehouseInventory"
+		warehouse_pane._configure_warehouse_pane(config,loadout,id)
+		board_panel.get_parent().add_child(warehouse_pane)
+		warehouse_pane.warehouse_transfer_requested.connect(func(wid: String, item: String, withdraw: bool): warehouse_transfer_requested.emit(wid,item,withdraw))
+		warehouse_pane.warehouse_selection_changed.connect(_refresh_warehouse_actions, CONNECT_DEFERRED)
+		warehouse_pane.storage_panel.resized.connect(_layout_warehouse_actions, CONNECT_DEFERRED)
+		warehouse_actions = preload("res://scripts/map/map_warehouse_actions.gd").new()
+		stage.add_child(warehouse_actions)
+		warehouse_actions.requested.connect(_request_warehouse_action)
+	if warehouse_pane != null:
+		warehouse_pane.warehouse_id = id
+		warehouse_pane.visible = not id.is_empty()
+		warehouse_pane._refresh_warehouse_records()
+	for section in _equipment_sections: section.visible = id.is_empty()
+	for card in grid.get_children():
+		if card is MapInventoryItemCard: _configure_card_transfer(card)
+	board_panel.visible = id.is_empty()
+	board_panel.name = "BoardPanel" if id.is_empty() else "WarehousePanel"
+	if warehouse_actions != null: warehouse_actions.visible = not id.is_empty()
+	warehouse_sidebar.visible = not id.is_empty()
+	_layout_warehouse_panel()
+	_refresh_warehouse_actions()
+
+func _layout_warehouse_panel() -> void:
+	if board_panel == null or storage_panel == null: return
+	board_panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if not warehouse_id.is_empty():
+		board_panel.anchor_right = 0.0
+		board_panel.offset_right = storage_panel.size.x
+	if warehouse_pane != null:
+		warehouse_pane.position = board_panel.position
+		warehouse_pane.size = Vector2(storage_panel.size.x,board_panel.size.y)
+	_layout_warehouse_actions()
+
+func _layout_warehouse_actions() -> void:
+	if warehouse_actions == null or not warehouse_actions.visible: return
+	var inverse := stage.get_global_transform().affine_inverse()
+	warehouse_actions.place_between(inverse * warehouse_pane.storage_panel.get_global_rect(), inverse * storage_panel.get_global_rect())
+
+func _selected_warehouse_item(withdraw: bool) -> String:
+	var card := ItemTooltipHost.for_control(self).selected_card
+	var source := warehouse_pane if withdraw else self
+	if source == null or not is_instance_valid(card) or card.is_queued_for_deletion() or card.get_parent() != source.grid: return ""
+	return card.entry.id if card.selected else ""
+
+func _warehouse_item_depositable(item_id: String) -> bool:
+	return not item_id.is_empty() and loadout.records.get(item_id,{}).get("board_layout","") != loadout.board.id
+
+func _refresh_warehouse_actions() -> void:
+	if warehouse_actions == null or warehouse_id.is_empty(): return
+	var has_deposit := loadout.storage_records().any(func(entry: Dictionary): return _warehouse_item_depositable(entry.id))
+	warehouse_actions.set_available(not _selected_warehouse_item(true).is_empty(), not loadout.warehouses.get(warehouse_id,{}).is_empty(), _warehouse_item_depositable(_selected_warehouse_item(false)), has_deposit)
+	var withdraw := not _selected_warehouse_item(true).is_empty()
+	var item_id := _selected_warehouse_item(withdraw)
+	var rows: Array[Dictionary] = []
+	if warehouse_history_provider.is_valid(): rows = warehouse_history_provider.call()
+	warehouse_sidebar.present(loadout,warehouse_id,item_id,withdraw,catalog.category_names,rows)
+
+func _request_warehouse_action(withdraw: bool, all_items: bool) -> void:
+	if warehouse_id.is_empty() or not is_visible_in_tree(): return
+	if all_items:
+		warehouse_bulk_transfer_requested.emit(warehouse_id,withdraw)
+	else:
+		var item_id := _selected_warehouse_item(withdraw)
+		if not item_id.is_empty():
+			warehouse_sidebar.commit_amount()
+			warehouse_quantity_transfer_requested.emit(warehouse_id,item_id,withdraw,warehouse_sidebar.quantity)
+
+func _configure_warehouse_pane(ui_config: Dictionary, model: MapLoadoutState, id: String) -> void:
+	is_warehouse_pane = true
+	warehouse_id = id
+	config = ui_config
+	loadout = model
+	catalog = MapInventoryCatalog.new()
+	catalog.configure(config)
+	theme = _theme()
+	body = HBoxContainer.new()
+	add_child(body)
+	body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_build_storage()
+	catalog.changed.connect(_refresh)
+	loadout.changed.connect(_refresh_warehouse_records)
+	_refresh_warehouse_records()
+
+func _refresh_warehouse_records() -> void:
+	if is_warehouse_pane: catalog.replace_entries(loadout.warehouse_records(warehouse_id))
+
+func _configure_card_transfer(card: MapInventoryItemCard) -> void:
+	if not card.selection_changed.is_connected(_card_selection_changed): card.selection_changed.connect(_card_selection_changed)
+	card.equipment_actions_enabled = warehouse_id.is_empty()
+	if warehouse_id.is_empty(): card.configure_transfer(Callable(),Callable())
+	else: card.configure_transfer(_warehouse_drag,func(item_id: String): warehouse_transfer_requested.emit(warehouse_id,item_id,is_warehouse_pane))
+
+func _card_selection_changed() -> void:
+	warehouse_selection_changed.emit()
+
+func _warehouse_drag(item_id: String) -> Dictionary:
+	return {"kind":"warehouse_transfer","owner":loadout.get_instance_id(),"revision":loadout.revision,"warehouse_id":warehouse_id,"item_id":item_id,"withdraw":is_warehouse_pane}
+
+func _can_transfer(data: Variant) -> bool:
+	return not warehouse_id.is_empty() and data is Dictionary and data.get("kind") == "warehouse_transfer" and data.get("owner") == loadout.get_instance_id() and data.get("revision") == loadout.revision and data.get("warehouse_id") == warehouse_id and data.get("withdraw") != is_warehouse_pane and data.get("item_id") is String
+
 func _open_board_change_dialog(data: Dictionary) -> void:
-	if not visible or is_board_change_dialog_open() or not loadout_board.can_request_board_change(data): return
+	if not warehouse_id.is_empty() or not visible or is_board_change_dialog_open() or not loadout_board.can_request_board_change(data): return
 	_pending_board_change = data.duplicate(true)
-	search.release_focus()
 	board_change_dialog.present(loadout.records[loadout.drag_entry(data).item_id].name)
 
 func close_board_change_dialog() -> void:
@@ -271,16 +402,13 @@ func _tab_box(color: Color, border: Color, radius: int, horizontal_padding: int,
 	return style
 
 func _style_collection_tab(button: Button) -> void:
-	button.add_theme_stylebox_override("normal", _tab_box(Color(0, 0, 0, 0), Color("34485080"), 16, 12, 1))
-	button.add_theme_stylebox_override("hover", _tab_box(Color("202b2b"), Color("8f8359"), 16, 12, 1, Color("bfa75c45"), 2))
-	var selected := _tab_box(COLLECTION_SELECTED_FILL, COLLECTION_SELECTED_BORDER, 16, 12, 2, Color("e1c36f80"), 5)
-	button.add_theme_stylebox_override("pressed", selected)
-	button.add_theme_stylebox_override("hover_pressed", selected.duplicate())
-	button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	button.add_theme_color_override("font_color", Color("aab9bd"))
-	button.add_theme_color_override("font_hover_color", Color("f0dfaf"))
-	button.add_theme_color_override("font_pressed_color", Color("ffe49a"))
-	button.add_theme_color_override("font_hover_pressed_color", Color("fff0bd"))
+	_style_category_tab(button)
+	for state in ["normal","hover","pressed","hover_pressed"]:
+		var style := button.get_theme_stylebox(state).duplicate() as StyleBoxFlat
+		style.set_corner_radius_all(16)
+		style.content_margin_left = 12
+		style.content_margin_right = 12
+		button.add_theme_stylebox_override(state,style)
 
 func _style_category_tab(button: Button) -> void:
 	button.add_theme_stylebox_override("normal", _tab_box(Color("0b1923"), Color("29424f"), 6, 9, 1))
@@ -369,6 +497,29 @@ func _section_heading(parent: Node, caption: String, icon_path: String = "", ico
 	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", SECTION_TITLE_COLOR)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return row
+
+func _art_heading(parent: Node, asset: String, artwork_name: String, x_offset: float = 0.0) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "SectionHeading"
+	row.custom_minimum_size.y = 36
+	row.add_theme_constant_override("separation", 10)
+	parent.add_child(row)
+	var slot := Control.new()
+	slot.custom_minimum_size.x = 160
+	slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(slot)
+	var art := TextureRect.new()
+	art.name = artwork_name
+	art.texture = BattleActionButton.trimmed_art(asset)
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.size = art.texture.get_size() * (50.0 / art.texture.get_height())
+	art.position = Vector2(x_offset, -7)
+	slot.add_child(art)
 	return row
 
 func _rule(parent: Node) -> void:
@@ -466,11 +617,17 @@ func _build_sidebar(board: BoardLayout) -> void:
 	return_button.offset_bottom = -10.0
 	return_button.name = "ReturnToMap"
 	return_button.pressed.connect(func(): close_requested.emit())
+	warehouse_sidebar = preload("res://scripts/map/map_warehouse_sidebar.gd").new()
+	warehouse_sidebar.hide()
+	column.add_child(warehouse_sidebar)
+	warehouse_sidebar.undo_requested.connect(func(operation_id: int): warehouse_undo_requested.emit(operation_id))
 	var gap := Control.new()
+	_equipment_sections.append(gap)
 	gap.custom_minimum_size.y = 90
 	column.add_child(gap)
 	faction_slot = Control.new()
 	faction_slot.name = "FactionReserved"
+	_equipment_sections.append(faction_slot)
 	faction_slot.custom_minimum_size.y = 40
 	column.add_child(faction_slot)
 	var faction := _heading(faction_slot, config.faction_caption)
@@ -479,13 +636,13 @@ func _build_sidebar(board: BoardLayout) -> void:
 	# Center the whole attribute block in the panel, independently of the return button.
 	var attribute_center := CenterContainer.new()
 	attribute_center.name = "AttributeContentCenter"
+	_equipment_sections.append(attribute_center)
 	attribute_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	sidebar.add_child(attribute_center)
 	var attributes := _column(attribute_center, 9)
 	attributes.name = "AttributeContentGroup"
 	attributes.custom_minimum_size.x = 164
-	var bag_heading := _section_heading(attributes, config.bag_caption, "res://assets/title-zpsxjc.webp")
-	bag_caption = bag_heading.get_node("SectionTitle") as Label
+	_art_heading(attributes, "res://assets/UI-title-shuxingjiacheng.webp", "AttributesTitleArtwork")
 	var motto_group := _column(attributes, 9)
 	motto_group.name = "SidebarMotto"
 	var motto := _label(motto_group, config.motto, 17, Color("fff0bd"))
@@ -514,13 +671,21 @@ func _build_sidebar(board: BoardLayout) -> void:
 	var buffs: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_buffs.json"))
 	for buff: Dictionary in buffs:
 		if buff.id not in ["armor", "shield"]: continue
-		buff_bonus_values[buff.id] = _attribute_row(properties, buff.id, buff.name, load("res://assets/buff-%s.webp" % buff.icon), buff.description, "+0", kai)
+		buff_bonus_values[buff.id] = _attribute_row(properties, buff.id, buff.name, load(buff.get("icon_path", "res://assets/buff-%s.webp" % buff.icon)), buff.description, "+0", kai)
+	_rule(properties)
+	var bottom_rule := properties.get_child(-1) as HSeparator
+	bottom_rule.name = "AttributeBottomRule"
 	# Preserve the remaining heading/resource rows' positions after removing 7 buffs.
 	var removed_rows_space := Control.new()
 	removed_rows_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	removed_rows_space.custom_minimum_size.y = 7 * 42 + 1
+	removed_rows_space.custom_minimum_size.y = 7 * 42 + 1 - bottom_rule.get_combined_minimum_size().y - 9
 	properties.add_child(removed_rows_space)
-	_add_panel_border(sidebar, 18.0)
+	# Reuse the reserved space so the existing attribute rows do not move.
+	var quick_heading := _art_heading(removed_rows_space, "res://assets/UI-title-kuaijiezhenxing.webp", "QuickFormationTitleArtwork")
+	quick_heading.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	quick_heading.offset_top = 7
+	quick_heading.offset_bottom = 43
+	_add_panel_border(sidebar, 18.0, 2.0)
 	_layout_sidebar_art()
 
 func _attribute_row(parent: Control, key: String, caption_text: String, texture: Texture2D, meaning: String, amount: String, font: Font, is_resource := false) -> Label:
@@ -572,16 +737,13 @@ func _attribute_row(parent: Control, key: String, caption_text: String, texture:
 
 func _refresh_buff_bonuses() -> void:
 	var rank := {}
-	var equipped: Array = []
 	var board := loadout.board if loadout != null else _bonus_board
 	for key in board_bonus_values:
 		board_bonus_values[key].text = "+%d" % board.resource_bonus(key)
 	if loadout != null:
 		if _bonus_player != null:
 			rank = loadout.registry.get_cultivation(_bonus_player.cultivation_rank_id)
-		for entry: Dictionary in loadout.inventory.get_instances():
-			equipped.append(loadout.records[entry.item_id])
-	var totals := BuffBonuses.sum_sources(rank, board.buff_bonuses if board != null else {}, equipped)
+	var totals := loadout.buff_bonus_totals(rank) if loadout != null else BuffBonuses.sum_sources(rank, board.buff_bonuses if board != null else {}, [])
 	for key in buff_bonus_values:
 		buff_bonus_values[key].text = "+" + EffectSystem.number_text(totals[key])
 
@@ -654,21 +816,42 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 		backdrop.size *= BOARD_BACKGROUND_ZOOM
 		_layout_panel_art(backdrop, board_panel, BOARD_PANEL_RADIUS)
 	)
-	board_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	board_panel.custom_minimum_size.y = MIDDLE_WIDTH
+	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	board_panel.custom_minimum_size.y = BODY_HEIGHT
 	var column := _column(board_panel, 10)
-	var row := _section_heading(column, "阵盘", "res://assets/title-zhenpan.webp")
-	var capacity_row := HBoxContainer.new()
+	_equipment_sections.append(column)
+	var row := HBoxContainer.new()
+	row.name = "SectionHeading"
+	row.custom_minimum_size.y = 36
+	row.add_theme_constant_override("separation", 10)
+	column.add_child(row)
+	var title_slot := Control.new()
+	title_slot.name = "BoardTitleSlot"
+	title_slot.custom_minimum_size.x = 160
+	title_slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(title_slot)
+	var title_art := TextureRect.new()
+	title_art.name = "BoardTitleArtwork"
+	title_art.texture = BattleActionButton.trimmed_art("res://assets/UI-title-zhenpan.webp")
+	title_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	title_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	title_art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	title_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_art.size = title_art.texture.get_size() * (50.0 / title_art.texture.get_height())
+	title_art.position = Vector2(-10, -7)
+	title_slot.add_child(title_art)
+	var capacity_row := Control.new()
 	capacity_row.name = "BoardCapacity"
-	capacity_row.add_theme_constant_override("separation", 8)
-	capacity_row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	capacity_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(capacity_row)
-	board_capacity_caption = _label(capacity_row, "容量", 16, Color("c5d0d2"))
-	board_capacity = _label(capacity_row, "", 17, Color("fff0bd"))
-	var numbers := SystemFont.new()
-	numbers.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans CJK SC", "sans-serif"])
-	board_capacity_caption.add_theme_font_override("font", numbers)
-	board_capacity.add_theme_font_override("font", numbers)
+	board_capacity = BoardCapacityArtwork.new()
+	board_capacity.number_offset = Vector2(-3,0)
+	board_capacity.preview_capacity = BOARD_CAPACITY_DISPLAY_PREVIEW
+	board_capacity.size = board_capacity.texture.get_size() * (title_art.size.y / board_capacity.texture.get_height())
+	board_capacity.position.y = title_art.position.y
+	capacity_row.custom_minimum_size.x = board_capacity.size.x
+	capacity_row.add_child(board_capacity)
 	_board_total_cells = board.grid_size.x * board.grid_size.y
 	_refresh_board_capacity()
 	board_art = TextureRect.new()
@@ -683,7 +866,30 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	board_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	board_art.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	board_art.mouse_filter = Control.MOUSE_FILTER_STOP if loadout != null else Control.MOUSE_FILTER_IGNORE
-	column.add_child(board_art)
+	var art_slot := Control.new()
+	art_slot.name = "BoardArtSlot"
+	art_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art_slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	column.add_child(art_slot)
+	art_slot.add_child(board_art)
+	art_slot.resized.connect(_layout_board_art.bind(art_slot, board))
+	if loadout != null:
+		loadout.changed.connect(_layout_board_art.bind(art_slot, board))
+	_layout_board_art.call_deferred(art_slot, board)
+
+func _layout_board_art(slot: Control, initial_board: BoardLayout) -> void:
+	if slot.size.x <= 0 or slot.size.y <= 0: return
+	var current_board := loadout.board if loadout != null else initial_board
+	var factor := float(config.get("board_display_scales", {}).get(current_board.id, 1.0))
+	# Preserve the previous square panel's art size before applying the requested
+	# per-board reduction; the extra panel height only adds centered breathing room.
+	var previous_size := slot.size - Vector2(0, board_panel.size.y - MIDDLE_WIDTH)
+	board_art.size = previous_size * factor
+	var texture := load(current_board.texture_path) as Texture2D
+	var visible := Rect2(MapItemArtwork.TextureMetrics.inspect(texture).visible_rect)
+	var panel_center := slot.get_global_transform().affine_inverse() * board_panel.get_global_rect().get_center()
+	board_art.position = panel_center - current_board.source_to_view(visible.get_center(), board_art.size)
+	board_art.position.x += float(config.get("board_display_x_offsets", {}).get(current_board.id, 0.0))
 
 func _add_panel_border(panel: PanelContainer, radius: float, line_width: float = MAIN_PANEL_BORDER_WIDTH) -> void:
 	var fill := panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
@@ -717,7 +923,7 @@ func _layout_panel_border(panel: Control, rim: ColorRect) -> void:
 func _refresh_board_capacity() -> void:
 	if loadout != null: _board_total_cells = loadout.board.grid_size.x * loadout.board.grid_size.y
 	var occupied := loadout.inventory.occupied_cells() if loadout != null else 0
-	board_capacity.text = "%d/%d" % [occupied, _board_total_cells]
+	board_capacity.set_capacity(occupied, _board_total_cells)
 
 func _build_formations(parent: Node) -> void:
 	formation_panel = _panel(parent, "FormationPanel")
@@ -1161,9 +1367,9 @@ func _build_storage() -> void:
 	storage_style.content_margin_left = 0
 	storage_style.content_margin_right = 0
 	storage_panel.add_theme_stylebox_override("panel", storage_style)
-	_add_panel_border(storage_panel, BOARD_PANEL_RADIUS)
+	_add_panel_border(storage_panel, BOARD_PANEL_RADIUS, 2.0)
 	storage_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var background_source: Texture2D = load("res://assets/inv-bg-3.webp")
+	var background_source: Texture2D = load("res://assets/UI-bg-cangku.webp" if is_warehouse_pane else "res://assets/inv-bg-3.webp")
 	var background_texture := AtlasTexture.new()
 	background_texture.atlas = background_source
 	background_texture.region = STORAGE_BACKGROUND_REGION
@@ -1172,7 +1378,7 @@ func _build_storage() -> void:
 	storage_panel.add_child(background_layer)
 	var background := TextureRect.new()
 	background.name = "StoragePanelBackground"
-	background.texture = background_texture
+	background.texture = background_source if is_warehouse_pane else background_texture
 	background.self_modulate.a = 1.0
 	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background.stretch_mode = TextureRect.STRETCH_SCALE
@@ -1183,11 +1389,17 @@ func _build_storage() -> void:
 	background.material = background_mask
 	background_layer.add_child(background)
 	storage_panel.resized.connect(func():
-		background.size = storage_panel.size * STORAGE_BACKGROUND_SCALE
-		background.position = (storage_panel.size - background.size) * 0.5 + Vector2(STORAGE_BACKGROUND_X_SHIFT, STORAGE_BACKGROUND_Y_SHIFT)
+		if is_warehouse_pane:
+			var factor := maxf(storage_panel.size.x / background_source.get_width(),storage_panel.size.y / background_source.get_height())
+			background.size = background_source.get_size() * factor
+			background.position = (storage_panel.size - background.size) * 0.5
+		else:
+			background.size = storage_panel.size * STORAGE_BACKGROUND_SCALE
+			background.position = (storage_panel.size - background.size) * 0.5 + Vector2(STORAGE_BACKGROUND_X_SHIFT, STORAGE_BACKGROUND_Y_SHIFT)
 		_layout_panel_art(background, storage_panel, BOARD_PANEL_RADIUS)
 	)
-	var column := _column(storage_panel, 8)
+	# Item well moved up another 3 design px (7 total); toolbar stays put.
+	var column := _column(storage_panel, 1)
 	var toolbar_margin := MarginContainer.new()
 	toolbar_margin.name = "StorageToolbarMargin"
 	toolbar_margin.add_theme_constant_override("margin_left", STORAGE_CONTENT_INSET)
@@ -1195,20 +1407,30 @@ func _build_storage() -> void:
 	column.add_child(toolbar_margin)
 	storage_toolbar = _column(toolbar_margin, 6)
 	storage_toolbar.name = "StorageToolbar"
-	var heading := _section_heading(storage_toolbar, "储物袋", "res://assets/title-chuwudai.webp", STORAGE_TITLE_ICON_X_OFFSET)
-	search = LineEdit.new()
-	search.name = "ItemSearch"
-	search.placeholder_text = "搜索物品名称…"
-	search.custom_minimum_size = Vector2(STORAGE_SEARCH_WIDTH, 30)
-	search.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	search.add_theme_font_size_override("font_size", 14)
-	search.clear_button_enabled = true
-	heading.add_child(search)
-	search.text_changed.connect(func(value: String): catalog.set_filter("search", value))
+	storage_heading = _art_heading(storage_toolbar, "res://assets/UI-title-cangku.webp" if is_warehouse_pane else "res://assets/UI-title-chuwudai.webp", "StorageTitleArtwork", -10)
+	var capacity_slot := Control.new()
+	capacity_slot.name = "StorageCapacitySlot"
+	capacity_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	storage_heading.add_child(capacity_slot)
+	storage_capacity = BoardCapacityArtwork.new()
+	storage_capacity.set_art("res://assets/UI-title-rongliang-kucun.webp" if is_warehouse_pane else "res://assets/UI-title-rongliang-chuwudai.webp")
+	storage_capacity.number_offset = Vector2(-3,0)
+	storage_capacity.preview_capacity = STORAGE_CAPACITY_DISPLAY_PREVIEW
+	storage_capacity.font_size_adjustment = -1
+	storage_capacity.name = "StorageCapacityArtwork"
+	storage_capacity.align_storage_heading()
+	capacity_slot.custom_minimum_size.x = storage_capacity.size.x
+	capacity_slot.add_child(storage_capacity)
 	var tabs := HBoxContainer.new()
 	tabs.name = "CollectionTabs"
 	tabs.add_theme_constant_override("separation", 8)
-	storage_toolbar.add_child(tabs)
+	# Add space only below the heading; preserve the title/capacity positions and
+	# all existing gaps between the remaining rows. The item viewport follows.
+	var tabs_margin := MarginContainer.new()
+	tabs_margin.name = "StorageHeadingBottomGap"
+	tabs_margin.add_theme_constant_override("margin_top", 6)
+	storage_toolbar.add_child(tabs_margin)
+	tabs_margin.add_child(tabs)
 	for key: String in catalog.collection_names:
 		var button := _compact_button(tabs, catalog.collection_names[key], 32)
 		button.name = "CollectionTab_" + key
@@ -1239,25 +1461,31 @@ func _build_storage() -> void:
 	var sorting := HBoxContainer.new()
 	sorting.add_theme_constant_override("separation", 8)
 	storage_toolbar.add_child(sorting)
+	search_box = preload("res://scripts/map/map_inventory_search.gd").new()
+	var search_style := _tab_box(Color("0b1923"),Color("29424f"),7,30)
+	search_box.add_theme_stylebox_override("normal",search_style)
+	search_box.add_theme_stylebox_override("focus",search_style.duplicate())
+	sorting.add_child(search_box)
+	search_box.text_changed.connect(func(value: String): catalog.set_filter("search",value))
 	quality_picker = OptionButton.new()
 	quality_picker.name = "QualityFilter"
-	quality_picker.custom_minimum_size = Vector2(104, 30)
+	quality_picker.custom_minimum_size = Vector2(80, 30)
 	quality_picker.focus_mode = Control.FOCUS_NONE
+	_style_category_tab(quality_picker)
 	sorting.add_child(quality_picker)
 	quality_picker.item_selected.connect(func(index: int): catalog.set_filter("quality", "" if index == 0 else _quality_values[index - 1]))
-	level_sort = _compact_button(sorting, "等级 ↕", 30)
-	level_sort.name = "EnhancementOrder"
-	level_sort.custom_minimum_size.x = 104
-	level_sort.toggle_mode = true
-	level_sort.pressed.connect(func(): catalog.set_level_descending(not catalog.level_descending if catalog.sort_key == "enhancement_level" else catalog.level_descending))
+	level_sort = OptionButton.new()
+	level_sort.name = "EnhancementFilter"
+	level_sort.custom_minimum_size = Vector2(80,30)
+	level_sort.focus_mode = Control.FOCUS_NONE
+	_style_category_tab(level_sort)
+	sorting.add_child(level_sort)
+	level_sort.item_selected.connect(func(index: int): catalog.set_filter("enhancement_level","" if index == 0 else str(_level_values[index-1])))
 	order_picker = _compact_button(sorting, "获得时间 ↓", 30)
 	order_picker.name = "AcquiredOrder"
 	order_picker.custom_minimum_size.x = 128
 	order_picker.toggle_mode = true
 	order_picker.pressed.connect(func(): catalog.set_newest_first(not catalog.newest_first if catalog.sort_key == "acquired_at" else catalog.newest_first))
-	var space := Control.new()
-	space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	sorting.add_child(space)
 	var reset := _compact_button(sorting, "重置筛选", 30)
 	reset.add_theme_font_size_override("font_size", 14)
 	reset.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
@@ -1273,7 +1501,7 @@ func _build_storage() -> void:
 	column.add_child(well)
 	var content_stack := Control.new()
 	well.add_child(content_stack)
-	var scroll := ScrollContainer.new()
+	var scroll := preload("res://scripts/map/map_inventory_scroll.gd").new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	# Wheel scrolling must not add/remove a scrollbar-width slice from the cards.
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
@@ -1297,7 +1525,21 @@ func _build_storage() -> void:
 	empty_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	empty_caption = _label(empty_state, "获得的物品会显示在这里", 14, MUTED)
 	empty_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+func _storage_capacity_model() -> MapLoadoutState:
+	return loadout
+
+func _refresh_storage_capacity() -> void:
+	if storage_capacity == null: return
+	var model := _storage_capacity_model()
+	if model != null:
+		storage_capacity.set_capacity(model.warehouse_records(warehouse_id).size(),model.warehouse_capacity_limit(warehouse_id)) if is_warehouse_pane else storage_capacity.set_capacity(model.storage_used_slots(), model.storage_capacity_limit())
+	else:
+		var rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/storage_capacity.json"))
+		var limit := int(rules.get("test_capacity_override", 0))
+		storage_capacity.set_capacity(catalog.collection_count("all"), limit if limit > 0 else int(rules.starting_capacity))
+
 func _refresh() -> void:
+	_refresh_storage_capacity()
 	for key in _collections:
 		_collections[key].text = "%s %d" % [catalog.collection_names[key], catalog.collection_count(key)]
 		_collections[key].set_pressed_no_signal(catalog.collection == key)
@@ -1306,17 +1548,19 @@ func _refresh() -> void:
 		_categories[key].set_pressed_no_signal(catalog.category == key)
 	_category_filters.visible = not catalog.subcategories().is_empty()
 	_category_rule.visible = _category_filters.visible
-	if search.text != catalog.search_text:
-		search.text = catalog.search_text
 	_quality_values = catalog.qualities()
 	quality_picker.clear()
 	quality_picker.add_item("品质")
 	for value in _quality_values:
 		quality_picker.add_item(value)
 	quality_picker.select(0 if catalog.quality.is_empty() else _quality_values.find(catalog.quality) + 1)
-	level_sort.set_pressed_no_signal(catalog.sort_key == "enhancement_level")
-	level_sort.text = "等级 " + (("↓" if catalog.level_descending else "↑") if catalog.sort_key == "enhancement_level" else "↕")
-	level_sort.tooltip_text = "按强化等级排序；再次点击切换升降序"
+	_level_values = catalog.enhancement_levels()
+	level_sort.clear()
+	level_sort.add_item("等级")
+	for value in _level_values: level_sort.add_item("+%d" % value)
+	level_sort.select(0 if catalog.enhancement_filter < 0 else _level_values.find(catalog.enhancement_filter)+1)
+	level_sort.tooltip_text = "筛选物品强化等级"
+	if search_box.text != catalog.search_text: search_box.text = catalog.search_text
 	order_picker.set_pressed_no_signal(catalog.sort_key == "acquired_at")
 	order_picker.text = "获得时间 " + (("↓" if catalog.newest_first else "↑") if catalog.sort_key == "acquired_at" else "↕")
 	order_picker.tooltip_text = "按获得时间排序；↓ 新到旧，↑ 旧到新"
@@ -1350,20 +1594,29 @@ func _refresh() -> void:
 	empty_state.visible = entries.is_empty()
 	empty_title.text = "储物袋空空如也" if catalog.total_count() == 0 else "没有符合条件的物品"
 	empty_caption.text = "获得的物品会显示在这里" if catalog.total_count() == 0 else "试试其他分类，或重置筛选"
+	if is_warehouse_pane and catalog.total_count() == 0:
+		empty_title.text = "仓库空空如也"
+		empty_caption.text = "右键物品或拖到此处，整叠存入仓库"
 	_enable_storage_drop(storage_panel)
+	_refresh_warehouse_actions.call_deferred()
 
 func _enable_storage_drop(node: Node) -> void:
 	if loadout == null:
 		return
 	if node is Control:
-		node.set_drag_forwarding(Callable(), func(_point: Vector2, data: Variant): return loadout.valid_drag(data) and data.source == "board", func(_point: Vector2, data: Variant): loadout.take_back(data))
+		node.set_drag_forwarding(Callable(), func(_point: Vector2, data: Variant): return _can_transfer(data) if not warehouse_id.is_empty() else loadout.valid_drag(data) and data.source == "board", func(_point: Vector2, data: Variant):
+			if not warehouse_id.is_empty():
+				if _can_transfer(data): warehouse_transfer_requested.emit(warehouse_id,data.item_id,data.withdraw)
+			else: loadout.take_back(data)
+		)
 	for child in node.get_children():
 		_enable_storage_drop(child)
 
 func _add_item_card(entry: Dictionary) -> void:
 	if not String(entry.get("card_frame", "")).is_empty():
 		var framed := MapInventoryItemCard.new()
-		framed.configure(entry, catalog.category_names[entry.category])
+		framed.configure(entry, catalog.category_names[entry.category], true)
+		_configure_card_transfer(framed)
 		if loadout != null:
 			framed.bind_loadout(loadout, loadout_board)
 		grid.add_child(framed)
@@ -1421,6 +1674,7 @@ func _layout() -> void:
 	sidebar_spacer.custom_minimum_size.x = extra_width * 0.5
 	body.position = Vector2(BODY_SIDE_MARGIN - extra_width * 0.5, 146)
 	body.size = Vector2(BODY_WIDTH + extra_width, BODY_HEIGHT)
+	_layout_warehouse_panel.call_deferred()
 
 func _input(event: InputEvent) -> void:
 	if visible and is_board_change_dialog_open():
@@ -1469,7 +1723,7 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
-	return loadout != null and loadout.valid_drag(data) and data.source == "board" and storage_panel.get_global_rect().has_point(get_global_transform() * point)
+	return warehouse_id.is_empty() and loadout != null and loadout.valid_drag(data) and data.source == "board" and storage_panel.get_global_rect().has_point(get_global_transform() * point)
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):

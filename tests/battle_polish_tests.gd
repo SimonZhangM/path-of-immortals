@@ -34,8 +34,8 @@ func _run() -> void:
 	check(game.startup_error.is_empty(), "real battle startup")
 	var ui = scene.get_node("MainUI")
 	var card: PartyMemberCard = ui.ally_panel.cards[0]
-	check(card.portrait_frame.texture is AtlasTexture and card.portrait_frame.texture.atlas.resource_path == "res://assets/player-level-1.webp", "same player portrait frame as map")
-	check(card.portrait_frame.texture.region == Rect2(16,45,510,510), "same frame crop as map")
+	check(card.portrait_frame.texture.resource_path == PartyMemberCard.PLAYER_FRAMES.path_for(game.party[0].cultivation_rank_id), "same player portrait frame as map")
+	check(card.portrait_frame.texture.get_size() == Vector2(543,610), "full level ornament retained")
 	check(not card.armor_status.text.contains("甲 ·") and not card.armor_status.text.contains("重甲"), "player hides armor type text")
 	check(not ui.enemy_panel.cards[0].armor_status.text.contains("轻甲"), "enemy hides armor type text")
 	var seconds: Label = ui.find_child("TimerSeconds", true, false)
@@ -115,22 +115,11 @@ func _run() -> void:
 	var enemy := PartyMemberState.new(game.registry.get_enemy(event.enemy_id), game.registry)
 	modal.present(event, enemy)
 	await settle()
-	check(modal.visible and modal.canvas.scale.x > 1.0, "modal is rendered at actual 2K scale")
-	var rows := modal.enemy_summary.get_children()
-	check(rows.size() == 4, "four centered summary rows")
-	var labels := []
-	for row in rows:
-		labels.append(row.get_child(1).get_child(0))
-	check(rows[1].get_child(1).get_child(1).text == "穿刺主，钝击辅", "attack wording")
-	var trait_text: Label = rows[3].get_child(1).get_child(1)
-	check(trait_text.text == "高气血·蓄势爆发" and trait_text.get_line_count() == 1, "trait value is single line")
-	check(is_equal_approx(trait_text.global_position.y,labels[3].global_position.y), "trait label and value share one row")
-	check(absf(modal.enemy_summary.get_global_rect().get_center().y - modal.enemy_summary.get_parent().get_global_rect().get_center().y) < 1, "four rows centered")
-	for row in rows:
-		check(row.get_combined_minimum_size().x <= modal.enemy_summary.get_parent().size.x, "row fits frame width")
-	var line: TextureRect = modal.find_child("EnemyItemsDivider",true,false)
-	var line_color: Color = line.texture.gradient.colors[1]
-	check(Color(line_color,1.0).is_equal_approx(Color("aeada8")), "divider grey color")
+	check(modal.visible and modal.canvas.scale == Vector2.ONE, "new popup uses native-pixel text layout")
+	check(modal.trait_labels[0].text == "高气血" and modal.trait_labels[1].text == "蓄势爆发", "actual boar traits")
+	check(modal.trait_labels[0].global_position.y == modal.trait_labels[1].global_position.y, "trait tags align")
+	check(modal.find_child("EnemyItemsDivider",true,false) == null, "old summary divider removed")
+	# Full new layout and selection checks live in encounter_redesign_tests.gd.
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://artifacts/battle-polish-encounter.png")

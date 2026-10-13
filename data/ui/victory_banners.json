@@ -1,0 +1,8 @@
+{
+  "base.cultivation.mortal": "res://assets/banner-victory-fanren.webp",
+  "base.cultivation.qi_refining": "res://assets/banner-victory-lianqi.webp",
+  "base.cultivation.foundation": "res://assets/banner-victory-zhuji.webp",
+  "base.cultivation.golden_core": "res://assets/banner-victory-jiedan.webp",
+  "base.cultivation.nascent_soul": "res://assets/banner-victory-yuanying.webp",
+  "base.cultivation.spirit_transformation": "res://assets/banner-victory-huashen.webp"
+}

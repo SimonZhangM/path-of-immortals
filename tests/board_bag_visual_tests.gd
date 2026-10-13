@@ -64,8 +64,8 @@ func run() -> void:
 	root.add_child(tip)
 	tip.z_index = 100
 	tip.position = Vector2(1550,720)
-	check(tip.description.is_empty() and tip.find_child("BoardDescriptionSlot",true,false) != null, "blank tooltip retains reserved container")
-	check(tip.find_children("*","RichTextLabel",true,false).is_empty(), "board has no explanatory text")
+	check(not tip.description.is_empty() and tip.find_child("BoardDescriptionSlot",true,false) == null, "board description replaces reserved spacer")
+	check(not tip.find_children("*","RichTextLabel",true,false).is_empty(), "board shows actual bonus description")
 	if DisplayServer.get_name() != "headless":
 		await settle()
 		await RenderingServer.frame_post_draw

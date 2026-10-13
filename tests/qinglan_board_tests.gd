@@ -26,7 +26,7 @@ func run() -> void:
 		var texture: Texture2D = load(board.texture_path)
 		check(board.grid_size == sizes[n-1],"authored grid "+str(n))
 		check(texture.get_size() == board.source_size and texture.get_image().has_mipmaps(),"dimensions / mipmaps "+str(n))
-		check(board.resource_bonuses.is_empty() and board.buff_bonuses.is_empty() and board.faction == "青岚宗","zero bonuses and faction")
+		check(board.resource_bonus("hp") == n*10 and not board.status_capacity_bonuses.is_empty() and board.buff_bonuses.is_empty() and board.faction == "青岚宗","resource and capacity bonuses, no initial buff layers")
 		check(model._owned.values().count("base.map_item.qinglan_board_%d"%n)==1,"grant one board")
 	var old := model.snapshot()
 	old.content_grants.erase("qinglan.boards.v1")

@@ -1,0 +1,22 @@
+{
+  "id": "base.board.qingshihewan_qingke_heyuan",
+  "name": "青壳河鼋阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-qingkeheyuan.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    176,
+    479,
+    776,
+    1077
+  ],
+  "y_lines": [
+    180,
+    472,
+    764,
+    1042
+  ]
+}

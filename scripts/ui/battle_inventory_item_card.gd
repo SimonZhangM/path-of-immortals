@@ -19,6 +19,7 @@ func drag_data() -> Dictionary:
 	return {"kind": "battle_board" if entry.category == "board" else "storage", "storage_id": storage_id, "quantity": selected_quantity(), "epoch": manager.interaction_epoch}
 
 func _gui_input(event: InputEvent) -> void:
+	if _handle_selection_input(event): return
 	if not event is InputEventMouseButton or not event.pressed or drag_data().is_empty():
 		return
 	if event.button_index == MOUSE_BUTTON_RIGHT:
@@ -31,6 +32,9 @@ func _gui_input(event: InputEvent) -> void:
 		_begin_drag.call_deferred(drag_data())
 		accept_event()
 
+func _storage_drag_data() -> Dictionary:
+	return drag_data()
+
 func _begin_drag(data: Dictionary) -> void:
 	if not is_visible_in_tree() or data.is_empty() or data.get("epoch") != manager.interaction_epoch or drag_data().is_empty() or get_viewport().gui_is_dragging():
 		return
@@ -39,6 +43,7 @@ func _begin_drag(data: Dictionary) -> void:
 	var item := manager.registry.get_item(entry.id)
 	var units := manager.storage.peek_units(entry.storage_id, selected_quantity())
 	_battle_drag_active = true
+	ItemTooltipHost.for_control(self).dismiss()
 	manager.inventory_interaction.emit("pick")
 	if entry.category == "board":
 		var holder := Control.new()
@@ -63,7 +68,7 @@ func _notification(what: int) -> void:
 		if not get_viewport().gui_is_drag_successful():
 			manager.inventory_interaction.emit("invalid")
 
-func _make_custom_tooltip(_for_text: String) -> Object:
+func build_item_tooltip(_for_text: String) -> Object:
 	var tooltip := ItemTooltip.new()
 	tooltip.configure(manager.registry.get_item(entry.id), manager.storage.get_entry(entry.storage_id), -1, 0, identified)
 	return tooltip

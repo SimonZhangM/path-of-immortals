@@ -66,7 +66,7 @@ func run() -> void:
 	check(panel.get_theme_stylebox("panel").shadow_size == 0,"custom item frame has no shadow")
 	if DisplayServer.get_name() != "headless":
 		var background := TextureRect.new()
-		background.texture = load("res://assets/battle-qingshihewan-zhu.webp")
+		background.texture = load("res://assets/battle-qingshihewan-chisongliaozhu.webp")
 		background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		root.add_child(background)

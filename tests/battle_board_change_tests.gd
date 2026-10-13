@@ -128,10 +128,11 @@ func run() -> void:
 	check(game.equip(stored(game,"base.map_item.hunting_bow"),0,Vector2i(5,4)), "re-equip overflow in same pause")
 	check(game.simulation.cooling_remaining_usec(bow) == 0, "same-pause return adds no insertion cooldown")
 	member.hp = member.maximum("hp")
-	check(game.change_board(bag), "switch to bonus board")
-	check(member.hp <= member.maximum("hp"), "capacity increase never refills")
+	check(game.change_board(bag), "switch to lower bonus board")
+	check(member.hp == member.maximum("hp"), "capacity decrease clamps current health")
 	member.hp = member.maximum("hp")
-	check(game.change_board(big) and member.hp == member.maximum("hp"), "capacity decrease clamps current health")
+	var health_before_growth := member.hp
+	check(game.change_board(big) and member.hp == health_before_growth and member.hp < member.maximum("hp"), "capacity increase never refills")
 	member.cultivation_rank_id = "base.cultivation.mortal"
 	check(not game.change_board(big), "realm gate enforced")
 	member.cultivation_rank_id = "base.cultivation.spirit_transformation"

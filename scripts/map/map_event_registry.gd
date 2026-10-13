@@ -23,10 +23,80 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图事件字段不完整。"
 		if not raw.id is String or not raw.id.begins_with("base.map_event.") or loaded.has(raw.id):
 			return "地图事件ID无效或重复。"
-		if raw.type not in ["dialogue", "encounter"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
+		if raw.type not in ["dialogue", "encounter", "chest", "gathering", "rest", "shop", "clinic"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
 			return "地图事件类型、节点或节点绑定无效。"
 		if raw.get("trigger", "click") not in ["arrival", "click"]:
 			return "地图事件触发方式无效。"
+		if not raw.get("enabled", true) is bool:
+			return "地图事件启用开关必须为布尔值。"
+		if raw.type == "clinic":
+			if raw.has("treatment"):
+				var treatment_error := MapClinicTreatment.configuration_error(raw.treatment)
+				if not treatment_error.is_empty(): return treatment_error
+			if raw.has("dialogue"):
+				if not raw.dialogue is String: return "医馆对话路径无效。"
+				var library := NpcDialogueLibrary.new()
+				var dialogue_error := library.load_file(raw.dialogue)
+				if not dialogue_error.is_empty(): return dialogue_error
+			for key in ["title","description","leave_label"]:
+				if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "医馆文案缺失："+key
+			if not raw.presentation is Dictionary: return "医馆展示配置无效。"
+			var title_center: Variant = raw.presentation.get("title_center_y",133.0)
+			if (not title_center is float and not title_center is int) or not is_finite(float(title_center)) or float(title_center)<100 or float(title_center)>165: return "医馆标题中心位置无效。"
+			for key in ["background","illustration","frame"]:
+				if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "医馆素材不存在："+key
+			if raw.presentation.has("treatment_background") and (not raw.presentation.treatment_background is String or not ResourceLoader.exists(raw.presentation.treatment_background,"Texture2D")): return "医馆诊治底图不存在。"
+			loaded[raw.id] = raw.duplicate(true)
+			point_index[raw.point_id] = raw.id
+			continue
+		if raw.type == "shop":
+			if not raw.get("catalog") is String or not FileAccess.file_exists(raw.catalog): return "商铺目录不存在。"
+			if not raw.presentation is Dictionary: return "商铺展示配置无效。"
+			var title_center: Variant = raw.presentation.get("title_center_y",133.0)
+			if (not title_center is float and not title_center is int) or not is_finite(float(title_center)) or float(title_center)<100 or float(title_center)>165: return "商铺标题中心位置无效。"
+			for key in ["background","illustration","frame"]:
+				if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "商铺素材不存在："+key
+			loaded[raw.id] = raw.duplicate(true)
+			point_index[raw.point_id] = raw.id
+			continue
+		if raw.type == "rest":
+			if raw.get("rest_kind") not in ["indoor","outdoor"]: return "休息地点类型无效。"
+			for key in ["title","description","note","action_label"]:
+				if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "休息文案缺失："+key
+			if not ContentRegistry._positive_integer(raw.get("recovery_percent")) or raw.recovery_percent>100: return "休息恢复比例无效。"
+			if not ContentRegistry._positive_integer(raw.get("duration_days")): return "休息耗时无效。"
+			if raw.has("warehouse_id") and (not raw.warehouse_id is String or not raw.warehouse_id.begins_with("base.warehouse.") or raw.warehouse_id.trim_prefix("base.warehouse.").is_empty()): return "休息地点仓储标识无效。"
+			if not raw.presentation is Dictionary: return "休息展示配置无效。"
+			for key in ["background","illustration"]:
+				if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "休息图片不存在："+key
+			loaded[raw.id]=raw.duplicate(true)
+			point_index[raw.point_id]=raw.id
+			continue
+		if raw.type == "gathering":
+			if not raw.get("title") is String or raw.title.is_empty() or not raw.presentation is Dictionary: return "采集地点展示配置无效。"
+			if not raw.get("item_id") is String or not raw.item_id.begins_with("base.material."): return "采集材料引用无效。"
+			if raw.get("reward_prefix") != raw.id.replace("base.map_event.","base.map_reward."): return "采集奖励前缀无效。"
+			loaded[raw.id] = raw.duplicate(true)
+			point_index[raw.point_id] = raw.id
+			continue
+		if raw.type == "chest":
+			if raw.get("quality") not in ["下品", "凡品"] or not raw.get("reward_id") is String or not raw.reward_id.begins_with("base.map_reward."):
+				return "宝箱品级或奖励标识无效。"
+			if not raw.presentation is Dictionary: return "宝箱展示配置无效。"
+			if raw.has("respawn_days") and not ContentRegistry._positive_integer(raw.respawn_days): return "宝箱重新开启天数无效。"
+			if raw.has("observation"):
+				if not raw.observation is Dictionary: return "宝箱观察文案无效。"
+				for key in ["location_name", "location_description", "chest_name", "description", "result_description"]:
+					if not raw.observation.get(key) is String or raw.observation[key].strip_edges().is_empty():
+						return "宝箱观察文案缺失：" + key
+				for key in ["illustration", "chest_image", "result_illustration"]:
+					if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key], "Texture2D"):
+						return "宝箱图片不存在：" + key
+			for previous: Dictionary in loaded.values():
+				if previous.get("reward_id",previous.get("reward",{}).get("id","")) == raw.reward_id: return "宝箱奖励标识重复。"
+			loaded[raw.id] = raw.duplicate(true)
+			point_index[raw.point_id] = raw.id
+			continue
 		if raw.type == "encounter":
 			var encounter_error := _validate_encounter(raw)
 			if not encounter_error.is_empty():
@@ -104,7 +174,12 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图对话头像超出配置窗口。"
 		loaded[raw.id] = raw.duplicate(true)
 		point_index[raw.point_id] = raw.id
+	var reward_ids := {}
 	for event: Dictionary in loaded.values():
+		var reward_id: String = event.get("reward_id",event.get("reward",{}).get("id",""))
+		if not reward_id.is_empty():
+			if reward_ids.has(reward_id): return "地图奖励标识重复。"
+			reward_ids[reward_id] = true
 		var requirements: Variant = event.get("requires_completed", [])
 		if not requirements is Array:
 			return "地图事件前置条件必须为列表。"
@@ -120,25 +195,32 @@ func configure(definitions: Array, point_ids: Array) -> String:
 	return ""
 
 func _validate_encounter(raw: Dictionary) -> String:
-	for key in ["title", "description", "enemy_id", "enemy_rank", "enemy_description", "battle_scene"]:
+	if raw.has("enemy_sequence"):
+		if not raw.enemy_sequence is Array or raw.enemy_sequence.is_empty(): return "遭遇轮换列表不能为空。"
+		for id: Variant in raw.enemy_sequence:
+			if not id is String or not id.begins_with("base.enemy."): return "遭遇轮换敌人标识无效。"
+		if raw.get("enemy_id") != raw.enemy_sequence[0]: return "初始敌人必须对应轮换首项。"
+		if raw.enemy_sequence.size() > 1 and not ContentRegistry._positive_integer(raw.get("respawn_days")):
+			return "轮换遭遇需要正整数重生天数。"
+	if raw.has("respawn_days") and not ContentRegistry._positive_integer(raw.respawn_days): return "重生天数无效。"
+	# Empty location copy is intentional while authoring; missing/non-text fields are not.
+	for key in ["title", "description"]:
+		if not raw.get(key) is String: return "地图遭遇字段无效：" + key
+	for key in ["enemy_id", "battle_scene"]:
 		if not raw.get(key) is String or raw[key].strip_edges().is_empty():
 			return "地图遭遇字段无效：" + key
 	if not raw.enemy_id.begins_with("base.enemy.") or not ResourceLoader.exists(raw.battle_scene, "PackedScene"):
 		return "地图遭遇敌人标识或战斗场景无效。"
 	var art: Variant = raw.presentation
-	if not art is Dictionary or not art.has_all(["background", "background_region", "rank_icon"]):
+	for key in ["enemy_rank", "enemy_category", "enemy_description"]:
+		if raw.has(key): return "怪物资料请配置在敌人主档：" + key
+	if not art is Dictionary or not art.has("illustration"):
 		return "地图遭遇美术配置不完整。"
-	for key in ["background", "rank_icon"]:
+	for key in ["illustration"]:
 		if not art[key] is String or not ResourceLoader.exists(art[key], "Texture2D"):
 			return "地图遭遇图片不存在：" + key
-	if art.has("battle_background") and (not art.battle_background is String or not ResourceLoader.exists(art.battle_background, "Texture2D")):
-		return "地图遭遇战场背景不存在。"
-	if not _valid_rect(art.background_region):
-		return "地图遭遇背景裁切无效。"
-	var region: Array = art.background_region
-	var texture := load(art.background) as Texture2D
-	if not Rect2(Vector2.ZERO, texture.get_size()).encloses(Rect2(region[0], region[1], region[2], region[3])):
-		return "地图遭遇裁切超出背景。"
+	for key in ["battle_background", "enemy_summary"]:
+		if art.has(key): return "怪物展示请配置在敌人主档：" + key
 	return ""
 
 func _valid_rect(rect: Variant) -> bool:

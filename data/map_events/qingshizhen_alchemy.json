@@ -1,0 +1,13 @@
+{
+  "id": "base.map_event.qingshizhen.alchemy",
+  "type": "shop",
+  "point_id": "base.map.qingshizhen.point.n12",
+  "trigger": "click",
+  "catalog": "res://data/shops/qingshizhen_alchemy.json",
+  "presentation": {
+    "title_center_y": 133.0,
+    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-liandanfang.webp",
+    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-liandanfang-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "base.map_event.qingshihewan.gathering_n36",
+  "type": "gathering",
+  "point_id": "base.map.qingshihewan.point.n36",
+  "trigger": "arrival",
+  "title": "潮湿溪石",
+  "item_id": "base.material.xilutai",
+  "reward_prefix": "base.map_reward.qingshihewan.gathering_n36",
+  "presentation": {}
+}

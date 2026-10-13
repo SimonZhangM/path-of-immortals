@@ -47,8 +47,7 @@ func run() -> void:
 		if card.entry.id == "base.map_item.bag_board": continue
 		var n := int(String(card.entry.id).right(1)) - 1
 		check(card.entry.name == "青岚 · " + names[n], "new board name")
-		var tags := card.canvas.get_node("CategoryTags")
-		check(tags.get_child_count() == 2 and tags.get_child(0).text == levels[n] and tags.get_child(1).text == "青岚宗", "level and faction tags")
+		check(card.canvas.get_node_or_null("CategoryTags") == null, "board card omits level and faction tags")
 		check(registry.get_item(card.entry.id).tags == [levels[n], "青岚宗"], "tooltip uses same tags")
 		if n == 5: target = card
 	for n in [4,5]:

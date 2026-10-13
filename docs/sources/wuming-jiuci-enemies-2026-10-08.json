@@ -1,0 +1,768 @@
+{
+  "schema_version": 1,
+  "catalog_type": "enemy_authoring_record",
+  "source": "用户：无名旧祠四怪数据、毒蚀补答及灰蝠图片/岩腹心囊修订，2026-10-08",
+  "region": "无名旧祠",
+  "runtime_registered": false,
+  "notes": [
+    "只记录待接入内容，不由ContentRegistry自动加载，不启用遭遇战。",
+    "size为宽×高，cell为左上起零基列行；所有器官下品。",
+    "未明示上阵护甲，按现行全局规则为0；岩腹毒蛛旧试算开场5不沿用。",
+    "腐毒囊改用现有毒蚀，每次施加1层；不增加基础伤害类型，不沿用旧固定4跳。",
+    "岩腹心囊采用猪心同款规则：首次击败岩腹毒蛛必掉1件，之后独立10%；首胜按岩腹毒蛛稳定ID单独记录，与猪心不共用。其他旧祠可掉物概率及成长奖励仍未指定。",
+    "系统已实现毒蚀：默认首次等2秒，此后每秒锁定本跳层数，扣1层再按锁定层数直接扣气血；追加不重置计时，清零重施重新等待。沿用现有容量、抵消、清除和免疫规则，腐毒囊每次施加1层。"
+  ],
+  "pending": [
+    "四怪体力、灵力：保留旧试算候选，未自动确认为本次正式值",
+    "除岩腹心囊外的旧祠掉落概率、首次保底与修为/历练奖励",
+    "腐毒囊对应毒蚀施加容量与发动资格（施加层数已定为1层）",
+    "CD延迟通用效果适配：攻击器具范围、同刻最早就绪并列选择等按接入时现行规则核对",
+    "专属战斗背景（18件器官图片已齐）",
+    "旧祠地图、节点/地点名、重生配置"
+  ],
+  "enemies": [
+    {
+      "id": "base.enemy.heiwei_cishu",
+      "name": "黑尾祠鼠",
+      "art_profile": "base.enemy.heiwei_cishu",
+      "battle_enabled": false,
+      "cultivation_rank": "base.cultivation.mortal",
+      "max_hp": 39,
+      "max_stamina": null,
+      "max_spirit": null,
+      "initial_armor": 0,
+      "innate_armor_type": "无甲",
+      "innate_armor_capacity": 0,
+      "progression_rewards": null,
+      "battle_background": "",
+      "historical_candidates": {
+        "max_stamina": 36,
+        "max_spirit": 0,
+        "source": "docs/prologue-content-data-2026-09-13.md",
+        "status": "historical_not_reconfirmed"
+      },
+      "presentation": {
+        "rank_label": "凡人级",
+        "category_label": "啮兽类",
+        "description": "藏身于旧祠墙洞与腐朽梁木间，身形瘦小，行动敏捷。善于利用牙齿、前爪和长尾攻击。",
+        "summary": {
+          "hp": 39,
+          "attack": "穿刺、斩击、钝击",
+          "armor": "无甲",
+          "feature": "脆弱·多段攻击"
+        }
+      },
+      "encounter_descriptions": [
+        "破旧供桌下传来细碎的抓挠声，地面散落着被啃破的木屑。你刚俯身查看，一只黑尾祠鼠便从桌脚后窜出，露出尖长的门齿。",
+        "旧祠石阶旁有几个新挖出的鼠洞，洞口残留着零碎食物。忽然一阵急促的窸窣声响起，一只黑尾祠鼠贴着断墙疾跑，猛地向你扑来。",
+        "昏暗回廊里传来断断续续的啃咬声，墙角一块破木板微微晃动。你正要靠近，木板突然被撞开，一条细长黑尾从阴影中甩出。"
+      ],
+      "grid_size": [
+        3,
+        3
+      ],
+      "layout": [
+        [
+          "爪",
+          "齿",
+          "尾"
+        ],
+        [
+          "爪",
+          "·",
+          "尾"
+        ],
+        [
+          "·",
+          "·",
+          "·"
+        ]
+      ],
+      "occupied_cells": 5,
+      "organs": [
+        {
+          "id": "base.organ.cishu_tooth",
+          "name": "祠鼠门齿",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            1,
+            0
+          ],
+          "cooldown": 3.5,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-heiweicishu-yingmenchi.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.cishu_tooth",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 4,
+            "damage_type": "穿刺"
+          },
+          "effect_text": "冷却3.5秒，造成4点穿刺伤害，消耗2体力。"
+        },
+        {
+          "id": "base.organ.cishu_claw",
+          "name": "祠鼠前爪",
+          "quality": "下品",
+          "size": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "cooldown": 3,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-heiweicishu-qianzhua.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.cishu_claw",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 3,
+            "damage_type": "斩击"
+          },
+          "effect_text": "冷却3秒，造成3点斩击伤害，消耗2体力。"
+        },
+        {
+          "id": "base.organ.cishu_tail",
+          "name": "祠鼠尾骨",
+          "quality": "下品",
+          "size": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "cooldown": 4.5,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-heiweicishu-cuweihengsao.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.cishu_tail",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 5,
+            "damage_type": "钝击"
+          },
+          "effect_text": "冷却4.5秒，造成5点钝击伤害，消耗2体力。"
+        }
+      ]
+    },
+    {
+      "id": "base.enemy.huiyi_fu",
+      "name": "灰翼蝠",
+      "art_profile": "base.enemy.huiyi_fu",
+      "battle_enabled": false,
+      "cultivation_rank": "base.cultivation.mortal",
+      "max_hp": 42,
+      "max_stamina": null,
+      "max_spirit": null,
+      "initial_armor": 0,
+      "innate_armor_type": "无甲",
+      "innate_armor_capacity": 0,
+      "progression_rewards": null,
+      "battle_background": "",
+      "historical_candidates": {
+        "max_stamina": 39,
+        "max_spirit": 0,
+        "source": "docs/prologue-content-data-2026-09-13.md",
+        "status": "historical_not_reconfirmed"
+      },
+      "presentation": {
+        "rank_label": "凡人级",
+        "category_label": "飞兽类",
+        "description": "盘踞于旧祠屋梁和阴暗洞穴，依靠尖齿和翼爪捕食。能发出尖锐震鸣，干扰敌人的攻击节奏。",
+        "summary": {
+          "hp": 42,
+          "attack": "穿刺、斩击",
+          "armor": "无甲",
+          "feature": "高速·震鸣干扰"
+        }
+      },
+      "encounter_descriptions": [
+        "残破屋梁上倒挂着几道黑影，脚下积着厚厚的灰尘。你刚踏进殿内，一阵尖锐鸣声骤然响起，一只灰翼蝠猛然展开双翼扑下。",
+        "阴暗的石廊里回荡着细微的振翅声，头顶不时落下碎屑。你抬头寻找声源，一只灰翼蝠已脱离岩缝，在狭窄廊道里迎面飞来。",
+        "旧祠后殿的窗棂破损，几片薄薄的翼膜挂在木刺上。忽然，角落传来刺耳震鸣，一只灰翼蝠从神像背后的阴影里飞出。"
+      ],
+      "grid_size": [
+        3,
+        3
+      ],
+      "layout": [
+        [
+          "齿",
+          "爪",
+          "囊"
+        ],
+        [
+          "膜",
+          "爪",
+          "·"
+        ],
+        [
+          "·",
+          "·",
+          "·"
+        ]
+      ],
+      "occupied_cells": 5,
+      "organs": [
+        {
+          "id": "base.organ.huifu_tooth",
+          "name": "蝠齿",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "cooldown": 2.5,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-huiyifu-fuchi.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huifu_tooth",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 4,
+            "damage_type": "穿刺"
+          },
+          "effect_text": "冷却2.5秒，造成4点穿刺伤害，消耗2体力。"
+        },
+        {
+          "id": "base.organ.huifu_claw",
+          "name": "灰蝠翼爪",
+          "quality": "下品",
+          "size": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            0
+          ],
+          "cooldown": 3.5,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-huiyifu-huifuyizhua.webp",
+          "image_status": "available",
+          "drop_eligible": false,
+          "material_id": null,
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 4,
+            "damage_type": "斩击"
+          },
+          "effect_text": "冷却3.5秒，造成4点斩击伤害，消耗2体力。"
+        },
+        {
+          "id": "base.organ.huifu_echo_sac",
+          "name": "震鸣囊",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "cooldown": 6.5,
+          "stamina_cost": 3,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-huiyifu-zhenmingnang.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huifu_echo_sac",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "delay_cooldown",
+            "seconds": 0.5,
+            "target": "enemy",
+            "item_scope": "attack_items",
+            "selection": "earliest_ready_one",
+            "implementation": "pending_adapter"
+          },
+          "effect_text": "冷却6.5秒，消耗3体力；敌方最早就绪的1件攻击器具CD延迟0.5秒。"
+        },
+        {
+          "id": "base.organ.huifu_membrane",
+          "name": "蝠翼膜",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            0,
+            1
+          ],
+          "cooldown": 0,
+          "stamina_cost": 0,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-huiyifu-fuyimo.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huifu_membrane",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "none"
+          },
+          "effect_text": "仅掉落，无战斗效果。"
+        }
+      ]
+    },
+    {
+      "id": "base.enemy.xueju_huizhu",
+      "name": "穴居灰蛛",
+      "art_profile": "base.enemy.xueju_huizhu",
+      "battle_enabled": false,
+      "cultivation_rank": "base.cultivation.mortal",
+      "max_hp": 57,
+      "max_stamina": null,
+      "max_spirit": null,
+      "initial_armor": 0,
+      "innate_armor_type": "轻甲",
+      "innate_armor_capacity": 0,
+      "progression_rewards": null,
+      "battle_background": "",
+      "historical_candidates": {
+        "max_stamina": 61,
+        "max_spirit": 0,
+        "source": "docs/prologue-content-data-2026-09-13.md",
+        "status": "historical_not_reconfirmed"
+      },
+      "presentation": {
+        "rank_label": "凡人级",
+        "category_label": "虫豸类",
+        "description": "栖息在旧祠阴湿角落，甲壳坚韧，螯牙锋利。擅长利用粘丝牵制对手，伺机近身撕咬。",
+        "summary": {
+          "hp": 57,
+          "attack": "穿刺、斩击",
+          "armor": "轻甲",
+          "feature": "产甲·粘丝迟滞"
+        }
+      },
+      "encounter_descriptions": [
+        "断墙之间挂着密密的灰白蛛丝，地上还残留着被缠住的虫壳。你刚拨开一束蛛网，一只穴居灰蛛便从墙缝里钻出，八足迅速展开。",
+        "偏殿的角落堆积着厚厚的尘土，一张灰白蛛网几乎遮住半扇破门。你刚碰到丝线，阴影中便传来连续的爬行声，一只灰蛛沿墙疾下。",
+        "潮湿的石壁上布满细小裂缝，裂缝旁散落着几块灰色硬壳。你正查看痕迹，脚边忽然粘住一束蛛丝，前方洞口随即探出一对螯牙。"
+      ],
+      "grid_size": [
+        3,
+        3
+      ],
+      "layout": [
+        [
+          "甲",
+          "甲",
+          "足"
+        ],
+        [
+          "甲",
+          "甲",
+          "足"
+        ],
+        [
+          "牙",
+          "囊",
+          "丝"
+        ]
+      ],
+      "occupied_cells": 9,
+      "organs": [
+        {
+          "id": "base.organ.huizhu_shell",
+          "name": "灰质甲片",
+          "quality": "下品",
+          "size": [
+            2,
+            2
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "cooldown": 5.5,
+          "stamina_cost": 0,
+          "armor_capacity": 4,
+          "icon": "res://assets/item-enemy-xuejuhuizhu-huizhijiake.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huizhu_shell",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "restore_armor",
+            "value": 2
+          },
+          "effect_text": "护甲上限+4；冷却5.5秒，恢复2护甲。"
+        },
+        {
+          "id": "base.organ.huizhu_fang",
+          "name": "灰蛛螯牙",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            0,
+            2
+          ],
+          "cooldown": 3,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-xuejuhuizhu-huizhuaoya.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huizhu_fang",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 4,
+            "damage_type": "穿刺"
+          },
+          "effect_text": "冷却3秒，造成4点穿刺伤害，消耗2体力。"
+        },
+        {
+          "id": "base.organ.huizhu_foreleg",
+          "name": "灰蛛前足",
+          "quality": "下品",
+          "size": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "cooldown": 3.5,
+          "stamina_cost": 2,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-xuejuhuizhu-qianzusiche.webp",
+          "image_status": "available",
+          "drop_eligible": false,
+          "material_id": null,
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 4,
+            "damage_type": "斩击"
+          },
+          "effect_text": "冷却3.5秒，造成4点斩击伤害，消耗2体力。"
+        },
+        {
+          "id": "base.organ.huizhu_silk_sac",
+          "name": "粘丝囊",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            1,
+            2
+          ],
+          "cooldown": 6,
+          "stamina_cost": 3,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-xuejuhuizhu-niansinang.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huizhu_silk_sac",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "delay_cooldown",
+            "seconds": 0.4,
+            "target": "enemy",
+            "item_scope": "attack_items",
+            "selection": "all",
+            "implementation": "pending_adapter"
+          },
+          "effect_text": "冷却6秒，消耗3体力；敌方全部攻击器具CD延迟0.4秒。"
+        },
+        {
+          "id": "base.organ.huizhu_silk",
+          "name": "灰蛛丝",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            2,
+            2
+          ],
+          "cooldown": 0,
+          "stamina_cost": 0,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-xuejuhuizhu-huizhusi.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.huizhu_silk",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "none"
+          },
+          "effect_text": "仅掉落，无战斗效果。"
+        }
+      ]
+    },
+    {
+      "id": "base.enemy.yanfu_duzhu",
+      "name": "岩腹毒蛛",
+      "art_profile": "base.enemy.yanfu_duzhu",
+      "battle_enabled": false,
+      "cultivation_rank": "base.cultivation.mortal",
+      "max_hp": 102,
+      "max_stamina": null,
+      "max_spirit": null,
+      "initial_armor": 0,
+      "innate_armor_type": "重甲",
+      "innate_armor_capacity": 0,
+      "progression_rewards": null,
+      "battle_background": "",
+      "historical_candidates": {
+        "max_stamina": 105,
+        "max_spirit": 0,
+        "source": "docs/prologue-content-data-2026-09-13.md",
+        "status": "historical_not_reconfirmed"
+      },
+      "presentation": {
+        "rank_label": "凡人级·首领",
+        "category_label": "虫豸类",
+        "description": "盘踞于旧祠深处的巨型毒蛛，腹甲厚硬，毒液猛烈。擅长吐丝牵制猎物，再以腐毒慢慢消耗对手。",
+        "summary": {
+          "hp": 102,
+          "attack": "穿刺、毒蚀",
+          "armor": "重甲",
+          "feature": "中毒·迟滞·回体"
+        }
+      },
+      "encounter_descriptions": [
+        "狭窄的石洞中遍布粗大的蛛丝，地上散落着被腐蚀的兽骨。你刚踏进洞口，前方巨大的灰黑腹甲便缓缓挪动，一只岩腹毒蛛从阴影中现身。",
+        "旧祠深处飘着一股刺鼻气味，石壁上留着暗绿色的腐蚀痕迹。前方蛛网突然剧烈颤动，一只腹部坚硬如岩的巨蛛沿着石壁迅速爬来。",
+        "破败神像背后，一团厚重蛛网几乎封住整条通道。你正寻找绕行的空隙，脚下突然传来震动，一只岩腹毒蛛破网而出，螯牙滴落毒液。"
+      ],
+      "grid_size": [
+        3,
+        3
+      ],
+      "layout": [
+        [
+          "甲",
+          "甲",
+          "牙"
+        ],
+        [
+          "甲",
+          "甲",
+          "毒"
+        ],
+        [
+          "囊",
+          "丝",
+          "心"
+        ]
+      ],
+      "occupied_cells": 9,
+      "organs": [
+        {
+          "id": "base.organ.yanfu_shell",
+          "name": "岩腹甲片",
+          "quality": "下品",
+          "size": [
+            2,
+            2
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "cooldown": 6.5,
+          "stamina_cost": 0,
+          "armor_capacity": 9,
+          "icon": "res://assets/item-enemy-yanfuduzhu-yanfujiake.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.yanfu_shell",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "restore_armor",
+            "value": 3
+          },
+          "effect_text": "护甲上限+9；冷却6.5秒，恢复3护甲。"
+        },
+        {
+          "id": "base.organ.yanfu_fang",
+          "name": "岩腹螯牙",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "cooldown": 3,
+          "stamina_cost": 3,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-yanfuduzhu-yanfuaoya.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.yanfu_fang",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "damage",
+            "value": 5,
+            "damage_type": "穿刺"
+          },
+          "effect_text": "冷却3秒，造成5点穿刺伤害，消耗3体力。"
+        },
+        {
+          "id": "base.organ.yanfu_poison_sac",
+          "name": "腐毒囊",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            2,
+            1
+          ],
+          "cooldown": 6,
+          "stamina_cost": 3,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-yanfuduzhu-fudunang.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.yanfu_poison_sac",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "apply_status",
+            "status": "毒蚀",
+            "value": 1,
+            "target": "enemy",
+            "gate": null,
+            "capacity_bonus": null,
+            "mechanism": "shared_default_toxin"
+          },
+          "effect_text": "冷却6秒，消耗3体力；向敌方施加1层毒蚀，沿用系统默认毒蚀机制。"
+        },
+        {
+          "id": "base.organ.yanfu_silk_sac",
+          "name": "大蛛丝囊",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            0,
+            2
+          ],
+          "cooldown": 7,
+          "stamina_cost": 3,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-yanfuduzhu-dazhusinang.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.yanfu_silk_sac",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "delay_cooldown",
+            "seconds": 0.5,
+            "target": "enemy",
+            "item_scope": "all_items",
+            "selection": "all",
+            "implementation": "pending_adapter"
+          },
+          "effect_text": "冷却7秒，消耗3体力；敌方全部器具CD延迟0.5秒。"
+        },
+        {
+          "id": "base.organ.yanfu_silk",
+          "name": "岩腹蛛丝",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            1,
+            2
+          ],
+          "cooldown": 0,
+          "stamina_cost": 0,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-yanfuduzhu-yanfuzhusi.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.yanfu_silk",
+          "drop_chance": null,
+          "effect_spec": {
+            "effect": "none"
+          },
+          "effect_text": "仅掉落，无战斗效果。"
+        },
+        {
+          "id": "base.organ.yanfu_heart",
+          "name": "岩腹心囊",
+          "quality": "下品",
+          "size": [
+            1,
+            1
+          ],
+          "cell": [
+            2,
+            2
+          ],
+          "cooldown": 2,
+          "stamina_cost": 0,
+          "armor_capacity": 0,
+          "icon": "res://assets/item-enemy-yanfuduzhu-yanfuxinnang.webp",
+          "image_status": "available",
+          "drop_eligible": true,
+          "material_id": "base.material.yanfu_heart",
+          "drop_chance": 0.1,
+          "effect_spec": {
+            "effect": "restore_instant",
+            "resource": "stamina",
+            "value": 2,
+            "resource_threshold": {
+              "resource": "stamina",
+              "numerator": 2,
+              "denominator": 3
+            }
+          },
+          "effect_text": "体力≤上限2/3时，每2秒恢复2体力。",
+          "first_victory_guaranteed": true,
+          "drop_quantity": 1,
+          "first_victory_scope": "base.enemy.yanfu_duzhu"
+        }
+      ]
+    }
+  ]
+}

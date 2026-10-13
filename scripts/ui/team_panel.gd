@@ -3,9 +3,11 @@ extends VBoxContainer
 
 const WIDTH := 822.0
 const BAG_SIDE := 548.0
-const ACTOR_Y_OFFSET := -3.75 # 5 physical pixels at the native 2560x1440 scale.
+const ENEMY_BOARD_SCALE := 0.9
+const ACTOR_Y_OFFSET := -11.25 # Previous -3.75, shifted up another 10 native 2K pixels.
 const PLAYER_BOARD_VISIBLE_SIZE := Vector2(650, 630)
 const PLAYER_BOARD_CENTER_Y_OFFSET := -40.0
+var board_presentation: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/battle_board_layout.json"))
 var manager: GameManager
 var enemy_side: bool = false
 var cards: Array[PartyMemberCard] = []
@@ -67,12 +69,7 @@ func rebuild() -> void:
 	main_column.add_child(actor_slot)
 	actor_slot.add_child(card)
 	card.position.y = ACTOR_Y_OFFSET
-	var frame := {} if enemy_side else {
-		"portrait_frame": "res://assets/player-level-1.webp",
-		"portrait_frame_region": [16, 45, 510, 510],
-		# Same 96px portrait / 113 1/3px ring proportions as the map header.
-		"portrait_window": [0.076470588, 0.076470588, 0.847058824, 0.847058824]
-	}
+	var frame := {} if enemy_side else {"player_level_frame": true}
 	card.configure(0, members[0], frame)
 	card.set_primary(true)
 	cards.append(card)
@@ -100,14 +97,22 @@ func rebuild() -> void:
 	status_space.custom_minimum_size.y = 80
 	status_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main_column.add_child(status_space)
-	var inventory_row: Control = CenterContainer.new() if enemy_side else Control.new()
+	var inventory_row := Control.new()
 	inventory_row.name = "BattleBoardStage"
 	inventory_row.custom_minimum_size.y = BAG_SIDE if enemy_side else BAG_SIDE * 1.04
 	add_child(inventory_row)
 	var bag := InventoryView.new()
-	bag.display_side = BAG_SIDE if enemy_side else 1.0
+	bag.display_side = BAG_SIDE * ENEMY_BOARD_SCALE if enemy_side else 1.0
 	inventory_row.add_child(bag)
 	bag.bind_game(manager, 0, enemy_side)
+	if enemy_side:
+		# Anchors preserve the exact center with a fractional 493.2px size;
+		# CenterContainer rounds its child position to whole design pixels.
+		bag.set_anchors_preset(Control.PRESET_CENTER)
+		bag.offset_left = -bag.display_side * 0.5
+		bag.offset_top = -bag.display_side * 0.5
+		bag.offset_right = bag.display_side * 0.5
+		bag.offset_bottom = bag.display_side * 0.5
 	bags.append(bag)
 	if not enemy_side:
 		bag.input_art_bounds_only = true
@@ -123,9 +128,13 @@ func _layout_player_board(stage: Control, bag: InventoryView) -> void:
 	var visible := Rect2(MapItemArtwork.TextureMetrics.inspect(bag.board_texture).visible_rect)
 	var target := Vector2(minf(PLAYER_BOARD_VISIBLE_SIZE.x, stage.size.x), PLAYER_BOARD_VISIBLE_SIZE.y)
 	var factor := minf(target.x / visible.size.x, target.y / visible.size.y)
+	var presentation: Dictionary = board_presentation.get(bag.board_layout.id, {})
+	factor *= float(presentation.get("scale", 1.0))
 	var side := factor * maxf(bag.board_layout.source_size.x, bag.board_layout.source_size.y) / bag.board_layout.display_scale
 	bag.size = Vector2.ONE * side
 	var center := Vector2(stage.size.x * 0.5, stage.size.y * 0.5 + PLAYER_BOARD_CENTER_Y_OFFSET)
+	# Design units: -7.5 means ten screen pixels at native 2560x1440.
+	center.y += float(presentation.get("center_y_offset", 0.0))
 	bag.position = center - bag.board_layout.source_to_view(visible.get_center(), bag.size)
 
 func _layout_status_icons() -> void:

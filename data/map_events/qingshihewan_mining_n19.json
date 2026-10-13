@@ -1,0 +1,10 @@
+{
+  "id": "base.map_event.qingshihewan.mining_n19",
+  "type": "gathering",
+  "point_id": "base.map.qingshihewan.point.n19",
+  "trigger": "arrival",
+  "title": "溪湾砂矿",
+  "item_id": "base.material.cutiekuang",
+  "reward_prefix": "base.map_reward.qingshihewan.mining_n19",
+  "presentation": {}
+}

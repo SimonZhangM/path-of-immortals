@@ -18,7 +18,7 @@ func configure_battle(game: GameManager) -> void:
 	add_child(body)
 	body.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	_build_storage()
-	var close := _compact_button(search.get_parent(), "×", 30)
+	var close := _compact_button(storage_heading, "×", 30)
 	close.name = "CloseBattleStorage"
 	close.tooltip_text = "关闭储物袋"
 	close.pressed.connect(func(): manager.set_adjustment(false))
@@ -35,6 +35,9 @@ func configure_battle(game: GameManager) -> void:
 	# Defer the full card catalog until the panel is actually opened, so battle
 	# entry does not wait for 115 hidden cards and their fonts/artwork.
 	_refresh()
+
+func _storage_capacity_model() -> MapLoadoutState:
+	return manager._durable_loadout
 
 func _sync_records() -> void:
 	var records := manager._durable_loadout.storage_records()
@@ -57,7 +60,7 @@ func _refresh() -> void:
 
 func _add_item_card(entry: Dictionary) -> void:
 	var card := BattleInventoryItemCard.new()
-	card.configure(entry, catalog.category_names[entry.category])
+	card.configure(entry, catalog.category_names[entry.category], true)
 	card.bind_battle(manager, target_board)
 	grid.add_child(card)
 

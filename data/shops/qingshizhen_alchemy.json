@@ -1,0 +1,14 @@
+{
+  "id": "base.shop.qingshizhen.alchemy",
+  "profile": "base.shop_profile.alchemy",
+  "title": "炼丹房",
+  "description": "丹药与丹方交易。",
+  "leave_label": "离开炼丹房",
+  "crafting_tab": true,
+  "crafting_label": "炼丹",
+  "products": [
+    {"item_id":"base.map_item.hemostatic_pill","category":"pill"},
+    {"item_id":"base.map_item.t01_0101","category":"pill"},
+    {"item_id":"base.map_item.t01_0025","category":"pill"}
+  ]
+}

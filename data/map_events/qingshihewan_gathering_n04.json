@@ -1,0 +1,10 @@
+{
+  "id": "base.map_event.qingshihewan.gathering_n04",
+  "type": "gathering",
+  "point_id": "base.map.qingshihewan.point.n04",
+  "trigger": "arrival",
+  "title": "林间草坡",
+  "item_id": "base.material.zhixuecao",
+  "reward_prefix": "base.map_reward.qingshihewan.gathering_n04",
+  "presentation": {}
+}

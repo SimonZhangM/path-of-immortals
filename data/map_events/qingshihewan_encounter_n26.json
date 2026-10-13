@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n26",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n26",
+  "title": "南岸深林",
+  "description": "南岸树林茂密，层层枝叶遮住了大半天光。前方树冠忽然一阵晃动，一只青翎岩雉跃上粗枝，锐利的目光正盯着下方。",
+  "enemy_id": "base.enemy.qingling_yanzhi",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-11.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

@@ -45,30 +45,36 @@ static func inspect(texture: Texture2D) -> Dictionary:
 static func _invalidate(texture: Texture2D) -> void:
 	_metrics.erase(texture)
 
+static func solid_rect(texture: Texture2D) -> Rect2:
+	var metrics := inspect(texture)
+	if not metrics.has("solid_rect"):
+		metrics.solid_rect = _visible_rect(texture.get_image(),metrics.used_rect,0.5)
+	return Rect2(metrics.solid_rect)
+
 # Ignore near-transparent export specks for alignment, without cropping artwork.
 # Scan only outer strips; cache the result with the existing texture metrics.
-static func _visible_rect(image: Image, used: Rect2i) -> Rect2i:
+static func _visible_rect(image: Image, used: Rect2i, alpha_threshold: float = 0.02) -> Rect2i:
 	if image == null or not used.has_area():
 		return used
 	var left := used.position.x
 	var right := used.end.x - 1
 	var top := used.position.y
 	var bottom := used.end.y - 1
-	while left <= right and not _opaque_strip(image, left, top, bottom, true):
+	while left <= right and not _opaque_strip(image, left, top, bottom, true, alpha_threshold):
 		left += 1
 	if left > right:
 		return used
-	while right > left and not _opaque_strip(image, right, top, bottom, true):
+	while right > left and not _opaque_strip(image, right, top, bottom, true, alpha_threshold):
 		right -= 1
-	while top <= bottom and not _opaque_strip(image, top, left, right, false):
+	while top <= bottom and not _opaque_strip(image, top, left, right, false, alpha_threshold):
 		top += 1
-	while bottom > top and not _opaque_strip(image, bottom, left, right, false):
+	while bottom > top and not _opaque_strip(image, bottom, left, right, false, alpha_threshold):
 		bottom -= 1
 	return Rect2i(left, top, right - left + 1, bottom - top + 1)
 
-static func _opaque_strip(image: Image, fixed: int, first: int, last: int, vertical: bool) -> bool:
+static func _opaque_strip(image: Image, fixed: int, first: int, last: int, vertical: bool, alpha_threshold: float = 0.02) -> bool:
 	for offset in range(first, last + 1):
 		var color := image.get_pixel(fixed, offset) if vertical else image.get_pixel(offset, fixed)
-		if color.a > 0.02:
+		if color.a > alpha_threshold:
 			return true
 	return false

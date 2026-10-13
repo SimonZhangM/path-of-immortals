@@ -21,13 +21,20 @@ const GLOSSARY_EXCLUDED := ["斩击", "穿刺", "钝击", "法术型", "命中",
 static var _tooltip_theme: Theme
 static var _keyword_theme: Theme
 static var _body_font: SystemFont
+static var _flavor_font: SystemFont
 static var _term_font: SystemFont
 static var _bold_term_font: FontVariation
 static var _status_keyword_definitions: Array = []
 static var _status_keywords_loaded := false
 static var _general_keyword_definitions: Array = []
 static var _resource_regions: Dictionary = {}
+const ITEM_TITLE_COLOR := Color("f9f8c8")
+const CLASSIFICATION_COLOR := Color("a7b8c5")
 var description: String = ""
+var active_keyword := ""
+var _hover_meanings: Dictionary = {}
+var _keyword_inset: MarginContainer
+var _keyword_row: RichTextLabel
 
 static func _px(design_pixels: float) -> int:
 	# Native 1440p geometry and integer font sizes, with no scaled tooltip texture.
@@ -40,10 +47,31 @@ static func _ensure_fonts() -> void:
 	if _term_font == null:
 		_term_font = SystemFont.new()
 		_term_font.font_names = PackedStringArray(["SimSun", "宋体", "Noto Serif CJK SC", "serif"])
+	if _flavor_font == null:
+		_flavor_font = SystemFont.new()
+		_flavor_font.font_names = PackedStringArray(["KaiTi", "楷体", "STKaiti", "serif"])
 	if _bold_term_font == null:
 		_bold_term_font = FontVariation.new()
 		_bold_term_font.base_font = _term_font
 		_bold_term_font.variation_embolden = 0.8
+
+static func summary_body_font() -> Font:
+	_ensure_fonts()
+	return _body_font
+
+static func summary_title_font() -> Font:
+	_ensure_fonts()
+	return _bold_term_font
+
+static func summary_name(value: String, category: String) -> String:
+	# SimSun's middle dot already has one CJK character advance. Extra spaces
+	# doubled the separator compared with the card's sans-serif name rendering.
+	return value.replace(" · ","·") if category == "board" else value
+
+static func style_item_title(label: Label, font_size: int) -> void:
+	label.add_theme_font_override("font", summary_title_font())
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", ITEM_TITLE_COLOR)
 
 static func _ensure_status_keywords() -> void:
 	if _status_keywords_loaded:
@@ -148,8 +176,31 @@ static func _box(fill: Color, border: Color, radius: int, padding: int) -> Style
 		box.set("content_margin_" + edge, padding)
 	return box
 
+static func classification_caption(value: String) -> String:
+	return "护"+value.trim_prefix("护具·") if value.begins_with("护具·") else value
+
+static func classification_tags(item: ItemData, vertical_book := false) -> Array:
+	var tags := [{"book":"功法书","spell":"法术","plant":"草木","beast":"兽材","mineral":"矿石","board":"阵盘"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
+	if item.category == "board": tags = []
+	if item.category == "item" and "器官" in item.tags: tags[0] = "器官"
+	for tag: String in item.tags:
+		if not tag.is_empty() and tag not in tags and tag not in ["斩击", "穿刺", "钝击", "weapon", "armor", "pill", "item", "hp", "stamina", "spirit"]:
+			tags.append(tag)
+	if item.category == "weapon":
+		for tag: String in item.tags:
+			if tag in ["斩击", "穿刺", "钝击"]:
+				tags.append(tag)
+				break
+	if not item.armor_type.is_empty():
+		tags.append(item.armor_type)
+	var footprint := Vector2i(1,2) if vertical_book else item.grid_size
+	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board"]:
+		tags.append("占格 %d×%d" % [footprint.x, footprint.y])
+	return tags.map(func(tag): return classification_caption(str(tag)))
+
 static func effect_text(item: ItemData) -> String:
-	if item.category == "board": return ""
+	if item.category in ["plant", "mineral"]: return item.combat.get("description", "")
+	if item.category == "board": return item.combat.get("description", "")
 	if item.category == "beast": return item.combat.get("description", "兽材，仅作材料，不能放入战斗阵盘。")
 	if item.category == "book":
 		var pending := "连携相关分支本轮暂缓。" if item.combat.has("deferred_branches") else ""
@@ -262,7 +313,7 @@ static func _resource_image(word: String, font_size: int) -> String:
 	var region: Rect2i = _resource_regions[word]
 	return "[img width=%d height=%d region=%d,%d,%d,%d]%s[/img]" % [font_size, font_size, region.position.x, region.position.y, region.size.x, region.size.y, icon_path]
 
-static func _colored(text: String, words: Dictionary, font_size: int = 23) -> String:
+static func _colored(text: String, words: Dictionary, font_size: int = 23, hover_words: Dictionary = {}) -> String:
 	# Longest first avoids nested tags when registered terms overlap.
 	var keys: Array[String] = []
 	for candidate: String in words:
@@ -286,7 +337,8 @@ static func _colored(text: String, words: Dictionary, font_size: int = 23) -> St
 					var gap_size := maxi(1, floori(font_size * 0.4))
 					result += "[font_size=%d] [/font_size]%s[font_size=%d]\u00a0[/font_size]" % [gap_size, _resource_image(word, font_size), gap_size]
 					shown_word = word.left(1) + "\u2060" + word.substr(1)
-				result += "[b][color=#%s]%s[/color][/b]" % [_keyword_color(word), shown_word] if words.has(word) else shown_word
+				var styled := "[b][color=#%s]%s[/color][/b]" % [_keyword_color(word), shown_word] if words.has(word) else shown_word
+				result += "[url=%s]%s[/url]" % [word, styled] if hover_words.has(word) else styled
 				cursor += word.length()
 				matched = true
 				break
@@ -312,14 +364,20 @@ func _rich(parent: Node, text: String, font_size: int) -> RichTextLabel:
 	parent.add_child(label)
 	return label
 
-func _rich_paragraphs(parent: Node, text: String, words: Dictionary, font_size: int, body_font_size: int = -1) -> VBoxContainer:
+func _rich_paragraphs(parent: Node, text: String, words: Dictionary, font_size: int, body_font_size: int = -1, hover_words: Dictionary = {}) -> VBoxContainer:
 	var paragraphs := VBoxContainer.new()
 	paragraphs.name = "EffectDescription"
 	paragraphs.add_theme_constant_override("separation", HARD_BREAK_GAP)
 	parent.add_child(paragraphs)
 	var lines := text.split("\n", true)
 	for index in lines.size():
-		var line := _rich(paragraphs, _colored(lines[index], words, _px(font_size)), font_size)
+		var line := _rich(paragraphs, _colored(lines[index], words, _px(font_size), hover_words), font_size)
+		if not hover_words.is_empty():
+			line.meta_underlined = false
+			line.meta_hover_started.connect(func(meta: Variant): show_keyword(str(meta)))
+			line.meta_hover_ended.connect(func(meta: Variant):
+				if active_keyword == str(meta): show_keyword("")
+			)
 		if body_font_size > 0:
 			line.add_theme_font_size_override("normal_font_size", _px(body_font_size))
 		line.name = "EffectDescriptionLine%d" % index
@@ -400,40 +458,52 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_theme_constant_override("separation", _px(10))
 	header.add_child(heading)
+	var title_row := HBoxContainer.new()
+	title_row.name = "ItemTitleRow"
+	title_row.add_theme_constant_override("separation", _px(7))
+	heading.add_child(title_row)
+	var quality_level := MapItemQuality.level(item.quality)
+	if identified and quality_level > 0:
+		var badge := TextureRect.new()
+		badge.name = "QualityBadge"
+		badge.texture = BattleActionButton.trimmed_art("res://assets/levelbq-%d.webp" % quality_level)
+		badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		badge.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.custom_minimum_size = Vector2(_px(34) * badge.texture.get_width() / badge.texture.get_height(), _px(34))
+		badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		title_row.add_child(badge)
 	var title := Label.new()
 	title.name = "ItemTitle"
-	title.text = item.display_name if identified else "？"
-	title.add_theme_font_override("font", _bold_term_font)
-	title.add_theme_font_size_override("font_size", _px(30))
-	title.add_theme_color_override("font_color", Color("f9f8c8"))
-	heading.add_child(title)
+	title.text = summary_name(item.display_name,item.category) if identified else "？"
+	style_item_title(title, _px(30))
+	title.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title_row.add_child(title)
 	var chips := HFlowContainer.new()
 	chips.name = "CategoryTags"
 	chips.add_theme_constant_override("h_separation", _px(7))
 	chips.add_theme_constant_override("v_separation", _px(5))
 	heading.add_child(chips)
-	var tags := [{"book":"功法书","spell":"法术","beast":"兽材","board":"阵盘"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
-	if item.category == "board": tags = []
-	if item.category == "item" and "器官" in item.tags: tags[0] = "器官"
-	for tag: String in item.tags:
-		if not tag.is_empty() and tag not in tags and tag not in ["斩击", "穿刺", "钝击", "weapon", "armor", "pill", "item", "hp", "stamina", "spirit"]:
-			tags.append(tag)
-	if item.category == "weapon":
-		for tag: String in item.tags:
-			if tag in ["斩击", "穿刺", "钝击"]:
-				tags.append(tag)
-				break
-	if not item.armor_type.is_empty():
-		tags.append(item.armor_type)
-	var footprint := Vector2i(1,2) if _entry.get("vertical_book",false) else item.grid_size
-	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board"]:
-		tags.append("占格 %d×%d" % [footprint.x, footprint.y])
+	var tags := classification_tags(item,_entry.get("vertical_book",false))
 	if not identified:
 		tags = ["？"]
 	for tag: String in tags:
-		var label := chip(tag, Color("a7b8c5"), UI_SCALE)
-		label.add_theme_font_size_override("font_size", _px(16))
+		var label := chip(tag, CLASSIFICATION_COLOR, UI_SCALE)
+		label.add_theme_font_size_override("font_size", _px(15))
 		chips.add_child(label)
+	var flavor := str(item.combat.get("flavor_description", "")).strip_edges() if identified else ""
+	if not flavor.is_empty():
+		var flavor_line := Label.new()
+		flavor_line.name = "FlavorDescription"
+		flavor_line.text = "“%s”" % flavor
+		flavor_line.add_theme_font_override("font", _flavor_font)
+		flavor_line.add_theme_font_size_override("font_size", _px(15))
+		flavor_line.add_theme_color_override("font_color", Color("a7b8c5"))
+		flavor_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		heading.add_child(flavor_line)
 	var divider := HSeparator.new()
 	var line := StyleBoxLine.new()
 	line.color = Color("303846")
@@ -441,20 +511,16 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	divider.add_theme_stylebox_override("separator", line)
 	content.add_child(divider)
 	description = str(_entry.get("effect_description",effect_text(item))) if identified else MapItemQuality.UNKNOWN_DESCRIPTION
-	if item.category == "board" and identified: description = ""
 	var meanings := keyword_meanings(item, description) if identified else {}
+	_hover_meanings = meanings
 	var highlighted := highlighted_keywords()
-	if item.category == "board" and identified:
-		var reserved := VBoxContainer.new()
-		reserved.name = "BoardDescriptionSlot"
-		reserved.custom_minimum_size.y = _px(170)
-		content.add_child(reserved)
-	else:
-		_rich_paragraphs(content, description, highlighted, 23, 22)
+	var body_rows := _rich_paragraphs(content, description, highlighted, 23, 22, meanings)
 	if identified and cooling_usec > 0:
 		_rich(content, "入场等待：%.1f秒" % (cooling_usec / 1_000_000.0), 17)
 	if not meanings.is_empty():
 		var inset := MarginContainer.new()
+		_keyword_inset = inset
+		inset.name = "KeywordInset"
 		inset.add_theme_constant_override("margin_left", _px(18))
 		inset.add_theme_constant_override("margin_right", _px(18))
 		column.add_child(inset)
@@ -477,11 +543,26 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 		caption.add_theme_font_size_override("font_size", _px(22))
 		caption.add_theme_color_override("font_color", Color("f1d4a2"))
 		words.add_child(caption)
-		for word: String in meanings:
-			# Highlight within definitions too, but do not recursively add glossary rows.
-			var row := _rich(words, "%s：%s" % [_colored(word, highlighted, _px(18)), _colored(meanings[word], highlighted, _px(18))], 18)
-			row.custom_minimum_size.x = WIDTH - _px(74)
+		_keyword_row = _rich(words, "", 18)
+		_keyword_row.name = "KeywordDefinition"
+		_keyword_row.custom_minimum_size.x = WIDTH - _px(74)
+		inset.hide()
 	_ignore(self)
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	for body_line: RichTextLabel in body_rows.get_children():
+		body_line.mouse_filter = Control.MOUSE_FILTER_PASS
+		body_line.mouse_default_cursor_shape = Control.CURSOR_ARROW
+
+func show_keyword(word: String) -> void:
+	if _keyword_inset == null: return
+	if not _hover_meanings.has(word): word = ""
+	if active_keyword == word: return
+	active_keyword = word
+	_keyword_inset.visible = not word.is_empty()
+	if not word.is_empty():
+		var highlighted := highlighted_keywords()
+		_keyword_row.text = "%s：%s" % [_colored(word, highlighted, _px(18)), _colored(_hover_meanings[word], highlighted, _px(18))]
+	reset_size.call_deferred()
 
 func _ignore(node: Node) -> void:
 	if node is Control:

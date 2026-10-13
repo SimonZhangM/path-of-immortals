@@ -1,0 +1,89 @@
+{
+  "id": "base.enemy.qingling_yanzhi",
+  "name": "青翎岩雉",
+  "progression_rewards": {
+    "cultivation": 3,
+    "experience": 1
+  },
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 46,
+  "max_stamina": 45,
+  "innate_armor_type": "轻甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 0,
+  "max_spirit": 0,
+  "loadout": [
+    {
+      "item_id": "base.organ.yanzhi_feather",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.yanzhi_beak",
+      "cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.yanzhi_claw",
+      "cell": [
+        2,
+        0
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.yanzhi_feather",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanzhi_beak",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanzhi_claw",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "preview_alignment": [0.5, 0.0],
+    "rank_label": "凡人级",
+    "category_label": "飞禽类",
+    "description": "栖于溪谷林木，行动灵活，受惊时会以尖喙利爪发起攻击。",
+    "traits": ["攻守兼备"],
+    "battle_background": "res://assets/battle-qingshihewan-qinglingyanzhi.webp",
+    "summary": [
+      {
+        "label": "气血",
+        "stat": "hp",
+        "icon": "res://assets/icon-enemy-health.webp"
+      },
+      {
+        "label": "攻击",
+        "value": "穿刺、斩击",
+        "icon": "res://assets/icon-enemy-attack.webp"
+      },
+      {
+        "label": "甲型",
+        "stat": "armor",
+        "icon": "res://assets/icon-enemy-defense.webp"
+      },
+      {
+        "label": "特点",
+        "value": "攻守兼备",
+        "icon": "res://assets/icon-enemy-chara.webp"
+      }
+    ]
+  },
+  "battle_enabled": true,
+  "encounter_descriptions": [
+    "山林间散落着几根青色羽毛，头顶树冠忽然传来急促的扑翅声。一只青翎岩雉立在横枝上，低头盯着你，随即展开双翼扑下。",
+    "岩坡上草木轻摇，几粒碎石沿斜坡滚落。你循声望去，一只青翎岩雉正站在突出的岩石上，忽然振翅跃起，朝你疾扑而来。",
+    "林中空地传来一阵尖锐鸣叫，几只小鸟惊慌飞散。前方灌木中钻出一只青翎岩雉，它高高扬起头颈，钩爪在泥土上刨出浅痕。"
+  ],
+  "art_profile": "base.enemy.qingling_yanzhi"
+}

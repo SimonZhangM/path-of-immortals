@@ -2,6 +2,7 @@ class_name MapStatusHeader
 extends Control
 
 const BASE_WIDTH := 1920.0
+const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
 const LEFT_REGION := Rect2(7, 45, 887, 231)
 const RIGHT_REGION := Rect2(695, 7, 1171, 689)
 const LEFT_TIP := Vector2(803, 173.5)
@@ -19,6 +20,10 @@ var bars: Dictionary = {}
 var values: Dictionary = {}
 var hero_name: Label
 var hero_rank: Label
+var portrait_frame: TextureRect
+var _frame_rank_id := ""
+var _portrait_group: Control
+var _portrait_group_origin := Vector2.ZERO
 var hero_age: Label
 var identity_container: CenterContainer
 var age_container: CenterContainer
@@ -39,7 +44,7 @@ var outline: PackedVector2Array
 var settings_button: MapHeaderUtilityButton
 var tasks_button: MapHeaderUtilityButton
 
-func configure(status: MapPlayerStatus, config: Dictionary) -> String:
+func configure(status: MapPlayerStatus, config: Dictionary, title_image := "") -> String:
 	state = status
 	name = "MapStatusHeader"
 	z_index = 30
@@ -65,10 +70,26 @@ func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	connection.antialiased = true
 	connection.gradient = Gradient.new()
 	# Keep the hanging cord behind head3; the plaque stays fixed with the header.
-	map_title = _image("res://assets/map-title-qshw.webp", Rect2(46, 0, 236, 1031))
+	var title_region := Rect2(46, 0, 236, 1031)
+	var title_size := title_region.size * 0.36
+	var title_origin := Vector2(18, 128)
+	if not title_image.is_empty():
+		if not ResourceLoader.exists(title_image, "Texture2D"):
+			return "地图标题图片不存在。"
+		var title_texture := load(title_image) as Texture2D
+		title_region = Rect2(title_texture.get_image().get_used_rect())
+		if not title_region.has_area(): return "地图标题图片没有可见内容。"
+		# Same hanging axis and height as the river plaque, preserving source aspect.
+		title_size = title_region.size * (371.16 / title_region.size.y)
+		title_origin.x += (84.96-title_size.x)*0.5
+	else:
+		title_image = "res://assets/map-title-qshw.webp"
+	map_title = _image(title_image, title_region)
+	if title_image == "res://assets/map-title-qingshizhen.webp":
+		title_origin.y -= 2.0
 	map_title.name = "MapTitle"
-	map_title.position = Vector2(18, 128)
-	map_title.size = Vector2(236, 1031) * 0.36
+	map_title.position = title_origin
+	map_title.size = title_size
 	map_title.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	left_art = _image("res://assets/map-head3.webp", LEFT_REGION)
 	right_art = _image("res://assets/map-head2.webp", RIGHT_REGION)
@@ -85,6 +106,8 @@ func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	# Scale the complete image/rim around the preceding rim's outer bottom-right.
 	portrait_group.scale = Vector2.ONE * 1.05
 	portrait_group.position = Vector2(176.1, 116.1) * (1.0 - 1.05) + Vector2(-4, 0)
+	_portrait_group = portrait_group
+	_portrait_group_origin = portrait_group.position
 	content.add_child(portrait_group)
 	portrait.reparent(portrait_group, false)
 	portrait.position = Vector2(78, 18)
@@ -94,13 +117,16 @@ func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	mask.set_shader_parameter("portrait_size", portrait.size)
 	portrait.material = mask
 	# Source ring center is (271, 300), independent of asymmetric source padding.
-	# The centered square keeps both control centers aligned; portrait overlaps the rim.
-	var rim := _image("res://assets/player-level-1.webp", Rect2(16, 45, 510, 510))
+	# Full source preserves upper/lower ornaments; portrait overlaps the circular rim.
+	var rim := _image(PLAYER_FRAMES.path_for(state.cultivation_rank_id), Rect2(Vector2.ZERO, PLAYER_FRAMES.SOURCE_SIZE))
+	portrait_frame = rim
+	_frame_rank_id = state.cultivation_rank_id
 	rim.name = "PortraitFrame"
 	rim.reparent(portrait_group, false)
-	rim.size = Vector2.ONE * (510.0 * 48.0 / 216.0)
-	rim.position = portrait.position + portrait.size * 0.5 - rim.size * 0.5
+	rim.size = PLAYER_FRAMES.SOURCE_SIZE * (48.0 / 216.0)
+	rim.position = portrait.position + portrait.size * 0.5 - PLAYER_FRAMES.SOURCE_CENTER * (48.0 / 216.0)
 	rim.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_fit_portrait_frame_top()
 	# Identity follows the supplied 301x91 reference at the 1920px design scale.
 	# Name is calligraphic; rank and secondary details use a heavier Song serif.
 	identity_container = _center_container("IdentityContainer", Rect2(178, 22, 320, 62))
@@ -208,6 +234,13 @@ func configure(status: MapPlayerStatus, config: Dictionary) -> String:
 	return ""
 
 func refresh() -> void:
+	if _frame_rank_id != state.cultivation_rank_id:
+		_frame_rank_id = state.cultivation_rank_id
+		var atlas := AtlasTexture.new()
+		atlas.atlas = load(PLAYER_FRAMES.path_for(_frame_rank_id))
+		atlas.region = Rect2(Vector2.ZERO, PLAYER_FRAMES.SOURCE_SIZE)
+		portrait_frame.texture = atlas
+		_fit_portrait_frame_top()
 	hero_name.text = state.display_name
 	hero_rank.text = state.rank_name
 	hero_age.text = "年龄 %d岁  |  寿元 %d年" % [state.age, state.lifespan]
@@ -224,6 +257,13 @@ func refresh() -> void:
 		bars[key].step = 0.0
 		bars[key].value = current
 		values[key].text = "%s/%d" % [EffectSystem.number_text(current), maximum]
+
+func _fit_portrait_frame_top() -> void:
+	var source: Texture2D = portrait_frame.texture.atlas
+	var source_top := float(source.get_image().get_used_rect().position.y)
+	var top_in_group := portrait_frame.position.y + source_top * (48.0 / 216.0)
+	_portrait_group.position = _portrait_group_origin
+	_portrait_group.position.y = maxf(_portrait_group_origin.y, 2.0 - top_in_group * _portrait_group.scale.y)
 
 func _layout() -> void:
 	if content == null:

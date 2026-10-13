@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n12",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n12",
+  "title": "夹壁山径",
+  "description": "山脚小径夹在陡峭的岩壁之间，碎石上忽然传来急促的爪声。一头灰脊山狼从岩后现身，压低身体，拦住了狭窄的去路。",
+  "enemy_id": "base.enemy.huiji_shanlang",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-04.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

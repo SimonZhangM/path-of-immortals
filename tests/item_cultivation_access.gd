@@ -110,7 +110,7 @@ func _run() -> void:
 	_check(not game.simulation._can_activate("rank.injected"), "activation rechecks cultivation")
 	var battle_card := StorageItemCard.new()
 	battle_card.configure(game, game.storage.get_entry("rank.battle"))
-	var battle_tip := battle_card._make_custom_tooltip("") as ItemTooltip
+	var battle_tip := battle_card.build_item_tooltip("") as ItemTooltip
 	_check(battle_tip.description == MapItemQuality.UNKNOWN_DESCRIPTION, "battle storage uses restricted tooltip")
 	battle_tip.free()
 	battle_card.free()
@@ -140,7 +140,7 @@ func _run() -> void:
 		card.position = Vector2(360 + offset, 240)
 		var title := card.canvas.get_node("ItemName") as Label
 		_check(title.text == (records[index].name if index == 5 else "？"), "card title respects boundary")
-		var tip := card._make_custom_tooltip("") as ItemTooltip
+		var tip := card.build_item_tooltip("") as ItemTooltip
 		preview_layer.add_child(tip)
 		tip.position = Vector2(360 + offset, 530)
 		if index == 6:

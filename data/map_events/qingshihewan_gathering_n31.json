@@ -1,0 +1,10 @@
+{
+  "id": "base.map_event.qingshihewan.gathering_n31",
+  "type": "gathering",
+  "point_id": "base.map.qingshihewan.point.n31",
+  "trigger": "arrival",
+  "title": "山坡荒地",
+  "item_id": "base.material.kuaiye",
+  "reward_prefix": "base.map_reward.qingshihewan.gathering_n31",
+  "presentation": {}
+}

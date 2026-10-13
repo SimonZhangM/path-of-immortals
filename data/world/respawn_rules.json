@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "encounter_days": 20,
+  "chest_days": 40,
+  "legacy_encounter_days": {
+    "base.map_event.qingshihewan.cliff_encounter": 15,
+    "base.map_event.qingshihewan.encounter_n01": 15,
+    "base.map_event.qingshihewan.encounter_n10": 15,
+    "base.map_event.qingshihewan.encounter_n21": 15,
+    "base.map_event.qingshihewan.encounter_n26": 15,
+    "base.map_event.qingshihewan.encounter_n28": 15
+  },
+  "chest_reward_ids": [
+    "base.map_reward.qingshihewan.chest_n06",
+    "base.map_reward.qingshihewan.chest_n14",
+    "base.map_reward.qingshihewan.chest_n22",
+    "base.map_reward.qingshihewan.chest_n27",
+    "base.map_reward.qingshihewan.chest_n34"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n24",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n24",
+  "title": "断阶水口",
+  "description": "残破石阶延伸至湍急的水口，浪花不断冲刷着阶沿。一只青壳河鼋伏在水边的断阶旁，缓缓抬起头，似乎不愿你继续靠近。",
+  "enemy_id": "base.enemy.qingke_heyuan",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-09.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n01",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n01",
+  "title": "雾松崖径",
+  "description": "山间薄雾缠绕着松枝，狭窄的崖径沿石壁延伸。一只青翎岩雉立在高处的松枝上，正低头注视着你，似乎随时准备扑下。",
+  "enemy_id": "base.enemy.qingling_yanzhi",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-01.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

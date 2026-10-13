@@ -1,0 +1,51 @@
+{
+  "pricing": {
+    "buy_factor_bps": 15000,
+    "sell_factor_bps": 5000,
+    "buy_rounding": "ceil",
+    "sell_rounding": "floor"
+  },
+  "profiles": {
+    "base.shop_profile.general": {
+      "label": "普通商铺",
+      "categories": [
+        {"id":"weapon","label":"武器","inventory_categories":["weapon"]},
+        {"id":"armor","label":"防具","inventory_categories":["armor"]},
+        {"id":"food","label":"食物","inventory_categories":[]},
+        {"id":"grocery","label":"杂货","inventory_categories":[]}
+      ]
+    },
+    "base.shop_profile.herbalist": {
+      "label": "药材铺",
+      "categories": [
+        {"id":"herb","label":"药材","inventory_categories":["plant"]},
+        {"id":"bait","label":"诱饵","inventory_categories":[]}
+      ]
+    },
+    "base.shop_profile.alchemy": {
+      "label": "炼丹房",
+      "categories": [
+        {"id":"pill","label":"丹药","inventory_categories":["pill"]},
+        {"id":"pill_recipe","label":"丹方","inventory_categories":[]}
+      ]
+    },
+    "base.shop_profile.sect": {
+      "label": "宗门商铺",
+      "categories": [
+        {"id":"artifact","label":"法器","inventory_categories":["artifact"]},
+        {"id":"talisman","label":"符箓","inventory_categories":[]},
+        {"id":"board","label":"阵盘","inventory_categories":["board"]},
+        {"id":"manual","label":"功法","inventory_categories":[]}
+      ]
+    },
+    "base.shop_profile.blacksmith": {
+      "label": "铁匠铺",
+      "categories": [
+        {"id":"ore","label":"矿石","inventory_categories":["mineral"]},
+        {"id":"material","label":"材料","inventory_categories":["beast"]},
+        {"id":"throwable","label":"暗器","inventory_categories":["throwable"]},
+        {"id":"equipment_recipe","label":"器方","inventory_categories":[]}
+      ]
+    }
+  }
+}

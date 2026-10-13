@@ -75,8 +75,8 @@ func run() -> void:
 	await capture("screen-and-log")
 	ui._log_panel.hide()
 	var spell_bag: InventoryView = ui.ally_panel.bags[0]
-	spell_bag._get_tooltip(spell_bag.board_layout.footprint_rect(Vector2i.ZERO,Vector2i.ONE,spell_bag.size).get_center())
-	var tooltip: ItemTooltip = spell_bag._make_custom_tooltip("")
+	spell_bag._tooltip_key_at(spell_bag.board_layout.footprint_rect(Vector2i.ZERO,Vector2i.ONE,spell_bag.size).get_center())
+	var tooltip: ItemTooltip = spell_bag.build_item_tooltip("")
 	root.add_child(tooltip); tooltip.position=Vector2(900,180)
 	check(tooltip.description.contains("返剑反击15") and tooltip.description.contains("生成30点剑幕"),"tooltip shows resolved branch effects with empty image")
 	await settle(); await capture("spell-tooltip")

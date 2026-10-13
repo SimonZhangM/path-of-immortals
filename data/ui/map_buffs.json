@@ -1,6 +1,6 @@
 [
-  {"id": "armor", "name": "护甲", "icon": "hujia", "description": "角色的基础防御层，用于承受并减免伤害，位于生命之前，但承受武器伤害系数。"},
-  {"id": "shield", "name": "护盾", "icon": "hudun", "description": "角色的额外防护层，优先承受伤害，高于护甲与生命，不受武器伤害系数。"},
+  {"id": "armor", "name": "护甲", "icon": "hujia", "icon_path": "res://assets/player-status-armor.webp", "description": "角色的基础防御层，用于承受并减免伤害，位于生命之前，但承受武器伤害系数。"},
+  {"id": "shield", "name": "灵盾", "icon": "hudun", "icon_path": "res://assets/player-status-sheild.webp", "description": "角色的额外防护层，优先承受伤害，高于护甲与生命，不受武器伤害系数。"},
   {"id": "counter", "name": "反锋", "icon": "jin", "description": "每层积累1点反弹伤害，受到实际物理伤害时一次性全额反弹并清零。"},
   {"id": "vitality", "name": "生机", "icon": "mu", "description": "2秒后开始每秒按当前层数恢复气血，每次恢复后减少1层。"},
   {"id": "moisture", "name": "润脉", "icon": "shui", "description": "2秒后开始每秒按当前层数同时恢复灵力和体力，每次恢复后减少1层。"},

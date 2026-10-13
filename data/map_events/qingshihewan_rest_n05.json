@@ -1,0 +1,17 @@
+{
+  "id": "base.map_event.qingshihewan.rest_n05",
+  "type": "rest",
+  "point_id": "base.map.qingshihewan.point.n05",
+  "trigger": "arrival",
+  "rest_kind": "outdoor",
+  "title": "林间篝火",
+  "description": "林间一处避风空地，几块山石围着一堆篝火。跃动的火光驱散山林寒意，可在此暂歇脚步、暖身调息，为接下来的行程恢复精神。",
+  "note": "篝火驱寒暖身，助你放松调息。",
+  "action_label": "稍作歇脚",
+  "recovery_percent": 30,
+  "duration_days": 1,
+  "presentation": {
+    "background": "res://assets/tanchuang-huifu-shiwai.webp",
+    "illustration": "res://assets/tanchuang-huifu-linjiangouhuo.webp"
+  }
+}

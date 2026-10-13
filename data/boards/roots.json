@@ -1,23 +1,23 @@
 {
   "id": "base.board.roots",
   "name": "古木阵盘",
-  "texture": "res://assets/bag-bg-2.webp",
+  "texture": "res://assets/zhenpan-qlz-2.webp",
   "source_size": [
-    1024,
-    1024
+    1254,
+    1454
   ],
   "x_lines": [
-    118,
-    314,
-    511,
-    711,
-    909
+    124,
+    374,
+    627,
+    880,
+    1130
   ],
   "y_lines": [
-    119,
-    315,
-    512,
-    709,
-    910
+    219,
+    470,
+    726,
+    980,
+    1231
   ]
 }

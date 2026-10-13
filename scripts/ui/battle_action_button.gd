@@ -4,6 +4,7 @@ extends Button
 var artwork: Texture2D
 var caption_reference := ""
 var icon_reference: Texture2D
+var dim_when_disabled := true
 var action_icon: Texture2D:
 	set(value):
 		if action_icon != value:
@@ -71,7 +72,7 @@ func _draw() -> void:
 	var press_scale := 1.0 - 0.03 * press_depth
 	draw_set_transform(size * (1.0 - press_scale) * 0.5, 0, Vector2.ONE * press_scale)
 	var tint := Color.WHITE
-	if disabled:
+	if disabled and dim_when_disabled:
 		tint = Color(0.52, 0.52, 0.52, 0.8)
 	var art_size := artwork.get_size() * minf(size.x / artwork.get_width(), size.y / artwork.get_height())
 	draw_texture_rect(artwork, Rect2((size - art_size) * 0.5, art_size), false, tint)

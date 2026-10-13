@@ -39,11 +39,12 @@ def export():
             existing = d.get('现有游戏ID')
             game_id = existing if isinstance(existing, str) and existing.startswith('base.') else 'base.map_item.t01_' + asset.rsplit('.', 1)[1]
             r = dict(old.get(game_id, {}))
-            r.update(id=game_id, asset_id=asset, name=d['名称'], category=category, quality=d['品级'],
+            r.update(id=game_id, asset_id=asset, name=r.get('display_name_override', d['名称']), category=category, quality=d['品级'],
                      quantity=r.get('quantity', 1), acquired_at=r.get('acquired_at', int(asset.rsplit('.', 1)[1]) + 100),
                      enhancement_level=r.get('enhancement_level', 0), icon=r.get('icon', ''),
                      card_frame=r.get('card_frame', 'res://assets/level-1.webp' if d['品级'] == '下品' else 'res://assets/level-2.webp'),
-                     footprint_columns=d['宽_格'], footprint_rows=d['高_格'],
+                     footprint_columns=r.get('footprint_override', [d['宽_格'], d['高_格']])[0],
+                     footprint_rows=r.get('footprint_override', [d['宽_格'], d['高_格']])[1],
                      element='base.element.' + ELEMENTS[d['元素']], rule_version=1,
                      effects=[], base_stamina_cost=0, spirit_cost=0, cooldown=d.get('CD_秒') or d.get('设计CD_秒') or 0,
                      source_location=f'{SOURCE.name}::{sheet}!A{row[0].row}', uses_per_unit=1 if category in ['pill', 'throwable'] else 0)

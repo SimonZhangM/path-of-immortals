@@ -4,6 +4,7 @@ extends Node
 signal sound_played(kind: String)
 
 const STREAMS := {
+	"click": preload("res://assets/click.ogg"),
 	"pick": preload("res://assets/gameplay-bag-pick.ogg"),
 	"place": preload("res://assets/gameplay-bag-place.ogg"),
 	"invalid": preload("res://assets/gameplay-bag-invalid.ogg"),
@@ -11,6 +12,7 @@ const STREAMS := {
 }
 var players: Dictionary = {}
 var music: AudioStreamPlayer
+var _victory_started := false
 
 func configure(manager: GameManager, defer_music: bool = false) -> void:
 	for kind in STREAMS:
@@ -20,26 +22,32 @@ func configure(manager: GameManager, defer_music: bool = false) -> void:
 		player.max_polyphony = 8 if kind == "hit" else 3
 		add_child(player)
 		players[kind] = player
-	var click := AudioStreamPlayer.new()
-	click.stream = _make_click()
-	click.volume_db = -4
-	click.max_polyphony = 3
-	add_child(click)
-	players["click"] = click
 	manager.inventory_interaction.connect(play)
 	music = AudioStreamPlayer.new()
 	music.name = "BattleMusic"
-	var track := preload("res://assets/battle.mp3").duplicate() as AudioStreamMP3
-	track.loop = true
-	track.loop_offset = 0.0
-	music.stream = track
 	music.volume_db = -6
 	music.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(music)
+	manager.battle_restarted.connect(start_music)
 	if not defer_music:
 		start_music()
 
 func start_music() -> void:
+	_victory_started = false
+	var track := preload("res://assets/battle.mp3").duplicate() as AudioStreamMP3
+	track.loop = true
+	track.loop_offset = 0.0
+	music.stream = track
+	music.volume_db = -6.0
+	music.play()
+
+func play_victory() -> void:
+	if _victory_started: return
+	_victory_started = true
+	music.stop()
+	var track := preload("res://assets/victory-song2.mp3").duplicate() as AudioStreamMP3
+	track.loop = false
+	music.stream = track
 	music.volume_db = -6.0
 	music.play()
 
@@ -47,22 +55,6 @@ func play(kind: String) -> void:
 	if players.has(kind):
 		players[kind].play()
 		sound_played.emit(kind)
-
-static func _make_click() -> AudioStreamWAV:
-	# A short, soft two-tone tap. Synthesized once; independent of simulation.
-	var stream := AudioStreamWAV.new()
-	stream.format = AudioStreamWAV.FORMAT_16_BITS
-	stream.mix_rate = 44100
-	var frames := 3528
-	var samples := PackedByteArray()
-	samples.resize(frames * 2)
-	for index in frames:
-		var time := float(index) / stream.mix_rate
-		var envelope := minf(time / 0.002, 1.0) * exp(-time * 75.0) * (1.0 - float(index) / frames)
-		var value := (sin(TAU * 1150 * time) + 0.35 * sin(TAU * 1870 * time)) * envelope * 0.24
-		samples.encode_s16(index * 2, int(value * 32767))
-	stream.data = samples
-	return stream
 
 func stop_all() -> void:
 	if is_instance_valid(music):

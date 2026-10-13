@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n21",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n21",
+  "title": "回水岭径",
+  "description": "岭间小路沿着回水河湾蜿蜒，草木间隐约传来低沉的喘息。一头灰脊山狼从坡侧走出，缓缓逼近，似在寻找扑击的机会。",
+  "enemy_id": "base.enemy.huiji_shanlang",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-06.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

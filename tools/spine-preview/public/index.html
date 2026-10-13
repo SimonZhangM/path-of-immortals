@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Spine 特效预览</title><link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body data-background="dark">
+  <header>
+    <div class="brand"><div class="brand-icon">✦</div><div><h1>特效预览室 <span>SPINE VIEWER</span></h1><p id="source">正在读取本地素材…</p></div></div>
+    <div class="library-info"><span class="local-dot"></span>本地素材库 <strong id="total">—</strong><button id="refresh" title="添加素材后重新扫描">↻ 重新扫描</button></div>
+  </header>
+  <section class="toolbar" aria-label="预览设置">
+    <label class="search"><span>⌕</span><input id="search" type="search" placeholder="搜索特效名称或文件夹…" aria-label="搜索特效名称或文件夹"><kbd>/</kbd></label>
+    <label>版本 <select id="version"><option value="">全部版本</option><option value="2.1">Spine 2.1</option><option value="3.6">Spine 3.6</option></select></label>
+    <div class="divider"></div>
+    <button id="play" aria-pressed="false">Ⅱ 暂停</button><button id="replay" title="当前页全部从头播放">↺ 重播</button>
+    <label>速度 <select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    <label>背景 <select id="background"><option value="dark">深色</option><option value="checker">棋盘格</option><option value="light">浅色</option><option value="black">纯黑</option></select></label>
+    <label class="zoom-label">缩放 <input id="zoom" type="range" min="0.25" max="2.5" step="0.05" value="1"><output id="zoom-value">100%</output></label>
+  </section>
+  <div class="results-line"><span id="results">正在扫描…</span><span>循环播放 · 点击右上角放大查看</span></div>
+  <main id="grid" aria-label="九宫格特效预览"></main>
+  <div id="empty" hidden><h2>没有找到匹配的特效</h2><p>试试更短的名称，或清除版本筛选。</p><button id="clear-search">清除筛选</button></div>
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <footer><span class="footer-note">每页 9 个 <span>← → 翻页 · 空格暂停</span></span><nav aria-label="分页"><button id="first" aria-label="第一页">«</button><button id="prev">‹ 上一页</button><div id="pages"></div><button id="next">下一页 ›</button><button id="last" aria-label="最后一页">»</button></nav><form id="jump"><label>前往 <input id="page-number" type="number" min="1" value="1" aria-label="页码"> 页</label><button>确定</button></form></footer>
+  <section id="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title" hidden><div class="detail-panel"><div class="detail-heading"><div><h2 id="detail-title"></h2><p id="detail-path"></p></div><button id="close-detail" aria-label="关闭大图">关闭 ✕</button></div><div id="detail-view"></div><div class="detail-controls"><label>动画 <select id="detail-animation"></select></label><button id="detail-play">Ⅱ 暂停</button><button id="detail-replay">↺ 重播</button><label>速度 <select id="detail-speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1">1×</option><option value="2">2×</option></select></label><label class="zoom-label">缩放 <input id="detail-zoom" type="range" min="0.25" max="2.5" step="0.05" value="1"></label><button id="detail-copy">复制路径</button><span>Esc 关闭</span></div></div></section>
+  <div id="toast" role="status" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body></html>

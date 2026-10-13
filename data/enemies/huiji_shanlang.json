@@ -1,0 +1,88 @@
+{
+  "id": "base.enemy.huiji_shanlang",
+  "name": "灰脊山狼",
+  "progression_rewards": {
+    "cultivation": 3,
+    "experience": 1
+  },
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 45,
+  "max_stamina": 42,
+  "innate_armor_type": "无甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 0,
+  "max_spirit": 0,
+  "loadout": [
+    {
+      "item_id": "base.organ.shanlang_claw",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.shanlang_fang",
+      "cell": [
+        1,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.shanlang_hide",
+      "cell": [
+        1,
+        1
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.shanlang_claw",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.shanlang_fang",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.shanlang_hide",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "凡人级",
+    "category_label": "野兽类",
+    "description": "游猎于山径林缘，警觉凶狠，擅用利爪和尖牙快速扑袭。",
+    "traits": ["快攻"],
+    "battle_background": "res://assets/battle-qingshihewan-shanjihuilang.webp",
+    "summary": [
+      {
+        "label": "气血",
+        "stat": "hp",
+        "icon": "res://assets/icon-enemy-health.webp"
+      },
+      {
+        "label": "攻击",
+        "value": "斩击、穿刺",
+        "icon": "res://assets/icon-enemy-attack.webp"
+      },
+      {
+        "label": "甲型",
+        "stat": "armor",
+        "icon": "res://assets/icon-enemy-defense.webp"
+      },
+      {
+        "label": "特点",
+        "value": "快攻",
+        "icon": "res://assets/icon-enemy-chara.webp"
+      }
+    ]
+  },
+  "battle_enabled": true,
+  "encounter_descriptions": [
+    "林间小径旁散落着新鲜爪印，几处低矮灌木被压出狭长通道。前方忽然传来一声低吼，一头灰脊山狼缓缓走出树影，露出尖牙。",
+    "山坡上几只鸟雀突然惊飞，林中随之传来急促的奔跑声。你刚转身，一道灰黑色身影便跃上路旁岩石，弓背紧盯着你。",
+    "潮湿的泥地上留着凌乱的兽蹄印，旁边还有几簇沾血的灰毛。正准备查看，一头灰脊山狼从灌木后绕出，堵住了前方山路。"
+  ],
+  "art_profile": "base.enemy.huiji_shanlang"
+}

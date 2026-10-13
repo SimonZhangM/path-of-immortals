@@ -4,6 +4,7 @@ extends Control
 signal clicked(index: int)
 
 const BAR_WIDTH := 200.0
+const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
 const BASE_SIZE := Vector2(410, 236)
 const COMPACT_SCALE := 0.66
 var member_index: int = -1
@@ -41,6 +42,7 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 	_content.add_theme_constant_override("separation", 8)
 	add_child(_content)
 	portrait = TextureRect.new()
+	portrait.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.texture = load(member.definition["portrait"])
 	if member.definition.has("portrait_region"):
 		var region: Array = member.definition.portrait_region
@@ -50,12 +52,12 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 		portrait.texture = cropped
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var cultivation: Dictionary = member.cultivation if _frame_override.is_empty() else _frame_override
+	var cultivation := _resolved_frame_style(member)
 	if member.definition.get("portrait_includes_frame", false): cultivation = {}
 	if not cultivation.is_empty():
 		_portrait_slot = Control.new()
 		_portrait_slot.custom_minimum_size = Vector2(236, 236)
-		_portrait_slot.clip_contents = is_zero_approx(portrait_vertical_offset)
+		_portrait_slot.clip_contents = is_zero_approx(portrait_vertical_offset) and not _frame_override.get("player_level_frame", false)
 		_content.add_child(_portrait_slot)
 		_portrait_slot.add_child(portrait)
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -189,6 +191,17 @@ func _layout_defense_rows() -> void:
 	defense_resources.offset_top = defense_resources.offset_bottom - defense_resources.get_combined_minimum_size().y
 
 func _layout_portrait() -> void:
+	if _frame_override.get("player_level_frame", false):
+		# Keep the old portrait/ring scale and center, while showing the full ornament.
+		var source_scale := minf(_portrait_slot.size.x, _portrait_slot.size.y) / PLAYER_FRAMES.RING_REFERENCE_SIZE
+		portrait.size = Vector2.ONE * PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE * source_scale
+		portrait.position = (_portrait_slot.size - portrait.size) * 0.5 + Vector2(0, portrait_vertical_offset)
+		portrait_frame.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		portrait_frame.size = PLAYER_FRAMES.SOURCE_SIZE * source_scale
+		portrait_frame.position = portrait.position + portrait.size * 0.5 - PLAYER_FRAMES.SOURCE_CENTER * source_scale
+		portrait.material.set_shader_parameter("portrait_size", portrait.size)
+		_layout_nameplate()
+		return
 	var source := portrait_frame.texture.get_size()
 	var frame_size := source * minf(_portrait_slot.size.x / source.x, _portrait_slot.size.y / source.y)
 	var origin := (_portrait_slot.size - frame_size) * 0.5
@@ -199,6 +212,11 @@ func _layout_portrait() -> void:
 	portrait.size = _portrait_window.size * frame_size
 	portrait.material.set_shader_parameter("portrait_size", portrait.size)
 	_layout_nameplate()
+
+func _resolved_frame_style(member: RefCounted) -> Dictionary:
+	if _frame_override.get("player_level_frame", false):
+		return PLAYER_FRAMES.style_for(member.cultivation_rank_id)
+	return member.cultivation if _frame_override.is_empty() else _frame_override
 
 func _frame_texture(style: Dictionary) -> Texture2D:
 	var source: Texture2D = load(style.portrait_frame)
@@ -245,7 +263,7 @@ func refresh(member: RefCounted) -> void:
 		if not cultivation.is_empty():
 			_title.text += "（%s）" % cultivation["name"]
 			if portrait_frame != null:
-				var frame_style: Dictionary = cultivation if _frame_override.is_empty() else _frame_override
+				var frame_style := _resolved_frame_style(member)
 				portrait_frame.texture = _frame_texture(frame_style)
 				var window: Array = frame_style["portrait_window"]
 				_portrait_window = Rect2(window[0], window[1], window[2], window[3])

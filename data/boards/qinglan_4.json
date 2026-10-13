@@ -24,6 +24,7 @@
   ],
   "faction": "青岚宗",
   "required_cultivation": "base.cultivation.golden_core",
-  "resource_bonuses": {},
+  "resource_bonuses": {"hp": 40, "stamina": 25, "spirit": 40},
+  "status_capacity_bonuses": {"生机": 16, "轻灵": 8, "坚韧": 6, "失衡": 6, "驱散": 6},
   "buff_bonuses": {}
 }

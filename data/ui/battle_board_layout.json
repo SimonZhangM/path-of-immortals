@@ -1,0 +1,6 @@
+{
+  "base.board.qinglan_1": {"scale": 0.8},
+  "base.board.qinglan_2": {"scale": 0.8},
+  "base.board.qinglan_3": {"scale": 0.9},
+  "base.board.qinglan_6": {"scale": 1.045, "center_y_offset": -7.5}
+}

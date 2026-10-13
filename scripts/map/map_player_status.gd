@@ -18,6 +18,10 @@ var maxima: Dictionary = {}
 var _active_board_bonuses: Dictionary = {}
 var cultivation_progress := 0
 var cultivation_required := 100
+var rest_days_spent := 0
+var last_rest: Dictionary = {}
+var calendar_record: Dictionary = {}
+var initial_age := 15
 
 func configure(registry: ContentRegistry, config: Dictionary) -> String:
 	var character := registry.get_character(config.get("character_id", ""))
@@ -56,6 +60,7 @@ func configure(registry: ContentRegistry, config: Dictionary) -> String:
 	if not stage.is_empty():
 		rank_name += " · " + stage
 	age = int(config.age)
+	initial_age = age
 	lifespan = int(config.lifespan)
 	spirit_stones = int(config.spirit_stones)
 	experience = int(config.experience)
@@ -86,6 +91,42 @@ func set_resource(resource: String, value: float) -> void:
 		resources[resource] = next_value
 		changed.emit()
 
+func needs_rest() -> bool:
+	for resource in ["hp", "stamina", "spirit"]:
+		if float(resources.get(resource,0)) < float(maxima.get(resource,0)):
+			return true
+	return false
+
+func apply_calendar(record: Dictionary) -> void:
+	calendar_record = record.duplicate(true)
+	age = initial_age + int(record.elapsed_days)/WorldCalendar.DAYS_PER_YEAR
+	changed.emit()
+
+func rest(recovery_percent: int, duration_days: int, source_id: String) -> Dictionary:
+	var result := preview_rest(recovery_percent,duration_days,source_id)
+	if result.error.is_empty(): apply_rest(result.result)
+	return result
+
+func preview_rest(recovery_percent: int, duration_days: int, source_id: String) -> Dictionary:
+	# Rest uses map resources, not temporary combat armor, shields or statuses.
+	# MapTimeActions commits calendar days before applying this recovery preview.
+	if recovery_percent<=0 or recovery_percent>100 or duration_days<=0 or source_id.is_empty():
+		return {"error":"休息配置无效。"}
+	var before:=resources.duplicate()
+	var after:=resources.duplicate()
+	var gains: Dictionary={}
+	for resource in ["hp","stamina","spirit"]:
+		var maximum:=float(maxima[resource])
+		after[resource]=clampf(float(before[resource])+maximum*recovery_percent/100.0,0.0,maximum)
+		gains[resource]=float(after[resource])-float(before[resource])
+	return {"error":"","result":{"source_id":source_id,"duration_days":duration_days,"recovery_percent":recovery_percent,"before":before,"after":after,"gains":gains}}
+
+func apply_rest(result: Dictionary) -> void:
+	resources = result.after.duplicate()
+	rest_days_spent += int(result.duration_days)
+	last_rest = result.duplicate(true)
+	changed.emit()
+
 func apply_battle_resources(member: PartyMemberState, defeated := false) -> void:
 	# Only durable resources cross this boundary; armor, shields and statuses
 	# follow their own battle cleanup rules. Map progression is not reset.
@@ -96,6 +137,12 @@ func apply_battle_resources(member: PartyMemberState, defeated := false) -> void
 	# Recovery belongs to the post-battle map state, not the defeated combatant.
 	if defeated and member.hp <= 0:
 		resources.hp = minf(1.0,float(maxima.hp))
+	changed.emit()
+
+func award_progression(rewards: Dictionary) -> void:
+	# Progress is retained across maps in this session; breakthrough rules are separate.
+	cultivation_progress += int(rewards.get("cultivation", 0))
+	experience += int(rewards.get("experience", 0))
 	changed.emit()
 
 func battle_snapshot() -> Dictionary:

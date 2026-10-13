@@ -33,8 +33,16 @@ static func layers(member: PartyMemberState, status: String) -> int:
 		total += int(batch.count)
 	return total
 
-static func capacity(member: PartyMemberState) -> int:
-	return int(member.definition.get("status_capacity", rank(member) * 10))
+static func capacity(member: PartyMemberState, status: String = "") -> int:
+	var base := int(member.definition.get("status_capacity", rank(member) * 10))
+	return base + (member.board.status_capacity_bonus(status) if member.board != null else 0)
+
+func clamp_buff_capacities(member: PartyMemberState) -> void:
+	# A board change trims only the wearer's buffs. Existing enemy debuffs
+	# retain their batches; future additions read the source's new capacity.
+	for status: String in member.combat_statuses.keys():
+		if T01Definition.is_buff(status):
+			consume(member, status, maxi(0, layers(member, status) - capacity(member, status)))
 
 static func barrier_capacity(member: PartyMemberState) -> float:
 	return float((rank(member) + 1) * 10)
@@ -81,7 +89,7 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 	if status == "雷蕴" and amount > 1 and not thunder_chunk:
 		var applied := false
 		while amount > 0:
-			var space := capacity(member) - layers(member, status)
+			var space := capacity(member, status) - layers(member, status)
 			if space <= 0: break
 			var chunk := mini(amount, mini(space, maxi(1, 10 - layers(member, status))))
 			applied = apply_status(member, status, chunk, source, at, true) or applied
@@ -93,7 +101,7 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 	if status=="寒霜" and layers(member,status)==0 and sim.cultivation.spec(source,"water",1,"初霜"): amount+=1
 	if status=="连环" and layers(member,status)==0 and sim.cultivation.spec(source,"thunder",1,"连势"): amount+=2
 	if status=="缠绕" and layers(member,status)>0 and sim.cultivation.spec(source,"wood",1,"盘根"): amount+=1
-	var accepted := mini(amount, maxi(0, capacity(member if T01Definition.is_buff(status) else source) - layers(member, status)))
+	var accepted := mini(amount, maxi(0, capacity(member if T01Definition.is_buff(status) else source, status) - layers(member, status)))
 	if accepted <= 0:
 		return false
 	var remaining := accepted
@@ -256,7 +264,7 @@ func can_activate(member: PartyMemberState, item: ItemData, at: int) -> bool:
 				if member.get(e.resource) < member.maximum(e.resource):
 					return true
 			"apply_status":
-				if layers(member, e.status) < capacity(member):
+				if layers(member, e.status) < capacity(member, e.status):
 					return true
 			"resistance":
 				return true
@@ -745,11 +753,15 @@ func refresh_equipment(member: PartyMemberState, excluded_id: String = "") -> vo
 	member.armor = minf(member.armor, member.maximum("armor"))
 
 func link_bonus(member: PartyMemberState, excluded_id: String = "") -> Dictionary:
+	return inventory_link_bonus(member.inventory, sim._registry, excluded_id)
+
+# Shared read-only calculation for battle settlement and map loadout totals.
+static func inventory_link_bonus(inventory: InventoryState, registry: ContentRegistry, excluded_id: String = "") -> Dictionary:
 	var result := {"capacity": 0, "recovery": {}, "stamina_recovery": {}}
 	var groups := {}
-	for entry: Dictionary in member.inventory.get_instances():
+	for entry: Dictionary in inventory.get_instances():
 		if entry.instance_id == excluded_id: continue
-		var item := sim._registry.get_item(entry.item_id)
+		var item := registry.get_item(entry.item_id)
 		var lineage: String = item.combat.get("lineage", "")
 		if lineage.is_empty(): continue
 		if not groups.has(lineage): groups[lineage] = {}

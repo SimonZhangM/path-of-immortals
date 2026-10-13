@@ -55,7 +55,7 @@ func _run() -> void:
 		check(ui._time_seconds.global_position.x > ui._time.get_global_rect().get_center().x + digit_width * .5, "suffix follows one space")
 	check(is_equal_approx(CooldownRing.SIZE_SCALE,2.0/3.0), "CD disc diameter reduced by one third")
 	var enemy_board: BoardLayout = game.enemies[0].board
-	check(enemy_board.texture_path == "res://assets/zhenpan-qshw-cslz.webp" and enemy_board.grid_size == Vector2i(3,3), "boar-only new 3x3 board")
+	check(enemy_board.texture_path == "res://assets/zhenpan-enemy-chisongliaozhu.webp" and enemy_board.grid_size == Vector2i(3,3), "boar-only new 3x3 board")
 	check(enemy_board.resource_bonuses.is_empty() and game.enemies[0].maximum("hp") == 96, "new board does not alter stats")
 	check(game.registry.get_board(game.registry.get_enemy("base.enemy.wild_dog").board_layout).texture_path != enemy_board.texture_path, "other enemy boards unchanged")
 	check((load(enemy_board.texture_path) as Texture2D).get_image().has_mipmaps(), "new board mipmaps")

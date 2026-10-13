@@ -8,6 +8,9 @@
 /tmp/
 *.log
 *.tmp
+/.playwright-cli/
+/output/playwright/spine-preview-*.png
+/output/playwright/spine-preview-*.png.import
 
 # Local Godot import sidecars for removed temporary MP3 sources
 assets/gameplay-bag-pick.mp3.import

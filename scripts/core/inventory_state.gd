@@ -91,7 +91,7 @@ func matching_stack(item_id: String) -> String:
 func available_cells(item_id: String) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	var item := _registry.get_item(item_id)
-	if item != null and item.category not in ["beast", "board"] and not locked:
+	if item != null and item.category not in ["plant", "beast", "mineral", "board"] and not locked:
 		for y in grid_size.y:
 			for x in grid_size.x:
 				if _fits(Vector2i(x, y), item.grid_size, ""):
@@ -119,7 +119,7 @@ func put(entry: Dictionary, cell: Vector2i) -> String:
 	return entry["instance_id"]
 
 func equipment_allowed(item: ItemData, ignore_id: String = "") -> bool:
-	if item.category in ["beast", "board"]: return false
+	if item.category in ["plant", "beast", "mineral", "board"]: return false
 	if item.rule_version != 1:
 		return true
 	for entry: Dictionary in _instances.values():

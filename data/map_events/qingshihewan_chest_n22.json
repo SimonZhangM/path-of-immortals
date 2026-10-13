@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.qingshihewan.chest_n22",
+  "type": "chest",
+  "point_id": "base.map.qingshihewan.point.n08",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.qingshihewan.chest_n22",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-beianlinjie1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-beianlinjie0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-beianlinjie2.webp"
+  },
+  "observation": {
+    "location_name": "北岸林阶",
+    "location_description": "北岸林木繁茂，荒旧的石阶隐没在树影间。山风吹过，落花与枯叶散落在青石上。",
+    "chest_name": "林阶藏匣",
+    "description": "一只雕有浅淡云纹的木匣静置于石阶旁，表面覆着薄尘。匣盖两侧各有一道精巧的机关锁扣。",
+    "result_description": "你轻轻推开机关锁扣，匣内双格随之展开，两件保存完好的物品显露出来。"
+  },
+  "respawn_days": 40
+}

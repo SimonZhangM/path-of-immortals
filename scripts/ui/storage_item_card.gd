@@ -84,7 +84,6 @@ func configure(game: GameManager, entry: Dictionary) -> void:
 		layout.add_child(quantity_picker)
 	art.resized.connect(_layout_art)
 	_layout_art.call_deferred()
-	tooltip_text = item.id
 
 func _layout_art() -> void:
 	if icon.texture == null:
@@ -103,7 +102,13 @@ func _layout_art() -> void:
 	_tags.size = _tags.get_combined_minimum_size()
 	_tags.position = Vector2((_art.size.x - _tags.size.x) * 0.5, _art.size.y - _tags.size.y)
 
-func _make_custom_tooltip(_for_text: String) -> Object:
+func _ready() -> void:
+	ItemTooltipHost.bind(self, func(_point: Vector2): return item.id, build_item_tooltip)
+
+func _get_tooltip(_point: Vector2) -> String:
+	return ""
+
+func build_item_tooltip(_for_text: String) -> Object:
 	var panel := ItemTooltip.new()
 	panel.configure(item, _entry, -1, 0, _identified())
 	return panel

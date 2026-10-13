@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.qingshihewan.chest_n34",
+  "type": "chest",
+  "point_id": "base.map.qingshihewan.point.n34",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.qingshihewan.chest_n34",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-xipushitai1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-xipushitai0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-xipushitai2.webp"
+  },
+  "observation": {
+    "location_name": "西瀑石台",
+    "location_description": "瀑水沿石壁倾泻而下，水雾终年不散。岩台上青苔遍布，老树的根须深深扎入石缝。",
+    "chest_name": "石根旧匣",
+    "description": "一只旧木匣嵌在树根与青石之间，铜制包角布满水痕。匣盖上设有两处机关锁格，看起来仍能开启。",
+    "result_description": "你拨动匣盖上的机关，两格同时开启，露出本次藏于其中的两件物品。"
+  },
+  "respawn_days": 40
+}

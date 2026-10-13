@@ -90,7 +90,11 @@ func _actor_name(actor: PartyMemberState) -> String:
 
 func _capacity_text(actor: PartyMemberState) -> String:
 	var source := "角色配置" if actor.definition.has("status_capacity") else str(actor.cultivation.get("name","境界"))
-	return "%s · %s：%d层" % [_actor_name(actor),source,T01CombatRules.capacity(actor)]
+	var text := "%s · %s：%d层" % [_actor_name(actor),source,T01CombatRules.capacity(actor)]
+	var bonus := actor.board.status_capacity_bonus(word) if actor.board != null else 0
+	if bonus > 0:
+		text += "\n%s：+%d层上限" % [actor.board.display_name, bonus]
+	return text
 
 func _refresh() -> void:
 	if member == null: return
@@ -108,7 +112,7 @@ func _refresh() -> void:
 	_sources.text = "\n".join(source_lines) if not source_lines.is_empty() else ("当前未生效" if count == 0 else "来源未记录")
 	var buff: bool = ItemTooltip.status_keyword_kinds().get(word) == "buff"
 	var cap_owner := member if buff else _actor(str(pool.get("source_id","")))
-	_current.text = "%d / %s" % [count,str(T01CombatRules.capacity(cap_owner)) if cap_owner != null else "—"]
+	_current.text = "%d / %s" % [count,str(T01CombatRules.capacity(cap_owner, word)) if cap_owner != null else "—"]
 	_capacity.text = _capacity_text(cap_owner) if cap_owner != null else "由实际施加者的状态容量决定"
 	if not buff and cap_owner != null:
 		_capacity.text += "\n按当前施加者容量限制新增层数。"

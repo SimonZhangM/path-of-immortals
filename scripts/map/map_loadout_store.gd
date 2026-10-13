@@ -28,6 +28,12 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 	error = catalog.replace_entries(resolved)
 	if not error.is_empty(): return {"state": null, "error": error}
 	definitions.append_array(catalog.visible_entries())
+	error = catalog.load_entries("res://data/maps/herbs.json")
+	if not error.is_empty(): return {"state": null, "error": error}
+	definitions.append_array(catalog.visible_entries())
+	error = catalog.load_entries("res://data/maps/minerals.json")
+	if not error.is_empty(): return {"state": null, "error": error}
+	definitions.append_array(catalog.visible_entries())
 	var boards: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/qinglan_boards.json"))
 	if not boards is Array: return {"state": null, "error": "阵盘目录必须为数组。"}
 	error = catalog.replace_entries(boards)
@@ -59,9 +65,19 @@ static func load_into(state: MapLoadoutState, path: String) -> String:
 	if parser.parse(saved_text) != OK:
 		return "行囊存档内容不完整，原文件已保留。"
 	var error := state.restore(parser.data)
-	if error.is_empty() and (path != target_path or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants):
+	if error.is_empty() and (path != target_path or not parser.data.has("calendar") or not parser.data.has("bag_capacity") or parser.data.get("respawn_rules_version",0)!=MapLoadoutState.RESPAWN_RULES.VERSION or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants):
 		error = save(state, target_path)
 	return error
+
+static func candidate(state: MapLoadoutState) -> Dictionary:
+	var copy := MapLoadoutState.new()
+	copy.registry = state.registry
+	copy.board = state.board
+	copy.records = state.records
+	copy._seed_owned = state._seed_owned
+	copy.cultivation_rank_id = state.cultivation_rank_id
+	copy.formation_icons = state.formation_icons
+	return {"state":copy,"error":copy.restore(state.snapshot())}
 
 static func save(state: MapLoadoutState, path: String) -> String:
 	if path.is_empty():

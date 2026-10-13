@@ -3,6 +3,7 @@ render_mode unshaded;
 
 uniform vec2 panel_size = vec2(630.0, 291.0);
 uniform float corner_radius = 18.0;
+uniform vec2 image_alignment = vec2(0.5, 0.5);
 varying vec4 panel_tint;
 
 void vertex() {
@@ -15,7 +16,7 @@ void fragment() {
 	vec2 image_size = 1.0 / TEXTURE_PIXEL_SIZE;
 	float cover_scale = max(panel_size.x / image_size.x, panel_size.y / image_size.y);
 	vec2 visible_uv = panel_size / (image_size * cover_scale);
-	vec2 image_uv = (UV - 0.5) * visible_uv + 0.5;
+	vec2 image_uv = UV * visible_uv + (vec2(1.0) - visible_uv) * image_alignment;
 	vec4 source = texture(TEXTURE, image_uv);
 	vec2 corner_offset = min(UV, vec2(1.0) - UV) * panel_size;
 	float distance_to_corner = length(corner_offset);

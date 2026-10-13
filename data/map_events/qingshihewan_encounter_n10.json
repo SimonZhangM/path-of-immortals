@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n10",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n10",
+  "title": "青溪渡口",
+  "description": "渡口浅滩水流平缓，岸边散布着大小卵石。一只青壳河鼋正从水中爬上石滩，见你靠近，便停下动作，警惕地望来。",
+  "enemy_id": "base.enemy.qingke_heyuan",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-03.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

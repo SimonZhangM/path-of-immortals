@@ -4,11 +4,13 @@ extends RefCounted
 var id: String
 var display_name: String
 var texture_path: String
+var pending_art: bool
 var source_size: Vector2
 var x_lines: Array
 var y_lines: Array
 var resource_bonuses: Dictionary
 var buff_bonuses: Dictionary
+var status_capacity_bonuses: Dictionary
 var faction: String
 var required_cultivation: String
 var display_scale: float
@@ -20,11 +22,13 @@ func _init(raw: Dictionary) -> void:
 	id = raw["id"]
 	display_name = raw.get("name", "行囊")
 	texture_path = raw.get("texture", "")
+	pending_art = raw.get("pending_art", false)
 	source_size = Vector2(raw["source_size"][0], raw["source_size"][1])
 	x_lines = raw["x_lines"].duplicate()
 	y_lines = raw["y_lines"].duplicate()
 	resource_bonuses = raw.get("resource_bonuses", {}).duplicate(true)
 	buff_bonuses = raw.get("buff_bonuses", {}).duplicate(true)
+	status_capacity_bonuses = raw.get("status_capacity_bonuses", {}).duplicate(true)
 	faction = raw.get("faction", "")
 	required_cultivation = raw.get("required_cultivation", "")
 	display_scale = float(raw.get("display_scale", 1.0))
@@ -32,7 +36,16 @@ func _init(raw: Dictionary) -> void:
 func resource_bonus(resource: String) -> int:
 	return int(resource_bonuses.get(resource, 0))
 
+func status_capacity_bonus(status: String) -> int:
+	return int(status_capacity_bonuses.get(status, 0))
+
 static func validate(raw: Dictionary) -> bool:
+	if not raw.get("pending_art", false) is bool: return false
+	var capacities: Variant = raw.get("status_capacity_bonuses", {})
+	if not capacities is Dictionary: return false
+	for status in capacities:
+		if not status is String or T01Definition.status_element(status).is_empty() or not ContentRegistry._nonnegative_integer(capacities[status]):
+			return false
 	if not ContentRegistry._positive_number(raw.get("display_scale", 1.0)): return false
 	for key in ["faction", "required_cultivation"]:
 		if not raw.get(key, "") is String: return false

@@ -1,0 +1,22 @@
+{
+  "id": "base.board.qingshihewan_huiji_shanlang",
+  "name": "灰脊山狼阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-shanjihuilang.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    170,
+    474,
+    785,
+    1086
+  ],
+  "y_lines": [
+    170,
+    460,
+    765,
+    1050
+  ]
+}

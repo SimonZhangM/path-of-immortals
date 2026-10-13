@@ -12,7 +12,7 @@
     1,
     2
   ],
-  "icon": "res://assets/weapontest.webp",
+  "icon": "res://assets/images/items/fire_sword.svg",
   "cooldown": 3.0,
   "stamina_cost": 5,
   "effects": [

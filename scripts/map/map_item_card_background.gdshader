@@ -6,6 +6,8 @@ uniform vec4 source_region = vec4(0.09375, 0.0625, 0.8125, 0.875);
 uniform float corner_radius = 10.0;
 uniform float line_width = 2.0;
 uniform vec4 line_color : source_color = vec4(0.647, 0.647, 0.647, 1.0);
+uniform bool selected = false;
+uniform vec4 selection_color : source_color = vec4(0.85, 0.85, 0.85, 1.0);
 varying vec4 vertex_tint;
 
 void vertex() {
@@ -23,6 +25,6 @@ void fragment() {
 	vec4 backing = texture(TEXTURE, source_region.xy + UV * source_region.zw);
 	// Sample only authored interior artwork. A single analytic rounded mask
 	// clips its corners and draws the independent inward 2px rarity stroke.
-	COLOR = mix(line_color, backing, inner_coverage) * vertex_tint;
+	COLOR = mix(selected ? selection_color : line_color, backing, inner_coverage) * vertex_tint;
 	COLOR.a *= outer_coverage;
 }

@@ -5,7 +5,7 @@
   "max_hp": 100,
   "max_stamina": 100,
   "max_spirit": 100,
-  "portrait": "res://assets/portrait2.webp",
+  "portrait": "res://assets/images/characters/cultivator.svg",
   "board_layout": "base.board.roots",
   "traits": [
     "base.trait.rejuvenation",

@@ -25,6 +25,7 @@
   ],
   "faction": "青岚宗",
   "required_cultivation": "base.cultivation.nascent_soul",
-  "resource_bonuses": {},
+  "resource_bonuses": {"hp": 50, "stamina": 30, "spirit": 50},
+  "status_capacity_bonuses": {"生机": 20, "轻灵": 12, "坚韧": 8, "失衡": 6, "驱散": 6},
   "buff_bonuses": {}
 }

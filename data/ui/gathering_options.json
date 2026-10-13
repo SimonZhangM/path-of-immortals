@@ -1,0 +1,54 @@
+{
+  "background": "res://assets/tanchuang-caiyao.webp",
+  "illustration_frame": "res://assets/tanchuang-neiqianbiankuang.webp",
+  "location_font_size": 23,
+  "item_name_offset_y": -2,
+  "item_tags_offset_y": -1,
+  "method_name_offset_y": 2,
+  "methods": [
+    {"id": "base.gathering.quick", "name": "快速采摘", "base": 1, "extra_min": 0, "extra_max": 1, "days": 1, "color": "f1cc72", "button_idle": "res://assets/tanchuang-caiji-kaishicaiji1.webp", "button_selected": "res://assets/tanchuang-caiji-kaishicaiji2.webp"},
+    {"id": "base.gathering.careful", "name": "细心采集", "base": 2, "extra_min": 0, "extra_max": 1, "days": 2, "color": "85c9fa", "button_idle": "res://assets/tanchuang-caiji-zixicaiji1.webp", "button_selected": "res://assets/tanchuang-caiji-zixicaiji2.webp"},
+    {"id": "base.gathering.deep", "name": "深入搜寻", "base": 3, "extra_min": 0, "extra_max": 1, "days": 3, "color": "c7a0fa", "button_idle": "res://assets/tanchuang-caiji-shenrusouxun1.webp", "button_selected": "res://assets/tanchuang-caiji-shenrusouxun2.webp"}
+  ],
+  "locations": {
+    "base.material.zhixuecao": {
+      "illustration": "res://assets/tanchuang-caiyao-zhixuecao1.webp",
+      "title": "林间草坡",
+      "description": "林间草坡向阳，几簇止血草藏在矮草间。",
+      "notes": {
+        "base.gathering.quick": "只取近处草株，\n省时省力。",
+        "base.gathering.careful": "拨开草丛，\n细寻成熟药草。",
+        "base.gathering.deep": "沿坡边缘寻觅，\n或有更多发现。"
+      }
+    },
+    "base.material.qingtenggen": {
+      "title": "祠后石隙",
+      "description": "旧祠后墙阴湿，青藤盘附石缝，根茎隐于墙基。",
+      "notes": {
+        "base.gathering.quick": "采下露出的根茎即可。",
+        "base.gathering.careful": "顺藤寻根，小心剥离石缝。",
+        "base.gathering.deep": "细查墙基阴角，寻找隐蔽老根。"
+      }
+    },
+    "base.material.kuaiye": {
+      "illustration": "res://assets/tanchuang-caiyao-kuaiye1.webp",
+      "title": "山坡荒地",
+      "description": "荒坡碎石遍地，灰绿苦艾在风中轻轻摇曳。",
+      "notes": {
+        "base.gathering.quick": "摘取近旁\n易得的苦艾。",
+        "base.gathering.careful": "辨叶寻株，\n避开杂草枯枝。",
+        "base.gathering.deep": "遍寻荒坡石隙，\n不漏隐蔽药株。"
+      }
+    },
+    "base.material.xilutai": {
+      "illustration": "res://assets/tanchuang-caiyao-xilutai.webp",
+      "title": "潮湿溪石",
+      "description": "溪边石面常年湿润，浅青色溪露苔附石而生。",
+      "notes": {
+        "base.gathering.quick": "取下石面\n易采的苔草。",
+        "base.gathering.careful": "沿湿石细采，\n保留完整苔株。",
+        "base.gathering.deep": "探寻溪石背面，\n寻找更多苔草。"
+      }
+    }
+  }
+}

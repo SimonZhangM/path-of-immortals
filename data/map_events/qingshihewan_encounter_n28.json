@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n28",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n28",
+  "title": "临溪石坡",
+  "description": "临溪石坡遍布湿润的岩石，茂密树枝伸向水面。头顶忽然传来一阵扑翅声，一只青翎岩雉停在斜枝上，警惕地俯视着你。",
+  "enemy_id": "base.enemy.qingling_yanzhi",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-07.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

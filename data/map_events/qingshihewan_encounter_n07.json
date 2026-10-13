@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n07",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n07",
+  "title": "河心乱礁",
+  "description": "河水在乱礁间奔涌，浪花不断拍打裸露的岩石。一块覆着青苔的“巨石”忽然动了起来，青壳河鼋缓缓探出头，挡住了前路。",
+  "enemy_id": "base.enemy.qingke_heyuan",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-02.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

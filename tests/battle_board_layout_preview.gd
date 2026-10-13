@@ -23,6 +23,11 @@ func run() -> void:
 	var ui = scene.get_node("MainUI")
 	var ids := ["base.board.bag"]
 	for n in range(1,7): ids.append("base.board.qinglan_%d" % n)
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--board="):
+			var selected := argument.trim_prefix("--board=")
+			assert(selected in ids, "preview board must exist")
+			ids = [selected]
 	var previews: Array[Image] = []
 	for id: String in ids:
 		var member := game.party[0]
@@ -47,14 +52,17 @@ func run() -> void:
 		var visible_rect := Rect2(bag.board_layout.source_to_view(used.position,bag.size),used.size*bag.board_layout.scale_for(bag.size))
 		print(id, " view=",bag.size," visible=",bag.get_global_transform()*visible_rect," actor=",ui.ally_panel.cards[0].get_global_rect())
 		var global_art := bag.get_global_transform() * visible_rect
-		check(global_art.position.y >= 580 and global_art.end.y <= 1430, "all visible boards stay below status area and inside screen")
-		check(is_equal_approx(global_art.get_center().y,1004.0), "all player boards share elevated visual center")
+		var scale_factor: float = {"base.board.qinglan_1":0.8, "base.board.qinglan_2":0.8, "base.board.qinglan_3":0.9, "base.board.qinglan_6":1.045}.get(id, 1.0)
+		var baseline := minf(650.0 / used.size.x, 630.0 / used.size.y)
+		check(global_art.size.is_equal_approx(used.size * baseline * scale_factor * (4.0 / 3.0)), "board-specific visual scale")
+		check(global_art.position.y >= 520 and global_art.end.y <= 1440, "visible boards remain inside screen")
+		check(is_equal_approx(global_art.get_center().y,984.0 if id == "base.board.qinglan_6" else 994.0), "whole group moves up ten pixels, keeping spirit board extra offset")
 		check(bag._board_art.get_rect().is_equal_approx(bag.board_layout.art_rect(bag.size)), "art and grid mapping agree")
 		check(not bag._has_point(visible_rect.position - Vector2(0,1)), "transparent top padding does not cover status hover region")
 		check(bag._has_point(visible_rect.get_center()), "board still accepts its visible center")
 		for panel in [ui.ally_panel,ui.enemy_panel]:
 			check(panel.status_icons.columns == 8, "status maximum eight per row")
-			check(is_equal_approx(panel.cards[0].global_position.y,221.6666667), "actor group is five screen pixels higher")
+			check(is_equal_approx(panel.cards[0].global_position.y,211.6666667), "actor group retains old offset plus new ten-pixel translation")
 			var icons: Array = panel.status_icons.get_children()
 			check(icons[7].position.y == icons[0].position.y and icons[8].position.y > icons[0].position.y, "eight icons fit before wrap")
 		for entry: Dictionary in member.inventory.get_instances():
@@ -71,7 +79,7 @@ func run() -> void:
 			previews.append(screenshot)
 	scene.queue_free()
 	await settle()
-	if not previews.is_empty():
+	if previews.size() > 1:
 		var gallery := Control.new()
 		root.add_child(gallery)
 		for index in previews.size():

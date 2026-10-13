@@ -1,0 +1,13 @@
+{
+  "id": "base.shop.qingshizhen.herbalist",
+  "profile": "base.shop_profile.herbalist",
+  "title": "药材铺",
+  "leave_label": "离开药材铺",
+  "description": "药材与特制诱饵交易。",
+  "products": [
+    {"item_id":"base.material.zhixuecao","category":"herb"},
+    {"item_id":"base.material.qingtenggen","category":"herb"},
+    {"item_id":"base.material.kuaiye","category":"herb"},
+    {"item_id":"base.material.xilutai","category":"herb"}
+  ]
+}

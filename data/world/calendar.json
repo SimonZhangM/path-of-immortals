@@ -1,0 +1,12 @@
+{
+  "id": "base.calendar.canglan",
+  "world_name": "苍澜界",
+  "months_per_year": 12,
+  "days_per_month": 30,
+  "month_names": ["正月", "杏月", "桃月", "槐月", "榴月", "荷月", "兰月", "桂月", "菊月", "良月", "冬月", "腊月"],
+  "initial_cycle": 1,
+  "initial_year_index": 0,
+  "default_birthday": [1, 1],
+  "year_names_provisional": true,
+  "year_names": ["青鹿", "玄狐", "灵鹤", "苍熊", "金隼", "玄龟", "锦鲤", "玉蟾", "银蝶", "鸣蝉", "云鲸", "鲲鹏"]
+}

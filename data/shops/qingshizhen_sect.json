@@ -1,0 +1,20 @@
+{
+  "id": "base.shop.qingshizhen.sect",
+  "profile": "base.shop_profile.sect",
+  "title": "宗门商铺",
+  "description": "修士专用器具与修炼资源。",
+  "products": [
+    {
+      "item_id": "base.map_item.warm_jade",
+      "category": "artifact"
+    },
+    {
+      "item_id": "base.map_item.t01_0020",
+      "category": "artifact"
+    },
+    {
+      "item_id": "base.map_item.t01_0096",
+      "category": "artifact"
+    }
+  ]
+}

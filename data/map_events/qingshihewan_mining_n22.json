@@ -1,0 +1,10 @@
+{
+  "id": "base.map_event.qingshihewan.mining_n22",
+  "type": "gathering",
+  "point_id": "base.map.qingshihewan.point.n22",
+  "trigger": "arrival",
+  "title": "西崖矿隙",
+  "item_id": "base.material.chitongkuang",
+  "reward_prefix": "base.map_reward.qingshihewan.mining_n22",
+  "presentation": {}
+}

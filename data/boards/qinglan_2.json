@@ -22,6 +22,7 @@
   ],
   "faction": "青岚宗",
   "required_cultivation": "base.cultivation.qi_refining",
-  "resource_bonuses": {},
+  "resource_bonuses": {"hp": 20, "stamina": 15, "spirit": 10},
+  "status_capacity_bonuses": {"生机": 8, "轻灵": 4, "坚韧": 2, "失衡": 2, "驱散": 2},
   "buff_bonuses": {}
 }

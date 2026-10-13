@@ -16,11 +16,11 @@ func _run() -> void:
 	var content: Node2D = screen.content
 	var points: Node2D = content.get_node("Points")
 	var routes: Node2D = content.get_node("Routes")
-	_check(points.get_child_count() == 38, "38 marked stops including east road end")
+	_check(points.get_child_count() == 40, "40 marked stops including east road end")
 	_check(ResourceLoader.exists("res://scenes/maps/qingshihewan.tscn"), "original river-bay map remains available")
 	var east_exit := points.get_node("EastExit") as MapRoutePoint
 	_check(east_exit != null and east_exit.visible and east_exit.texture.resource_path == "res://assets/mapdot.webp", "east road endpoint displays mapdot")
-	_check(routes.get_child_count() == 41, "all reference route branches are present")
+	_check(routes.get_child_count() == 44, "all reference route branches are present")
 	_check(content.get_node("Background").texture.get_size() == Vector2(3215, 1835), "map uses original bitmap dimensions")
 	_check(content.get_node("Background").texture.resource_path == screen.definition["background"], "background matches metadata")
 	var background_image: Image = content.get_node("Background").texture.get_image()
@@ -55,7 +55,7 @@ func _run() -> void:
 			continue
 		visited[point] = true
 		pending.append_array(neighbors[point])
-	_check(visited.size() == 38, "no disconnected islands or accidental missing joins")
+	_check(visited.size() == 40, "no disconnected islands or accidental missing joins")
 	var first: MapRoute = routes.get_child(0)
 	var marker := first.get_node(first.start_point) as Node2D
 	var original := marker.position

@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.qingshihewan.chest_n06",
+  "type": "chest",
+  "point_id": "base.map.qingshihewan.point.n06",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.qingshihewan.chest_n06",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-hexinluanjiao1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-hexinluanjiao0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-hexinluanjiao2.webp"
+  },
+  "observation": {
+    "location_name": "河心乱礁",
+    "location_description": "河水穿过密集的礁石，激起层层白浪。几块高大的青岩露出水面，石壁上留着常年冲刷的痕迹。",
+    "chest_name": "河礁沉匣",
+    "description": "一只乌木机关匣卡在礁石凹处，匣角磨损，铜扣泛着暗绿色泽。正面的双格机关保存尚好。",
+    "result_description": "随着机关轻响，匣盖缓缓打开。两件物品分别置于左右锁格之中，等待你的选择。"
+  },
+  "respawn_days": 40
+}

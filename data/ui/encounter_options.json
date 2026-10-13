@@ -1,0 +1,9 @@
+{
+  "background": "res://assets/tanchuang-zaoyuzhan.webp",
+  "illustration_frame": "res://assets/tanchuang-neiqianbiankuang.webp",
+  "actions": [
+    {"id": "retreat", "description": "悄然离开此地", "color": "d1d8dc", "button_idle": "res://assets/tanchuang-zaoyuzhan-raoxing1.webp", "button_selected": "res://assets/tanchuang-zaoyuzhan-raoxing2.webp"},
+    {"id": "fight", "description": "迎面参加战斗", "color": "f1cc72", "button_idle": "res://assets/tanchuang-zaoyuzhan-yingzhan1.webp", "button_selected": "res://assets/tanchuang-zaoyuzhan-yingzhan2.webp"},
+    {"id": "intimidate", "description": "施展气势逼退", "color": "ee9c5d", "button_idle": "res://assets/tanchuang-zaoyuzhan-weiya1.webp", "button_selected": "res://assets/tanchuang-zaoyuzhan-weiya2.webp", "enabled": false, "unavailable_reason": "暂未开放\n威压要求：胜利3次，且至少高一个等级。"}
+  ]
+}

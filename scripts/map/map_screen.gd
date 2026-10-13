@@ -19,11 +19,25 @@ var _drag_delta := Vector2.ZERO
 var _suppress_click := false
 var _cursor_position := Vector2(-1, -1)
 var travel: MapTravelState
+var exploration: MapExplorationState
+var exploration_save_error := ""
+var location_save_error := ""
+var _location_active := false
 var player: MapPlayer
 var event_registry: MapEventRegistry
 var event_state: MapEventState
 var dialogue: MapDialogue
 var reward_dialog: MapRewardDialog
+var chest_dialog: Control
+var chest_observation_dialog: Control
+var gathering_dialog: MapGatheringDialog
+var gathering_result: Control
+var rest_dialog: MapRestDialog
+var shop_dialog: MapShopDialog
+var clinic_dialog: MapClinicDialog
+var shops: Dictionary = {}
+var _gathering_rng := RandomNumberGenerator.new()
+var _chest_rng := RandomNumberGenerator.new()
 var encounter_dialog: MapEncounterDialog
 var _encounter_enemies: Dictionary = {}
 var exit_dialog: MapExitDialog
@@ -32,9 +46,11 @@ var _active_exit: Dictionary = {}
 var arrival_point_id := ""
 var arrival_facing := ""
 var defer_map_music := false
+var defer_location_save := false
 var sign_motion: MapSignMotion
 var player_status: MapPlayerStatus
 var status_header: MapStatusHeader
+var calendar_readout: MapCalendarReadout
 var inventory_screen: MapInventoryScreen
 var inventory_catalog: MapInventoryCatalog
 var _last_view_size := Vector2.ZERO
@@ -62,9 +78,39 @@ func _ready() -> void:
 		if startup_error.is_empty():
 			_setup_status_header()
 		if startup_error.is_empty():
+			_restore_saved_location()
+		if startup_error.is_empty():
+			_setup_exploration()
+		if startup_error.is_empty():
 			startup_error = MapPresentation.validate_music(definition)
-		if startup_error.is_empty() and not defer_map_music:
-			MapPresentation.enter_map(definition)
+		if startup_error.is_empty():
+			if not defer_location_save: activate_location()
+			if not defer_map_music: MapPresentation.enter_map(definition)
+
+func _restore_saved_location() -> void:
+	# Explicit transition/battle-return arrivals always take precedence.
+	if not arrival_point_id.is_empty() or loadout.map_location.get("map_id", "") != definition.id: return
+	var point_id: String = loadout.map_location.get("point_id", "")
+	if not travel.node_positions.has(point_id): return
+	travel.current_node_id = point_id
+	travel.map_position = travel.node_positions[point_id]
+	travel.stop_at_current_node()
+	player.position = travel.map_position
+	content.position = map_viewport.size * 0.5 - player.position * content.scale
+	_clamp_position()
+
+func activate_location() -> void:
+	if not startup_error.is_empty() or loadout == null or travel == null: return
+	_location_active = true
+	loadout.set_map_location(definition.id, travel.current_node_id)
+	_save_location()
+
+func deactivate_location() -> void:
+	_location_active = false
+
+func _save_location() -> void:
+	location_save_error = _save_loadout()
+	if not location_save_error.is_empty(): push_warning("地图落点尚未保存：" + location_save_error)
 
 func _setup_status_header() -> void:
 	var registry := ContentRegistry.new()
@@ -85,7 +131,7 @@ func _setup_status_header() -> void:
 		push_error(startup_error)
 		return
 	status_header = MapStatusHeader.new()
-	startup_error = status_header.configure(player_status, config)
+	startup_error = status_header.configure(player_status, config, definition.get("title_image", ""))
 	if not startup_error.is_empty():
 		push_error(startup_error)
 		status_header.free()
@@ -95,6 +141,14 @@ func _setup_status_header() -> void:
 	status_header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	status_header.map_title.visible = bool(definition.get("show_map_title", true))
 	_setup_inventory(registry)
+	if startup_error.is_empty():
+		calendar_readout = MapCalendarReadout.new()
+		# Date is shown over fullscreen inventory/warehouse, not map travel.
+		calendar_readout.hide()
+		add_child(calendar_readout)
+		inventory_screen.visibility_changed.connect(_update_calendar_visibility)
+		resized.connect(_layout_calendar)
+		_update_calendar_readout()
 
 func _setup_inventory(registry: ContentRegistry) -> void:
 	inventory_save_path = MapLoadoutStore.session_path(inventory_save_path)
@@ -114,11 +168,39 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 		push_error(startup_error)
 		return
 	event_state.reward_claimed = loadout.has_reward
+	event_state.chest_resolver = func(event: Dictionary): return MapChestRewards.current_event(loadout,event)
+	event_state.enemy_lookup = registry.get_enemy
+	event_state.enemy_available = func(id: String): return registry.enemy_battle_error(id).is_empty()
 	for event: Dictionary in event_registry.events.values():
 		if event.type == "encounter":
-			var enemy := registry.get_enemy(event.enemy_id)
+			for id: String in event.get("enemy_sequence", [event.enemy_id]):
+				if registry.get_enemy(id).is_empty():
+					startup_error = "地图遭遇引用未知敌人：" + id
+					return
+		if not event.get("enabled", true): continue
+		if event.type == "shop":
+			var shop := MapShop.new()
+			startup_error = shop.load_catalog(event.catalog,loadout)
+			if not startup_error.is_empty(): return
+			shops[event.id] = shop
+		if event.type == "gathering" and (not loadout.records.has(event.item_id) or loadout.records[event.item_id].category not in ["plant", "mineral"]):
+			startup_error = "采集点引用了未知材料。"
+			return
+		if event.type == "chest":
+			startup_error = MapChestRewards.configuration_error(loadout,event)
+			if not startup_error.is_empty(): return
+			if loadout.has_reward(event.reward_id): event_state.completed[event.id] = true
+		if event.type == "encounter":
+			var current_event := event_state.resolved_event(event.id)
+			if not event_state.enemy_available.call(current_event.enemy_id): continue
+			var enemy := registry.get_enemy(current_event.enemy_id)
 			if enemy.is_empty() or not ResourceLoader.exists(enemy.get("portrait", ""), "Texture2D"):
 				startup_error = "地图遭遇引用了未知敌人或头像。"
+				push_error(startup_error)
+				return
+			var presentation_error := EnemyPresentation.validation_error(enemy.get("presentation"))
+			if not presentation_error.is_empty():
+				startup_error = "地图遭遇敌人展示配置无效：" + presentation_error
 				push_error(startup_error)
 				return
 			_encounter_enemies[event.id] = PartyMemberState.new(enemy, registry)
@@ -128,17 +210,88 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 			push_error(startup_error)
 			return
 	inventory_catalog.replace_entries(loadout.storage_records())
+	_sync_completed_signs()
 	player_status.apply_board(loadout.board)
+	_sync_currency()
+	loadout.changed.connect(_sync_currency)
+	_sync_player_name()
+	loadout.changed.connect(_sync_player_name)
 	loadout.changed.connect(func(): player_status.apply_board(loadout.board))
+	loadout.changed.connect(_sync_calendar)
+	_sync_calendar()
 	inventory_screen = MapInventoryScreen.new()
 	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout, player_status)
 	inventory_screen.formation_save_callback = _save_loadout
 	add_child(inventory_screen)
 	inventory_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	inventory_screen.close_requested.connect(func(): set_inventory_open(false))
+	inventory_screen.warehouse_transfer_requested.connect(_transfer_warehouse)
+	inventory_screen.warehouse_bulk_transfer_requested.connect(func(id: String, withdraw: bool): _transfer_warehouse(id,"",withdraw,true))
+	inventory_screen.warehouse_quantity_transfer_requested.connect(func(id: String, item_id: String, withdraw: bool, quantity: int): _transfer_warehouse(id,item_id,withdraw,false,quantity))
+	inventory_screen.warehouse_undo_requested.connect(_undo_warehouse)
+	inventory_screen.warehouse_history_provider = func(): return warehouse_transfers.view_history(loadout)
 	if sign_motion != null:
 		inventory_screen.visibility_changed.connect(func(): sign_motion.set_suspended(inventory_screen.visible))
 		sign_motion.set_suspended(inventory_screen.visible)
+
+var warehouse_transfers := preload("res://scripts/map/map_warehouse_transfer.gd").new()
+
+func _transfer_warehouse(id: String, item_id: String, withdraw: bool, all_items: bool = false, quantity: int = -1) -> void:
+	if not is_inventory_open() or inventory_screen.warehouse_id != id: return
+	var error := warehouse_transfers.transfer(loadout,id,item_id,withdraw,inventory_save_path,all_items,quantity)
+	_finish_warehouse_command(error)
+
+func _undo_warehouse(operation_id: int) -> void:
+	if not is_inventory_open() or inventory_screen.warehouse_id.is_empty(): return
+	_finish_warehouse_command(warehouse_transfers.revert(loadout,operation_id,inventory_save_path))
+
+func _finish_warehouse_command(error: String) -> void:
+	if error.is_empty():
+		_saved_loadout_revision = loadout.revision
+		loadout.interaction.emit("place")
+	else:
+		var notice := AcceptDialog.new()
+		notice.title = "仓库存取"
+		notice.dialog_text = error
+		add_child(notice)
+		notice.confirmed.connect(notice.queue_free)
+		notice.canceled.connect(notice.queue_free)
+		notice.popup_centered()
+	inventory_screen._refresh_warehouse_actions.call_deferred()
+
+func _sync_calendar() -> void:
+	player_status.apply_calendar(loadout.calendar)
+	var today := WorldCalendar.current_day(loadout.calendar)
+	for event: Dictionary in event_registry.events.values():
+		var managed := false
+		var waiting := false
+		if event.type == "chest":
+			managed = true
+			waiting = loadout.has_reward(MapChestRewards.current_event(loadout,event).reward_id)
+		elif event.type == "encounter" and loadout.encounter_cooldowns.has(event.id):
+			managed = true
+			waiting = today < int(loadout.encounter_cooldowns[event.id])
+		if not managed: continue
+		var was_waiting := event_state.completed.has(event.id)
+		if waiting: event_state.completed[event.id] = true
+		else: event_state.completed.erase(event.id)
+		if was_waiting != waiting: _on_encounter_changed(event.id)
+	_update_calendar_readout()
+
+func _update_calendar_readout() -> void:
+	if calendar_readout == null or loadout == null: return
+	calendar_readout.present(loadout.calendar)
+	_update_calendar_visibility()
+	_layout_calendar.call_deferred()
+
+func _update_calendar_visibility() -> void:
+	if calendar_readout == null: return
+	calendar_readout.visible = is_inventory_open()
+	if calendar_readout.visible: _layout_calendar.call_deferred()
+
+func _layout_calendar() -> void:
+	if calendar_readout != null:
+		calendar_readout.layout_for(size,MapStatusHeader.height_for_width(size.x))
 
 func is_inventory_open() -> bool:
 	return inventory_screen != null and inventory_screen.visible
@@ -147,6 +300,9 @@ func is_exit_open() -> bool:
 	return exit_dialog != null and exit_dialog.visible
 
 func set_inventory_open(open: bool) -> void:
+	if not open and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
+		_close_home_warehouse()
+		return
 	if inventory_screen == null or is_exit_open() or (open and event_state != null and event_state.is_active()):
 		return
 	if is_inventory_open() == open:
@@ -170,11 +326,10 @@ func set_inventory_open(open: bool) -> void:
 	if open:
 		player.pause()
 	else:
-		inventory_screen.search.release_focus()
 		player.play()
 
 func _save_loadout() -> String:
-	if Engine.is_editor_hint() or loadout == null or _saved_loadout_revision == loadout.revision:
+	if Engine.is_editor_hint() or not _location_active or not startup_error.is_empty() or loadout == null or _saved_loadout_revision == loadout.revision:
 		return ""
 	var error := MapLoadoutStore.save(loadout, inventory_save_path)
 	if error.is_empty():
@@ -186,7 +341,50 @@ func _exit_tree() -> void:
 	if not error.is_empty():
 		push_error(error)
 
+func _sync_currency() -> void:
+	if player_status.spirit_stones != loadout.spirit_stones:
+		player_status.spirit_stones = loadout.spirit_stones
+		player_status.changed.emit()
+
+func _sync_player_name() -> void:
+	var full_name := DialogueJournal.full_name(loadout.narrative)
+	if player_status.display_name!=full_name:
+		player_status.display_name = full_name
+		player_status.changed.emit()
+
 func _input(event: InputEvent) -> void:
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "clinic":
+		if clinic_dialog.handle_continue_input(event):
+			get_viewport().set_input_as_handled()
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed: _close_clinic()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventKey:
+			if event.pressed and event.keycode == KEY_ESCAPE: _close_clinic()
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "shop":
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed: _close_shop()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventKey:
+			if event.pressed and event.keycode == KEY_ESCAPE: _close_shop()
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
+		if event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or (event.is_action_pressed("map_inventory") and not get_viewport().gui_get_focus_owner() is LineEdit)):
+			_close_home_warehouse()
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "rest" and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed: _cancel_rest()
+		get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase in ["chest_observation", "chest"] and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed: _cancel_chest()
+		get_viewport().set_input_as_handled()
+		return
 	if not Engine.is_editor_hint() and is_exit_open() and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
 			_cancel_exit()
@@ -200,6 +398,14 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event_state != null and event_state.is_active():
+		if event_state.phase == "rest":
+			if event.keycode == KEY_ESCAPE: _cancel_rest()
+			get_viewport().set_input_as_handled()
+			return
+		if event_state.phase in ["chest_observation", "chest"]:
+			if event.keycode == KEY_ESCAPE: _cancel_chest()
+			get_viewport().set_input_as_handled()
+			return
 		if event_state.phase == "encounter":
 			if event.keycode == KEY_ESCAPE:
 				_retreat_encounter()
@@ -223,7 +429,7 @@ func _input(event: InputEvent) -> void:
 		set_inventory_open(false)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("map_inventory"):
-		# Typing I in a search field must not close the interface.
+		# Typing I in an editable field must not close the interface.
 		if is_inventory_open() and get_viewport().gui_get_focus_owner() is LineEdit:
 			return
 		set_inventory_open(not is_inventory_open())
@@ -256,6 +462,46 @@ func _setup_events() -> void:
 	add_child(reward_dialog)
 	reward_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	reward_dialog.accept_requested.connect(_accept_reward)
+	chest_dialog = load("res://scripts/map/map_chest_dialog.gd").new()
+	add_child(chest_dialog)
+	chest_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	chest_dialog.accept_requested.connect(_accept_chest)
+	chest_dialog.cancelled.connect(_cancel_chest)
+	chest_observation_dialog = load("res://scripts/map/map_chest_observation_dialog.gd").new()
+	add_child(chest_observation_dialog)
+	chest_observation_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	chest_observation_dialog.open_requested.connect(_open_chest)
+	chest_observation_dialog.cancelled.connect(_cancel_chest)
+	_chest_rng.randomize()
+	_gathering_rng.randomize()
+	gathering_dialog = MapGatheringDialog.new()
+	add_child(gathering_dialog)
+	gathering_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	gathering_dialog.gathering_requested.connect(_begin_gathering)
+	gathering_dialog.cancelled.connect(_cancel_gathering)
+	gathering_result = load("res://scripts/map/map_gathering_result_dialog.gd").new()
+	add_child(gathering_result)
+	gathering_result.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	gathering_result.accept_requested.connect(_accept_gathering)
+	gathering_result.cancelled.connect(_cancel_gathering)
+	rest_dialog = MapRestDialog.new()
+	add_child(rest_dialog)
+	rest_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rest_dialog.rest_requested.connect(_confirm_rest)
+	rest_dialog.warehouse_requested.connect(_open_home_warehouse)
+	rest_dialog.cancelled.connect(_cancel_rest)
+	shop_dialog = MapShopDialog.new()
+	add_child(shop_dialog)
+	shop_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	shop_dialog.cancelled.connect(_close_shop)
+	shop_dialog.purchase_requested.connect(_purchase_shop_item)
+	shop_dialog.sale_requested.connect(_sell_shop_item)
+	clinic_dialog = MapClinicDialog.new()
+	add_child(clinic_dialog)
+	clinic_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	clinic_dialog.cancelled.connect(_close_clinic)
+	clinic_dialog.dialogue_requested.connect(_clinic_dialogue_command)
+	clinic_dialog.treatment_requested.connect(_confirm_clinic_treatment)
 	encounter_dialog = MapEncounterDialog.new()
 	add_child(encounter_dialog)
 	encounter_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -267,6 +513,7 @@ func _setup_events() -> void:
 		return
 	if not exits_by_point.is_empty():
 		exit_dialog = MapExitDialog.new()
+		exit_dialog.use_map_exit_art()
 		add_child(exit_dialog)
 		exit_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		exit_dialog.cancelled.connect(_cancel_exit)
@@ -329,14 +576,54 @@ func _present_event_progress(completed_id: String = "") -> void:
 	if not completed_id.is_empty():
 		dialogue.hide()
 		reward_dialog.hide()
+		chest_dialog.hide()
+		chest_observation_dialog.hide()
+		gathering_dialog.hide()
+		gathering_result.hide()
+		rest_dialog.hide()
+		shop_dialog.hide()
+		clinic_dialog.hide()
 		travel.paused = false
 		_sync_completed_signs(true)
 		_end_drag()
 		_clear_hover()
+	elif event_state.phase == "shop":
+		shop_dialog.present(event_state.active_event(),shops[event_state.active_id],loadout)
+	elif event_state.phase == "clinic":
+		clinic_dialog.present(event_state.active_event(),loadout,player_status)
+		_clinic_dialogue_command("visit","")
+	elif event_state.phase == "rest":
+		dialogue.hide()
+		reward_dialog.hide()
+		rest_dialog.present(event_state.active_event(),player_status.needs_rest())
+	elif event_state.phase == "gathering":
+		var event := event_state.active_event()
+		if not MapGatheringRewards.pending(loadout,event).is_empty():
+			_show_gathering_result()
+		else:
+			_set_gathering_profile(MapGatheringOptions.path_for_record(loadout.records[event.item_id]))
+			gathering_dialog.bind_herb(loadout.records[event.item_id],loadout)
+			gathering_dialog.present(event.title)
+	elif event_state.phase == "chest_observation":
+		dialogue.hide()
+		reward_dialog.hide()
+		chest_dialog.hide()
+		chest_observation_dialog.present(event_state.active_event())
+	elif event_state.phase == "chest":
+		dialogue.hide()
+		reward_dialog.hide()
+		var event := event_state.active_event()
+		var error := MapChestRewards.ensure_offer(loadout,event,inventory_save_path,_chest_rng)
+		_show_chest_choices(event, error)
 	elif event_state.phase == "encounter":
 		dialogue.hide()
 		reward_dialog.hide()
-		encounter_dialog.present(event_state.active_event(), _encounter_enemies[event_state.active_id])
+		var event := event_state.active_event()
+		# Resolve per opening so rotation never reuses the preceding species' preview.
+		var enemy := PartyMemberState.new(loadout.registry.get_enemy(event.enemy_id), loadout.registry)
+		enemy.equip_definition_loadout()
+		_encounter_enemies[event.id] = enemy
+		encounter_dialog.present(event, enemy)
 	elif event_state.phase == "reward":
 		dialogue.hide()
 		var reward: Dictionary = event_state.active_event().reward
@@ -361,12 +648,254 @@ func _accept_reward() -> void:
 	reward_dialog.pick_sound.play()
 	_present_event_progress(event_state.accept_reward())
 
+func _setup_exploration() -> void:
+	var settings: Variant = definition.get("exploration", {})
+	if not settings is Dictionary or not settings.get("enabled", false) is bool:
+		startup_error = "地图探索配置无效。"
+		push_error(startup_error)
+		return
+	if not settings.get("enabled", false): return
+	var hint: Variant = settings.get("hint_length", 72.0)
+	if not (hint is float or hint is int) or not is_finite(float(hint)) or float(hint) <= 0:
+		startup_error = "地图探索路线提示长度无效。"
+		push_error(startup_error)
+		return
+	exploration = MapExplorationState.new()
+	travel.exploration_enabled = true
+	_visit_exploration(travel.current_node_id)
+
+func _visit_exploration(point_id: String) -> void:
+	if exploration == null or loadout == null: return
+	var changed := loadout.visit_map_point(definition.id, point_id)
+	exploration.rebuild(travel.adjacency, loadout.map_visited.get(definition.id, []))
+	travel.revealed_points = exploration.revealed.duplicate()
+	travel.revealed_routes = exploration.full_routes.duplicate()
+	for point: MapRoutePoint in content.get_node("Points").get_children():
+		point.present_exploration(exploration.revealed.has(point.point_id), exploration.visited.has(point.point_id))
+	for route: MapRoute in content.get_node("Routes").get_children():
+		var first: String = route.get_node(route.start_point).point_id
+		var last: String = route.get_node(route.end_point).point_id
+		route.present_exploration(exploration.full_routes.has(route.route_id), exploration.revealed.has(first), exploration.revealed.has(last), float(definition.exploration.get("hint_length", 72.0)))
+	if changed or not exploration_save_error.is_empty():
+		exploration_save_error = _save_loadout()
+		if not exploration_save_error.is_empty(): push_warning("探索进度尚未保存：" + exploration_save_error)
+
 func _on_node_arrived(point_id: String) -> void:
+	if _location_active: loadout.set_map_location(definition.id, point_id)
+	_visit_exploration(point_id)
+	if _location_active: _save_location()
 	if exits_by_point.has(point_id) and not event_state.is_active():
 		travel.stop_at_current_node()
 		if _try_open_exit(point_id):
 			return
 	_try_start_event(point_id, "arrival", true)
+
+func _open_home_warehouse() -> void:
+	if event_state.phase != "rest" or not rest_dialog.visible or rest_dialog.warehouse_button.disabled: return
+	var warehouse_id: String = event_state.active_event().get("warehouse_id","")
+	if warehouse_id.is_empty(): return
+	warehouse_transfers.clear()
+	rest_dialog.hide()
+	inventory_screen.set_warehouse(warehouse_id)
+	inventory_screen.show()
+	status_header.map_title.hide()
+	player.pause()
+	_end_drag()
+	_clear_hover()
+
+func _close_home_warehouse() -> void:
+	warehouse_transfers.clear()
+	inventory_screen.hide()
+	inventory_screen.set_warehouse()
+	status_header.map_title.visible = bool(definition.get("show_map_title",true))
+	if event_state.phase == "rest": _close_rest()
+	player.play()
+	_end_drag()
+	_clear_hover()
+
+func _purchase_shop_item(item_id: String, quantity: int) -> void:
+	if event_state.phase != "shop" or not shop_dialog.visible or shop_dialog.busy or shop_dialog.selling or shop_dialog.crafting: return
+	shop_dialog.set_busy(true)
+	var shop: MapShop = shops[event_state.active_id]
+	var error := shop.purchase(loadout,item_id,quantity,inventory_save_path)
+	if error.is_empty(): _saved_loadout_revision = loadout.revision
+	shop_dialog.set_busy(false)
+	shop_dialog.refresh_checkout()
+	shop_dialog.message.text = error if not error.is_empty() else "已购买 %s ×%d，已放入储物袋。" % [loadout.records[item_id].name,quantity]
+
+func _sell_shop_item(item_id: String, quantity: int) -> void:
+	if event_state.phase != "shop" or not shop_dialog.visible or shop_dialog.busy or not shop_dialog.selling or shop_dialog.crafting: return
+	shop_dialog.set_busy(true)
+	var shop: MapShop = shops[event_state.active_id]
+	var before := loadout.spirit_stones
+	var error := shop.sell(loadout,item_id,quantity,inventory_save_path)
+	if error.is_empty():
+		_saved_loadout_revision = loadout.revision
+		shop_dialog.quantity = 1
+	shop_dialog.set_busy(false)
+	shop_dialog._refresh_page(false)
+	shop_dialog.message.text = error if not error.is_empty() else "已出售 %s ×%d，获得%d灵石。" % [loadout.records[item_id].name,quantity,loadout.spirit_stones-before]
+
+func _close_shop() -> void:
+	if event_state.phase != "shop" or shop_dialog.busy: return
+	travel.stop_at_current_node()
+	event_state.close_shop()
+	shop_dialog.hide()
+	travel.paused = false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
+
+func _close_clinic() -> void:
+	if not event_state.close_clinic(): return
+	travel.stop_at_current_node()
+	clinic_dialog.hide()
+	travel.paused = false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
+
+func _clinic_dialogue_command(action: String, topic: String) -> void:
+	if event_state.phase!="clinic" or clinic_dialog.library==null: return
+	var error := NpcDialogueActions.command(loadout,clinic_dialog.library,action,inventory_save_path,topic)
+	if error.is_empty(): _saved_loadout_revision = loadout.revision
+	clinic_dialog.refresh_dialogue(error)
+
+func _confirm_clinic_treatment() -> void:
+	if event_state.phase!="clinic" or not clinic_dialog.visible or clinic_dialog.mode!="treatment": return
+	var event := event_state.active_event()
+	var result := MapClinicTreatment.treat(loadout,player_status,event.get("treatment",{}),inventory_save_path)
+	if result.error.is_empty(): _saved_loadout_revision = loadout.revision
+	clinic_dialog.treatment_content.refresh(result.error if not result.error.is_empty() else "诊治完成，气血已恢复。")
+
+func _confirm_rest() -> void:
+	if event_state.phase != "rest" or not rest_dialog.visible or rest_dialog.start_button.disabled: return
+	rest_dialog.set_busy(true)
+	var event := event_state.active_event()
+	var result := MapTimeActions.rest(loadout,player_status,event,inventory_save_path)
+	if not result.error.is_empty():
+		rest_dialog.present(event,player_status.needs_rest())
+		rest_dialog.error_label.text = result.error
+		return
+	_saved_loadout_revision = loadout.revision
+	_close_rest()
+
+func _cancel_rest() -> void:
+	if event_state.phase != "rest" or rest_dialog.later_button.disabled: return
+	_close_rest()
+
+func _close_rest() -> void:
+	travel.stop_at_current_node()
+	event_state.close_rest()
+	rest_dialog.hide()
+	travel.paused = false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
+
+func _set_gathering_profile(path: String) -> void:
+	if gathering_dialog.options.profile_path == path: return
+	remove_child(gathering_dialog)
+	gathering_dialog.queue_free()
+	gathering_dialog = MapGatheringDialog.new(path)
+	add_child(gathering_dialog)
+	gathering_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	gathering_dialog.gathering_requested.connect(_begin_gathering)
+	gathering_dialog.cancelled.connect(_cancel_gathering)
+
+func _begin_gathering(forecast: Dictionary) -> void:
+	if event_state.phase != "gathering": return
+	var error := MapGatheringRewards.prepare(loadout,event_state.active_event(),forecast.get("method_id",""),inventory_save_path,_gathering_rng)
+	if not error.is_empty():
+		gathering_dialog.error_label.text = error
+		gathering_dialog.set_busy(false)
+		return
+	_saved_loadout_revision = loadout.revision
+	_show_gathering_result()
+
+func _show_gathering_result() -> void:
+	var offer := MapGatheringRewards.pending(loadout,event_state.active_event())
+	if offer.is_empty(): return
+	event_state.phase = "gathering_reward"
+	gathering_dialog.hide()
+	var record: Dictionary = loadout.records[offer.item_id].duplicate(true)
+	record.quantity = offer.quantity
+	gathering_result.present_herb(record,loadout)
+
+func _accept_gathering() -> void:
+	if event_state.phase != "gathering_reward" or gathering_result.accept_button.disabled: return
+	gathering_result.accept_button.disabled = true
+	var event := event_state.active_event()
+	var error := MapGatheringRewards.claim(loadout,event,inventory_save_path)
+	if not error.is_empty():
+		gathering_result.error_label.text = error
+		gathering_result.accept_button.disabled = false
+		return
+	_saved_loadout_revision = loadout.revision
+	gathering_result.pick_sound.play()
+	_present_event_progress(event_state.close_gathering(loadout.gathering_offers[event.id].id))
+
+func _cancel_gathering() -> void:
+	if event_state.phase not in ["gathering","gathering_reward"]: return
+	travel.stop_at_current_node()
+	event_state.close_gathering()
+	gathering_dialog.hide()
+	gathering_result.hide()
+	travel.paused = false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
+
+func _open_chest() -> void:
+	if event_state.phase != "chest_observation": return
+	chest_observation_dialog.set_busy(true)
+	var event := event_state.active_event()
+	var error := MapChestRewards.ensure_offer(loadout,event,inventory_save_path,_chest_rng)
+	if not error.is_empty():
+		chest_observation_dialog.error_label.text = error
+		chest_observation_dialog.set_busy(false)
+		return
+	if event_state.open_chest():
+		_show_chest_choices(event)
+
+# Stage-two presentation seam: receives the full event (including result copy)
+# and the persisted offer. Replacing its UI must not reroll or grant rewards.
+func _show_chest_choices(event: Dictionary, error := "") -> void:
+	var records: Array[Dictionary] = []
+	if error.is_empty():
+		_saved_loadout_revision = loadout.revision
+		for id: String in MapChestRewards.items(loadout,event):
+			var record: Dictionary = loadout.records[id].duplicate(true)
+			record.quantity = 1
+			record.identified = loadout.can_use_item(id)
+			records.append(record)
+	chest_observation_dialog.hide()
+	chest_dialog.present_choices(event,records,inventory_catalog.category_names,loadout,error)
+
+func _accept_chest() -> void:
+	if event_state.phase != "chest" or chest_dialog.accept_button.disabled: return
+	chest_dialog.set_busy(true)
+	var error := MapChestRewards.claim(loadout,event_state.active_event(),chest_dialog.selected_index,inventory_save_path)
+	if not error.is_empty():
+		chest_dialog.error_label.text = error
+		chest_dialog.set_busy(false)
+		return
+	_saved_loadout_revision = loadout.revision
+	chest_dialog.pick_sound.play()
+	_present_event_progress(event_state.close_chest(true))
+
+func _cancel_chest() -> void:
+	if event_state.phase not in ["chest_observation", "chest"]: return
+	if event_state.phase == "chest" and chest_dialog.review_button.disabled: return
+	if event_state.phase == "chest_observation" and chest_observation_dialog.later_button.disabled: return
+	travel.stop_at_current_node()
+	event_state.close_chest(false)
+	chest_dialog.hide()
+	chest_observation_dialog.hide()
+	travel.paused = false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
 
 func _retreat_encounter() -> void:
 	if event_state.phase != "encounter" or encounter_dialog.retreat_button.disabled:
@@ -416,8 +945,6 @@ func _start_encounter_battle() -> void:
 		battle.free()
 		_encounter_error("战斗返回入口配置无效。")
 		return
-	if battle_ui != null and event.presentation.has("battle_background"):
-		battle_ui.battle_background_path = event.presentation.battle_background
 	var return_flow := MapBattleReturn.new()
 	return_flow.name = "MapBattleReturn"
 	return_flow.manager = manager
@@ -487,6 +1014,7 @@ func _complete_exit() -> void:
 	var destination = scene.instantiate()
 	destination.player_status = player_status
 	destination.defer_map_music = true
+	destination.defer_location_save = true
 	destination.hide()
 	destination.inventory_save_path = inventory_save_path
 	destination.arrival_point_id = _active_exit.target_point
@@ -594,6 +1122,7 @@ func _node_at(pointer: Vector2) -> String:
 	# Constant minimum hit target, expanding with the drawn marker when zoomed.
 	var radius := maxf(18.0, 22.4 * content.scale.x + 4.0)
 	for point: MapRoutePoint in content.get_node("Points").get_children():
+		if not point.is_visible_in_tree(): continue
 		var screen_position := map_to_screen(content.to_local(point.global_position))
 		var distance := pointer.distance_to(screen_position)
 		if distance <= radius and distance < closest_distance:

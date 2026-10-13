@@ -1,7 +1,7 @@
 extends SceneTree
 var checks := 0
 var failures := 0
-const POINT := "base.map.qingshihewan.point.n12"
+const POINT := "base.map.qingshihewan.point.n30"
 const EVENT := "base.map_event.qingshihewan.cliff_encounter"
 func _initialize() -> void: run.call_deferred()
 func check(ok: bool, message: String) -> void:
@@ -69,7 +69,7 @@ func run() -> void:
 	map = await return_from(battle)
 	check(map.player_status == status,"return reuses current model")
 	check_resources(map,{"hp":28.3,"stamina":11.2,"spirit":7.8},"victory return")
-	check(status.cultivation_progress == 27 and status.spirit_stones == 123 and status.experience == 45,"noncombat progress retained without fabricated rewards")
+	check(status.cultivation_progress == 32 and status.spirit_stones == 123 and status.experience == 47,"victory adds configured progression and preserves spirit stones")
 	# The normal map-exit command must carry the same state too.
 	map.travel.current_node_id = "base.map.qingshihewan.point.east_exit"
 	map.travel.mode = "idle"
@@ -111,7 +111,7 @@ func run() -> void:
 		map = await return_from(battle)
 		check_resources(map,expected,outcome + " return")
 	check(status.resources.hp == 1 and status.resources.stamina == 9.1 and status.resources.spirit == 3.2,"defeat restores only one HP, retains final stamina/spirit")
-	check(status.cultivation_progress == 27,"progress survives all returns")
+	check(status.cultivation_progress == 32 and status.experience == 47,"progress survives all returns; retreat, draw and defeat add nothing")
 	map.queue_free()
 	await settle()
 	print("MAP/BATTLE RESOURCE HANDOFF: %d checks, %d failures" % [checks,failures])

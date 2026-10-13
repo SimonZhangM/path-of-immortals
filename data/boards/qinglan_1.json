@@ -21,6 +21,7 @@
   ],
   "faction": "青岚宗",
   "required_cultivation": "base.cultivation.mortal",
-  "resource_bonuses": {},
+  "resource_bonuses": {"hp": 10, "stamina": 10, "spirit": 0},
+  "status_capacity_bonuses": {"生机": 4, "轻灵": 4, "坚韧": 0, "失衡": 0, "驱散": 0},
   "buff_bonuses": {}
 }

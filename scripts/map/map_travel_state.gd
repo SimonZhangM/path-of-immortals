@@ -3,6 +3,9 @@ extends RefCounted
 
 signal node_arrived(point_id: String)
 var paused := false
+var exploration_enabled := false
+var revealed_points: Dictionary = {}
+var revealed_routes: Dictionary = {}
 
 # Curves and coordinates are detached content data. No Nodes or wall-clock access.
 var node_positions: Dictionary = {}
@@ -23,6 +26,9 @@ func configure(points: Dictionary, edges: Array[Dictionary], start_id: String, w
 	if not points.has(start_id) or walk <= 0 or run <= 0:
 		return "地图玩家起点或移动速度无效。"
 	node_positions = points.duplicate()
+	exploration_enabled = false
+	revealed_points.clear()
+	revealed_routes.clear()
 	adjacency.clear()
 	for id in points:
 		if not points[id] is Vector2:
@@ -83,6 +89,7 @@ func shortest_path(start_id: String, target_id: String) -> Array[Dictionary]:
 		if node == target_id:
 			break
 		for edge: Dictionary in adjacency[node]:
+			if exploration_enabled and not revealed_routes.has(edge.id): continue
 			var candidate: float = best + edge.length
 			if candidate < float(distances.get(edge.to, INF)):
 				distances[edge.to] = candidate
@@ -100,6 +107,7 @@ func shortest_path(start_id: String, target_id: String) -> Array[Dictionary]:
 func request_destination(target_id: String) -> bool:
 	if not node_positions.has(target_id):
 		return false
+	if exploration_enabled and not revealed_points.has(target_id): return false
 	if mode != "idle":
 		# Repeating the existing destination cancels a pending diversion, without
 		# restarting this journey or changing its chosen animation midway.

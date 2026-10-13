@@ -6,6 +6,7 @@ signal board_change_requested(data: Dictionary)
 var state: MapLoadoutState
 var layout: BoardLayout
 var _board_art: TextureRect
+var _placement_overlay: Control
 var _items: Dictionary = {}
 var _hover_cell := Vector2i(-1, -1)
 var _hover_dimensions := Vector2i.ZERO
@@ -24,6 +25,15 @@ func configure(model: MapLoadoutState) -> void:
 	_board_art.mouse_filter = MOUSE_FILTER_IGNORE
 	_board_art.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	add_child(_board_art)
+	# Parent drawing is underneath BoardSurface; draw placement above the
+	# background/items without intercepting their drag/drop input.
+	_placement_overlay = Control.new()
+	_placement_overlay.name = "PlacementOverlay"
+	_placement_overlay.mouse_filter = MOUSE_FILTER_IGNORE
+	_placement_overlay.z_index = 1
+	add_child(_placement_overlay)
+	_placement_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_placement_overlay.draw.connect(_draw_placement)
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -98,12 +108,18 @@ func make_preview(data: Dictionary) -> Control:
 	art.center_visible_at(Vector2.ZERO)
 	return holder
 
-func _get_tooltip(at_position: Vector2) -> String:
+func _ready() -> void:
+	ItemTooltipHost.bind(self, _tooltip_key_at, build_item_tooltip)
+
+func _get_tooltip(_at_position: Vector2) -> String:
+	return ""
+
+func _tooltip_key_at(at_position: Vector2) -> String:
 	if state == null:
 		return ""
 	return state.inventory.item_at(layout.cell_at(at_position, size))
 
-func _make_custom_tooltip(for_text: String) -> Object:
+func build_item_tooltip(for_text: String) -> Object:
 	var entry := state.inventory.get_instance(for_text)
 	if entry.is_empty():
 		return null
@@ -184,6 +200,10 @@ func _notification(what: int) -> void:
 		queue_redraw()
 
 func _draw() -> void:
+	if _placement_overlay != null:
+		_placement_overlay.queue_redraw()
+
+func _draw_placement() -> void:
 	if _hover_dimensions == Vector2i.ZERO or not get_viewport().gui_is_dragging():
 		return
 	for y in _hover_dimensions.y:
@@ -192,5 +212,5 @@ func _draw() -> void:
 			var color := Color(0.3, 0.85, 0.55, 0.25) if _hover_valid else Color(0.9, 0.25, 0.3, 0.3)
 			if _hover_swap:
 				color = SWAP_COLOR
-			draw_rect(rect, color)
-			draw_rect(rect, Color(color, 0.7), false, 1.0)
+			_placement_overlay.draw_rect(rect, color)
+			_placement_overlay.draw_rect(rect, Color(color, 0.7), false, 1.0)

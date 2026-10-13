@@ -1,0 +1,22 @@
+{
+  "id": "base.board.yanfu_duzhu",
+  "name": "岩腹毒蛛阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-yanfuduzhu.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    181,
+    469,
+    782,
+    1074
+  ],
+  "y_lines": [
+    185,
+    462,
+    763,
+    1039
+  ]
+}

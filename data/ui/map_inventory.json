@@ -2,6 +2,13 @@
   "faction_caption": "",
   "bag_caption": "属性加成",
   "motto": "天地灵物，纳于一盘",
+  "board_display_x_offsets": {"base.board.qinglan_4": 2.5},
+  "board_display_scales": {
+    "base.board.bag": 0.8,
+    "base.board.qinglan_1": 0.8,
+    "base.board.qinglan_2": 0.9,
+    "base.board.qinglan_3": 0.9
+  },
   "categories": {
     "all": "全部",
     "weapon": "武器",

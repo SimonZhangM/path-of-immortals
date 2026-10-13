@@ -23,6 +23,7 @@
   ],
   "faction": "青岚宗",
   "required_cultivation": "base.cultivation.foundation",
-  "resource_bonuses": {},
+  "resource_bonuses": {"hp": 30, "stamina": 20, "spirit": 30},
+  "status_capacity_bonuses": {"生机": 12, "轻灵": 8, "坚韧": 4, "失衡": 4, "驱散": 4},
   "buff_bonuses": {}
 }

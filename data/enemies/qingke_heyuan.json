@@ -1,0 +1,88 @@
+{
+  "id": "base.enemy.qingke_heyuan",
+  "name": "青壳河鼋",
+  "progression_rewards": {
+    "cultivation": 3,
+    "experience": 1
+  },
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 51,
+  "max_stamina": 45,
+  "innate_armor_type": "重甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 0,
+  "max_spirit": 0,
+  "loadout": [
+    {
+      "item_id": "base.organ.heyuan_shell",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.heyuan_beak",
+      "cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.heyuan_tail",
+      "cell": [
+        2,
+        0
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.heyuan_shell",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.heyuan_beak",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.heyuan_tail",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "凡人级",
+    "category_label": "水栖甲兽类",
+    "description": "常伏于河滩乱礁，甲壳坚厚，遭受威胁时会以粗尾横扫。",
+    "traits": ["重甲","护甲恢复"],
+    "battle_background": "res://assets/battle-qingshihewan-qingkeheyuan.webp",
+    "summary": [
+      {
+        "label": "气血",
+        "stat": "hp",
+        "icon": "res://assets/icon-enemy-health.webp"
+      },
+      {
+        "label": "攻击",
+        "value": "穿刺、钝击",
+        "icon": "res://assets/icon-enemy-attack.webp"
+      },
+      {
+        "label": "甲型",
+        "stat": "armor",
+        "icon": "res://assets/icon-enemy-defense.webp"
+      },
+      {
+        "label": "特点",
+        "value": "重甲·护甲恢复",
+        "icon": "res://assets/icon-enemy-chara.webp"
+      }
+    ]
+  },
+  "battle_enabled": true,
+  "encounter_descriptions": [
+    "河滩上一块青灰色的石头似乎轻轻动了一下。你走近水边，才发现那是一只伏在浅水中的河鼋，它突然抬起尖喙，发出低沉的嘶声。",
+    "水流冲过布满青苔的乱石，几道深深的划痕延伸至岸边。你刚踏上湿滑的石滩，一只青壳河鼋便从水中爬出，横身挡住去路。",
+    "前方浅湾水面异常平静，岸边却有新鲜的爬行痕迹。水下忽然泛起一圈涟漪，一只背负青壳的河鼋慢慢浮出，粗尾不停扫动。"
+  ],
+  "art_profile": "base.enemy.qingke_heyuan"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "base.organ.yanzhi_feather",
+  "name": "青翎",
+  "type": "item",
+  "category": "item",
+  "quality": "下品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    2,
+    2
+  ],
+  "icon": "res://assets/item-enemy-qinglingyanzhi-qingling.webp",
+  "cooldown": 5.5,
+  "stamina_cost": 0,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 5,
+  "combat": {
+    "source_location": "用户确认：青石河湾四怪数据 2026-10-08",
+    "hit_chance": 0.9,
+    "waste_on_insufficient": true,
+    "art_outline_px": 1
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "restore_armor",
+      "value": 2
+    }
+  ]
+}

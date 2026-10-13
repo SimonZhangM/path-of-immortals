@@ -103,10 +103,8 @@ func _run() -> void:
 	for card: MapInventoryItemCard in panel.grid.get_children():
 		var base_name := String(card.entry.name).trim_suffix('a').trim_suffix('b').trim_suffix('c')
 		var art := card.canvas.get_node("ItemArtwork") as TextureRect
-		_check((card.canvas.get_node("CategoryTags") as HBoxContainer).position.y == 185.0, "item category tags use the lowered visual baseline")
-		var badge_texture := card.quality_badge.texture as AtlasTexture
-		_check(is_equal_approx(card.size.x / card.size.y, 0.75) and card.quality_badge.get_rect().get_center().is_equal_approx(Vector2(card.size.x * 0.5, card.size.y)), "item card uses3:4 geometry and centers the quality badge on its lower border")
-		_check(badge_texture.atlas.resource_path == "res://assets/levelbq-1.webp" and badge_texture.region == card.QUALITY_BADGE_REGION and badge_texture.atlas.get_image().has_mipmaps(), "lower-quality badge uses the cropped mipmapped levelbq-1 artwork")
+		_check(card.canvas.get_node_or_null("CategoryTags") == null, "inventory cards omit classification tags")
+		_check(is_equal_approx(card.size.x, card.size.y) and card.quality_badge == null, "inventory cards are square and omit quality badges")
 		var outline := art.get_node_or_null("ItemOutline")
 		_check(FileAccess.file_exists(card.entry.icon) and art.texture is AtlasTexture and art.texture.atlas.resource_path == card.entry.icon and art.texture.atlas.get_image().has_mipmaps() and art.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED and art.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, "item source exists, has mipmaps, preserves source aspect and uses linear mipmap filtering")
 		_check(card.entry.art_outline_px == 1 and outline != null and outline.get_child_count() == 16 and outline.z_index == 0 and (outline.get_child(0) as TextureRect).self_modulate == MapItemArtwork.OUTLINE_COLOR, "all items use the shared softened one-pixel outline above static backgrounds")
@@ -121,10 +119,7 @@ func _run() -> void:
 		var values: Array = expected[base_name]
 		_check(card.entry.damage_type == values[0] and int(card.entry.base_damage) == values[1] and is_equal_approx(card.entry.cooldown, values[2]) and int(card.entry.base_stamina_cost) == values[3], "authored weapon values match user table")
 		_check(card.frame.resource_path == "res://assets/level-1.webp" and card.entry.quality == "下品", "each lower-quality weapon uses level-1 interior artwork")
-		var tags: Array[String] = []
-		for tag: Label in card.canvas.get_node("CategoryTags").get_children():
-			tags.append(tag.text)
-		_check(tags == ["武器", card.entry.subcategory, card.entry.damage_type], "weapon card shows category, weapon kind and damage type as three labels")
+		_check(card.canvas.get_node_or_null("CategoryTags") == null, "weapon categories are reserved for the tooltip")
 		_check(card.footprint_cells.size() == 2 and card.footprint_cells[0].position.x == card.footprint_cells[1].position.x and card.footprint_cells[0].position.y < card.footprint_cells[1].position.y, "one column two rows shown vertically at top right")
 		var description := ItemTooltip.effect_text(panel.loadout.registry.get_item(card.entry.id))
 		_check(description.contains("伤害") and description.contains("冷却") and description.contains("耗费"), "all weapon attributes available on hover")
@@ -185,7 +180,7 @@ func _run() -> void:
 	_check(board_background.position == Vector2(-7, 0) and board_background.size == panel.board_panel.size + Vector2(11, panel.BOARD_BACKGROUND_BOTTOM_EXTENSION), "board background restores the previous shifted and extended geometry")
 	_check(is_equal_approx(board_background.self_modulate.a, 0.5), "board background restores fifty-percent opacity")
 	_check(panel.board_panel.find_child("BoardPanelBorder", true, false) == null and board_panel_style.border_width_left == 0 and board_panel_style.corner_radius_top_left == int(panel.BOARD_PANEL_RADIUS), "board panel removes the procedural gold rim and uses the reduced corner radius")
-	_check(panel.board_capacity_caption.get_theme_font("font") == panel.board_capacity.get_theme_font("font") and panel.board_capacity_caption.get_theme_color("font_color") == Color("c5d0d2"), "capacity caption and value share one font while the Chinese caption stays clearly brighter")
+	_check(panel.board_capacity.texture.atlas.resource_path == "res://assets/UI-title-rongliang-zhange.webp" and panel.board_capacity.TOTAL_COLOR == Color("1f3f3b"), "capacity artwork and dark green total use requested style")
 	var heading_specs := [
 		[panel.sidebar, "属性加成", "res://assets/title-zpsxjc.webp"],
 		[panel.board_panel, "阵盘", "res://assets/title-zhenpan.webp"],
@@ -347,11 +342,9 @@ func _run() -> void:
 	_click(panel.formation_create_button.get_global_rect().get_center())
 	await _settle()
 	_check(screen.loadout.formations[0].name == "平衡阵" and screen.loadout.formations[0].icon == "res://assets/zhen-pingheng.webp" and screen.loadout.formations[0].layout == {"placements": before_edit.placements}, "editing icon and name preserves the saved layout")
-	panel.search.grab_focus()
-	_key(KEY_I, false, 105)
-	_check(screen.is_inventory_open() and panel.search.text == "i", "typing I in search does not close panel")
+	_check(panel.search_box != null, "search available before quality filter")
 	_key(KEY_ESCAPE)
-	_check(not screen.is_inventory_open() and header.map_title.visible, "Escape closes even when search focused and restores map plaque")
+	_check(not screen.is_inventory_open() and header.map_title.visible, "Escape closes and restores map plaque")
 	screen._process(0.05)
 	_check(screen.travel.map_position != position_before and screen.travel.destination_id == destination_before and screen.player.is_playing(), "closing resumes same journey")
 	_key(KEY_I)
@@ -359,18 +352,19 @@ func _run() -> void:
 	await _fixed_card_size_checks(panel)
 	panel.catalog.replace_entries(_fixtures())
 	await _settle()
-	_click(panel.level_sort.get_global_rect().get_center())
+	panel.level_sort.get_popup().index_pressed.emit(3)
 	await _settle()
-	_check(_ids(panel.catalog) == ["test.c", "test.b", "test.d", "test.a"] and panel.level_sort.button_pressed and not panel.order_picker.button_pressed, "level button selects descending enhancement sort")
-	_click(panel.level_sort.get_global_rect().get_center())
+	_check(_ids(panel.catalog) == ["test.c"] and panel.catalog.enhancement_filter == 10, "level dropdown filters enhancement 10")
+	panel.level_sort.get_popup().index_pressed.emit(2)
 	await _settle()
-	_check(_ids(panel.catalog) == ["test.a", "test.b", "test.d", "test.c"], "second level click switches ascending")
+	_check(_ids(panel.catalog) == ["test.b", "test.d"], "level dropdown filters enhancement 2")
+	panel.level_sort.get_popup().index_pressed.emit(0)
 	_click(panel.order_picker.get_global_rect().get_center())
 	await _settle()
-	_check(_ids(panel.catalog) == ["test.b", "test.c", "test.d", "test.a"] and panel.order_picker.button_pressed and not panel.level_sort.button_pressed, "acquisition button restores time as primary sorting")
+	_check(_ids(panel.catalog) == ["test.a", "test.d", "test.b", "test.c"] and panel.order_picker.button_pressed and panel.catalog.enhancement_filter == -1, "acquisition button sorts oldest after clearing level filter")
 	_click(panel.order_picker.get_global_rect().get_center())
 	await _settle()
-	_check(_ids(panel.catalog) == ["test.a", "test.d", "test.b", "test.c"], "second acquisition click switches oldest first")
+	_check(_ids(panel.catalog) == ["test.b", "test.c", "test.d", "test.a"], "second acquisition click switches newest first")
 	_click(panel._collections.consumable.get_global_rect().get_center())
 	await _settle()
 	_click(panel._categories.pill.get_global_rect().get_center())

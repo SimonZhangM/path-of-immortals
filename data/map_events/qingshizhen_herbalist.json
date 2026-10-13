@@ -1,0 +1,13 @@
+{
+  "id": "base.map_event.qingshizhen.herbalist",
+  "type": "shop",
+  "point_id": "base.map.qingshizhen.point.n14",
+  "trigger": "click",
+  "catalog": "res://data/shops/qingshizhen_herbalist.json",
+  "presentation": {
+    "title_center_y": 133.5,
+    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu.webp",
+    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
+  }
+}

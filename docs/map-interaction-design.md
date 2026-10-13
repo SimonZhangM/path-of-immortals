@@ -1,5 +1,339 @@
 # 地图节点互动与桥头对话（2026-09-15）
 
+## 医馆诊治页与5灵石治疗（2026-10-13）
+
+最新排版：诊金右侧说明区Rect2(978,527,371,51)，较原上移4设计px；正常两行由VBox整体垂直居中，满气血／错误提示原位替换，不再放在按钮上方。满气血按钮文字“无需诊治”，disabled使用普通底图、白字及箭头光标，悬浮不切换且不可扣费；受伤后重新按余额决定能否诊治。按钮及其文字上移12设计px，箴言左移54／上移13设计px。治疗仍只回气血。Render同时输出clinic-treatment.png和clinic-treatment-full.png。
+
+qingshizhen_clinic.json新增treatment及presentation.treatment_background，诊治使用tanchuang-qingshizhen-yiguan-2，交谈维持原图，左侧场景／标题／介绍／离开及交谈第一、诊治第二的页签共用。MapClinicTreatmentView按新底图原生框和心形图示覆盖实时气血数字、诊后上限、恢复差值及诊金；诊治预览／诊金／医馆说明为黑体，说明左侧使用tanchuang-baoxiang-alaet，诊金左侧无图标，右侧灵石单位图沿用交易素材。确认按钮为dakai1／dakai2，鸿蒙简体标准400字重，平时白字／悬浮黑字。
+
+MapClinicTreatment负责配置校验、预览及治疗结算：固定5灵石，仅将气血补满，不恢复体力／灵力、不推进日历、不处理复杂病症。满气血、余额不足时禁用确认；服务层再次校验，保存失败不扣费／不恢复。使用候选库存先保存扣费，再发布状态并调用MapPlayerStatus.set_resource；气血沿用现有地图资源生命周期（跨地图携带，未扩展完整资源存档），货币沿用库存存档。UI只发送treatment_requested，MapScreen确认clinic模态及诊治页再执行，治疗完成留在原页实时更新。
+
+专项tests/clinic_treatment_tests.gd：实际资源预览、按钮材质／鼠标悬浮、诊金不足、失败回滚、原生点击治疗、恰好5灵石、只回气血／无时间／无其他进度变化、持久扣款、满状态防重复和配置校验；-Render静态输出artifacts/clinic-treatment.png。旧clinic_dialog_tests已更新空页假设，仍验证单纯查看不改变资源及既有退出机制。
+
+## NPC分话题对话实施设计（2026-10-13）
+
+独立话题框已接入（2026-10-13）：交谈底图已换为用户去掉内嵌三框的新版本，各话题Button下新增TopicFrame TextureRect，使用UI-dialo-topic.webp（mipmap开启），全矩形锚定原槽位、绘制于按钮样式／文字后，不接收鼠标。框随各自按钮显隐，欢迎词未全部读完时三框／三个话题均隐藏；欢迎完成由DialogueJournal同一次返回三个话题，同步显示。切诊治隐藏，返回交谈按既有进度恢复，已读欢迎不重复播放。
+
+未读话题标记：白色楷体“新”15号，放在气泡图标左上角，相对按钮左上角(26,4)；在上一版(26,2)基础上再下移2设计px，保持原有未读判定且不接收鼠标。
+
+换底图前的话题框位置基线（2026-10-13）：用户将更新交谈底图并去掉其中三个话题框，后续沿用当前布局。MapClinicDialog已固定TOPIC_ROW_RECT=(624,745,806,44)、TOPIC_SEPARATION=29；均为原底图设计坐标，canvas坐标需减FRAME原点(32,32)。从左至右医馆／叶伯／闲聊三槽等宽(806−29×2)÷3≈249.333，高44，理论左边界624／902.333／1180.667，顶部745；实际像素余数由HBoxContainer分配。整体缩放仍为min(视口宽/1920,视口高/1080)×0.9并居中。气泡图标目前仍在底图内，各图标右缘相对槽位为62／63／62；标题留半个汉字间距，新标记用上段偏移。此次只记录位置，不提前更换背景或重建框素材；新底图到位后按此基线接入独立框。
+
+阶段继续提示：_refresh_continue_hint统一更新原继续按钮和同位置的纯Label；can_continue为false且当前topic.history为false时显示“点击话题继续”，段内仍显示原继续按钮，整话题完成／诊治页隐藏。提示本身不新增点击操作，下一段仍由话题按钮选择。
+
+姓名位置最新微调：双方姓名在上次视觉校准基础上再上移1设计px，当前offset_top／bottom均为1，字号仍17。
+
+话题按钮最新：当前话题且can_continue时发送advance，其他话题发送select；段末仍发送select进入已解锁的下一段或查看历史。按钮保持原生输入路径，每次点击只分派一个命令，跨话题不额外跳句。
+
+字号／顺序最新：交谈位于第一项、诊治第二项；正文楷体23号，姓名17号，姓名上下锚点同偏移2设计px达到底框内视觉居中，长姓名继续自适应。下述气泡补偿值已按23号重新静态复核可沿用。
+
+视觉居中校准：在Label整段居中后，按22号楷体实际笔画与内纸面补偿六种素材差异，TEXT_OPTICAL_OFFSET_Y中NPC一／二／三行下移2／2.5／3设计px，主角为5／0.5／-0.5设计px。避免只用字体行框／素材含阴影的外框判断居中；更换字体、字号或气泡素材需复核这些光学校准值。
+
+继续输入：MapScreen在clinic模态输入分支调用MapClinicDialog.handle_continue_input，弹窗canvas内左键按下／释放且位移≤6px时继续，递归排除BaseButton，保留滚轮浏览及原生按钮路径；空格兼容keycode／physical_keycode并过滤echo。request_continue统一检查交谈页、可见及can_continue，段末／历史不继续。提示移到闲聊下方，欢迎结束不再显示“请选择想聊的话题”。专项tests/clinic_continue_input_tests.gd使用隔离内存状态验证。
+
+排版最新微调：气泡台词保持楷体，以可见气泡全高度整体垂直居中，两／三行line_spacing为7；三个话题使用SystemFont的HarmonyOS Sans SC标准400字重，左对齐到各自底图气泡图标右缘＋半个汉字宽度。长标题用同一字体测宽缩字，各按钮状态共用边距，源图／箭头／头像坐标不变。
+
+已接入，覆盖下方医馆空话题框的早期状态。运行内容21段／146条台词，原第二轮反馈保存在[sources/suqinghe-feedback-2026-10-13.txt](sources/suqinghe-feedback-2026-10-13.txt)。NpcDialogueLibrary负责配置校验，DialogueJournal纯数据推进，NpcDialogueActions负责候选保存与发布，DialogueBubble负责实际楷体测宽／换行／三行拆泡／头像遮罩。MapClinicDialog通过dialogue_requested发命令，控制器保存成功才刷新；常规历史操作不重复推进。
+
+数据接口：事件dialogue指向NPC文件；topics内initial／revisits／story引用稳定段落ID，段落支持requires_flags（全部满足）与requires_points（已探索地点），clues只记一次。主线可调用NpcDialogueActions.set_story_flag(state,flag,save_path)：base.story.qinglan.departure_ready解锁离镇段；base.story.qinglan.joined与base.story.qinglan.first_town_return共同解锁回镇段。这些事实尚未自动绑定未实现主线，不把当前化神测试境界当入宗。新段加入相应topic.story即可按条件优先显示；河湾调查结果的具体分支台词仍待提供。
+
+姓名入口NpcDialogueActions.set_player_name(state,surname,given_name,save_path)，narrative.identity持久保存，地图名称及战斗快照来源同步；文本支持{player.full_name}／{player.given_name}／{player.familiar_name}，兼容旧字面量张辰宇／辰宇。创建角色页面本轮不新建。narrative缺省自动兼容旧档；JSON数值恢复时规范为整数，损坏记录拒绝发布，读取历史不重新执行clues。专项tests/npc_dialogue_tests.gd验证全部日程／中断／条件／姓名／隔离存档与UI点击滚动；Render仅静态欢迎、左右会话、剧情示例及三行压力布局（压力文案不进入游戏数据）。
+
+本轮按用户正文与附件接入苏清禾：内容以data/dialogues/suqinghe.json记录稳定NPC／话题／段落ID、自由顺序台词、条件及线索；通用对话模型负责逐句进度、完成归档、三话题互不丢失、每日回访与剧情优先。医馆UI只读取模型并发送选择／继续命令。已完成内容只供查看，不再执行线索；欢迎词仅首轮推进。首次闲聊三段不设日间隔，完成后每日有效回访最多新增一段普通闲聊，未读保留、不累计多天份额；重要剧情标记变化也可构成回访。剧情条件未接到现有主线时保持锁定。
+
+沿用现有库存原子保存通道，新增可选narrative字段保存姓名（姓／名）、剧情标记／线索及NPC日志，旧档缺省无对话进度；每次命令先保存候选后发布，失败不前进。完整名字与亲昵称呼用模板解析，单字名加“阿”，多字名取名字。诊治机制仍留空。气泡按实际换行使用左右1／2／3行素材，过长发言拆连续气泡；头像圆形遮罩、框后绘制，箭头对齐头像上三分之一。历史可滚动，自动滚到新消息，查看旧记录不推进。
+
+## 青石医馆框架（2026-10-13最新）
+
+qingshizhen.json新增qingshizhen_clinic事件，稳定ID base.map_event.qingshizhen.clinic，N19／click／独立clinic类型，不加入五店目录。MapEventRegistry校验标题、介绍、退出文案及三张展示素材，可选treatment_background覆盖诊治底图；缺省使用background。MapEventState保持可重复打开，advance不推进为普通剧情，close_clinic只结束本次交互；MapScreen负责点击呈现、输入隔离与离开／右键／Esc退出。
+
+MapClinicDialog参照商铺FRAME(32,32,1474,840)及居中缩放，左侧-boss与通用场景框，title_center_y=134.5；52号黑体标题、28号黑体页签、楷体单行介绍按长度适配。两新素材mipmap开启，源图不改。默认conversation，另一模式treatment；ConversationContent／ConversationOptions／TreatmentContent为空容器，供后续接正文、话题与诊治UI。源图三个话题框未绑定指令，不生成未定内容或玩法。配置不含商品、收费、治疗或耗时；覆盖旧N19仅地点状态。
+
+专项tests/clinic_dialog_tests.gd：headless验证入口、切页、退出／重开与状态不变，Render仅输出artifacts/clinic-conversation.png及clinic-treatment-empty.png。城镇触发共用检查shop_quantity_town_tests同步新增clinic关闭分支；验证结果见最新进度。
+
+2026-10-13草药／矿石与铺名最新：herbalist目录上架zhixuecao／qingtenggen／kuaiye／xilutai四草药，blacksmith新增cutiekuang／chitongkuang两矿石，原两暗器保持。已有plant→herb、mineral→ore映射正确，缺失的是products上架条目，本次保留物品“草木／药材”及矿石分类、原收购和价目。各事件presentation.title_center_y记录原图logo垂直中心（普通135.5、药材133.5、宗门132.5、铁匠／炼丹133源px），注册校验100～165有限数值，共用弹窗只调整标题y并补偿黑体可见字形中心1px；字号52、横坐标704、logo／原图不变。专项tests/shop_material_stock_preview.gd，Render仅五店静态图shop-material-*.png；分类范围检查shop_trade_rules_tests。覆盖下方空货架和原标题位置。
+
+2026-10-13地点更正：炼丹房迁至原仓库N12，qingshizhen_alchemy只改point_id为n12，目录／ID／click及炼丹空页不变；N19恢复医馆、移除炼丹事件绑定，医馆功能待后续。N14—N19新增r41，N19—N23新增r42，两条Curve2D按参考红线弯曲并复用双向行走，无新运行时分支。31节点／42路线，原道路保留。路牌N12暂用现有药用葫芦，N19原医馆葫芦不改；家中仓储入口不受影响。坐标见地图编辑文首，专项tests/town_clinic_routes_tests.gd，覆盖以下旧N19炼丹房位置。
+
+## 药材铺拆分与炼丹房（2026-10-13最新）
+
+红框N14药材铺保留药材／诱饵，蓝框原医馆N19(2489,1141)改炼丹房；alchemy事件以click绑定N19并加入地图event_files，使用liandanfang底图及-boss左图，两图mipmap启用，源图不改。节点／路线／路牌图案不改。旧herbalist目录3丹药原样迁至alchemy，药材铺购买目录暂空、仍收购药材且不再收丹药，炼丹房买卖丹药／丹方，现无丹方定义。五店分类与作用见核心01第1.51，覆盖下方四店／药材铺四类旧状态。
+
+MapShop允许1～4个分类，继续校验非空、唯一ID和库存映射；两类店只生成两个可点标签，原底图后两格留白，未改用户素材。目录可选crafting_label，默认“打造”，炼丹房配置为“炼丹”；共用CraftingContent空容器和交易禁用保护，跨店present时重设标签文字，铁匠铺不受影响。炼丹配方／实际制作及丹药细分留后续。
+
+专项tests/alchemy_shop_tests.gd检查实际入口、买卖、隔离保存重载、炼丹空页禁交易、药材铺拒收丹药、切店恢复打造；Render仅静态截图alchemy-buy／alchemy-sell／alchemy-empty／herbalist-two-categories。shop_trade_rules_tests覆盖五店唯一经营映射与统一价目，验证结果见最新进度。
+
+## 药材铺／宗门商铺入口与节点换位（2026-10-13最新）
+
+qingshizhen.json注册qingshizhen_herbalist／qingshizhen_sect两事件，分别绑定N14／N01，trigger=click，沿用MapScreen自动加载目录、MapShop原子结算和MapShopDialog共用布局，无新脚本分支。底图分别为tanchuang-jiaoyi-qingshizhen-yaocaipu／zongmenshangpu，左侧为各自-boss，四张原图均保留并启用mipmap，场景边框继续用通用框。药材铺退出文字为“离开药材铺”，宗门商铺为“离开商铺”。
+
+经营分类沿用核心01第1.51，购买保留已有3丹药／3法器，其他未配置货架为空；出售展示范围内随身可售物品，包含药材和未使用阵盘，收藏／上阵／仓庫／关键任务保护及统一价目沿用。没有新增投放、购买资格、补货或打造规则。到达不弹，站在节点点击打开，离开／右键／Esc关闭，不耗天数。
+
+按截图蓝框N01(1323,148)改宗门商铺，红框N05(1057,405)改修炼所，LocationIcon图案及各自原缩放互换，节点／路牌外框／路线不变。N14原“草药铺”显示名统一为“药材铺”。N05没有商铺事件，修炼功能留后续；稳定节点ID不变，无需迁移行走或探索存档。四店入口现全部完成，覆盖下方历史待接记录。
+
+专项tests/herbalist_sect_shop_tests.gd：两节点手动入口、分类、专属图片、实际买卖及隔离磁盘重载；Render仅静态，输出artifacts/herbalist-buy.png、herbalist-sell.png、sect-buy.png、sect-sell.png、town-sect-training-swap.png。具体结果见最新PROJECT_PROGRESS。
+
+2026-10-13最新：普通城镇地点改手动交互。qingshizhen_shop／blacksmith／home_rest三事件trigger统一click，路过／到达不打开也不暂停；站在该点点击后沿原流程打开。沿用MapEventState逐事件trigger及缺省click，不加全局屏蔽，特定剧情仍可显式arrival；野外事件与出口确认不改。共用商品卡单件无角标，多件用HBoxContainer分开17号乘号和19号数字，右对齐范围104→101，数字右边缘左移3设计px。右侧可售数量与结算不变。规则核心01第1.52，覆盖下方城镇自动触发的旧描述。专项tests/shop_quantity_town_tests.gd：headless仅检查城镇到达／点击和剧情例外；Render仅数量静态检查并输出artifacts/shop-quantity-refined.png，无商品点击／交易。
+
+## 青石镇铁匠铺交易与打造空页（2026-10-13）
+
+N23绑定base.map_event.qingshizhen.blacksmith，事件文件data/map_events/qingshizhen_blacksmith.json已加入地图event_files。共用MapShopDialog与MapShop实际买卖，底图用tanchuang-jiaoyi-qingshizhen-tiejiangpu，左图用同前缀-boss，边框／裁切／缩放沿用普通商铺；两新图开启mipmap、源图未改。到达自动打开、原地可点击重开，离开铁匠铺／Esc／右键关闭，不完成事件、不耗日历时间。
+
+目录qingshizhen_blacksmith.json新增可选crafting_tab=true及leave_label；MapShop校验字段类型，普通商铺缺省保持两个模式。新增第三页签“打造”，源图槽位Rect2(1025,233,191,49)，文字及选中高亮沿用28号黑体。灵石余额移至右侧Rect2(1224,240,192,37)，重开普通商铺恢复原位置。打造仅显示空CraftingContent容器，隐藏动态分类／商品／详情／分页和交易控件；UI信号与地图命令都阻止该模式买卖。切回购买／出售恢复原分类交易，重新进入默认购买首分类，普通商铺不显示打造。
+
+交易范围仍为矿石／材料／暗器／器方，购买沿用既有飞针／柳叶镖两件目录，未擅增材料现货或补货规则；出售可收购实际随身矿石、兽材、暗器，沿用统一价格、数量保护、收藏／装备保护及原子保存。器方与打造内容暂空，药材铺／宗门商铺入口仍待接。本节覆盖下方旧“只有N16／其他三店入口未接”记录。
+
+直接检查`./tests/run_t01.ps1 -Script res://tests/blacksmith_shop_tests.gd`：真实N23到达、三模式切换、矿石／兽材出售、暗器购买及持久化、打造禁交易、右键／Esc／离开与跨店重开。加-Render只做静态2K，输出artifacts/blacksmith-buy.png、blacksmith-sell.png、blacksmith-craft-empty.png。共用普通商铺回归shop_transactions_tests；实际计数与验证边界见PROJECT_PROGRESS。
+
+2026-10-13商铺底图局部更新：重导入tanchuang-jiaoyi-qingshizhen-shangpu、保留mipmap。上方购买／出售按缩小后的源图边框分别标定Rect2(624,233,192,49)与Rect2(828,233,185,49)，文字及选中／悬浮高亮随槽位居中；28号黑体、配色不变。其他布局、商品格和实际买卖逻辑不改。必要静态两模式预览tests/shop_mode_frame_preview.gd -Render。
+
+2026-10-12地图切换确认框换图：仅MapScreen创建的出口弹窗调用MapExitDialog.use_map_exit_art，使用UI-jiaohu-size-m，按有效Alpha区域Rect2(20,23,974,585)等比显示约604.38×363设计px，与旧图高度363一致、中心不变；mipmap开启。标题移入新图顶部内框至y185分隔线之间的标题带，字体及正文不变。左确定／右取消继续原button-queren／button-quxiao，位置、160×57.6大小、间距与确认／取消回调不改；地图／战斗阵盘更换框仍用size0。截图里的预计耗时及不同按钮不属于本次要求，未新增耗时或交易逻辑。必要静态专项tests/map_exit_art_preview.gd -Render，截图artifacts/map-exit-medium.png；覆盖下方旧出口底图描述。
+
+## 青石镇商铺实际买卖与价格基线（2026-10-12）
+
+2026-10-12已接入：用户批准首轮价格基线及13项微调，普通商铺可实际买卖；四店经营配置与价目共用，其他三店的场景入口保持待接。出售以权威随身单位重新校验范围／收藏／关键任务／当前装备保护、数量、单价与灵石上限，候选快照扣物加钱一次保存后发布。售空后不自动选中另一种商品，避免连续点击误售。自动／手动用药机制不改。
+
+**最新货架与出售范围：**武器、防具各8件，各6下品＋2凡品；食物／杂货空，不借用其他库存大类填充。武器为青石短剑、柴斧、猎弓、短柄铁锤、匕首、长枪、雷鞭、清风印；防具原6＋2保持。16件均读取批准基准价，匕首／长枪买入45／108灵石。出售按商铺经营类别收购，不受当前货架16件限制。
+
+**出售列表：**MapShop.sale_items读取state.storage中的松散随身单位，按经营范围筛选并统计真实数量；不依赖上架池、不以缺少价格为由隐藏物品，排除favorite、key_item、quest_item／关键类别、当前使用阵盘；盘内及仓库单位天然不计入。共用弹窗切换购买／出售保留当前主分类，重置页码／数量，出售每页8种、按获得时间降序和ID稳定排序。卡片及右详情显示可售数量、实际分类／效果；加减限制在可售数量和单次999保护内。库存changed即时刷新、删除末页物品后页码回退；空栏清空详情及单价／总价。
+
+**出售按钮与结算：**出售模式用cangku1／2，沿用原200×58设计槽位、按Alpha本体校准两态大小／位置，切换前重置几何防止累计缩小；白楷字、悬浮黑楷字。按下发sale_requested，MapScreen校验实际活动商铺／出售模式／忙碌状态后调用MapShop.sell；服务重新查价格与具体单位，成功扣物加钱、重置数量1并显示成交结果，失败保留原状态并显示原因。售空后清空选择、禁用按钮；购买模式用原dakai图及独立purchase命令。无回购、限量补货或新确认框。
+
+**最新正式基线：**核心01第1.51。普通商铺武器／防具／食物／杂货，药材铺药材／丹药／丹方／诱饵，宗门商铺法器／符箓／阵盘／功法，铁匠铺矿石／材料／暗器／器方；四分类固定顺序、无“全部”。共用UI直接读经营配置，不改储物袋分类。当前只有N16有实际交易入口，另外三店目录已准备但未绑定地图节点；专属场景与打造／交易入口后续接入，未把普通商铺插图冒作另三店正式素材。
+
+**配置分层：**`data/shops/trade_rules.json`维护四个profile及默认价格因数，分类内的inventory_categories仅为现有储物分类到经营分类的映射；没有实物的栏目映射为空，之后随实际内容扩展。`qingshizhen_shop / qingshizhen_herbalist / qingshizhen_sect / qingshizhen_blacksmith.json`分别维护四店上架池，经营范围判断MapShop.category_for独立于是否上架，不代表已获得出售权限。当前材料映射兽材，未来加工金属应纳入该经营栏；未新增库存大类或假物品。
+
+**逐件价格（2026-10-12）：**142项已写入data/shops/item_base_prices.json，包含核心01第1.51批准的13项调整，其余129项沿用首稿。标记first_economy_test_baseline，表示进入经济测试，不代表已完成平衡。[原审阅工作簿](../output/spreadsheet/现有物品基准价_首版建议_2026-10-12.xlsx)及docs/sources/item-base-price-proposal-2026-10-12.json保留为历史来源，不作为现行报价。
+
+**价格入口：**运行时基准价表prices以稳定物品ID为键。`MapTradePricing`用整数基点表示因数（10000=100%，默认买入15000／卖出5000），`shop.pricing.set_factors(buy_bps,sell_bps)`接收未来系统计算好的最终因数，不自行决定声望／活动等来源的叠加规则。修改后通过changed信号同步商品格、单价和总价；买卖均重新读同一权威单价，不接受UI传入总额。买入向上、卖出向下取整，总价为单价×数量。青石短剑基准60、买90／卖30；止血丹基准9、买14／卖4。
+
+**报价校验：**四店目录已移除preview_buy_price／provisional，实际全部使用统一基准价。历史样例价兼容接口仍在，但当前目录不调用。缺价显示待定并禁交易，不能当作0灵石；非法因数／基准价／分类加载前拒绝，空商品池允许。
+
+同日标题／数量悬浮：商铺标题用采药标题同款SimHei黑体、52设计号、fbf4bf，保留原位置。两数量TextureButton内添加不拦截输入的QuantityHover，复用翻页按钮_selection_box的12%浅金底、1px金边和5px圆角；移入显示、移出隐藏，禁用或刷新后按实际悬停状态同步，不缩放按钮、不改数量逻辑。专项tests/shop_title_quantity_style_preview.gd -Render只做静态样式／渲染，不发送鼠标事件；离开商铺继续无悬浮。
+
+同日按钮后续：离开商铺去掉悬浮框与悬浮／按压字色变化，改为采药“稍后再说”同款黑体、27设计号，原底图边框保留。购买两态以原悬浮态实际绘制范围为准：TextureMetrics.solid_rect缓存Alpha>0.5本体边界，默认图按两态本体的宽高及位置映射Atlas区域，购买控件按原悬浮绘制区域定位；悬浮图、文字中心和原素材不变，默认／禁用及悬浮／按压各自共用纹理。不要只按两个1079×364画布或含光晕的裁边推断本体等大。专项tests/shop_button_art_preview.gd -Render，仅静态样式／几何和两态截图，无鼠标操作。
+
+同日物品本体微调：商铺所有商品格及右侧详情的物品本体，在现有尺寸基础上宽高各乘0.85，仍居中；品级方形背景／边框、商品框、名称及价格不变。MapItemThumbnail.create新增可选artwork_scale，商铺传0.85，默认1保持仓储等其他入口原尺寸。此项不撤销下文此前的方图整体面积90%设置，仅额外调整其中物品本体。必要静态预览tests/shop_item_body_preview.gd -Render。
+
+同日底图更新：新shangpu底图已去除预画商品框，沿用下述八个固定位置，独立shangpinbiankuang只在当前页对应商品存在时显示；空位的框、内容及按钮同步隐藏，筛选和翻页复用。空分类同时清空详情并禁用购买，不保留上一件详情。专项静态预览为tests/shop_updated_art_preview.gd（-Render），包括仓储四小标题更新后的UI-title-cangku-jiantou；箭头保持13×25布局区域、有效Alpha裁边、等比居中及mipmap，不改其他方向箭头。
+
+同日视觉修订：详情ScrollContainer使用SHOW_NEVER隐藏滚动条、保留滚动；购买常态白楷／悬浮黑楷，图文y714→722。加减按钮净距92→73.6、整体中点不变，上下细金线相接。灵石图片面积为原80%，商品格／右侧物品方图面积为原90%，各自中心及文字槽位保留；只影响商铺，不改仓储缩略图。购买／出售与四分类字体改黑体，选中背景、金边和文字加亮。护具分类通过ItemTooltip.classification_caption统一显示护臂／护腿／护肩／护腰，内部部位字段不改。静态预览tests/shop_visual_refinement_preview.gd -Render，覆盖本节下方旧颜色／尺寸口径。
+
+N16普通商铺（非N05仙门商铺）绑定`base.map_event.qingshizhen.shop`，到达弹窗、原地点击可重开；离开商铺／Esc／右键关闭，不删除路牌、不完成事件、不耗时。`data/map_events/qingshizhen_shop.json`指定底图、boss场景与通用场景边框；标题青石商铺及地点描述来自`data/shops/qingshizhen_shop.json`。买卖已启用；没有回购、商铺刷新或完整经济平衡。
+
+四个上架池：普通16（武器／防具各8），药材铺3丹药，宗门3法器，铁匠2暗器。目录存item_id及经营category；名称、品级、图片和效果读取实际道具，价格读取统一基准表。其他三店目录仍待正式投放及入口接入。当前可重复购买，未指定有限库存／补货；单次数量1～999为输入保护上限。未来修改或添加商品只编辑目录products，分页自动变化，不新增独立卡片位置。
+
+共用`MapShopDialog`基于源画布FRAME(32,32,1474,840)，沿用采药／采矿的1920×1080基准0.9倍缩放，文字开启随缩放重绘。左边框按有效Alpha裁外透明边后507×696源px、中心(349,451)，在左内边x80与右横线起点x618之间等距，上下对齐y80／822；内嵌boss图片等比cover、内缩5px，原素材未编辑。
+
+**固定商品位维护：**源坐标首格(634,375)，每格118×166，列距136、行距180，4列×2行；常量`SLOT_ORIGIN / SLOT_SIZE / SLOT_STEP`在map_shop_dialog.gd。框用shangpinbiankuang，上方98px方形缩略图复用`MapItemThumbnail`（由仓储同款实现抽出，原仓储尺寸不变），下方白色宋体名称及player-status-coin价格。按店读取的四分类和前后页按钮共用这8格，选中描边不覆盖文字颜色。
+
+右侧展示实际图片／名称／品级及全部分类标签，`ItemTooltip.classification_tags / effect_text / _colored`共享分类和真实效果，不另写假数值；含原描述、关键词配色、资源图标，长内容在详情容器中滚动，不侵入结算框。结算单价／数量／总价，价格用jiaoyi-coin、加减用jiaoyi-zengjia／jianshao，购买用baoxiang-dakai1／2、黑色楷体→悬浮白色楷体。原生按钮自动复用全局click.ogg。
+
+`MapShop`校验目录与经营范围，通过MapTradePricing读取统一单价计算总价，拒绝未知商品、无效数量、锁定状态和余额不足。现有库存快照新增spirit_stones及purchase_serial；旧档余额缺省读取原status_header配置0，不自动赠币。购买构建候选快照，灵石扣除、唯一purchase单位入袋及流水一次保存，成功后才发布；失败两者均不变。地图顶部余额从库存权威值同步，既有跨图／战斗保存链路保留此字段，不扩展气血等完整玩家存档。储物袋继续测试99／允许超额的既定规则。
+
+直接检查：`./tests/run_t01.ps1 -Script res://tests/shop_transactions_tests.gd`验证142项价格、13项调整、买卖原子性、失败回滚、保护／数量、原生切换／分页／选卡／成交及售空禁误售；加`-Render`仅静态2K，输出artifacts/shop-sale-enabled.png、shop-priced-stock.png。shop_trade_rules_tests验证四店分类和价格因数；旧shop_sale_preview_tests入口转调新交易专项。仅用隔离内存／artifacts存档，实际结果见PROJECT_PROGRESS。
+
+## 遭遇与宝箱刷新统一修订（2026-10-12）
+
+全部11处遭遇配置respawn_days=20、5处宝箱=40，共用现有游戏日历；击败／领取当日开始，到第20／40天恢复，跨图及重启不重置。怪物不轮换，宝箱到期清除旧选项并开启新领取周期。此节覆盖下方历史15／30天、无日历或测试重启重生说明；草药／矿点周期不变。
+
+data/world/respawn_rules.json定义刷新版本1及旧记录映射，MapRespawnRules在MapLoadoutState.restore通过输入验证后迁移候选副本，MapLoadoutStore.load将升级一次保存。旧仍在等待的六处15天记录到期日加5天，宝箱按原领取时点延至40天；已到期开放的轮次保持开放。不猜测没有记录的击败日期，规则版本防止重复延长。非法版本／越界日期拒绝，失败不发布状态。
+
+专项`./tests/run_t01.ps1 -Script res://tests/economy_respawn_tests.gd`验证所有节点配置、19／20与39／40边界、真实战斗胜利返回／重载、宝箱第二轮及旧档迁移幂等性；仅用隔离存档，无墙上时钟计时。
+
+2026-10-11月份显示：data/world/calendar.json新增month_names，按月序为正月、杏月、桃月、槐月、榴月、荷月、兰月、桂月、菊月、良月、冬月、腊月。WorldCalendar.month_day统一用于日期横幅及完整日期提示；仅名称变化，不改变月日数值、耗时、生日、刷新或存档。专项calendar_month_names_tests检查十二月各初一／初十／二十／三十，无需界面或完整日历回归。
+
+2026-10-11仓库后续：自家“进入仓储”已打开独立仓库＋随身储物袋，两栏同布局、右键／拖拽整叠双向存取。仓库测试99且允许超额、初始空，实际种类数及单位独立持久保存；原空白框架说明由此覆盖。容量／存取数据边界与专项见[储物袋设计](map-inventory-design.md)文首和核心01第1.49，休息与时间机制不变。
+
+## 青石镇自己家：休息与仓储（2026-10-11）
+
+同日布局后续：中间统一称“仓储栏”，左边界不动、右边界向左收缩至与右侧储物栏等宽；储物栏位置和宽度不变，中间多出的空隙预留。普通库存阵盘栏保持原宽，覆盖下文初版“沿用三栏尺寸”中的仓储中栏宽度口径。
+
+右上N03（2591,317，原“家”）绑定base.map_event.qingshizhen.home_rest，配置data/map_events/qingshizhen_home_rest.json，地图event_files正式加载。到达自动弹、原地可再开、休息后路牌保留。地点“自己家”及用户两句描述（“筒朴”修为“简朴”），配tanchuang-huifu-shineizijia底图、huifu-zijia场景图与原huifu-picframe。气血／体力／灵力上限100%恢复并封顶、耗时1天；复用MapTimeActions及原子日历事务，满状态仍能休息，取消／保存失败无恢复或耗时。
+
+MapRestDialog增加可选warehouse_id，存在时下方为两枚270×91源图px按钮：左“进入仓储”cangku1→cangku2，右“开始休息”kaishi1→kaishi2，沿用34号加粗仿宋、白字→悬浮黑字。新增4图mipmap、原图不改；100%沿用原比例样式，自家提示行上移避免底框覆盖。河湾两处不配置warehouse_id，仍使用原376×127单按钮。
+
+仓储ID为base.warehouse.qingshizhen.home，打开后MapInventoryScreen切换展示模式，沿用三栏尺寸、各栏底图／边框与右侧同一实际储物袋、筛选、排序、容量、卡片及共用说明；左属性与中间阵盘／标题／容量隐藏，保留返回操作。此阶段为空仓储界面框架，未创建独立仓库物品账本／存取事务；右侧仍可浏览／选中／看说明，关闭装备／换盘／装备拖拽，防止物品转入隐藏阵盘。模式退出还原普通储物袋功能，不改库存。返回游历／Esc／I关闭仓储并回到当前地图节点；稍后再说／右键／Esc仍可关闭自家弹窗。仓储不耗时，内部日历及地图日期隐藏设置保留。
+
+专项tests/home_rest_warehouse_tests.gd：headless验证实际节点到达、取消、双按钮悬浮／忙碌、仓储进入退出、数据不变、100%与满状态恢复／耗时、失败重试以及普通库存模式还原；-Render只检查静态布局，输出artifacts/home-rest.png、home-warehouse.png。全部使用artifacts独立存档，结果见PROJECT_PROGRESS。
+
+## 统一日历（2026-10-11，已接入）
+
+用户要求系统接入统一时间日历；起始月日读取未来角色创建的生日，当前缺省一月初一。已确认十二灵兽年、十二年为一纪，主界面隐藏纪次、完整日期补纪次；一年十二个月、每月三十天，共三百六十天，不设闰月。灵兽名称仍为可调整候选，尚未作为最终设定锁定。
+
+WorldCalendar是独立于场景树、墙钟与战斗秒数的纯计算模块，配置data/world/calendar.json。MapLoadoutState保存calendar（birthday、start_day、elapsed_days及最近耗时记录），显示层由连续日转换为灵兽年／传统月日。WorldCalendar.initial([月,日])为角色创建预留生日入口，目前默认[1,1]；初始第一纪／青鹿年均是可调整的暂定配置。候选顺序：青鹿、玄狐、灵鹤、苍熊、金隼、玄龟、锦鲤、玉蟾、银蝶、鸣蝉、云鲸、鲲鹏。年龄按开局年龄加已经完整度过的360天年数，不按灵兽年切换提前加岁，未接寿元耗尽。
+
+用户已确认只按耗时行为推进：MapTimeActions.rest保存候选日历成功后才发布三资源恢复，休息固定1天；全满仍可休息，恢复0。MapGatheringRewards.prepare将选定方式的1／2／3天与随机待领结果一次存档；取消选择不扣天，已出结果后退出不退还耗时，重开／领取不重复扣天；旧待领结果不追扣。移动、闲置、UI操作、战斗／倍速、跨地图和离线均不自动推进日期。旧档首次读取迁入默认日期，不追算历史休息或现实时间。
+
+刷新采用绝对到期日，无每帧扣天：全部11处遭遇胜利掉落与encounter_cooldowns中的20天重生日期一起原子保存；到期恢复原种类路牌和遭遇，失败／撤退不新建计时。五宝箱领取时记录40天ready_day和cycle；到期下一轮使用原奖励ID加.cycle.N，新选项与领取凭证相互独立，旧物品／凭证保留。旧等待记录按文首刷新版本迁移，跨图与重启不清零。草药／矿点刷新周期未定，仍测试重启恢复。
+
+2026-10-11最新澄清：两张地图游历时MapCalendarReadout隐藏；打开全屏储物袋或仓储时，在顶部状态栏下方右侧显示UI-title-time横幅，仅年月日、去掉苍澜界前缀，按两山脚间及横幅内部居中；悬浮可看完整纪次，关闭全屏界面返回地图隐藏。由inventory_screen.visibility_changed统一控制，不依赖某个打开按钮。内部历法、耗时行为、年龄和到期刷新逻辑保留；日期／刷新记录仍接入现有原子库存存档。三资源本身仍只有原有的同运行期跨地图／跨战保留，未实现完整资源磁盘存档。
+
+日历检查入口：./tests/run_t01.ps1 -Script res://tests/world_calendar_tests.gd，覆盖历法、生日、跨纪、保存失败／重复操作、休息和两类采集、40天宝箱复开、实际战斗20天重生、重启／跨图及年龄；隔离存档，不碰正式测试档。本轮直接刷新检查用文首economy_respawn_tests，旧入口仅同步周期断言，未额外整套重跑。加-Render仅静态日期检查和2K截图artifacts/calendar-map.png，无鼠标输入或实际结算。以下历史“日历后续／全满禁用／重启即重生”由文首最新状态覆盖。
+
+## 两处休息交互已接入（2026-10-10）
+
+2026-10-11重新导入用户更新的tanchuang-huifu-shandaoxieshe.webp，N13沿用原引用、内嵌边框及等比裁切，mipmap保持开启。tests/map_header_refinement_preview.gd -Render只检查新版图片、两图日期隐藏和容量同字号，不执行输入或休息结算。
+
+云横线中的“室内休息点／室外休息点”现用24号黑体（原22号楷体），保留原容器和水平／垂直居中。
+
+最新文字微调：共用“状态恢复”标题改黑体；30%／50%为38号加粗楷体、左对齐、x1287，靠近“的”。耗时数字x1121、“天”x1142，间距缩短；情况说明框x1246，较原右移2源图px、左对齐，字号／宽高不变。室内外同步，行为不变。
+
+用户指定N05为室外“林间篝火”，N13为室内“山道歇舍”；地点描述及情况说明记录在两份qingshihewan_rest_nXX.json。共用MapRestDialog，室内／室外对应huifu-shinei／shiwai底图、huifu-picframe与各自场景图；沿用宝箱观察的90%整体尺寸、原生像素文字和左侧等比裁切。云横线中填室内／室外休息点，中部“状态恢复”、放大的50%／30%及1天；提示为“状态不满可以休息，但恢复不会超过各上限值。”。按钮huifu-kaishi1→悬浮kaishi2，加粗仿宋34号、白字→黑字；室内“入内休息”、室外“稍作歇脚”，按上下文校正用户后一处重复“室内”。
+
+两事件已注册到qingshihewan.json，原节点坐标／路线／路牌不动，仅更新地点名称；N32既有水边休息标记不在本次范围。到达自动暂停行走并弹窗，原地点击可重开。MapEventRegistry校验类型、比例、耗时、文案和素材，MapEventState的rest阶段不会被对话推进或标为完成；成功休息与取消均留在当前节点，恢复后不删除路牌。
+
+用户已确认仅恢复气血／体力／灵力，并先记录1天、立即恢复，日历后续接入。MapPlayerStatus.rest统一按当前上限增加30%／50%，封顶并一次发出changed；顶部状态栏立即更新，下次战斗读取同一资源快照。任一项不满可休息，全部满时显示“当前状态已满，无需休息。”并禁用按钮。稍后再说／右键／Esc退出不产生资源与时间变化；重复确认不会重复结算，主动再次打开可再次休息。
+
+时间记录为rest_days_spent累计天数和last_rest最近一次来源事件、比例、耗时、三资源前值／后值／实际增量，与地图资源一起在当前运行期跨图／跨战保留。没有推进年龄、采集、怪物或宝箱计时，也没有增加完整磁盘资源存档；统一日历仍待后续。
+
+必要检查：./tests/run_t01.ps1 -Script res://tests/map_rest_tests.gd，使用artifacts独立存档，headless检查两节点到达／取消／悬浮／恢复／封顶／重复及真实战斗衔接；加-Render仅静态检查实际地图注册及两种弹窗，输出artifacts/rest-n05.png、rest-n13.png，不执行输入或恢复。结果见PROJECT_PROGRESS。
+
+2026-10-10共用遭遇框间距：掉落图片／边框／名称整体上移3源图px，三交互卡全部要素整体下移3源图px；包含底图烘焙边框／图标、说明、按钮、点击区、选中框与禁用蒙版。底图通过encounter_action_offset.gdshader仅对交互区取样偏移，原素材及其他区域颜色／位置保持，所有地点复用同一弹窗。专项encounter_spacing_preview仅静态几何／渲染，不执行鼠标检查。
+
+2026-10-10地图路线：N08宝箱左移；N14恢复马路原坐标和三条原路线、改纯通行节点，原宝箱迁至河岸N39，仅支路R44连接N14；chest_n14事件／奖励ID保留，旧选项及领取凭证继续使用。瀑顶增加普通分岔N38，潮湿溪石N36经N38直达临溪石坡N28；保留原石阶路线，现40节点／44段路。事件与敌人不变，坐标及路线ID见[地图编辑说明](map-editing-guide.md)文首。
+
+## 2026-10-09：横向遭遇战新界面
+
+MapEncounterDialog已整体替换旧纵向full弹窗；旧六格器官／四行摘要／凹角战场预览不再显示。data/ui/encounter_options.json统一维护tanchuang-zaoyuzhan、内嵌框、三组操作文案及六按钮图，MapEncounterOptions在构建前校验资源。仍按1920×1080的0.9倍整体缩放，原生像素排版文字；只裁外透明边距FRAME=(32,32,1474,840)。左框463×694、中心(349,451)、4px内缩cover及裁切与采矿一致，源图片不编辑。18张新增素材均mipmap。
+
+11事件presentation只配置illustration，按下方地点编号读取battle-qingheshiwan-01～11（保留原文件拼写）。事件description存用户地点原文，优先于敌人随机池；敌人主档保存四篇介绍、实际rank_label／category_label与最多两个traits。怪物标签复用草药标签的字体、颜色、圆框，不另加关键词颜色。可能掉落直接读实际enemy.loot并以材料ID查询图片／名称／悬浮说明，包含兽心；不展示战斗器官、不虚构参考图里的兽肉。
+
+底部卡片第一行说明、第二行图片按钮；点卡片或首次点按钮只选择，再点该按钮发送命令，2号图仅已选＋悬浮／按下使用。所有按钮沿用全局click.ogg，忙碌时三卡及按钮全部锁定。绕行沿用退出现遭遇、留敌留路牌；迎战保留保存失败重试、实际战场背景及战前暂停。威压已按用户回复暂时禁用：actions.enabled=false，整卡叠加68%不透明深灰蒙版，卡片／按钮均禁用，选择／命令入口再次防护，忙碌解除／重开不解锁；提示显示“暂未开放；威压要求：胜利3次，且至少高一个等级”。条件只记录展示，统计和逼退／胜利／奖励未接入。规则与未决见核心01第1.44。
+
+必要专项：./tests/run_t01.ps1 -Script res://tests/encounter_redesign_tests.gd；headless只测试本次按钮选中／悬浮／忙碌、11实际到达和真实迎战转场，使用artifacts唯一隔离存档。加-Render只静态查看四种敌人、验证全部11处映射，不操作系统鼠标。旧纵向布局测试由本专项取代，部分复合历史测试仅同步直接字段，不默认全跑。
+
+## 2026-10-09：采药底图与左侧场景图更新
+
+采药使用tanchuang-caiyao，结构／90%整体尺寸、原三组按钮和结算不变。细节对齐采矿：地点描述23号、名称上移2源px、双标签上移1px、方式名下移2px；河湾九条方式短句固定两行，逗号后换行，无逗号按语意断行。左侧共用tanchuang-neiqianbiankuang原463×694、中心(349,451)、4px内缩等比嵌图。gathering_options.locations中止血草／苦艾叶／溪露苔分别对应tanchuang-caiyao-zhixuecao1／kuaiye1／xilutai，底图与三图均mipmap。青藤根未配场景图，隐藏图和框并清空旧纹理；无名旧祠节点仍未开启。本节覆盖旧采药底图和25号／零偏移口径；静态检查使用gathering_copy_audio_tests的Render分支，不默认重跑输入或领取。
+
+## 2026-10-09：青石河湾采矿
+
+最新文字微调：仅采矿地点描述24→23源字号；物品名称上移2源图px至中心y429，品级／矿石标签上移1px至中心y465.5，三档方式名y600→602。配置为mining_options的location_font_size及三个*_offset_y，采药保持原25号及零偏移；其他布局与机制不动。覆盖下方旧24号口径，必要验证仅静态Render。
+
+最新左图接入：tanchuang-neiqianbiankuang按原463×694源尺寸，在左内边x80与横线起点x618之间居中，并在上下内边y80／822之间居中，中心(349,451)、左上(117.5,104)，不额外缩放。框内4px内缩放置地点场景图，等比覆盖并限于框内；透明原边框叠上方，不加色。赤铜矿用tanchuang-wakuang-chitongkuang1，粗铁矿用tanchuang-wakuang-cutiekuang1；三图均mipmap，mining_options按地点配置，采药不新增图片。此项覆盖下方首版左侧暂空描述。
+
+N19（2221,1215）为溪湾砂矿／粗铁矿，N22（1847,833）为西崖矿隙／赤铜矿；对应用户蓝框／红框，保留原坐标、矿石路牌及探索显隐。到达自动弹窗、右键／Esc／稍后再说取消，原地可点击重开；三方式和数量见核心01第1.43。材料原文及图片在data/maps/minerals.json，地点描述与六条短句在data/ui/mining_options.json，事件为qingshihewan_mining_n19／n22.json。
+
+MapGatheringOptions按材料类别选择采药／采矿配置，MapGatheringDialog切换底图、方式名称与单位，MapGatheringRewards共用待领与原子收下流程，仍存到库存v2的gathering_offers。校验按材料类别限定方式，不能拿采药方式制造矿石。取消结果后再打开／重启仍领原数量，收下后同运行不可再次采；测试期重启可重新采矿，新的递增凭证不覆盖旧库存。日历未接，不推进怪物重生天数。
+
+采矿使用tanchuang-wakuang1，保留采药90%整体尺寸；地点描述源字号24（采药25不变），六条方式短句固定两行，有逗号的在逗号后换行，无逗号的浅层铜矿说明按“敲取岩壁／外露的铜矿。”断行，原文不改。左侧场景图与框暂空。三按钮已换tanchuang-wakuang-qiancengqiaoqu／xunmaikaicai／shencengkaizao各1／2图：正常用1，选中容器＋悬浮时用2，首点选方式、再点执行，位置保持；自动接全局click.ogg。六按钮图、底图及两矿图均开启mipmap。矿石卡仅一个“矿石”分类标签、下品品级牌，隐藏占格、不能上阵。
+
+必要验证：`./tests/run_t01.ps1 -Script res://tests/map_mining_tests.gd`。使用独立artifacts存档，headless检查两矿点、三档数量／耗时、取消／重开／存档／防重领／写失败，以及采矿切回采药；加`-Render`只生成两张静态预览，不跑鼠标输入。结果记PROJECT_PROGRESS。
+
+2026-10-09采集文字再微调：地点描述26→25源字号，楷体保持；移除预计合计整行及未选择时原合计位置的提示，不改下方三方式卡上的获得数量。简短方式说明16→18号、楷体保留，显示区域改y422～478，中心y450对齐四行数据底边416与容器底484的中间。未选方式时留空；选择时仍读原12条文案。必要Render静态检查通过，未重跑鼠标或音效测试。
+
+2026-10-09采集文案与全局按钮声音：用户确认全游戏按钮统一click.ogg，UiButtonAudio常驻自动连接Button／TextureButton及其子类的pressed，含动态弹窗、复盘和暂停；原战斗按钮手动click调用移除，避免双响。资源不循环，拾取／摆放／命中音效不替换。药材名称27→26、标签15→14，按实际字体最小高度在原分隔带内居中。地点标题与左logo间距52→26源图px；右侧加入26号楷体描述（标题52的一半），较长文字自动换行且不压右侧返回按钮。预计合计下方加16号楷体短说明，未选方式时留空、选择三方式同步更新。四地点标题／描述及十二条短说明维护在data/ui/gathering_options.json的locations，由稳定药材ID／方式ID索引；祠后石隙／青藤根仅准备文案，不新增地图事件或指定节点。必要专项tests/gathering_copy_audio_tests.gd，headless只测音效所需按钮输入，Render仅静态出图。
+
+2026-10-09采集底图再次更新：重新导入tanchuang-caiji1，保持mipmap及90%显示比例，源图不编辑。按新图将药材框标定为Rect2(730,198,267,286)，首／次分隔线y413／449，图片可见中心305.5、名称中心431、标签中心466.5；预计框四行中心y275／316／357／398，合计中心450，方式抬头中心516。抬头／稍后再说及独立箭头随新版标题栏重新对位；三按钮中心取新版耗时框底733与卡底793之间。字体、字号、颜色、选择及悬停规则不变，覆盖前文旧图绝对坐标。只做必要导入、静态断言与2K渲染，不重跑鼠标交互；测试仍为gathering_layout_refinement_preview。
+
+2026-10-09位置续存已接入：现有库存v2存档增加可选map_location，保存稳定地图ID与最后实际到达节点ID；移动中退出恢复最后节点，不保存半路坐标。F5入口改为scenes/maps/session_start.tscn，由map_session_start.gd按data/maps/session_maps.json受控目录选择场景，先核对存档节点存在；无位置旧档走原默认，失效地图／节点回退默认。只在正式落点／转场提交后保存，预载目的地不抢先覆盖来源位置，退场旧地图不覆盖新位置；探索、库存、奖励凭证沿用同一原子存档，不重复建存档系统。读档定位不自动触发离开确认或重开遭遇。进入战斗保留遇敌节点，返图重新激活位置保存；不是战斗中途续战功能。直接检查tests/map_location_resume_tests.gd使用隔离存档，覆盖重启、跨图、转场激活、旧档与备份恢复、失效位置回退及保存失败重试；本轮结果见PROJECT_PROGRESS。
+
+2026-10-09采集楷体／居中后续：三种方式的获得、耗时六行均用KaiTi楷体和18源图字号（原获得18、耗时20），右侧预计四行值改楷体19号，左字段黑体和合计原字体不变。药材名称与双标签各上移3源图px，按分隔空间作视觉居中；图片区域中心调整为上下边223／434的中点328.5，并按图片可见区域校准，名称／标签仍沿用物品卡字体。稍后再说原文字Rect2(1253,118,167,43)不变，右侧独立加“>”，不改变点击范围或交互。
+
+2026-10-09采集按钮／字体后续：三个行动按钮由源图y737上移至732，中心位于耗时框下沿y730与容器底边y793之间；只有“容器已选中＋鼠标在按钮上”显示2号亮图，移出恢复1号，首次点击选择／第二次执行保持。地点抬头、稍后再说、预计收获、四行字段名、选择采集方式及三方式名称统一SimHei黑体；右侧数值／合计与三卡获得／耗时内容不改。药材名称与两个标签均使用物品卡相应的继承主题字体，保留上次位置、字号与圆角框。按钮图内原字不重绘，源图片不改。
+
+2026-10-09采集排版：弹窗以屏幕中心整体缩小10%（DISPLAY_SCALE=0.9，蒙版仍全屏）；“选择采集方式”按下方中间蓝色方式框水平居中，设计字号24→23。药材名称移至原标签行中心，品级与“药材”分为两个物品卡同款圆角标签，放到下方横线以下；图片与采集机制不变。遭遇战弹窗地点名／现场描述／敌人名称均为SimHei黑体（42／18／28设计字号），本次仅核实不修改；敌人介绍及其类别标签为楷体。
+
+2026-10-08最新表现时长（覆盖下方旧值）：胜利图片与50%黑蒙版同步渐显0.5秒、完整停留1.5秒，总计约2秒，保留点击跳过；进战与返图均0.5秒变黑＋0.5秒显现，音乐同步，总计约1秒。地图之间的方向切换保持1秒＋1秒，首次地图音乐渐入仍3秒。资源加载／保存耗时不计入纯转场时长，奖励框／复盘仍等玩家操作。定时专项：tests/battle_presentation_timing_tests.gd。
+
+## 草药采集与领取（2026-10-08）
+
+规则／范围以核心01第1.40为准。`MapGatheringOptions`读取`data/ui/gathering_options.json`，校验三种命名空间ID、数量区间／耗时和按钮素材，再提供预计摘要；`data/maps/herbs.json`保存四药材及用户原文，MapLoadoutStore注册plant分类但不初始赠送。三份gathering事件将N04／N31／N36绑定地点与药材，到达自动触发、停稳可点击重开；青藤根尚无地图事件。
+
+`MapGatheringRewards`处理随机与原子保存，UI只发送method_id，服务重新查配置。v2新增可选gathering_offers，以事件ID保存待领取的药材、数量、方式、天数、唯一奖励ID；旧档缺省空字典。生成结果先写盘，再显示继承MapRewardDialog的获得药材框；收下通过既有claim_reward写库存与凭证，保存失败不发物、允许重试。结果框右键关闭保留待领，重开／读档不重抽。领取完成写MapEventState同运行期completed并淡出路牌；测试重启清空完成状态，下一轮按奖励序号生成新凭证，既有库存和首轮凭证保留。没有墙上时钟或游戏日历推进。
+
+UI继续使用更新tanchuang-caiji1及原三组按钮，原生整数像素文字；预计单位白色，“选择采集方式”24号。药材区实际图／名／下品标签，可悬浮原文。获得药材框显示收下按钮及数量（1株也显示），药材卡不可拖走或上阵。独立F6入口`scenes/maps/gathering_preview.tscn`只看效果，不读写玩家存档。
+
+必要验证：`tests/map_gathering_dialog_tests.gd`验证本次单位文字／既有选择交互；`tests/map_gathering_rewards_tests.gd`使用隔离存档检查实际到达、入袋、取消、保存失败、读档防重抽、防重复、路牌消失及重启再采。2K图为artifacts/gathering-herb-n04／n31／n36.png、gathering-loot-n04／n31／n36.png，最后数量位置微调见gathering-loot-final.png。四种药材图片开启mipmap，源图不编辑。
+
+2026-10-08草药点修订：N36原「西南石阶水岸」先由矿石标记改草药，本轮正式命名「潮湿溪石」；N04／N31分别改林间草坡／山坡荒地。路牌内图复用map-zhiwu，节点位置、路线、外框与探索显隐不变。三个草药点已接上文采集；剩余矿石N22／N19仍未接采矿玩法。
+
+## 青石河湾逐步探索（2026-10-08）
+
+灰白短路线末端表现更新：从可见节点向外保留清晰线芯，逐步减弱线芯、增加柔化扩散并将全部图层（含阴影）淡出至透明，正反方向一致；不再硬切断。短段长度与探索范围不变，完整金色路线绘法不变。必要静态／渲染检查：`./tests/run_t01.ps1 -Script res://tests/map_hint_fade_preview.gd -Render`，不含鼠标或存档操作。
+
+规则见核心01第1.39。仅qingshihewan.json启用exploration，hint_length=72底图px（短路线按22%截断，两端提示不相接）；青石镇配置不动。MapExplorationState从已访问ID和真实邻接图导出可见节点／完整路线；MapRoute只裁绘制区间，不改Curve2D及移动距离。MapRoutePoint仅对节点自身用灰白shader，子路牌不继承材质；父节点隐藏同时隐藏路牌，与既有完成淡出／恢复兼容。
+
+库存v2新增可选map_visited字典（地图ID→已走节点ID数组），旧档缺失为空；校验类型、命名空间、重复ID及数量边界。首次落点及每次到达／途经先记录并保存，再处理宝箱／遭遇／出口；使用原MapLoadoutStore原子写入，不创建第二份进度存档。仅存已走节点，灰白前沿按拓扑重算；库存奖励候选／恢复／战斗持久快照沿用该字段。保存失败保留内存进度、提示日志并在下一次到达／既有保存入口重试，不假报落盘成功。探索数据不触发无关库存界面重建。
+
+隐藏节点排除_node_at，MapTravelState探索模式下拒绝未揭示目标并过滤未完整展开的路线，防止寻路穿过隐藏捷径。首次EastExit仅邻接N15；在N15展开N14、N16、N37，保留EastExit。专项`./tests/run_t01.ps1 -Script res://tests/map_exploration_tests.gd`，`-Render`生成初始／展开截图；只用隔离存档，不运行全量地图交互套件。此前假定全图可点击的旧地图测试如需复跑，应在独立夹具中先提供已探索记录，不为测试关闭正式探索规则。
+
+## 四怪数据与固定遭遇配置（2026-10-09最新）
+
+本次以用户新表覆盖下方旧分布与掉落。敌人主档保存三条随机遭遇文案、基础值、器官布局、奖励和专属展示资料；四怪battle_enabled=true，11事件enabled=true。2026-10-08头像／阵盘／专属战场均已到齐，已验证地图到达自动弹窗和实际开战。Registry／GameManager仍拒绝缺失正式资源的配置，不复用其他怪物背景。
+
+2026-10-09修订：所有战斗地点固定一种敌人，取消后续种类轮换；南湾沙洲改为灰脊山狼，其余保留原首次敌人。原已配置15游戏日的N01／N10／N30／N21／N28／N26保留重生等待，重生仍为同种；其余五处时长仍未定。实际日历尚未接入，测试重启恢复各地点固定敌人，同运行期重进地图保留击败状态。 事件仅用enemy_id指定固定敌人，移除enemy_sequence；每次开启遭遇从该怪物三条文案抽一次，刷新弹窗不重抽。
+
+河鼋开战护甲0、上限7、6.5秒回3（用户已确认）；狼45/42、河鼋51/45、岩雉46/45、猪96/98（气血/体力），灵力均0。三小怪每胜修为3／历练1，猪5／2。普通可掉器官各独立25%、命中1件，兽心恢复首胜必掉、之后独立10%；已持有的旧兽心材料与凭证保留。器官均下品，掉落仍为无战斗功能的兽材，不免费入库。其他15张新图所属怪物本次不接入。
+
+## 当前地点与启用方式
+
+| 编号 | 节点 | 地点 | 固定敌人 |
+| --- | --- | --- | --- |
+| 01 | N01 | 雾松崖径 | 青翎岩雉 |
+| 02 | N07 | 河心乱礁 | 青壳河鼋 |
+| 03 | N10 | 青溪渡口 | 青壳河鼋 |
+| 04 | N12 | 夹壁山径 | 灰脊山狼 |
+| 05 | N30 | 落英林径 | 赤鬃獠猪 |
+| 06 | N21 | 回水岭径 | 灰脊山狼 |
+| 07 | N28 | 临溪石坡 | 青翎岩雉 |
+| 08 | N33 | 南湾沙洲 | 灰脊山狼 |
+| 09 | N24 | 断阶水口 | 青壳河鼋 |
+| 10 | N17 | 翻车商道 | 赤鬃獠猪 |
+| 11 | N26 | 南岸深林 | 青翎岩雉 |
+
+器官配置：data/items/shanlang_*、heyuan_*、yanzhi_*及cslz_*；敌人主档data/enemies/对应稳定ID尾段.json。三新盘data/boards/qingshihewan_*.json已由300×300逻辑占位升级为各自1254×1254原图与独立格线。九材料写入enemy_materials.json，grant_on_start=false，旧兽心材料保留以兼容持有与凭证。图片按拼音对应、启用mipmap，物品共用可见区域居中及0.5屏幕px描边。
+
+当前四怪均已配置独立presentation.battle_background并开启敌人及11事件；Registry和GameManager仍校验正式资产。以后新增内容沿用此步骤，不需要为普通器官新增脚本。
+
+MapEventState.resolved_event读取地点固定enemy_id（无轮换表时兼容旧序号）；active_event保存本次文案快照，MapScreen每次打开重建对应预览，战斗与奖励取实际敌人ID。advance_encounter_days正整数入参只推进本MapEventRegistry中的遭遇，每段游戏时间由未来统一日历调用一次；禁止按帧反复调用或用多个重复地图实例重复推进。运行期字典以事件ID隔离，尚不写地图天数存档。未设时长地点手动respawn保留；已有15天配置的地点不能绕过等待，超额日数不跨越尚未发生的下一次击败。
+
+检查：tests/qingshihewan_content_tests.gd验证数据／概率边界／材料兼容／资源缺失拒绝／固定敌人重生与文案；tests/qingshihewan_encounter_roster_tests.gd验证真实地图11处到达及两猪可用。渲染gallery只展示器官素材，不开启新怪物战场。已做／未做结果见PROJECT_PROGRESS最新条目。
+
+## 怪物资料归属与专属战场（2026-10-08）
+
+八套头像／阵盘引用存于data/ui/enemy_art.json；敌人JSON使用art_profile，Registry合并为运行时portrait／portrait_includes_frame／board_layout，保持所有UI统一读取。美术档案可以先于完整怪物数据注册，不产生可战敌人。
+
+敌人主档的presentation统一管理rank_label、category_label、description、battle_background、summary；遭遇事件只保留节点、触发、现场文案、战斗入口与弹窗皮肤。动态摘要行只配stat，显示时从PartyMemberState计算，禁止同时填写value；攻击特点等静态介绍仍配value。EnemyPresentation提供共享校验和展示读取，Registry校验字段与素材引用，地图拒绝展示资料不完整的敌人。旧事件内enemy_rank／enemy_category／enemy_description与presentation.enemy_summary／battle_background已迁移，后续重复配置会被拒绝。
+
+四怪背景统一为battle-qingshihewan-前缀：山狼shanjihuilang、河鼋qingkeheyuan、岩雉qinglingyanzhi、赤猪chisongliaozhu，扩展名.webp。赤猪换用户新图，删除旧battle-qingshihewan-zhu.webp及.import；原test1此前已删除。四图保留原像素，启用mipmap和无损导入。遭遇预览／地图开战／独立战斗都读取敌人主档背景，无全局赤猪贴图兜底；未配置背景的旧测试敌人使用中性底色，其他敌人配置自己的背景。MainUI显式背景属性仅保留场景／预览覆盖用途，正常地图流程不再重复传递背景。原战场蒙版和UI布局保持；预览等比cover，新增可选preview_alignment=[x,y]（每轴0～1，默认0.5居中），岩雉设[0.5,0]顶端取景以免切掉头部，四角内凹保持。每次展示重新设置取景，切回赤猪不继承岩雉偏移。
+
+存活与重生按全局唯一地图事件ID独立记录，同种敌人的两个节点互不影响。保留运行期击败记录／重启重生；固定敌人及已有15游戏日重生配置按本文文首，实际日历尚未接入。器官与掉落材料仍使用不同稳定ID。直接检查：`./tests/run_t01.ps1 -Script res://tests/enemy_presentation_tests.gd`，使用内存定义与artifacts隔离存档，不操作鼠标。
+
+## 宝箱两阶段实现（2026-10-10）
+
+第二阶段后续尺寸微调：左侧物品方框围绕原中心等比缩小10%（132→118.8源图px），物品与浮影同步适配；警告文字17→18号；收取按钮围绕原中心等比缩小10%，文字仍居中并保留原字号及长名称适配。选项整行及第一阶段按钮不改。
+
+2026-10-10选物卡文字微调：物品名称改用地点名称同色#FBF4BF；名称与分类标签各下移2源图px（y10→12、55→57），描述上移2源图px（y91→89），让三层文字视觉间距更接近。两行说明高度、字号及物品图框保持。
+
+规则以核心01第1.36为准。五份qingshihewan_chest_nXX.json经event_files注册，到达／途经先进入`chest_observation`、暂停移动。节点及文案：N34西瀑石台、N06河心乱礁、N08北岸林阶、N39桥东石滩、N27南坡林缘；N08保留chest_n22、N39保留chest_n14事件与奖励ID。五处quality全部下品、respawn_days全部30，取代原按路径颜色分配品级。
+
+`MapChestObservationDialog`共用原生像素字体和90%显示尺寸，第一阶段tanchuang-baoxiang1、693×694的picframe、各地点0号宝匣／1号场景。标题与宝匣名黑体，稍后再说27号黑体＋独立“>”，打开按钮34号加粗仿宋；常态dakai1白字、悬浮dakai2黑字。新底图首阶段抬头／稍后再说下移14源图px，宝匣原中心缩小10%；左侧场景等比裁切、素材像素不改、mipmap保持。
+
+`MapChestDialog`继承同一壳，第二阶段改tanchuang-baoxiang2与`presentation.result_illustration`的各地点2号图；显示`observation.result_description`完整寻宝结果。顶部按第二阶段底图装饰对齐，字体与稍后再说形式不变。两个562×156源图px的`MapChestChoiceCard`单选栏，淡金底／亮边与右上圆圈勾；方形图片框与浮影读取MapItemQuality颜色，共享MapItemArtwork取景／朝向，浮影单独固定在框中心。标签读实际分类、子类、甲型／伤害类型、品级并去重。描述读取可选`flavor_description`；2026-10-10已为武器36、防具36、法器22、丹药16、暗器5共115种下品／凡品主角道具逐件补齐简短叙述，每条含标点不超过30字。文案维护在data/maps/inventory_items.json，按稳定ID区分同名不同品级物品；加载时从目录取文案，旧库存无需迁移，T01导入器保留此字段。阵盘、材料及敌人专用道具不在本次范围；悬浮说明仍提供真实效果，行内不可拖拽／右键上阵。描述固定在原两行区域，限制初始最小高度并先设字号再设尺寸，避免非空文本在卡片尚未取得宽度时把说明撑出边界。
+
+下方警告使用底图已有感叹号，文字为“选择并收取后，另一格的物品将永久无法获得。”。领取按钮使用首阶段素材和加粗仿宋，随选项变为“收取 XX”，悬浮亮图黑字；未选禁用，长名称在按钮范围内适配。两阶段的稍后再说／右键／Esc均退出到当前节点。观察无抽取／领取；点击打开时先`MapChestRewards.ensure_offer`原子保存，成功才`MapEventState.open_chest()`进入第二阶段，失败留观察框可重试。旧无observation定义保留直接选物品的兼容入口，第二阶段缺图／文案时为空，不借用其他地点内容。
+
+池定义在`data/maps/chest_pools.json`：武器A＋防具B权重40，丹药／暗器合并池两件权重40，法器两件权重20。MapChestRewards校验配置和候选充足后，先按权重选池，再按event.quality过滤各栏，等概率抽取且排除已选ID。通用支持下品／凡品，河湾只下品；目前下品无暗器，合并池暂为两种丹药。UI不负责抽奖或推断规则。
+
+库存v2可选`chest_offers`保存`{version:2,pool_id,items:[A,B]}`，校验两件不同、同品级与各栏类别；旧数组格式兼容读入，未领取的旧规则选项在首次打开时原子升级，写失败不替换。新版选项取消／重开／重启不重抽；旧已领取凭证不清除。领取候选把一件物品、granted_rewards凭证及`chest_cooldowns[reward_id]={delay_days:30,remaining_days:30}`一次保存成功后才发布。失败保留选择且不发奖／不加等待；成功关闭路牌，路径点与路线保留，重启仍关闭。等待记录随库存／战斗存档保留；未接日历扣天或重新开放，无现实计时器。以后日历接入还需按每次开放周期管理新选项和领取身份。
+
+必要检查：`./tests/run_t01.ps1 -Script res://tests/map_chest_tests.gd`。headless只用artifacts隔离存档及视口虚拟输入，检查五节点实际到达／观察／打开／互斥选择／悬浮／取消／领取、40/40/20池范围、类别品级与去重、旧档迁移、保存失败原子性和30天等待保留。加`-Render`只静态绘制五处两阶段2K预览，不执行鼠标或领取；截图`artifacts/chest-observation-nXX.png`与`chest-choice-nXX.png`（后缀保留事件ID）。实际验证结果见PROJECT_PROGRESS。
+
+## 胜利展示与物品复盘弹窗（2026-10-07最新）
+
+复盘按钮最新更正（2026-10-07）：REVIEW时开放战斗记录，沿用实际本场日志弹窗及关闭按钮；关闭后留在复盘。仅置换／撤退继续灰置，“离开战场”不变。胜利图／奖励框阶段仍禁止通过此按钮打开记录，覆盖下方旧三按钮全禁用描述。
+
+战前入口补充（2026-10-07）：中央“对阵”图216×216设计px改为复用BattleActionButton的点击入口，仅PREPARATION有效，调用现有start_battle；按下缩小最多3%、松开回弹及音效与底部按钮相同。开战后不可点击但保持原色、原位置／尺寸，暂停和复盘仍使用原底部按钮。battle-start素材开启mipmap，静态展示不自动放大／淡出。
+
+后续音乐／布局：胜利时立即停止原战斗曲，victory-song2.mp3只播放一遍；复盘、重开奖励和刷新不重播，自然播完静音，返回地图沿用原播放器渐隐／停止。六张胜利图已等比放大50%（显示框宽66%、高51%，中心不变）；奖励滚动区现408×244，单／双卡居中，两卡间距16设计px，多排仍最多三列。
+
+胜利时MainUI按BANNER→REWARDS→REVIEW管理展示，模拟状态始终保持FINISHED；战败／撤退继续原失败界面。六档素材映射在data/ui/victory_banners.json，取实际主角cultivation_rank，新增图片均开mipmap。胜利图保持原比例、显示框宽屏幕44%、中心Y43%，黑色全屏蒙版Alpha0.5；Timer用独立表现时间3秒，鼠标左／右／中键可提前结束且消费该次输入，不穿透后续确定按钮。
+
+BattleRewardDialog继承MapRewardDialog赠玉画框及标题，保留原剧情单卡流程；战斗卡宽120设计px（原赠玉152），三列、16px横距／28px行距，底部留24px空间以展示品质角标。滚动区408×224，零掉落明确提示，按钮左复盘／右确定使用现有button-quxiao／button-queren。复盘隐藏两层新增弹窗及蒙版；底部主按钮无图标、文字离开战场，其余置换／撤退／战斗记录全部禁用。离开战场只重开物品框，确定才调用既有地图返回与音乐转场。
+
+MapBattleReturn仍先原子保存掉落及首胜凭证，成功后将物品ID发布给界面；不从摘要文字解析物品、不在打开或关闭弹窗时发奖。返回失败在原物品框显示错误并恢复按钮供重试；旧概率、存档格式与玩法结算不变。F6独立入口没有原地图返回地址，继续既有退出程序行为，不虚构地图位置。专项`./tests/run_t01.ps1 -Script res://tests/battle_victory_flow_tests.gd`，加`-Render`生成胜利／奖励／滚动／复盘截图；明确规则见核心01第1.35节。
+
 ## 入战先等待开始、阵盘同步显示（2026-10-06）
 
 地图进入战斗后停留PREPARATION战前准备，不自动start_battle，不推进计时或CD；主按钮显示“战斗开始”，点击后才开始模拟，后续“战斗暂停／战斗继续”保持。独立F6入口同样显示“战斗开始”。入场1秒渐隐＋1秒渐显及音乐不变。

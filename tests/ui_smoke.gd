@@ -19,6 +19,7 @@ func _run() -> void:
 	manager.set_process(false)
 	ui = scene.get_node("MainUI")
 	ui.game_audio.sound_played.connect(func(kind): sound_events.append(kind))
+	root.get_node("UiButtonAudio").click_played.connect(func(): sound_events.append("click"))
 	await _layout()
 	_check(manager.startup_error.is_empty(), "startup succeeds")
 	_check(manager.party.size() == 1 and manager.enemies.size() == 1 and manager.companions.size() == 2, "one main each plus two allied companions")
@@ -215,7 +216,13 @@ func _test_controls_and_retreat() -> void:
 		_check(ui._battle_button.press_depth <= previous_depth, "released button returns monotonically without a second pulse")
 		previous_depth = ui._battle_button.press_depth
 	_check(is_zero_approx(previous_depth), "released button settles completely")
-	ui._bag_button.pressed.emit()
+	# Disabled controls must be tested through input, not by forcing their signal.
+	for down in [true,false]:
+		var input := InputEventMouseButton.new()
+		input.position = ui._bag_button.get_global_rect().get_center()
+		input.button_index = MOUSE_BUTTON_LEFT
+		input.pressed = down
+		root.push_input(input,true)
 	_check(not manager.adjustment_open and sound_events == ["click"], "disabled adjustment neither opens nor plays click")
 	manager.set_speed(2.0)
 	ui._battle_button.pressed.emit()
@@ -353,7 +360,7 @@ func _test_cultivation_and_feedback() -> void:
 	_check(hit.is_queued_for_deletion(), "hit feedback cleans itself up")
 	for kind in GameAudio.STREAMS:
 		_check(ui.game_audio.players[kind].stream.get_length() > 0, "sound resource decodes: " + kind)
-	_check(ui.game_audio.players["click"].stream.get_length() > 0, "synthesized click has playable audio")
+	_check(root.get_node("UiButtonAudio").player.stream.get_length() > 0, "global click.ogg has playable audio")
 
 func _test_activation_feedback() -> void:
 	root.size = Vector2i(1920, 1080)
@@ -411,12 +418,12 @@ func _test_details_and_boards() -> void:
 		var bag: InventoryView = ui.ally_panel.bags[index]
 		_check(bag.board_texture.resource_path == "res://assets/zhenpan-bag.webp", "correct skin bound by character")
 		_check(bag.board_texture.get_size() == bag.board_layout.source_size, "mapping reference matches source image dimensions")
-		var key := bag._get_tooltip(bag.cell_center(Vector2i(1, 1)))
-		var tooltip := bag._make_custom_tooltip(key) as ItemTooltip
+		var key := bag._tooltip_key_at(bag.cell_center(Vector2i(1, 1)))
+		var tooltip := bag.build_item_tooltip(key) as ItemTooltip
 		_check(tooltip.description.contains("防御 +1"), "array hover uses actual armor definition")
 		tooltip.free()
 	var armor: StorageItemCard = ui.storage_panel.cards["run.storage.base.armor.qinglin.0"]
-	var tooltip := armor._make_custom_tooltip(armor.item.id) as ItemTooltip
+	var tooltip := armor.build_item_tooltip(armor.item.id) as ItemTooltip
 	_check(tooltip.description.contains("反击 1") and tooltip.description.contains("无视防御"), "counter tooltip explains trigger and true damage")
 	ui.add_child(tooltip)
 	tooltip.position = Vector2(650, 570)
@@ -426,7 +433,7 @@ func _test_details_and_boards() -> void:
 	ui.remove_child(tooltip)
 	tooltip.free()
 	var entry_card: StorageItemCard = ui.storage_panel.cards["run.storage.base.armor.xuantie.0"]
-	var entry_tip := entry_card._make_custom_tooltip(entry_card.item.id) as ItemTooltip
+	var entry_tip := entry_card.build_item_tooltip(entry_card.item.id) as ItemTooltip
 	_check(entry_tip.description.contains("防御 +2") and entry_tip.description.contains("增加 2 防御"), "entry tooltip separates base and entry bonus")
 	entry_tip.free()
 	if DisplayServer.get_name() == "headless":

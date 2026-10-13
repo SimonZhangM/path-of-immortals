@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.qingshizhen.home_rest",
+  "type": "rest",
+  "point_id": "base.map.qingshizhen.point.n03",
+  "trigger": "click",
+  "rest_kind": "indoor",
+  "title": "自己家",
+  "description": "这是你在青石镇的家。虽简朴，却温暖安宁。\n这里可供你休息恢复，也可存放各类物品。",
+  "note": "温暖安宁\n助你安心休养",
+  "action_label": "开始休息",
+  "recovery_percent": 100,
+  "duration_days": 1,
+  "warehouse_id": "base.warehouse.qingshizhen.home",
+  "presentation": {
+    "background": "res://assets/tanchuang-huifu-shineizijia.webp",
+    "illustration": "res://assets/tanchuang-huifu-zijia.webp"
+  }
+}

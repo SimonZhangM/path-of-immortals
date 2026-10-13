@@ -4,7 +4,7 @@ extends Node
 const MUSIC_FADE := 3.0
 const WIPE_OUT := 1.0
 const WIPE_IN := 1.0
-const BATTLE_FADE := 1.0
+const BATTLE_FADE := 0.5
 const MUSIC_VOLUME := 0.501187 # -6 dB, matching battle music.
 var music: AudioStreamPlayer
 var map_id := ""
@@ -153,6 +153,8 @@ func change_map(source: Control, destination: Control, outgoing: Vector2, incomi
 	source.hide()
 	destination.show()
 	get_tree().current_scene = destination
+	if source.has_method("deactivate_location"): source.deactivate_location()
+	if destination.has_method("activate_location"): destination.activate_location()
 	enter_map(destination.definition, 0.0)
 	music.volume_linear = 0.0
 	music_state = "resuming"
@@ -183,6 +185,8 @@ func change_battle_scene(source: Node, destination: Node, source_view: CanvasIte
 	source_view.hide()
 	destination_view.show()
 	get_tree().current_scene = destination
+	if source.has_method("deactivate_location"): source.deactivate_location()
+	if destination.has_method("activate_location"): destination.activate_location()
 	if entering_battle:
 		battle_audio.start_music()
 		battle_audio.music.volume_linear = 0.0

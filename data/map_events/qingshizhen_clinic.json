@@ -1,0 +1,28 @@
+{
+  "id": "base.map_event.qingshizhen.clinic",
+  "type": "clinic",
+  "point_id": "base.map.qingshizhen.point.n19",
+  "trigger": "click",
+  "title": "青石医馆",
+  "description": "悬壶济世，仁心为怀。青石医馆诊治镇中百姓，也因此听闻不少江湖乡野之事。",
+  "leave_label": "离开医馆",
+  "dialogue": "res://data/dialogues/suqinghe.json",
+  "treatment": {
+    "fee": 5,
+    "resource": "hp",
+    "recovery_percent": 100,
+    "duration_days": 0,
+    "tagline": "一剂汤药，涤尽疲惫，重整行装。",
+    "payment_note": "支付诊金后，医馆将为你调理伤势，",
+    "recovery_note": "恢复全部气血值。",
+    "description": "青石医馆可为行旅者疗伤，恢复全部气血。\n但不处理长期积疾、奇毒顽症等复杂病症，此类需另寻高人医治。",
+    "motto": "“医者，仁心也。”\n—— 青石医馆"
+  },
+  "presentation": {
+    "title_center_y": 134.5,
+    "background": "res://assets/tanchuang-qingshizhen-yiguan.webp",
+    "treatment_background": "res://assets/tanchuang-qingshizhen-yiguan-2.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-yiguan-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
+  }
+}

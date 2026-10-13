@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3]
+[gd_scene load_steps=79 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/gamemap-qingshihewan.webp" id="1_bg"]
 [ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="2_dot"]
@@ -138,9 +138,9 @@ point_count = 8
 [sub_resource type="Curve2D" id="Curve_8"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 6.6, 2.64, 1735, 117, -13.42, -6.82, 13.42, 6.82, 1795, 141, -16.06, -6.38, 16.06, 6.38, 1857, 179, -20.24, -3.08, 20.24, 3.08, 1941, 199, -19.8, -0.66, 19.8, 0.66, 2041, 207, -13.64, -2.86, 13.64, 2.86, 2121, 205, -4.84, -3.08, 0, 0, 2165, 233)
+"points": PackedVector2Array(0, 0, 14.3, 2.64, 1625, 105, -37.4, -7.92, 37.4, 7.92, 1690, 117, -36.74, -13.64, 36.74, 13.64, 1795, 141, -32.12, -12.76, 32.12, 12.76, 1857, 179, -40.48, -6.16, 40.48, 6.16, 1941, 199, -39.6, -1.32, 39.6, 1.32, 2041, 207, -27.28, -5.72, 27.28, 5.72, 2121, 205, -9.68, -6.16, 0, 0, 2165, 233)
 }
-point_count = 7
+point_count = 8
 
 [sub_resource type="Curve2D" id="Curve_9"]
 bake_interval = 4.0
@@ -341,9 +341,9 @@ point_count = 7
 [sub_resource type="Curve2D" id="Curve_37"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 0.44, 6.38, 1173, 979, -5.06, -12.54, 5.06, 12.54, 1177, 1037, -10.12, -10.78, 10.12, 10.78, 1219, 1093, -3.52, -11.44, 3.52, 11.44, 1269, 1135, 5.28, -13.2, -5.28, 13.2, 1251, 1197, 3.96, -13.42, -3.96, 13.42, 1221, 1255, 3.08, -12.76, -3.08, 12.76, 1215, 1319, 2.42, -5.72, 0, 0, 1193, 1371)
+"points": PackedVector2Array(0, 0, 0.44, 6.38, 1173, 979, -5.06, -12.54, 5.06, 12.54, 1177, 1037, -10.12, -10.78, 10.12, 10.78, 1219, 1093, -3.52, -11.44, 0, 0, 1269, 1135)
 }
-point_count = 8
+point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_38"]
 bake_interval = 4.0
@@ -372,6 +372,27 @@ _data = {
 "points": PackedVector2Array(0, 0, -10.12, -5.28, 579, 1303, 17.6, 9.02, -17.6, -9.02, 487, 1255, 16.28, 6.16, -16.28, -6.16, 419, 1221, 17.38, 6.38, -17.38, -6.38, 339, 1199, 12.54, 11, -12.54, -11, 261, 1163, 8.36, 12.32, -8.36, -12.32, 225, 1099, 10.12, 9.02, -10.12, -9.02, 185, 1051, 5.72, 3.74, 0, 0, 133, 1017)
 }
 point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_42"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 3.52, 11.44, 1269, 1135, 5.28, -13.2, -5.28, 13.2, 1251, 1197, 3.96, -13.42, -3.96, 13.42, 1221, 1255, 3.08, -12.76, -3.08, 12.76, 1215, 1319, 2.42, -5.72, 0, 0, 1193, 1371)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_43"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 6.82, -7.92, 1269, 1135, -20.46, 16.72, 20.46, -16.72, 1300, 1099, -26.62, 13.64, 26.62, -13.64, 1362, 1059, -12.98, 4.84, 0, 0, 1421, 1037)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_44"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -12.98, 6.38, 2851, 503, 24.86, -16.5, -24.86, 16.5, 2792, 532, 21.34, -21.12, -21.34, 21.12, 2738, 578, 17.16, -22.88, -17.16, 22.88, 2695, 628, 7.7, -11.88, 0, 0, 2660, 682)
+}
+point_count = 5
 
 [node name="MapContent" type="Node2D"]
 
@@ -634,12 +655,12 @@ route_id = "base.map.qingshihewan.route.r36"
 start_point = NodePath("../../Points/N03")
 end_point = NodePath("../../Points/N31")
 
-[node name="R37_N29_N36" type="Path2D" parent="Routes"]
+[node name="R37_N29_N38" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_37")
 script = ExtResource("4_route")
 route_id = "base.map.qingshihewan.route.r37"
 start_point = NodePath("../../Points/N29")
-end_point = NodePath("../../Points/N36")
+end_point = NodePath("../../Points/N38")
 
 [node name="R38_N36_N35" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_38")
@@ -669,6 +690,27 @@ route_id = "base.map.qingshihewan.route.r41"
 start_point = NodePath("../../Points/N33")
 end_point = NodePath("../../Points/N34")
 
+[node name="R42_N38_N36" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_42")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r42"
+start_point = NodePath("../../Points/N38")
+end_point = NodePath("../../Points/N36")
+
+[node name="R43_N38_N28" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_43")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r43"
+start_point = NodePath("../../Points/N38")
+end_point = NodePath("../../Points/N28")
+
+[node name="R44_N14_N39" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_44")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r44"
+start_point = NodePath("../../Points/N14")
+end_point = NodePath("../../Points/N39")
+
 [node name="Points" type="Node2D" parent="."]
 z_index = 2
 
@@ -678,7 +720,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n01"
-location_note = "西北山道"
+location_note = "雾松崖径"
 
 [node name="N02" type="Sprite2D" parent="Points"]
 position = Vector2(619, 421)
@@ -702,7 +744,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n04"
-location_note = "林间支路"
+location_note = "林间草坡"
 
 [node name="N05" type="Sprite2D" parent="Points"]
 position = Vector2(1107, 509)
@@ -710,7 +752,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n05"
-location_note = "北林岔路"
+location_note = "林间篝火"
 
 [node name="N06" type="Sprite2D" parent="Points"]
 position = Vector2(1131, 155)
@@ -718,7 +760,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n06"
-location_note = "西北水道尽头"
+location_note = "河心乱礁"
 
 [node name="N07" type="Sprite2D" parent="Points"]
 position = Vector2(1365, 275)
@@ -726,15 +768,15 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n07"
-location_note = "北水道岔口"
+location_note = "河心乱礁"
 
 [node name="N08" type="Sprite2D" parent="Points"]
-position = Vector2(1735, 117)
+position = Vector2(1625, 105)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n08"
-location_note = "北岸石阶"
+location_note = "北岸林阶"
 
 [node name="N09" type="Sprite2D" parent="Points"]
 position = Vector2(1853, 392)
@@ -750,7 +792,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n10"
-location_note = "东北岸岔路"
+location_note = "青溪渡口"
 
 [node name="N11" type="Sprite2D" parent="Points"]
 position = Vector2(2357, 145)
@@ -766,7 +808,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n12"
-location_note = "东北林道"
+location_note = "夹壁山径"
 
 [node name="N13" type="Sprite2D" parent="Points"]
 position = Vector2(2911, 407)
@@ -774,7 +816,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n13"
-location_note = "东北小屋"
+location_note = "山道歇舍"
 
 [node name="N14" type="Sprite2D" parent="Points"]
 position = Vector2(2851, 503)
@@ -782,7 +824,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n14"
-location_note = "东侧山道岔口"
+location_note = "东北商道岔口"
 
 [node name="N15" type="Sprite2D" parent="Points"]
 position = Vector2(2897, 837)
@@ -806,7 +848,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n17"
-location_note = "水车东侧岔口"
+location_note = "翻车商道"
 
 [node name="N18" type="Sprite2D" parent="Points"]
 position = Vector2(2439, 1321)
@@ -822,7 +864,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n19"
-location_note = "中央东南水岸"
+location_note = "溪湾砂矿"
 
 [node name="N20" type="Sprite2D" parent="Points"]
 position = Vector2(2079, 959)
@@ -838,7 +880,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n21"
-location_note = "中央北侧林道"
+location_note = "回水岭径"
 
 [node name="N22" type="Sprite2D" parent="Points"]
 position = Vector2(1847, 833)
@@ -846,7 +888,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n22"
-location_note = "中央小屋支路"
+location_note = "西崖矿隙"
 
 [node name="N23" type="Sprite2D" parent="Points"]
 position = Vector2(1695, 1149)
@@ -862,7 +904,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n24"
-location_note = "南部北岸"
+location_note = "断阶水口"
 
 [node name="N25" type="Sprite2D" parent="Points"]
 position = Vector2(2169, 1559)
@@ -878,7 +920,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n26"
-location_note = "东南林地"
+location_note = "南岸深林"
 
 [node name="N27" type="Sprite2D" parent="Points"]
 position = Vector2(2889, 1515)
@@ -886,7 +928,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n27"
-location_note = "东南山脚"
+location_note = "南坡林缘"
 
 [node name="N28" type="Sprite2D" parent="Points"]
 position = Vector2(1421, 1037)
@@ -894,7 +936,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n28"
-location_note = "中央西侧小径"
+location_note = "临溪石坡"
 
 [node name="N29" type="Sprite2D" parent="Points"]
 position = Vector2(1173, 979)
@@ -910,7 +952,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n30"
-location_note = "西部林道"
+location_note = "落英林径"
 
 [node name="N31" type="Sprite2D" parent="Points"]
 position = Vector2(891, 867)
@@ -918,7 +960,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n31"
-location_note = "西桥下支路"
+location_note = "山坡荒地"
 
 [node name="N32" type="Sprite2D" parent="Points"]
 position = Vector2(615, 917)
@@ -934,7 +976,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n33"
-location_note = "西南水道岔口"
+location_note = "南湾沙洲"
 
 [node name="N34" type="Sprite2D" parent="Points"]
 position = Vector2(133, 1017)
@@ -942,7 +984,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n34"
-location_note = "西部孤岛尽头"
+location_note = "西瀑石台"
 
 [node name="N35" type="Sprite2D" parent="Points"]
 position = Vector2(897, 1555)
@@ -958,7 +1000,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.n36"
-location_note = "西南石阶水岸"
+location_note = "潮湿溪石"
 
 [node name="N37" type="Sprite2D" parent="Points"]
 position = Vector2(2483, 889)
@@ -975,6 +1017,22 @@ texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshihewan.point.east_exit"
 location_note = "东侧道路末端"
+
+[node name="N38" type="Sprite2D" parent="Points"]
+position = Vector2(1269, 1135)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n38"
+location_note = "瀑顶分岔"
+
+[node name="N39" type="Sprite2D" parent="Points"]
+position = Vector2(2660, 682)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n39"
+location_note = "桥东石滩"
 
 [node name="Sign" type="Sprite2D" parent="Points/N01"]
 position = Vector2(0, -250.714286)
@@ -1046,7 +1104,7 @@ position = Vector2(0, -223.928571)
 scale = Vector2(0.81168831, 0.81168831)
 texture = SubResource("Atlas_sign_2")
 
-[node name="Sign" type="Sprite2D" parent="Points/N14"]
+[node name="Sign" type="Sprite2D" parent="Points/N39"]
 position = Vector2(0, -223.928571)
 scale = Vector2(0.81168831, 0.81168831)
 texture = SubResource("Atlas_sign_2")
@@ -1194,14 +1252,14 @@ scale = Vector2(0.695492023, 0.695492023)
 texture = SubResource("Atlas_chest")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N08/Sign"]
-scale = Vector2(0.628771324, 0.628771324)
-texture = SubResource("Atlas_ore")
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N04/Sign"]
 scale = Vector2(0.714051873, 0.714051873)
 texture = SubResource("Atlas_plant")
 
-[node name="EventIcon" type="Sprite2D" parent="Points/N14/Sign"]
+[node name="EventIcon" type="Sprite2D" parent="Points/N39/Sign"]
 scale = Vector2(0.695492023, 0.695492023)
 texture = SubResource("Atlas_chest")
 
@@ -1210,16 +1268,16 @@ scale = Vector2(0.714051873, 0.714051873)
 texture = SubResource("Atlas_plant")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N22/Sign"]
-scale = Vector2(0.695492023, 0.695492023)
-texture = SubResource("Atlas_chest")
+scale = Vector2(0.628771324, 0.628771324)
+texture = SubResource("Atlas_ore")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N34/Sign"]
 scale = Vector2(0.695492023, 0.695492023)
 texture = SubResource("Atlas_chest")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N36/Sign"]
-scale = Vector2(0.628771324, 0.628771324)
-texture = SubResource("Atlas_ore")
+scale = Vector2(0.714051873, 0.714051873)
+texture = SubResource("Atlas_plant")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N19/Sign"]
 scale = Vector2(0.628771324, 0.628771324)

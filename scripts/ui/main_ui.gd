@@ -5,9 +5,11 @@ const MUTED := Color("b2bdb6")
 const JADE := Color("91c6b0")
 const GOLD := Color("dfc28a")
 const LAYOUT_SIZE := Vector2(1920, 1080)
+const PLAYBACK_SIDE := 48.0 * 0.7071067811865476
+const PLAYBACK_GAP := 8
 const FixedSeparatorValue := preload("res://scripts/ui/fixed_separator_value.gd")
 @export var preview_all_status_icons := true
-@export_file("*.webp", "*.png") var battle_background_path := "res://assets/backgroundtest.png"
+@export_file("*.webp", "*.png") var battle_background_path := ""
 @onready var manager: GameManager = $"../GameManager"
 var ally_panel: TeamPanel
 var enemy_panel: TeamPanel
@@ -16,9 +18,7 @@ var _time_seconds: Label
 var _timer_frame: PanelContainer
 var _header_separator: Control
 var _backdrop: Control
-var _battle_emblem: TextureRect
-var _emblem_preparing := true
-var _emblem_tween: Tween
+var _battle_emblem: BattleActionButton
 var _status: Label
 var _bag_button: Button
 var _battle_button: BattleActionButton
@@ -44,6 +44,11 @@ var game_audio: GameAudio
 var defer_battle_music := false
 var board_change_dialog: MapExitDialog
 var _pending_board_change: Dictionary = {}
+enum VictoryView { NONE, BANNER, REWARDS, REVIEW }
+var victory_view := VictoryView.NONE
+var victory_banner
+var victory_rewards
+var _log_button: BattleActionButton
 
 func _ready() -> void:
 	set_deferred("oversampling_with_scale", CanvasItem.OVERSAMPLING_WITH_SCALE_ENABLED)
@@ -59,7 +64,7 @@ func _ready() -> void:
 	manager.presentation_events.connect(_on_events)
 	manager.battle_restarted.connect(_on_restart)
 	manager.battle_started.connect(_on_started)
-	manager.battle_review_requested.connect(func(): _review_note.show())
+	manager.battle_review_requested.connect(_review_victory)
 	manager.battle_exit_requested.connect(_exit_battle)
 	game_audio = GameAudio.new()
 	add_child(game_audio)
@@ -93,8 +98,11 @@ func _build_ui() -> void:
 	theme = ui_theme
 	var backdrop: Control = load("res://scripts/ui/battle_backdrop.gd").new()
 	_backdrop = backdrop
-	# Temporary background comparison; restore battle_background_path after review.
-	backdrop.texture = load("res://assets/test1.webp")
+	# A scene may explicitly override the enemy background for a preview fixture.
+	if battle_background_path.is_empty():
+		battle_background_path = EnemyPresentation.background_path(manager.registry.get_enemy(manager.enemy_id))
+	if not battle_background_path.is_empty():
+		backdrop.texture = load(battle_background_path)
 	backdrop.name = "BattleBackground"
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
@@ -140,7 +148,7 @@ func _build_ui() -> void:
 	_time.separator = "."
 	_time.gap = 0
 	_time.text = "00.00"
-	_time.add_theme_font_size_override("font_size", 39)
+	_time.add_theme_font_size_override("font_size", 38)
 	_time.add_theme_color_override("font_color", Color("f1dca6"))
 	timer_content.add_child(_time)
 	_time_seconds = _label(_time, "秒", 20, Color("f1dca6"))
@@ -151,12 +159,13 @@ func _build_ui() -> void:
 	_layout_time_suffix.call_deferred()
 	# Integer font size: 39 / 2 rounds to 20.
 	var speeds := HBoxContainer.new()
+	speeds.name = "PlaybackControls"
 	speeds.anchor_left = 1
 	speeds.anchor_right = 1
-	speeds.offset_left = -272
+	speeds.offset_left = -(PLAYBACK_SIDE * 5 + PLAYBACK_GAP * 4)
 	speeds.offset_right = 0
-	speeds.offset_top = 34
-	speeds.add_theme_constant_override("separation", 8)
+	speeds.offset_top = 58 - PLAYBACK_SIDE * 0.5
+	speeds.add_theme_constant_override("separation", PLAYBACK_GAP)
 	header.add_child(speeds)
 	_pause_button = _playback_button(speeds, "pause", "暂停", manager.pause_battle)
 	_speed_buttons[0.5] = _playback_button(speeds, "half", "半速", manager.set_speed.bind(0.5))
@@ -167,6 +176,7 @@ func _build_ui() -> void:
 	_settings_button.disabled = true
 	_build_header_divider(root)
 	var arena := HBoxContainer.new()
+	arena.name = "BattleArena"
 	arena.add_theme_constant_override("separation", 20)
 	root.add_child(arena)
 	ally_panel = TeamPanel.new()
@@ -178,7 +188,8 @@ func _build_ui() -> void:
 	middle.custom_minimum_size.x = 182
 	middle.add_theme_constant_override("separation", 8)
 	arena.add_child(middle)
-	var duel := _art("res://assets/battle-start.webp")
+	var duel := _action_button(self, "res://assets/battle-start.webp", Vector2(216, 216), _start_from_emblem)
+	duel.dim_when_disabled = false
 	_battle_emblem = duel
 	duel.name = "BattleEmblem"
 	duel.anchor_left = 0.5
@@ -190,7 +201,6 @@ func _build_ui() -> void:
 	duel.offset_top = -128
 	duel.offset_bottom = 88
 	duel.pivot_offset = Vector2.ONE * 108
-	add_child(duel)
 	var stretch := Control.new()
 	stretch.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stretch.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -222,6 +232,12 @@ func _build_ui() -> void:
 	arena.add_child(enemy_panel)
 	if manager.startup_error.is_empty():
 		enemy_panel.configure(manager, true)
+	# Translate both complete groups by ten native 2K pixels after container layout.
+	# The center emblem/footer retain their previous position and all sizes stay fixed.
+	arena.sort_children.connect(func():
+		ally_panel.position.y = -7.5
+		enemy_panel.position.y = -7.5
+	)
 	_build_log()
 	var divider: Control = preload("res://scripts/ui/battle_footer_divider.gd").new()
 	divider.name = "BattleFooterDivider"
@@ -236,6 +252,7 @@ func _build_ui() -> void:
 	log_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	log_button.tooltip_text = "查看战斗记录"
 	log_button.name = "BattleLogButton"
+	_log_button = log_button
 	var footer_padding := Control.new()
 	footer_padding.custom_minimum_size.y = 14
 	footer_padding.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -260,6 +277,15 @@ func _build_ui() -> void:
 	_countdown.theme = ui_theme
 	add_child(_countdown)
 	_build_retreat_dialog()
+	victory_rewards = preload("res://scripts/ui/battle_reward_dialog.gd").new()
+	add_child(victory_rewards)
+	victory_rewards.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	victory_rewards.review_requested.connect(manager.request_battle_review)
+	victory_rewards.accept_requested.connect(manager.request_battle_exit)
+	victory_banner = preload("res://scripts/ui/battle_victory_banner.gd").new()
+	add_child(victory_banner)
+	victory_banner.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	victory_banner.dismissed.connect(_show_victory_rewards)
 	board_change_dialog = MapExitDialog.new()
 	board_change_dialog.name = "BattleBoardChangeDialog"
 	board_change_dialog.message.text = "确定更换阵盘吗？"
@@ -313,19 +339,6 @@ func _update_background_focus() -> void:
 		regions.append(Rect2(relative * Vector2.ZERO, bag.size))
 	_backdrop.set_board_regions(regions[0], regions[1])
 
-func _refresh_emblem(preparing: bool) -> void:
-	if _emblem_preparing == preparing: return
-	_emblem_preparing = preparing
-	if _emblem_tween != null: _emblem_tween.kill()
-	if preparing:
-		_battle_emblem.scale = Vector2.ONE
-		_battle_emblem.modulate.a = 1.0
-		return
-	_emblem_tween = create_tween().set_parallel(true).set_ignore_time_scale(true)
-	_emblem_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_emblem_tween.tween_property(_battle_emblem, "scale", Vector2.ONE * 1.6, 3.0)
-	_emblem_tween.tween_property(_battle_emblem, "modulate:a", 0.0, 3.0)
-
 func _action_button(parent: Node, path: String, minimum: Vector2, action: Callable) -> BattleActionButton:
 	var button := BattleActionButton.new()
 	button.configure(path, minimum)
@@ -333,15 +346,20 @@ func _action_button(parent: Node, path: String, minimum: Vector2, action: Callab
 	button.pressed.connect(func():
 		if button.disabled:
 			return
-		if game_audio != null:
-			game_audio.play("click")
 		action.call()
 		_refresh()
 	)
 	return button
 
+func _start_from_emblem() -> void:
+	if manager.simulation != null and manager.simulation.state.phase == GameState.Phase.PREPARATION:
+		manager.start_battle()
+
 func _toggle_battle() -> void:
 	if manager.simulation == null:
+		return
+	if victory_view == VictoryView.REVIEW:
+		_show_victory_rewards()
 		return
 	if manager.simulation.state.phase == GameState.Phase.PREPARATION:
 		manager.start_battle()
@@ -353,11 +371,12 @@ func _playback_button(parent: Node, symbol: String, caption: String, action: Cal
 	button.symbol = symbol
 	button.text = "0.5x" if symbol == "half" else ""
 	button.tooltip_text = caption
-	button.custom_minimum_size = Vector2(48, 48)
+	button.custom_minimum_size = Vector2.ONE * PLAYBACK_SIDE
+	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	button.focus_mode = Control.FOCUS_NONE
 	button.toggle_mode = true
-	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_font_size_override("font_size", 11)
 	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled"]:
 		var box := _box(Color("2d261f"), Color("d7b477") if state in ["hover", "pressed", "hover_pressed"] else Color("796043"))
 		box.set_corner_radius_all(5)
@@ -411,14 +430,19 @@ func _exit_battle() -> void:
 	if _exit_button.disabled:
 		return
 	_exit_button.disabled = true
+	if victory_view != VictoryView.NONE: victory_rewards.set_busy(true)
 	# Flush same-frame play requests before stopping all polyphonic voices.
 	await get_tree().process_frame
 	await get_tree().create_timer(0.05).timeout
 	if battle_exit_handler.is_valid():
 		var error: String = await battle_exit_handler.call()
 		if not error.is_empty():
-			_review_note.text = error
-			_review_note.show()
+			if victory_view != VictoryView.NONE:
+				_show_victory_rewards()
+				victory_rewards.error_label.text = error
+			else:
+				_review_note.text = error
+				_review_note.show()
 			_exit_button.disabled = false
 		return
 	game_audio.stop_all()
@@ -455,6 +479,9 @@ func _process(_delta: float) -> void:
 	_refresh()
 
 func _input(event: InputEvent) -> void:
+	if victory_view in [VictoryView.BANNER, VictoryView.REWARDS]:
+		if event is InputEventKey: get_viewport().set_input_as_handled()
+		return
 	if board_change_dialog != null and board_change_dialog.visible:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 			if event.pressed: _close_board_change()
@@ -468,16 +495,23 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		if not storage_panel.get_global_rect().has_point(event.position):
+			# _input runs before InventoryView._gui_input. Let an occupied ally
+			# cell handle its right-click return before treating it as outside.
+			for board: InventoryView in ally_panel.bags:
+				var local: Vector2 = board.get_global_transform_with_canvas().affine_inverse() * event.position
+				if board._has_point(local) and not board.inventory.item_at(board._cell_at(local)).is_empty():
+					return
 			manager.set_adjustment(false)
 			get_viewport().set_input_as_handled()
 
 func _layout_time_suffix() -> void:
 	if not is_instance_valid(_time_seconds): return
 	var font := _time.get_theme_font("font", "Label")
-	var gap := font.get_string_size(" ", HORIZONTAL_ALIGNMENT_LEFT, -1, 39).x
+	var font_size := _time.get_theme_font_size("font_size")
+	var gap := font.get_string_size(" ", HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 	var small_font := _time_seconds.get_theme_font("font")
-	var baseline := (_time.size.y - font.get_height(39)) * .5 + font.get_ascent(39)
-	baseline += CooldownRing.ink_vertical_bounds(font, _time.text, 39).y - CooldownRing.ink_vertical_bounds(small_font,"秒",20).y
+	var baseline := (_time.size.y - font.get_height(font_size)) * .5 + font.get_ascent(font_size)
+	baseline += CooldownRing.ink_vertical_bounds(font, _time.text, font_size).y - CooldownRing.ink_vertical_bounds(small_font,"秒",20).y
 	_time_seconds.position = Vector2(_time.text_right() + gap, baseline - small_font.get_ascent(20))
 	_time_seconds.size = Vector2(_time_seconds.get_minimum_size().x, small_font.get_height(20))
 
@@ -488,13 +522,23 @@ func _refresh() -> void:
 	var state := sim.state
 	var preparing := state.phase == GameState.Phase.PREPARATION
 	var fighting := state.phase == GameState.Phase.BATTLE
-	_refresh_emblem(preparing)
+	_battle_emblem.disabled = not preparing
+	_battle_emblem.mouse_filter = Control.MOUSE_FILTER_STOP if preparing else Control.MOUSE_FILTER_IGNORE
+	_battle_emblem.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if preparing else Control.CURSOR_ARROW
+	if state.is_finished() and state.result == "victory":
+		# Recover a BANNER state left by an interrupted debug hot reload too.
+		if victory_view == VictoryView.NONE or (victory_view == VictoryView.BANNER and not victory_banner.visible and victory_banner.timer.is_stopped()):
+			_begin_victory()
 	_time.text = format_battle_time(state.time_usec)
 	_layout_time_suffix()
 	_bag_button.disabled = not manager.can_adjust()
-	_battle_button.disabled = state.is_finished()
-	_battle_button.caption = "战斗开始" if preparing else ("战斗结束" if state.is_finished() else ("战斗继续" if sim.clock.paused else "战斗暂停"))
-	_battle_button.action_icon = _wait_icon if fighting and not sim.clock.paused else _battle_icon
+	var reviewing := victory_view == VictoryView.REVIEW
+	_battle_button.disabled = state.is_finished() and not reviewing
+	_battle_button.caption = "离开战场" if reviewing else ("战斗开始" if preparing else ("战斗结束" if state.is_finished() else ("战斗继续" if sim.clock.paused else "战斗暂停")))
+	_battle_button.action_icon = null if reviewing else (_wait_icon if fighting and not sim.clock.paused else _battle_icon)
+	_battle_button.icon_reference = null if reviewing else _battle_icon
+	_battle_button.caption_reference = "离开战场" if reviewing else "战斗继续"
+	_log_button.disabled = state.is_finished() and state.result == "victory" and not reviewing
 	for speed in _speed_buttons:
 		_speed_buttons[speed].disabled = state.is_finished()
 		_speed_buttons[speed].set_pressed_no_signal(not sim.clock.paused and is_equal_approx(speed, sim.clock.speed_multiplier))
@@ -502,7 +546,7 @@ func _refresh() -> void:
 	_pause_button.set_pressed_no_signal(fighting and sim.clock.paused)
 	_retreat_button.disabled = not fighting or state.retreat_at_usec >= 0
 	_countdown.update_remaining(state.retreat_at_usec - state.time_usec if state.retreat_at_usec >= 0 else 0)
-	_retreat_dialog.visible = state.is_finished() and (state.result == "defeat" or battle_exit_handler.is_valid())
+	_retreat_dialog.visible = state.is_finished() and state.result != "victory" and (state.result == "defeat" or battle_exit_handler.is_valid())
 	if _retreat_dialog.visible:
 		_result_heading.text = {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局", "retreat": "战斗失败"}.get(state.result, "战斗结束")
 		_loot_label.text = manager.loot_summary
@@ -515,6 +559,10 @@ func _refresh() -> void:
 		_status.text = "战斗已暂停" if sim.clock.paused else "战斗进行中"
 
 func _on_restart() -> void:
+	victory_view = VictoryView.NONE
+	victory_banner.reset()
+	victory_rewards.hide()
+	_exit_button.disabled = false
 	_close_board_change()
 	_bind_board_change_request()
 	_bind_background_focus()
@@ -523,6 +571,60 @@ func _on_restart() -> void:
 	_battle_log.reset()
 	_review_note.hide()
 	_log_label.text = "布阵中。"
+	_refresh()
+
+func _begin_victory() -> void:
+	victory_view = VictoryView.BANNER
+	# Publish a usable result UI before optional audio: an audio failure must
+	# never leave BANNER blocking input while no banner/timer exists.
+	victory_banner.present(manager.party[0].definition.get("cultivation_rank", "base.cultivation.mortal"))
+	_close_board_change()
+	manager.set_adjustment(false)
+	if storage_panel != null: storage_panel.hide()
+	_log_panel.hide()
+	victory_rewards.hide()
+	_retreat_dialog.hide()
+	if is_instance_valid(game_audio):
+		if game_audio.has_method("play_victory"):
+			game_audio.call("play_victory")
+		else:
+			# A running Godot debug session may retain the pre-update audio script.
+			# Its existing player is enough to finish this battle without a lockup.
+			var player: AudioStreamPlayer = game_audio.get("music")
+			if is_instance_valid(player):
+				player.stop()
+				var song := load("res://assets/victory-song2.mp3") as AudioStreamMP3
+				if song != null:
+					song = song.duplicate() as AudioStreamMP3
+					song.loop = false
+					player.stream = song
+					player.volume_db = -6
+					player.play()
+
+func _show_victory_rewards() -> void:
+	if manager.simulation == null or manager.simulation.state.result != "victory": return
+	victory_view = VictoryView.REWARDS
+	victory_banner.reset()
+	var records: Array[Dictionary] = []
+	var counts := {}
+	for id: String in manager.loot_item_ids: counts[id] = int(counts.get(id, 0)) + 1
+	if manager._durable_loadout != null:
+		for id: String in counts:
+			var record: Dictionary = manager._durable_loadout.records[id].duplicate(true)
+			record.quantity = counts[id]
+			records.append(record)
+	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_inventory.json"))
+	victory_rewards.present_loot(records, config.categories, manager.loot_error)
+	_refresh()
+
+func _review_victory() -> void:
+	if manager.simulation == null or manager.simulation.state.result != "victory":
+		_review_note.show()
+		return
+	if victory_view != VictoryView.REWARDS or victory_rewards.accept_button.disabled: return
+	victory_view = VictoryView.REVIEW
+	victory_rewards.hide()
+	victory_banner.reset()
 	_refresh()
 
 static func format_battle_time(time_usec: int) -> String:
@@ -592,39 +694,11 @@ func _box(color: Color, border: Color) -> StyleBoxFlat:
 
 func _build_header_divider(parent: Node) -> void:
 	_header_separator = Control.new()
+	_header_separator.name = "HeaderSpacing"
+	_header_separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_header_separator.custom_minimum_size.y = 26
 	parent.add_child(_header_separator)
+	# Retain layout spacing and the status value for diagnostics, not visual copy.
 	_status = _label(_header_separator, "", 17, GOLD)
 	_status.name = "BattleStatus"
-	_status.anchor_left = 0.5
-	_status.anchor_right = 0.5
-	_status.offset_left = -120
-	_status.offset_right = 120
-	_status.offset_top = -14
-	_status.offset_bottom = 10
-	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var line := ColorRect.new()
-	line.name = "HeaderDividerLine"
-	line.color = Color("dfc28a", 0.6)
-	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	line.anchor_right = 1.0
-	line.offset_top = 17
-	line.offset_bottom = 18
-	_header_separator.add_child(line)
-	for right in [false, true]:
-		var motto := _label(_header_separator, "山河万物 · 皆为道场" if right else "逆天而行 · 道在心中", 18, GOLD)
-		motto.name = "RightMotto" if right else "LeftMotto"
-		motto.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		motto.offset_top = -14
-		motto.offset_bottom = 10
-		var text_width := motto.get_minimum_size().x
-		if right:
-			motto.anchor_left = 1.0
-			motto.anchor_right = 1.0
-			motto.offset_left = -text_width
-			motto.offset_right = 0
-		else:
-			# Keep the left motto centered beneath the title.
-			motto.offset_left = 170 - text_width * 0.5
-			motto.offset_right = 170 + text_width * 0.5
+	_status.hide()

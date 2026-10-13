@@ -19,7 +19,7 @@ func run() -> void:
 	game.loadout_save_path = ""
 	game.enemy_id = "base.enemy.chisong_liaozhu"
 	var ui = scene.get_node("MainUI")
-	ui.battle_background_path = "res://assets/battle-qingshihewan-zhu.webp"
+	ui.battle_background_path = "res://assets/battle-qingshihewan-chisongliaozhu.webp"
 	root.add_child(scene)
 	game.set_process(false)
 	await settle()

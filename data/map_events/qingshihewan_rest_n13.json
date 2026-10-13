@@ -1,0 +1,17 @@
+{
+  "id": "base.map_event.qingshihewan.rest_n13",
+  "type": "rest",
+  "point_id": "base.map.qingshihewan.point.n13",
+  "trigger": "arrival",
+  "rest_kind": "indoor",
+  "title": "山道歇舍",
+  "description": "山舍简朴，却备有清水、草药与卧榻。入内稍作休养，可包扎伤处，安神缓痛，为接下来的行程养精蓄锐。",
+  "note": "提供清水与草药\n助你调养身心",
+  "action_label": "入内休息",
+  "recovery_percent": 50,
+  "duration_days": 1,
+  "presentation": {
+    "background": "res://assets/tanchuang-huifu-shinei.webp",
+    "illustration": "res://assets/tanchuang-huifu-shandaoxieshe.webp"
+  }
+}

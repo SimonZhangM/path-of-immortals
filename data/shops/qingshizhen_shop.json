@@ -1,0 +1,72 @@
+{
+  "id": "base.shop.qingshizhen.general",
+  "profile": "base.shop_profile.general",
+  "title": "青石商铺",
+  "description": "云游四方，汇聚天地奇珍。青石商铺，愿与道友结善缘。",
+  "products": [
+    {
+      "item_id": "base.map_item.qingshi_short_sword",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.t01_0003",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.hunting_bow",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.short_iron_hammer",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.t01_0005",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.t01_0006",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.t01_0049",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.t01_0052",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.coarse_cloth_armor",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0011",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.old_iron_helmet",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.round_wood_shield",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0016",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0017",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0059",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0074",
+      "category": "armor"
+    }
+  ]
+}

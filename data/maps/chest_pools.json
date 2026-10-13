@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "allowed_qualities": ["下品", "凡品"],
+  "pools": [
+    {"id": "base.chest_pool.equipment", "weight": 40, "slots": [["weapon"], ["armor"]]},
+    {"id": "base.chest_pool.consumables", "weight": 40, "slots": [["pill", "throwable"], ["pill", "throwable"]]},
+    {"id": "base.chest_pool.artifacts", "weight": 20, "slots": [["artifact"], ["artifact"]]}
+  ]
+}

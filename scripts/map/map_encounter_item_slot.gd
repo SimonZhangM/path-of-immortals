@@ -3,6 +3,12 @@ extends Panel
 
 var item: ItemData
 
+func _ready() -> void:
+	ItemTooltipHost.bind(self, func(_point: Vector2): return item.id if item != null else "", build_item_tooltip)
+
+func _get_tooltip(_point: Vector2) -> String:
+	return ""
+
 func _init() -> void:
 	# Match inventory/battle tooltips: the custom item panel draws its own frame.
 	# Otherwise Godot adds a second TooltipPanel with a drop shadow behind it.
@@ -11,8 +17,9 @@ func _init() -> void:
 
 func show_item(definition: ItemData) -> void:
 	item = definition
-	for child in get_children(): child.queue_free()
-	tooltip_text = definition.display_name if definition != null else ""
+	for child in get_children():
+		remove_child(child)
+		child.queue_free()
 	if definition == null: return
 	var art := TextureRect.new()
 	art.texture = load(definition.icon_path)
@@ -27,7 +34,7 @@ func show_item(definition: ItemData) -> void:
 	art.offset_right = -4
 	art.offset_bottom = -4
 
-func _make_custom_tooltip(_text: String) -> Object:
+func build_item_tooltip(_text: String) -> Object:
 	if item == null: return null
 	var popup := ItemTooltip.new()
 	popup.configure(item)

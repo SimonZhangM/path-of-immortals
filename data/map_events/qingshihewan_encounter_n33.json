@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.qingshihewan.encounter_n33",
+  "type": "encounter",
+  "trigger": "arrival",
+  "point_id": "base.map.qingshihewan.point.n33",
+  "title": "南湾沙洲",
+  "description": "南湾沙洲被河水环绕，湿沙上留着凌乱的兽类足迹。一头灰脊山狼从岸边草丛中走出，目光紧锁着你，堵住了前方浅滩。",
+  "enemy_id": "base.enemy.huiji_shanlang",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "presentation": {
+    "illustration": "res://assets/battle-qingheshiwan-08.webp"
+  },
+  "enabled": true,
+  "respawn_days": 20
+}

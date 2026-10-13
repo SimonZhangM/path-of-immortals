@@ -7,6 +7,7 @@ extends Node
 var manager: GameManager
 var player_status: MapPlayerStatus
 var _resources_recorded := false
+var _progression_recorded := false
 var events: MapEventState
 var event_id := ""
 var map_scene_path := ""
@@ -36,21 +37,24 @@ func _record_result() -> void:
 			_resources_recorded = true
 		if manager.simulation.state.result == "victory":
 			reward_error = _award_victory()
+			manager.loot_error = reward_error
 			if not reward_error.is_empty():
-				manager.loot_summary = reward_error + " 点击返回地图重试。"
+				manager.loot_summary = reward_error + " 点击确定重试。"
 				return
+			if not _progression_recorded and player_status != null:
+				player_status.award_progression(manager.enemies[0].definition.get("progression_rewards", {}))
+				_progression_recorded = true
 		_recorded = events.resolve_encounter(event_id, manager.simulation.state.result)
 
 func _award_victory() -> String:
 	if manager.simulation == null or manager.simulation.state.result != "victory": return "仅战斗胜利后可结算掉落。"
 	var enemy: Dictionary = manager.enemies[0].definition
-	if enemy.get("loot", []).is_empty(): return ""
 	if manager._durable_loadout == null: return "缺少战利品库存。"
 	if not manager.persist_consumption(): return "消耗记录保存失败。"
 	if _loot_rolls.is_empty():
 		var rng := RandomNumberGenerator.new()
 		rng.randomize()
-		for row in enemy.loot: _loot_rolls.append(float(rng.randi()) / 4294967296.0)
+		for row in enemy.get("loot",[]): _loot_rolls.append(float(rng.randi()) / 4294967296.0)
 	var state := MapLoadoutState.new()
 	state.registry = manager.registry
 	state.board = manager._durable_loadout.board
@@ -62,6 +66,12 @@ func _award_victory() -> String:
 	var prepared := BattleLoot.candidate(state, enemy, _battle_id, _loot_rolls)
 	if not prepared.error.is_empty(): return prepared.error
 	error = state.restore(prepared.snapshot)
+	var respawn_days := int(events.registry.events[event_id].get("respawn_days",0))
+	if error.is_empty() and respawn_days>0:
+		var deadline := WorldCalendar.current_day(state.calendar)+respawn_days
+		if deadline>WorldCalendar.MAX_DAY: return "怪物重生日期超出历法范围。"
+		# Defeat deadline and loot receipt commit together; battle seconds cost no days.
+		state.encounter_cooldowns[event_id] = deadline
 	if error.is_empty(): error = MapLoadoutStore.save(state, save_path)
 	if not error.is_empty(): return error
 	# Publish ownership only after the inventory and first-victory receipt save.
@@ -69,6 +79,7 @@ func _award_victory() -> String:
 		var gained: Array = entry.units.filter(func(unit: Dictionary): return not manager._durable_snapshot.owned_units.has(unit.id))
 		if not gained.is_empty(): manager.storage.put({"instance_id": gained[0].id, "item_id": entry.item_id, "units": gained})
 	manager._durable_snapshot = state.snapshot()
+	manager.loot_item_ids.assign(prepared.drops)
 	var names: PackedStringArray = []
 	for item_id: String in prepared.drops: names.append(manager.registry.get_item(item_id).display_name + " ×1")
 	manager.loot_summary = "获得材料：\n" + "\n".join(names) if not names.is_empty() else "本次未掉落材料。"
@@ -90,6 +101,7 @@ func return_to_map() -> String:
 	var destination = scene.instantiate()
 	destination.player_status = player_status
 	destination.defer_map_music = true
+	destination.defer_location_save = true
 	destination.hide()
 	destination.process_mode = Node.PROCESS_MODE_DISABLED
 	destination.inventory_save_path = save_path

@@ -8,7 +8,7 @@
     "quantity": 1,
     "acquired_at": 100000,
     "grant_on_start": true,
-    "icon": "res://assets/zhenpan-bag.webp",
+    "icon": "res://assets/zhenpan-chushibag.webp",
     "board_layout": "base.board.bag",
     "required_cultivation": "base.cultivation.mortal",
     "faction": "",
@@ -17,6 +17,7 @@
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
+    "origin_description": "寻常修士使用的基础行囊。",
     "description": ""
   },
   {
@@ -33,12 +34,13 @@
     "board_layout": "base.board.qinglan_1",
     "required_cultivation": "base.cultivation.mortal",
     "faction": "青岚宗",
+    "origin_description": "出自青岚宗的制式阵盘。",
     "card_frame": "res://assets/level-1.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
-    "description": "青岚宗阵盘，入门级，容量4×3。达到凡人境界后可用。当前无额外加成。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战斗中不可更换阵盘。"
+    "description": "青岚宗阵盘，入门级，容量4×3。达到凡人境界后可用。气血上限+10，体力上限+10；生机上限+4，轻灵上限+4。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战前或战斗暂停后的置换界面也可更换阵盘。"
   },
   {
     "id": "base.map_item.qinglan_board_2",
@@ -54,12 +56,13 @@
     "board_layout": "base.board.qinglan_2",
     "required_cultivation": "base.cultivation.qi_refining",
     "faction": "青岚宗",
+    "origin_description": "出自青岚宗的制式阵盘。",
     "card_frame": "res://assets/level-2.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
-    "description": "青岚宗阵盘，炼气级，容量4×4。达到炼气境界后可用。当前无额外加成。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战斗中不可更换阵盘。"
+    "description": "青岚宗阵盘，炼气级，容量4×4。达到炼气境界后可用。气血上限+20，体力上限+15，灵力上限+10；生机上限+8，轻灵上限+4，坚韧上限+2，失衡与驱散上限各+2。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战前或战斗暂停后的置换界面也可更换阵盘。"
   },
   {
     "id": "base.map_item.qinglan_board_3",
@@ -75,17 +78,19 @@
     "board_layout": "base.board.qinglan_3",
     "required_cultivation": "base.cultivation.foundation",
     "faction": "青岚宗",
+    "origin_description": "出自青岚宗的制式阵盘。",
     "card_frame": "res://assets/level-3.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
-    "description": "青岚宗阵盘，筑基级，容量5×4。达到筑基境界后可用。当前无额外加成。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战斗中不可更换阵盘。"
+    "description": "青岚宗阵盘，筑基级，容量5×4。达到筑基境界后可用。气血上限+30，体力上限+20，灵力上限+30；生机上限+12，轻灵上限+8，坚韧上限+4，失衡与驱散上限各+4。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战前或战斗暂停后的置换界面也可更换阵盘。"
   },
   {
     "id": "base.map_item.qinglan_board_4",
     "name": "青岚 · 流霞",
     "board_level": "结丹",
+    "card_border_color": "b65cde",
     "category": "board",
     "subcategory": "青岚宗",
     "quality": "上品",
@@ -96,17 +101,19 @@
     "board_layout": "base.board.qinglan_4",
     "required_cultivation": "base.cultivation.golden_core",
     "faction": "青岚宗",
+    "origin_description": "出自青岚宗的制式阵盘。",
     "card_frame": "res://assets/level-4.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
-    "description": "青岚宗阵盘，结丹级，容量5×5。达到结丹境界后可用。当前无额外加成。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战斗中不可更换阵盘。"
+    "description": "青岚宗阵盘，结丹级，容量5×5。达到结丹境界后可用。气血上限+40，体力上限+25，灵力上限+40；生机上限+16，轻灵上限+8，坚韧上限+6，失衡与驱散上限各+6。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战前或战斗暂停后的置换界面也可更换阵盘。"
   },
   {
     "id": "base.map_item.qinglan_board_5",
     "name": "青岚 · 凌霄",
     "board_level": "元婴",
+    "card_border_color": "ed8b28",
     "category": "board",
     "subcategory": "青岚宗",
     "quality": "灵品",
@@ -117,12 +124,13 @@
     "board_layout": "base.board.qinglan_5",
     "required_cultivation": "base.cultivation.nascent_soul",
     "faction": "青岚宗",
+    "origin_description": "出自青岚宗的制式阵盘。",
     "card_frame": "res://assets/level-5.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
-    "description": "青岚宗阵盘，元婴级，容量6×5。达到元婴境界后可用。当前无额外加成。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战斗中不可更换阵盘。"
+    "description": "青岚宗阵盘，元婴级，容量6×5。达到元婴境界后可用。气血上限+50，体力上限+30，灵力上限+50；生机上限+20，轻灵上限+12，坚韧上限+8，失衡与驱散上限各+6。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战前或战斗暂停后的置换界面也可更换阵盘。"
   },
   {
     "id": "base.map_item.qinglan_board_6",
@@ -138,11 +146,12 @@
     "board_layout": "base.board.qinglan_6",
     "required_cultivation": "base.cultivation.spirit_transformation",
     "faction": "青岚宗",
-    "card_frame": "res://assets/level-6.webp",
+    "origin_description": "出自青岚宗的制式阵盘。",
+    "card_frame": "res://assets/level-7.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
     "cooldown": 0,
     "effects": [],
-    "description": "青岚宗阵盘，化神级，容量6×6。达到化神境界后可用。当前无额外加成。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战斗中不可更换阵盘。"
+    "description": "青岚宗阵盘，化神级，容量6×6。达到化神境界后可用。气血上限+60，体力上限+40，灵力上限+60；生机上限+24，轻灵上限+12，坚韧上限+10，失衡与驱散上限各+8。\n在地图储物袋中拖到当前阵盘或右键卡片，确认后更换；原格位保留，放不下的道具退回储物袋。战前或战斗暂停后的置换界面也可更换阵盘。"
   }
 ]

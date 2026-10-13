@@ -11,6 +11,7 @@ var category_groups: Dictionary = {}
 var collection := "all"
 var category := "all"
 var quality := ""
+var enhancement_filter := -1
 var search_text := ""
 var newest_first := true
 var sort_key := "acquired_at"
@@ -61,7 +62,7 @@ func replace_entries(records: Array) -> String:
 			return "物品数量须大于零。"
 		if not raw.get("grant_on_start", true) is bool:
 			return "初始发放标记须为布尔值。"
-		for key in ["favorite", "common", "recipe"]:
+		for key in ["favorite", "common", "recipe", "key_item", "quest_item"]:
 			if not raw.get(key, false) is bool:
 				return "物品标签须为布尔值。"
 		var icon_path: Variant = raw.get("icon", "")
@@ -122,6 +123,7 @@ func replace_entries(records: Array) -> String:
 	_entries = validated
 	if quality not in qualities():
 		quality = ""
+	if enhancement_filter not in enhancement_levels(): enhancement_filter = -1
 	changed.emit()
 	return ""
 
@@ -148,6 +150,10 @@ func set_filter(key: String, value: String) -> void:
 			quality = value
 		"search":
 			search_text = value
+		"enhancement_level":
+			if value.is_empty(): enhancement_filter = -1
+			elif value.is_valid_int() and int(value) in enhancement_levels(): enhancement_filter = int(value)
+			else: return
 		_:
 			return
 	changed.emit()
@@ -166,6 +172,7 @@ func reset_filters() -> void:
 	collection = "all"
 	category = "all"
 	quality = ""
+	enhancement_filter = -1
 	search_text = ""
 	newest_first = true
 	sort_key = "acquired_at"
@@ -180,6 +187,14 @@ func qualities() -> Array[String]:
 	for entry in _entries:
 		if entry.quality not in values:
 			values.append(entry.quality)
+	values.sort()
+	return values
+
+func enhancement_levels() -> Array[int]:
+	var values: Array[int] = []
+	for entry in _entries:
+		var level := int(entry.get("enhancement_level",0))
+		if level not in values: values.append(level)
 	values.sort()
 	return values
 
@@ -208,6 +223,7 @@ func visible_entries() -> Array[Dictionary]:
 			continue
 		if not quality.is_empty() and entry.quality != quality:
 			continue
+		if enhancement_filter >= 0 and int(entry.get("enhancement_level",0)) != enhancement_filter: continue
 		var searchable_name := String(entry.name) if entry.get("identified", true) else "？"
 		if not search_text.strip_edges().is_empty() and not search_text.strip_edges().to_lower() in searchable_name.to_lower():
 			continue

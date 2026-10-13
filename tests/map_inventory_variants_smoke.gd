@@ -74,7 +74,7 @@ func _run() -> void:
 	var sidebar_border_material := sidebar_border.material as ShaderMaterial
 	_check(storage_border != null and storage_style.border_width_left == 0 and storage_style.corner_radius_top_left == int(panel.BOARD_PANEL_RADIUS), "storage panel uses the board panel radius and restores its shader border")
 	_check(storage_border_material.get_shader_parameter("line_width") == sidebar_border_material.get_shader_parameter("line_width") and storage_border_material.get_shader_parameter("line_color") == panel.STORAGE_BORDER_COLOR, "storage border keeps the sidebar line width and uses the requested806d48 color")
-	_check(panel.search.custom_minimum_size.x == panel.STORAGE_SEARCH_WIDTH and storage_item_well_style.bg_color.a == 0.0, "storage search is narrower and the item display well is transparent")
+	_check(panel.storage_capacity != null and panel.find_child("ItemSearch", true, false) == null and storage_item_well_style.bg_color.a == 0.0, "storage capacity replaces search and the item display well is transparent")
 	var board_title_icon := panel.board_panel.find_child("SectionTitleIcon", true, false) as TextureRect
 	var storage_title_icon := panel.storage_panel.find_child("SectionTitleIcon", true, false) as TextureRect
 	var board_icon_visual_left := board_title_icon.global_position.x - panel.board_panel.global_position.x

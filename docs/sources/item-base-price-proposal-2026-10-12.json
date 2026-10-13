@@ -1,0 +1,2806 @@
+{
+  "status": "proposal_not_approved_not_loaded",
+  "date": "2026-10-12",
+  "currency": "灵石",
+  "confirmed_pricing": {
+    "buy_factor_bps": 15000,
+    "sell_factor_bps": 5000,
+    "buy_rounding": "ceil",
+    "sell_rounding": "floor"
+  },
+  "scope": "现有玩家库存142定义；不含未注册旧祠18件兽材、35典籍、56法术或未制作类别。",
+  "source_sha256": {
+    "data/maps/inventory_items.json": "317a8146b245c82fd740cb5b384c417b598f7efc666f8ce98e57da9d0971c6b5",
+    "data/maps/enemy_materials.json": "eaf6608d88c77194550ac438f42e35d629561c40246e3ee86ec2389a0fc3108b",
+    "data/maps/herbs.json": "456b3b8ccd7a61fc0eeed5a8cab6acda233cda8ddcb9bb0b51760a1fdb6e39a4",
+    "data/maps/minerals.json": "a989f3518dfdc73283ed48bdb5bd7d80e429afed526eddf44754730126fd314d",
+    "data/maps/qinglan_boards.json": "061a9fe4bfdb20fc7adc9d5698d1f3fc12e672d7e4f758cba8605af987bcb435",
+    "data/shops/trade_rules.json": "c7b711f5caf497d8047621f608b675cc423c31dc11d3c0efa77d1c0c81802ceb",
+    "data/shops/item_base_prices.json": "e00ce564675b85c2f6db429aabb30c01760758b44886b2673662c4bb023839c3"
+  },
+  "entries": [
+    {
+      "item_id": "base.map_item.qingshi_short_sword",
+      "name": "青石短剑",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 60,
+      "rationale": "下品主武器锚点；11伤／5.5秒、耗体3，适合持续使用。",
+      "suggested_buy_price": 90,
+      "suggested_sell_price": 30,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：5.5秒，耗费3点体力，对敌方造成11点斩击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3
+      },
+      "preview_buy_price": 80
+    },
+    {
+      "item_id": "base.map_item.hunting_bow",
+      "name": "猎弓",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 64,
+      "rationale": "14穿刺／7秒；两格远程器型，耗体5限制持续输出。",
+      "suggested_buy_price": 96,
+      "suggested_sell_price": 32,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费5点体力，对敌方造成14点穿刺伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 108
+      },
+      "preview_buy_price": 100
+    },
+    {
+      "item_id": "base.map_item.short_iron_hammer",
+      "name": "短柄铁锤",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 60,
+      "rationale": "12钝击／6秒、耗体4，和短剑处于同档。",
+      "suggested_buy_price": 90,
+      "suggested_sell_price": 30,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，耗费4点体力，对敌方造成12点钝击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 213
+      },
+      "preview_buy_price": 90
+    },
+    {
+      "item_id": "base.map_item.t01_0002",
+      "name": "铁刀",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 36,
+      "rationale": "单格入门刀；6伤／4.5秒，低伤低耗体。",
+      "suggested_buy_price": 54,
+      "suggested_sell_price": 18,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.5秒，耗费2点体力，对敌方造成6点斩击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 38
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0003",
+      "name": "柴斧",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 56,
+      "rationale": "20伤爆发较高，但8.5秒轮转且耗体6，略低于通用短剑。",
+      "suggested_buy_price": 84,
+      "suggested_sell_price": 28,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，耗费6点体力，对敌方造成20点斩击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 73
+      },
+      "preview_buy_price": 70
+    },
+    {
+      "item_id": "base.map_item.t01_0005",
+      "name": "匕首",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 30,
+      "rationale": "单格、3.5秒快轮转；4点基础伤害，作为便宜起步选择。",
+      "suggested_buy_price": 45,
+      "suggested_sell_price": 15,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：3.5秒，耗费2点体力，对敌方造成4点穿刺伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 143
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0006",
+      "name": "长枪",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 72,
+      "rationale": "24伤单次爆发；三格占用、9秒CD与耗体7限制溢价。",
+      "suggested_buy_price": 108,
+      "suggested_sell_price": 36,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，耗费7点体力，对敌方造成24点穿刺伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 178
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0008",
+      "name": "石印",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 30,
+      "rationale": "单格基础钝击；8伤／6.5秒，不按大伤武器定价。",
+      "suggested_buy_price": 45,
+      "suggested_sell_price": 15,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.5秒，耗费3点体力，对敌方造成8点钝击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 248
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0009",
+      "name": "皮鞭",
+      "category": "武器",
+      "quality": "下品",
+      "base_price": 64,
+      "rationale": "10伤／4秒的较快轮转，但占三格，限制加价。",
+      "suggested_buy_price": 96,
+      "suggested_sell_price": 32,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.0秒，耗费3点体力，对敌方造成10点钝击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 283
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0028",
+      "name": "铁剑",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 140,
+      "rationale": "18伤／5.5秒、耗体3；凡品纯伤主武器锚点。",
+      "suggested_buy_price": 210,
+      "suggested_sell_price": 70,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：5.5秒，耗费3点体力，对敌方造成18点斩击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 318
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0029",
+      "name": "赤纹剑",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 160,
+      "rationale": "16伤并附1灼烧；伤害与持续状态兼顾。",
+      "suggested_buy_price": 240,
+      "suggested_sell_price": 80,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：5.5秒，耗费4点体力，对敌方造成16点斩击伤害。\n命中后向敌方施加1层灼烧。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 353
+      },
+      "preview_buy_price": 240
+    },
+    {
+      "item_id": "base.map_item.t01_0030",
+      "name": "寒水剑",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 168,
+      "rationale": "17伤并附1寒霜；配合主动水攻，控制价值需构筑兑现。",
+      "suggested_buy_price": 252,
+      "suggested_sell_price": 84,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，耗费4点体力，对敌方造成17点斩击伤害。\n命中后向敌方施加1层寒霜。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 396
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0031",
+      "name": "钢刀",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 112,
+      "rationale": "单格10伤并可施加流血；需伤及气血，低耗体有利循环。",
+      "suggested_buy_price": 168,
+      "suggested_sell_price": 56,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.5秒，耗费2点体力，对敌方造成10点斩击伤害。\n实际伤及气血后向敌方施加1层流血。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 439
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0032",
+      "name": "金纹刀",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 128,
+      "rationale": "单格12伤附锋痕；轮转比钢刀慢，略增协同估值。",
+      "suggested_buy_price": 192,
+      "suggested_sell_price": 64,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：5.5秒，耗费3点体力，对敌方造成12点斩击伤害。\n命中后向敌方施加1层锋痕。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 482
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0033",
+      "name": "赤焰刀",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 128,
+      "rationale": "单格11伤附破甲；依赖后续主动火伤，不无限抬高功能价。",
+      "suggested_buy_price": 192,
+      "suggested_sell_price": 64,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：5.5秒，耗费3点体力，对敌方造成11点斩击伤害。\n命中后向敌方施加1层破甲。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 525
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0034",
+      "name": "开山斧",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 188,
+      "rationale": "30伤附2疲惫；爆发高，8.5秒与耗体6约束持续性。",
+      "suggested_buy_price": 282,
+      "suggested_sell_price": 94,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，耗费6点体力，对敌方造成30点斩击伤害。\n命中后向敌方施加2层疲惫。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 568
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0035",
+      "name": "金刚斧",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 184,
+      "rationale": "28伤附2锋痕；作为大伤与金系协同件。",
+      "suggested_buy_price": 276,
+      "suggested_sell_price": 92,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，耗费6点体力，对敌方造成28点斩击伤害。\n命中后向敌方施加2层锋痕。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 611
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0036",
+      "name": "厚土斧",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 184,
+      "rationale": "28伤附2重伤；压制回复与资源，价格接近同型斧。",
+      "suggested_buy_price": 276,
+      "suggested_sell_price": 92,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，耗费6点体力，对敌方造成28点斩击伤害。\n命中后向敌方施加2层重伤。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 654
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0037",
+      "name": "桑木弓",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 152,
+      "rationale": "24穿刺／7秒；凡品纯伤弓，未额外施加状态。",
+      "suggested_buy_price": 228,
+      "suggested_sell_price": 76,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费5点体力，对敌方造成24点穿刺伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 697
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0038",
+      "name": "水纹弓",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 164,
+      "rationale": "20伤附1枯脉；以功能补偿部分直伤。",
+      "suggested_buy_price": 246,
+      "suggested_sell_price": 82,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费5点体力，对敌方造成20点穿刺伤害。\n命中后向敌方施加1层枯脉。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 732
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0039",
+      "name": "雷纹弓",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 176,
+      "rationale": "22伤附1连环；雷攻配合价值，耗体6略高。",
+      "suggested_buy_price": 264,
+      "suggested_sell_price": 88,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费6点体力，对敌方造成22点穿刺伤害。\n命中后向敌方施加1层连环。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 775
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0040",
+      "name": "精铁匕",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 104,
+      "rationale": "单格8伤／3.5秒，伤及气血才施加流血；低门槛快攻。",
+      "suggested_buy_price": 156,
+      "suggested_sell_price": 52,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：3.5秒，耗费2点体力，对敌方造成8点穿刺伤害。\n实际伤及气血后向敌方施加1层流血。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 818
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0041",
+      "name": "风刃匕",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 128,
+      "rationale": "单格3秒快攻并附失衡；轮转与控制带来溢价。",
+      "suggested_buy_price": 192,
+      "suggested_sell_price": 64,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：3.0秒，耗费2点体力，对敌方造成7点穿刺伤害。\n命中后向敌方施加1层失衡。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 861
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0042",
+      "name": "青木枪",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 196,
+      "rationale": "34伤附2缠绕；三格与耗体7限制价格上浮。",
+      "suggested_buy_price": 294,
+      "suggested_sell_price": 98,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，耗费7点体力，对敌方造成34点穿刺伤害。\n命中后向敌方施加2层缠绕。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 904
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0043",
+      "name": "雷纹枪",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 216,
+      "rationale": "38伤附2雷印；凡品长枪高端，9.5秒和耗体8为代价。",
+      "suggested_buy_price": 324,
+      "suggested_sell_price": 108,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.5秒，耗费8点体力，对敌方造成38点穿刺伤害。\n命中后向敌方施加2层雷印。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 947
+      },
+      "preview_buy_price": 320
+    },
+    {
+      "item_id": "base.map_item.t01_0044",
+      "name": "炎纹锤",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 160,
+      "rationale": "20钝击附1破甲；中速主武器与火系协同。",
+      "suggested_buy_price": 240,
+      "suggested_sell_price": 80,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，耗费4点体力，对敌方造成20点钝击伤害。\n命中后向敌方施加1层破甲。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 990
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0045",
+      "name": "石骨锤",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 164,
+      "rationale": "26钝击／7秒的纯伤器具；不额外计算未有的控制。",
+      "suggested_buy_price": 246,
+      "suggested_sell_price": 82,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费5点体力，对敌方造成26点钝击伤害。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1033
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0046",
+      "name": "镇土印",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 112,
+      "rationale": "单格16钝击附疲惫；7秒慢轮转抑制溢价。",
+      "suggested_buy_price": 168,
+      "suggested_sell_price": 56,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费3点体力，对敌方造成16点钝击伤害。\n命中后向敌方施加1层疲惫。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1068
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0047",
+      "name": "雷纹印",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 136,
+      "rationale": "单格14伤，命中自身加雷蕴；兼作雷系积累件。",
+      "suggested_buy_price": 204,
+      "suggested_sell_price": 68,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，耗费3点体力，对敌方造成14点钝击伤害。\n命中后向自身施加1层雷蕴。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1111
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0048",
+      "name": "藤鞭",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 176,
+      "rationale": "14伤／4秒附毒蚀；持续施毒有价值，三格占用。",
+      "suggested_buy_price": 264,
+      "suggested_sell_price": 88,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.0秒，耗费3点体力，对敌方造成14点钝击伤害。\n命中后向敌方施加1层毒蚀。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1154
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0049",
+      "name": "雷鞭",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 184,
+      "rationale": "15伤／4.5秒附雷印；频率较高，但占三格。",
+      "suggested_buy_price": 276,
+      "suggested_sell_price": 92,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.5秒，耗费4点体力，对敌方造成15点钝击伤害。\n命中后向敌方施加1层雷印。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1197
+      },
+      "preview_buy_price": 300
+    },
+    {
+      "item_id": "base.map_item.t01_0050",
+      "name": "刺血匕",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 136,
+      "rationale": "单格可施2流血；需伤及气血，按条件效果计价。",
+      "suggested_buy_price": 204,
+      "suggested_sell_price": 68,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.5秒，耗费2点体力，对敌方造成8点穿刺伤害。\n实际伤及气血后向敌方施加2层流血。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1240
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0051",
+      "name": "震骨锤",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 196,
+      "rationale": "32钝击附2重伤；高爆发但9秒和耗体7限制循环。",
+      "suggested_buy_price": 294,
+      "suggested_sell_price": 98,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，耗费7点体力，对敌方造成32点钝击伤害。\n命中后向敌方施加2层重伤。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1283
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0052",
+      "name": "清风印",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 168,
+      "rationale": "单格驱散载体兼13伤；功能溢价仍受7秒CD约束。",
+      "suggested_buy_price": 252,
+      "suggested_sell_price": 84,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，耗费3点体力，对敌方造成13点钝击伤害。\n命中后向敌方施加1层驱散。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1326
+      },
+      "preview_buy_price": 280
+    },
+    {
+      "item_id": "base.map_item.t01_0053",
+      "name": "荆鞭",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 176,
+      "rationale": "16伤附缠绕；三格木系铺垫件，与藤鞭同档。",
+      "suggested_buy_price": 264,
+      "suggested_sell_price": 88,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：4.5秒，耗费3点体力，对敌方造成16点钝击伤害。\n命中后向敌方施加1层缠绕。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1369
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0054",
+      "name": "赤焰枪",
+      "category": "武器",
+      "quality": "凡品",
+      "base_price": 208,
+      "rationale": "36伤附2灼烧；高伤火枪，耗体8、三格占用。",
+      "suggested_buy_price": 312,
+      "suggested_sell_price": 104,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，耗费8点体力，对敌方造成36点穿刺伤害。\n命中后向敌方施加2层灼烧。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1412
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.coarse_cloth_armor",
+      "name": "粗布甲",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 48,
+      "rationale": "轻甲上限7、每6秒回4；布装联动有价值，仍保持入门价。",
+      "suggested_buy_price": 72,
+      "suggested_sell_price": 24,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，恢复4点护甲。\n上限：护甲+7。\n套装：布护臂和布护腿同时与粗布甲紧贴，粗布甲护甲上限额外+3，粗布甲恢复护甲额外+2，且额外恢复2体力。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1455
+      },
+      "preview_buy_price": 60
+    },
+    {
+      "item_id": "base.map_item.old_iron_helmet",
+      "name": "旧铁盔",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 16,
+      "rationale": "只提供2上限、每7.5秒回1，低价补位件。",
+      "suggested_buy_price": 24,
+      "suggested_sell_price": 8,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复1点护甲。\n上限：护甲+2。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1532
+      },
+      "preview_buy_price": 55
+    },
+    {
+      "item_id": "base.map_item.round_wood_shield",
+      "name": "木圆盾",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 28,
+      "rationale": "单格回甲4／7.5秒较实用，但自身上限仅2。",
+      "suggested_buy_price": 42,
+      "suggested_sell_price": 14,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复4点护甲。\n上限：护甲+2。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1566
+      },
+      "preview_buy_price": 65
+    },
+    {
+      "item_id": "base.map_item.t01_0011",
+      "name": "铁甲",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 64,
+      "rationale": "重甲上限10、每9秒回5；容量和铁装联动高于布甲。",
+      "suggested_buy_price": 96,
+      "suggested_sell_price": 32,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复5点护甲。\n上限：护甲+10。\n套装：铁护臂和铁护腿同时与铁甲紧贴，铁甲护甲上限额外+3，铁甲恢复护甲额外+2。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1496
+      },
+      "preview_buy_price": 120
+    },
+    {
+      "item_id": "base.map_item.t01_0014",
+      "name": "布护臂",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 12,
+      "rationale": "1上限、回甲1；便宜布装联动配件。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复1点护甲。\n上限：护甲+1。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1604
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0015",
+      "name": "布护腿",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 16,
+      "rationale": "2上限、回甲1；高于护臂但9秒轮转较慢。",
+      "suggested_buy_price": 24,
+      "suggested_sell_price": 8,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复1点护甲。\n上限：护甲+2。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1639
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0016",
+      "name": "铁护臂",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 24,
+      "rationale": "2上限、回甲2；铁装联动配件。",
+      "suggested_buy_price": 36,
+      "suggested_sell_price": 12,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复2点护甲。\n上限：护甲+2。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1674
+      },
+      "preview_buy_price": 75
+    },
+    {
+      "item_id": "base.map_item.t01_0017",
+      "name": "铁护腿",
+      "category": "防具",
+      "quality": "下品",
+      "base_price": 30,
+      "rationale": "3上限、回甲3；比铁护臂略高。",
+      "suggested_buy_price": 45,
+      "suggested_sell_price": 15,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复3点护甲。\n上限：护甲+3。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1709
+      },
+      "preview_buy_price": 75
+    },
+    {
+      "item_id": "base.map_item.t01_0055",
+      "name": "细布衣",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 108,
+      "rationale": "13上限、回甲7／6秒；凡品纯防御基准。",
+      "suggested_buy_price": 162,
+      "suggested_sell_price": 54,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，恢复7点护甲。\n上限：护甲+13。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1744
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0056",
+      "name": "水纹衣",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 144,
+      "rationale": "12上限、回甲6并加润脉；加入水系协同价值。",
+      "suggested_buy_price": 216,
+      "suggested_sell_price": 72,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，恢复6点护甲。\n发动时向自身施加1层润脉。\n上限：护甲+12。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1778
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0057",
+      "name": "札甲",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 160,
+      "rationale": "18上限、回甲8；重甲容量较高，轮转慢于布衣。",
+      "suggested_buy_price": 240,
+      "suggested_sell_price": 80,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，恢复8点护甲。\n上限：护甲+18。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1821
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0058",
+      "name": "赤铜甲",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 168,
+      "rationale": "16上限、回甲6；受击准备可加附炎，不能当每次受击都触发。",
+      "suggested_buy_price": 252,
+      "suggested_sell_price": 84,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，恢复6点护甲。\n冷却：独立9秒准备，合格受击时为自身施加2层附炎；成功施加后重开9秒。\n上限：护甲+16。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1856
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0059",
+      "name": "雷纹法袍",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 176,
+      "rationale": "14上限、回甲6并加2雷蕴；攻防协同套装主件。",
+      "suggested_buy_price": 264,
+      "suggested_sell_price": 88,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复6点护甲。\n发动时向自身施加2层雷蕴。\n上限：护甲+14。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1899
+      },
+      "preview_buy_price": 360
+    },
+    {
+      "item_id": "base.map_item.t01_0060",
+      "name": "皮帽",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 64,
+      "rationale": "单格4上限、回甲2，受击后按独立准备获得轻灵。",
+      "suggested_buy_price": 96,
+      "suggested_sell_price": 32,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，恢复2点护甲。\n冷却：独立9秒准备，合格受击时为自身施加1层轻灵；成功施加后重开9秒。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1942
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0061",
+      "name": "铁盔",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 80,
+      "rationale": "单格4上限、回甲3，受击准备获得坚韧。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复3点护甲。\n冷却：独立9秒准备，合格受击时为自身施加1层坚韧；成功施加后重开9秒。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 1985
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0062",
+      "name": "木纹冠",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 88,
+      "rationale": "单格4上限、回甲2并循环生机；价格含回复协同。",
+      "suggested_buy_price": 132,
+      "suggested_sell_price": 44,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复2点护甲。\n发动时向自身施加1层生机。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2028
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0063",
+      "name": "风纹冠",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 80,
+      "rationale": "单格3上限、回甲2并循环轻灵；主动产状态。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，恢复2点护甲。\n发动时向自身施加1层轻灵。\n上限：护甲+3。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2070
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0064",
+      "name": "皮护臂",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 64,
+      "rationale": "单格3上限、回甲2；受击准备获得反锋。",
+      "suggested_buy_price": 96,
+      "suggested_sell_price": 32,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，恢复2点护甲。\n冷却：独立9秒准备，合格受击时为自身施加1层反锋；成功施加后重开9秒。\n上限：护甲+3。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2112
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0065",
+      "name": "铁护臂",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 88,
+      "rationale": "凡品铁护臂：回甲4并加反锋，显著强于同名下品。",
+      "suggested_buy_price": 132,
+      "suggested_sell_price": 44,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复4点护甲。\n发动时向自身施加1层反锋。\n上限：护甲+3。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2155
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0066",
+      "name": "水纹护臂",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 80,
+      "rationale": "3上限、回甲2；受击准备获得润脉并有水装谱系。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，恢复2点护甲。\n冷却：独立9秒准备，合格受击时为自身施加1层润脉；成功施加后重开9秒。\n上限：护甲+3。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2199
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0067",
+      "name": "雷纹护臂",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 96,
+      "rationale": "4上限、回甲3；受击准备获得2雷蕴。",
+      "suggested_buy_price": 144,
+      "suggested_sell_price": 48,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复3点护甲。\n冷却：独立9秒准备，合格受击时为自身施加2层雷蕴；成功施加后重开9秒。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2243
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0068",
+      "name": "皮护腿",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 72,
+      "rationale": "4上限、回甲2并产轻灵；单格补位件。",
+      "suggested_buy_price": 108,
+      "suggested_sell_price": 36,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复2点护甲。\n发动时向自身施加1层轻灵。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2288
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0069",
+      "name": "铁胫甲",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 104,
+      "rationale": "4上限、回甲5；受击准备获得2坚韧。",
+      "suggested_buy_price": 156,
+      "suggested_sell_price": 52,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复5点护甲。\n冷却：独立9秒准备，合格受击时为自身施加2层坚韧；成功施加后重开9秒。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2330
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0070",
+      "name": "水纹护腿",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 88,
+      "rationale": "4上限、回甲3并产润脉；主动效果稳定。",
+      "suggested_buy_price": 132,
+      "suggested_sell_price": 44,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，恢复3点护甲。\n发动时向自身施加1层润脉。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2374
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0071",
+      "name": "藤甲护腿",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 104,
+      "rationale": "5上限、回甲4并产2生机；10.5秒慢轮转限制加价。",
+      "suggested_buy_price": 156,
+      "suggested_sell_price": 52,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：10.5秒，恢复4点护甲。\n发动时向自身施加2层生机。\n上限：护甲+5。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2417
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0072",
+      "name": "皮护肩",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 72,
+      "rationale": "8上限且受击准备产坚韧；没有主动回甲，不按完整产甲件估价。",
+      "suggested_buy_price": 108,
+      "suggested_sell_price": 36,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：独立9秒准备，合格受击时为自身施加1层坚韧；成功施加后重开9秒。\n上限：护甲+8。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2459
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0073",
+      "name": "金纹护肩",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 96,
+      "rationale": "6上限、回甲3；受击准备获得2反锋。",
+      "suggested_buy_price": 144,
+      "suggested_sell_price": 48,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复3点护甲。\n冷却：独立9秒准备，合格受击时为自身施加2层反锋；成功施加后重开9秒。\n上限：护甲+6。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2497
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0074",
+      "name": "灵丝腰带",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 104,
+      "rationale": "3上限并每9秒产2轻灵；无回甲，主要价值在状态构筑。",
+      "suggested_buy_price": 156,
+      "suggested_sell_price": 52,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，发动时向自身施加2层轻灵。\n上限：护甲+3。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2540
+      },
+      "preview_buy_price": 220
+    },
+    {
+      "item_id": "base.map_item.t01_0075",
+      "name": "包铁木盾",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 116,
+      "rationale": "两格5上限、回甲6并加生机；持续防御组件。",
+      "suggested_buy_price": 174,
+      "suggested_sell_price": 58,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，恢复6点护甲。\n发动时向自身施加1层生机。\n上限：护甲+5。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2577
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0076",
+      "name": "铁盾",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 124,
+      "rationale": "两格8上限、回甲5；受击准备获得2反锋。",
+      "suggested_buy_price": 186,
+      "suggested_sell_price": 62,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复5点护甲。\n冷却：独立9秒准备，合格受击时为自身施加2层反锋；成功施加后重开9秒。\n上限：护甲+8。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2619
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0077",
+      "name": "水纹盾",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 120,
+      "rationale": "两格6上限、回甲5并产润脉；与同型盾接近。",
+      "suggested_buy_price": 180,
+      "suggested_sell_price": 60,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，恢复5点护甲。\n发动时向自身施加1层润脉。\n上限：护甲+6。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2662
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0078",
+      "name": "束甲带",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 64,
+      "rationale": "仅提供12护甲上限，没有回甲；依赖其他组件填充。",
+      "suggested_buy_price": 96,
+      "suggested_sell_price": 32,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "上限：护甲+12。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2704
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0079",
+      "name": "燎火护臂",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 80,
+      "rationale": "4上限、回甲2并产附炎；火系单格配件。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.0秒，恢复2点护甲。\n发动时向自身施加1层附炎。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2732
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0080",
+      "name": "雷纹护腿",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 88,
+      "rationale": "4上限、回甲2并产雷蕴；雷系单格配件。",
+      "suggested_buy_price": 132,
+      "suggested_sell_price": 44,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，恢复2点护甲。\n发动时向自身施加1层雷蕴。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2774
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0081",
+      "name": "炎纹护肩",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 96,
+      "rationale": "6上限、回甲2并产2附炎；10秒轮转较慢。",
+      "suggested_buy_price": 144,
+      "suggested_sell_price": 48,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：10.0秒，恢复2点护甲。\n发动时向自身施加2层附炎。\n上限：护甲+6。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2817
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0082",
+      "name": "润脉腰带",
+      "category": "防具",
+      "quality": "凡品",
+      "base_price": 104,
+      "rationale": "4上限并每9秒产2润脉；没有回甲，以状态价值定价。",
+      "suggested_buy_price": 156,
+      "suggested_sell_price": 52,
+      "unit": "件",
+      "shop_scope": "普通商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，发动时向自身施加2层润脉。\n上限：护甲+4。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2859
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.warm_jade",
+      "name": "温玉佩",
+      "category": "法器",
+      "quality": "下品",
+      "base_price": 96,
+      "rationale": "单格双资源循环回复，6秒恢复5气血及7体力；受2/3上限限制。",
+      "suggested_buy_price": 144,
+      "suggested_sell_price": 48,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，同时恢复5点气血、7点体力。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2896
+      },
+      "preview_buy_price": 160
+    },
+    {
+      "item_id": "base.map_item.t01_0019",
+      "name": "回春玉",
+      "category": "法器",
+      "quality": "下品",
+      "base_price": 80,
+      "rationale": "单资源循环回血8／7.5秒；受2/3上限限制。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，同时恢复8点气血。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2939
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0020",
+      "name": "养息珠",
+      "category": "法器",
+      "quality": "下品",
+      "base_price": 88,
+      "rationale": "循环回体12／7.5秒，支持持续攻击；受2/3上限限制。",
+      "suggested_buy_price": 132,
+      "suggested_sell_price": 44,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，同时恢复12点体力。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 2974
+      },
+      "preview_buy_price": 120
+    },
+    {
+      "item_id": "base.map_item.t01_0021",
+      "name": "聚灵珠",
+      "category": "法器",
+      "quality": "下品",
+      "base_price": 96,
+      "rationale": "循环回灵8／7.5秒，支持法器构筑；受2/3上限限制。",
+      "suggested_buy_price": 144,
+      "suggested_sell_price": 48,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，同时恢复8点灵力。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3009
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0083",
+      "name": "回春佩",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 188,
+      "rationale": "每7.5秒回13气血，可回至满值但耗灵2。",
+      "suggested_buy_price": 282,
+      "suggested_sell_price": 94,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，每次实际发动消耗2灵力。\n同时恢复13点气血。\n恢复上限：各自最大值的1/1（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3044
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0084",
+      "name": "行气珠",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 180,
+      "rationale": "每7.5秒回18体力且不耗灵；2/3上限约束。",
+      "suggested_buy_price": 270,
+      "suggested_sell_price": 90,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，同时恢复18点体力。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3079
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0085",
+      "name": "聚元环",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 200,
+      "rationale": "每7.5秒回13灵力；循环法器供能，2/3上限约束。",
+      "suggested_buy_price": 300,
+      "suggested_sell_price": 100,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，同时恢复13点灵力。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3114
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0086",
+      "name": "调息玉",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 196,
+      "rationale": "每8.5秒回7气血及10灵力；双资源但2/3封顶。",
+      "suggested_buy_price": 294,
+      "suggested_sell_price": 98,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：8.5秒，同时恢复7点气血、10点灵力。\n恢复上限：各自最大值的2/3（向下取整）。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3149
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0087",
+      "name": "金光镜",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 220,
+      "rationale": "单格22法术伤并附锋痕；每次耗灵6。",
+      "suggested_buy_price": 330,
+      "suggested_sell_price": 110,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.0秒，每次实际发动消耗6灵力。\n对敌方造成22点法术型伤害。\n命中后向敌方施加1层锋痕。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3192
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0088",
+      "name": "青木铃",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 176,
+      "rationale": "单格产3生机；耗灵4，需战斗时间兑现。",
+      "suggested_buy_price": 264,
+      "suggested_sell_price": 88,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，每次实际发动消耗4灵力。\n发动时向自身施加3层生机。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3236
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0089",
+      "name": "寒水珠",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 228,
+      "rationale": "单格23法术伤并附寒霜；控制协同但耗灵6。",
+      "suggested_buy_price": 342,
+      "suggested_sell_price": 114,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，每次实际发动消耗6灵力。\n对敌方造成23点法术型伤害。\n命中后向敌方施加1层寒霜。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3271
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0090",
+      "name": "火灵珠",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 176,
+      "rationale": "单格产3附炎；依赖主动攻击构筑兑现。",
+      "suggested_buy_price": 264,
+      "suggested_sell_price": 88,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，每次实际发动消耗4灵力。\n发动时向自身施加3层附炎。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3315
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0091",
+      "name": "坤土珠",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 168,
+      "rationale": "单格产3坚韧；耗灵4的防御型支持。",
+      "suggested_buy_price": 252,
+      "suggested_sell_price": 84,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，每次实际发动消耗4灵力。\n发动时向自身施加3层坚韧。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3350
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0092",
+      "name": "逐风旗",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 188,
+      "rationale": "每7.5秒施4失衡；两格、耗灵4约束功能溢价。",
+      "suggested_buy_price": 282,
+      "suggested_sell_price": 94,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：7.5秒，每次实际发动消耗4灵力。\n发动时向敌方施加4层失衡。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3385
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0093",
+      "name": "引雷珠",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 192,
+      "rationale": "单格每9秒施4雷印；雷系构筑专用价值。",
+      "suggested_buy_price": 288,
+      "suggested_sell_price": 96,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，每次实际发动消耗4灵力。\n发动时向敌方施加4层雷印。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3420
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0094",
+      "name": "护心镜",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 80,
+      "rationale": "仅加10护甲上限，没有回甲；不能按成品护盾定价。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "上限：护甲+10。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3455
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0095",
+      "name": "复甲环",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 148,
+      "rationale": "每6秒回7护甲，耗灵3；需已有上限配合。",
+      "suggested_buy_price": 222,
+      "suggested_sell_price": 74,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：6.0秒，每次实际发动消耗3灵力。\n恢复7点护甲。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3481
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0096",
+      "name": "灵盾珠",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 216,
+      "rationale": "每10.5秒加15灵盾，耗灵6且受盾上限限制。",
+      "suggested_buy_price": 324,
+      "suggested_sell_price": 108,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：10.5秒，每次实际发动消耗6灵力。\n增加15普通灵盾，受当前上限限制；满值停用，受攻击减值后重开完整CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3513
+      },
+      "preview_buy_price": 260
+    },
+    {
+      "item_id": "base.map_item.t01_0097",
+      "name": "枯脉瓶",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 180,
+      "rationale": "单格每9秒施3枯脉；依赖目标与水系配合。",
+      "suggested_buy_price": 270,
+      "suggested_sell_price": 90,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，每次实际发动消耗4灵力。\n发动时向敌方施加3层枯脉。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3546
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0098",
+      "name": "清风拂",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 200,
+      "rationale": "两格施2驱散；功能稀缺，10.5秒和耗灵4抑制溢价。",
+      "suggested_buy_price": 300,
+      "suggested_sell_price": 100,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：10.5秒，每次实际发动消耗4灵力。\n发动时向敌方施加2层驱散。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3581
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0099",
+      "name": "锁雷环",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 184,
+      "rationale": "单格施2连环；需主动雷攻配合。",
+      "suggested_buy_price": 276,
+      "suggested_sell_price": 92,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，每次实际发动消耗4灵力。\n发动时向敌方施加2层连环。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3616
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0100",
+      "name": "蕴雷铃",
+      "category": "法器",
+      "quality": "凡品",
+      "base_price": 184,
+      "rationale": "单格产3雷蕴；累积雷盾的循环支持件。",
+      "suggested_buy_price": 276,
+      "suggested_sell_price": 92,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "初稿待审；未作实战经济平衡",
+      "runtime_effect_text": "冷却：9.0秒，每次实际发动消耗4灵力。\n发动时向自身施加3层雷蕴。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3651
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.hemostatic_pill",
+      "name": "止血丹",
+      "category": "丹药",
+      "quality": "下品",
+      "base_price": 8,
+      "rationale": "一份共回9气血；分三跳，作为基础补给锚点。",
+      "suggested_buy_price": 12,
+      "suggested_sell_price": 4,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：10.0秒，持续：每2.0秒恢复3点气血，共3次，总计9点。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3686
+      },
+      "preview_buy_price": 30
+    },
+    {
+      "item_id": "base.map_item.sinew_pill",
+      "name": "强筋丸",
+      "category": "丹药",
+      "quality": "下品",
+      "base_price": 8,
+      "rationale": "一份共回18体力；按体力资源价值计，不与气血按点等价。",
+      "suggested_buy_price": 12,
+      "suggested_sell_price": 4,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：11.5秒，持续：每2.0秒恢复6点体力，共3次，总计18点。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3721
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.detox_powder",
+      "name": "消毒散",
+      "category": "丹药",
+      "quality": "下品",
+      "base_price": 10,
+      "rationale": "一份清毒并免毒15秒；针对性强，不按常驻免疫估值。",
+      "suggested_buy_price": 15,
+      "suggested_sell_price": 5,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：8.5秒，清除当前毒蚀，15.0秒内免除毒蚀效果。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3756
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0025",
+      "name": "回灵丹",
+      "category": "丹药",
+      "quality": "下品",
+      "base_price": 10,
+      "rationale": "一份共回12灵力；法器构筑补给略高于回体。",
+      "suggested_buy_price": 15,
+      "suggested_sell_price": 5,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：11.5秒，持续：每2.0秒恢复4点灵力，共3次，总计12点。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3788
+      },
+      "preview_buy_price": 40
+    },
+    {
+      "item_id": "base.map_item.t01_0026",
+      "name": "金疮散",
+      "category": "丹药",
+      "quality": "下品",
+      "base_price": 8,
+      "rationale": "即时回6气血；总量低于止血丹，以即时性补偿。",
+      "suggested_buy_price": 12,
+      "suggested_sell_price": 4,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：8.5秒，立即恢复6点气血。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3823
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0027",
+      "name": "回元散",
+      "category": "丹药",
+      "quality": "下品",
+      "base_price": 12,
+      "rationale": "即时回5气血及9体力；双资源补给。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：10.5秒，立即恢复5点气血。\n立即恢复9点体力。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3856
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0101",
+      "name": "回春丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 20,
+      "rationale": "一份共回21气血，分三跳；高于下品但仍作常用补给。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：12.0秒，持续：每2.0秒恢复7点气血，共3次，总计21点。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3895
+      },
+      "preview_buy_price": 80
+    },
+    {
+      "item_id": "base.map_item.t01_0102",
+      "name": "益气丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 16,
+      "rationale": "一份共回30体力；资源用途不同，不按气血等点定价。",
+      "suggested_buy_price": 24,
+      "suggested_sell_price": 8,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：13.0秒，持续：每2.0秒恢复10点体力，共3次，总计30点。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3930
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0103",
+      "name": "聚灵丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 22,
+      "rationale": "一份共回27灵力；法器补给，略高于回血丹。",
+      "suggested_buy_price": 33,
+      "suggested_sell_price": 11,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：13.0秒，持续：每2.0秒恢复9点灵力，共3次，总计27点。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 3965
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0104",
+      "name": "培元丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 24,
+      "rationale": "一份即时回12气血及18体力；双资源与即时性溢价。",
+      "suggested_buy_price": 36,
+      "suggested_sell_price": 12,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：12.0秒，立即恢复12点气血。\n立即恢复18点体力。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4000
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0105",
+      "name": "铁骨丸",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 16,
+      "rationale": "一次施4坚韧；一次性状态，不能按常驻法器价出售。",
+      "suggested_buy_price": 24,
+      "suggested_sell_price": 8,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：18.0秒，发动时向自身施加4层坚韧。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4039
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0106",
+      "name": "避火丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 12,
+      "rationale": "12秒减10%火直接伤；窄用途消耗品，不按品级机械加价。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：22.5秒，对应火直接伤害降低10%，持续12秒；不减少持续跳伤。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4074
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0107",
+      "name": "辟寒丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 12,
+      "rationale": "12秒减10%水直接伤；与同机制抗性丹同价。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：22.5秒，对应水直接伤害降低10%，持续12秒；不减少持续跳伤。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4108
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0108",
+      "name": "辟金丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 12,
+      "rationale": "12秒减10%金直接伤；与同机制抗性丹同价。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：22.5秒，对应金直接伤害降低10%，持续12秒；不减少持续跳伤。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4142
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0109",
+      "name": "御木丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 12,
+      "rationale": "12秒减10%木直接伤；与同机制抗性丹同价。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：22.5秒，对应木直接伤害降低10%，持续12秒；不减少持续跳伤。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4176
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0110",
+      "name": "镇土丹",
+      "category": "丹药",
+      "quality": "凡品",
+      "base_price": 12,
+      "rationale": "12秒减10%土直接伤；与同机制抗性丹同价。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "份",
+      "shop_scope": "药材铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：22.5秒，对应土直接伤害降低10%，持续12秒；不减少持续跳伤。\n同一具体物品仅一叠，每叠最多10份。首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4210
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0111",
+      "name": "飞针",
+      "category": "暗器",
+      "quality": "凡品",
+      "base_price": 12,
+      "rationale": "一次18穿刺，零资源消耗；6秒CD，从完整CD起步。",
+      "suggested_buy_price": 18,
+      "suggested_sell_price": 6,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：6.0秒，对敌方造成18点穿刺伤害。\n同一具体物品仅一叠，每叠最多10份。暗器首轮从完整CD开始，发动后消耗一件。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4244
+      },
+      "preview_buy_price": 25
+    },
+    {
+      "item_id": "base.map_item.t01_0112",
+      "name": "柳叶镖",
+      "category": "暗器",
+      "quality": "凡品",
+      "base_price": 16,
+      "rationale": "一次26斩击；较飞针爆发高、8.5秒CD。",
+      "suggested_buy_price": 24,
+      "suggested_sell_price": 8,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：8.5秒，对敌方造成26点斩击伤害。\n同一具体物品仅一叠，每叠最多10份。暗器首轮从完整CD开始，发动后消耗一件。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4279
+      },
+      "preview_buy_price": 35
+    },
+    {
+      "item_id": "base.map_item.t01_0113",
+      "name": "铁丸",
+      "category": "暗器",
+      "quality": "凡品",
+      "base_price": 18,
+      "rationale": "一次32钝击；9.5秒较慢，不按可循环武器估价。",
+      "suggested_buy_price": 27,
+      "suggested_sell_price": 9,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：9.5秒，对敌方造成32点钝击伤害。\n同一具体物品仅一叠，每叠最多10份。暗器首轮从完整CD开始，发动后消耗一件。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4314
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0114",
+      "name": "毒针",
+      "category": "暗器",
+      "quality": "凡品",
+      "base_price": 20,
+      "rationale": "一次12穿刺并命中施3毒蚀；按附加状态给少量溢价。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：7.5秒，对敌方造成12点穿刺伤害。\n命中后向敌方施加3层毒蚀。\n同一具体物品仅一叠，每叠最多10份。暗器首轮从完整CD开始，发动后消耗一件。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4349
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.t01_0115",
+      "name": "火砂",
+      "category": "暗器",
+      "quality": "凡品",
+      "base_price": 20,
+      "rationale": "一次30法术型伤害；一次性爆发且不耗灵。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "按1份／件计价；留意自动消耗速度与战斗补给成本",
+      "runtime_effect_text": "冷却：9.0秒，对敌方造成30点法术型伤害。\n同一具体物品仅一叠，每叠最多10份。暗器首轮从完整CD开始，发动后消耗一件。",
+      "source": {
+        "path": "data/maps/inventory_items.json",
+        "line": 4392
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.material.cslz_heart",
+      "name": "赤鬃兽心",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 80,
+      "rationale": "首胜必得、之后10%；仅稀有核心材料，不具有玩家回体效果。",
+      "suggested_buy_price": 120,
+      "suggested_sell_price": 40,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "赤鬃獠猪掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 95
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.cslz_heart",
+        "chance": 0.1,
+        "first_victory_guaranteed": true,
+        "enemy": "赤鬃獠猪",
+        "file": "data/enemies/chisong_liaozhu.json"
+      }
+    },
+    {
+      "item_id": "base.material.cslz_hide",
+      "name": "厚鬃皮",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 32,
+      "rationale": "首领25%独立掉落；较大皮材，用途未接配方，溢价控制在小幅。",
+      "suggested_buy_price": 48,
+      "suggested_sell_price": 16,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "赤鬃獠猪掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 26
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.cslz_hide",
+        "chance": 0.25,
+        "enemy": "赤鬃獠猪",
+        "file": "data/enemies/chisong_liaozhu.json"
+      }
+    },
+    {
+      "item_id": "base.material.cslz_hoof",
+      "name": "獠猪铁蹄",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 20,
+      "rationale": "首领25%独立掉落；普通硬质兽材。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "赤鬃獠猪掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 49
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.cslz_hoof",
+        "chance": 0.25,
+        "enemy": "赤鬃獠猪",
+        "file": "data/enemies/chisong_liaozhu.json"
+      }
+    },
+    {
+      "item_id": "base.material.cslz_mane",
+      "name": "赤鬃",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 20,
+      "rationale": "首领25%独立掉落；普通鬃材，不含蓄势效果。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "赤鬃獠猪掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 72
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.cslz_mane",
+        "chance": 0.25,
+        "enemy": "赤鬃獠猪",
+        "file": "data/enemies/chisong_liaozhu.json"
+      }
+    },
+    {
+      "item_id": "base.material.cslz_tusk",
+      "name": "赤鬃獠牙",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 28,
+      "rationale": "首领25%独立掉落；只按獠牙材料计价，不含敌方攻击能力。",
+      "suggested_buy_price": 42,
+      "suggested_sell_price": 14,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "赤鬃獠猪掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 3
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.cslz_tusk",
+        "chance": 0.25,
+        "enemy": "赤鬃獠猪",
+        "file": "data/enemies/chisong_liaozhu.json"
+      }
+    },
+    {
+      "item_id": "base.material.heyuan_beak",
+      "name": "河鼋尖喙",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 18,
+      "rationale": "普通怪25%独立掉落；喙类原料。",
+      "suggested_buy_price": 27,
+      "suggested_sell_price": 9,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "青壳河鼋掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 214
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.heyuan_beak",
+        "chance": 0.25,
+        "enemy": "青壳河鼋",
+        "file": "data/enemies/qingke_heyuan.json"
+      }
+    },
+    {
+      "item_id": "base.material.heyuan_shell",
+      "name": "青壳甲片",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 28,
+      "rationale": "普通怪25%独立掉落；大型甲材，暂给小幅材料溢价。",
+      "suggested_buy_price": 42,
+      "suggested_sell_price": 14,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "青壳河鼋掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 190
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.heyuan_shell",
+        "chance": 0.25,
+        "enemy": "青壳河鼋",
+        "file": "data/enemies/qingke_heyuan.json"
+      }
+    },
+    {
+      "item_id": "base.material.heyuan_tail",
+      "name": "河鼋尾骨",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 22,
+      "rationale": "普通怪25%独立掉落；骨类原料。",
+      "suggested_buy_price": 33,
+      "suggested_sell_price": 11,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "青壳河鼋掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 238
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.heyuan_tail",
+        "chance": 0.25,
+        "enemy": "青壳河鼋",
+        "file": "data/enemies/qingke_heyuan.json"
+      }
+    },
+    {
+      "item_id": "base.material.shanlang_claw",
+      "name": "山狼利爪",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 20,
+      "rationale": "普通怪25%独立掉落；爪类原料。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "灰脊山狼掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 118
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.shanlang_claw",
+        "chance": 0.25,
+        "enemy": "灰脊山狼",
+        "file": "data/enemies/huiji_shanlang.json"
+      }
+    },
+    {
+      "item_id": "base.material.shanlang_fang",
+      "name": "山狼尖牙",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 18,
+      "rationale": "普通怪25%独立掉落；牙类原料。",
+      "suggested_buy_price": 27,
+      "suggested_sell_price": 9,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "灰脊山狼掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 142
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.shanlang_fang",
+        "chance": 0.25,
+        "enemy": "灰脊山狼",
+        "file": "data/enemies/huiji_shanlang.json"
+      }
+    },
+    {
+      "item_id": "base.material.shanlang_hide",
+      "name": "山狼皮",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 16,
+      "rationale": "普通怪25%独立掉落；普通皮材，未赋予战斗防御。",
+      "suggested_buy_price": 24,
+      "suggested_sell_price": 8,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "灰脊山狼掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 166
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.shanlang_hide",
+        "chance": 0.25,
+        "enemy": "灰脊山狼",
+        "file": "data/enemies/huiji_shanlang.json"
+      }
+    },
+    {
+      "item_id": "base.material.yanzhi_beak",
+      "name": "岩雉硬喙",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 18,
+      "rationale": "普通怪25%独立掉落；与同阶喙类原料同价。",
+      "suggested_buy_price": 27,
+      "suggested_sell_price": 9,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "青翎岩雉掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 286
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.yanzhi_beak",
+        "chance": 0.25,
+        "enemy": "青翎岩雉",
+        "file": "data/enemies/qingling_yanzhi.json"
+      }
+    },
+    {
+      "item_id": "base.material.yanzhi_claw",
+      "name": "岩雉钩爪",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 20,
+      "rationale": "普通怪25%独立掉落；与山狼爪材同档。",
+      "suggested_buy_price": 30,
+      "suggested_sell_price": 10,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "青翎岩雉掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 310
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.yanzhi_claw",
+        "chance": 0.25,
+        "enemy": "青翎岩雉",
+        "file": "data/enemies/qingling_yanzhi.json"
+      }
+    },
+    {
+      "item_id": "base.material.yanzhi_feather",
+      "name": "青翎",
+      "category": "妖材",
+      "quality": "下品",
+      "base_price": 24,
+      "rationale": "普通怪25%独立掉落；羽材，未按敌方产甲能力计价。",
+      "suggested_buy_price": 36,
+      "suggested_sell_price": 12,
+      "unit": "件",
+      "shop_scope": "铁匠铺",
+      "review_note": "仅材料；不继承敌方器官效果，制作需求未定",
+      "runtime_effect_text": "青翎岩雉掉落的兽材。仅作材料，不能放入战斗阵盘。",
+      "source": {
+        "path": "data/maps/enemy_materials.json",
+        "line": 262
+      },
+      "preview_buy_price": null,
+      "loot_source": {
+        "item_id": "base.material.yanzhi_feather",
+        "chance": 0.25,
+        "enemy": "青翎岩雉",
+        "file": "data/enemies/qingling_yanzhi.json"
+      }
+    },
+    {
+      "item_id": "base.material.kuaiye",
+      "name": "苦艾叶",
+      "category": "药材",
+      "quality": "下品",
+      "base_price": 4,
+      "rationale": "常见清毒药材；与止血草同档。",
+      "suggested_buy_price": 6,
+      "suggested_sell_price": 2,
+      "unit": "株",
+      "shop_scope": "药材铺",
+      "review_note": "制作配方与需求量未定，后续需核对材料成本",
+      "runtime_effect_text": "叶片灰绿，气味浓烈，具有清毒、处理伤口的用途。",
+      "source": {
+        "path": "data/maps/herbs.json",
+        "line": 49
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.material.qingtenggen",
+      "name": "青藤根",
+      "category": "药材",
+      "quality": "下品",
+      "base_price": 4,
+      "rationale": "已注册但旧祠投放未开放；普通回体药材，同档估值。",
+      "suggested_buy_price": 6,
+      "suggested_sell_price": 2,
+      "unit": "株",
+      "shop_scope": "药材铺",
+      "review_note": "制作配方与需求量未定，后续需核对材料成本",
+      "runtime_effect_text": "青藤盘附岩石，根茎结实，药性偏温。适合恢复体力、调养身体。",
+      "source": {
+        "path": "data/maps/herbs.json",
+        "line": 26
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.material.xilutai",
+      "name": "溪露苔",
+      "category": "药材",
+      "quality": "下品",
+      "base_price": 6,
+      "rationale": "设定含微弱灵气、辅助回灵；仅少量溢价。",
+      "suggested_buy_price": 9,
+      "suggested_sell_price": 3,
+      "unit": "株",
+      "shop_scope": "药材铺",
+      "review_note": "制作配方与需求量未定，后续需核对材料成本",
+      "runtime_effect_text": "生长于阴凉湿润的石面，略含微弱灵气，能够辅助恢复灵力。",
+      "source": {
+        "path": "data/maps/herbs.json",
+        "line": 72
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.material.zhixuecao",
+      "name": "止血草",
+      "category": "药材",
+      "quality": "下品",
+      "base_price": 4,
+      "rationale": "常见药材锚点；配方未定，不虚构炼丹成本。",
+      "suggested_buy_price": 6,
+      "suggested_sell_price": 2,
+      "unit": "株",
+      "shop_scope": "药材铺",
+      "review_note": "制作配方与需求量未定，后续需核对材料成本",
+      "runtime_effect_text": "常见低矮草本，叶缘略带红色。用于制作止血、治疗外伤的药品。",
+      "source": {
+        "path": "data/maps/herbs.json",
+        "line": 3
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.material.chitongkuang",
+      "name": "赤铜矿",
+      "category": "矿石",
+      "quality": "下品",
+      "base_price": 8,
+      "rationale": "现有下品矿石；暂不凭颜色或名称认定更稀有。",
+      "suggested_buy_price": 12,
+      "suggested_sell_price": 4,
+      "unit": "块",
+      "shop_scope": "铁匠铺",
+      "review_note": "制作配方与需求量未定，后续需核对材料成本",
+      "runtime_effect_text": "赤褐色矿石，易于熔炼，可加工成铜质器具与配件。",
+      "source": {
+        "path": "data/maps/minerals.json",
+        "line": 26
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.material.cutiekuang",
+      "name": "粗铁矿",
+      "category": "矿石",
+      "quality": "下品",
+      "base_price": 8,
+      "rationale": "现有下品矿石；冶炼配方未定，与同阶赤铜同价。",
+      "suggested_buy_price": 12,
+      "suggested_sell_price": 4,
+      "unit": "块",
+      "shop_scope": "铁匠铺",
+      "review_note": "制作配方与需求量未定，后续需核对材料成本",
+      "runtime_effect_text": "灰黑色矿石，质地坚实，可用于打造普通铁质装备。",
+      "source": {
+        "path": "data/maps/minerals.json",
+        "line": 3
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.bag_board",
+      "name": "普通行囊",
+      "category": "阵盘",
+      "quality": "下品",
+      "base_price": 60,
+      "rationale": "3×3基础盘、气血和体力各+5；备用物品估值，当前使用时不直接出售。",
+      "suggested_buy_price": 90,
+      "suggested_sell_price": 30,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "当前使用阵盘禁直接出售；有估值不等于允许上架",
+      "runtime_effect_text": "寻常修士使用的基础行囊。\n适用境界：凡人及以上。\n上限：气血+5，体力+5。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 3
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.qinglan_board_1",
+      "name": "青岚 · 晓岚",
+      "category": "阵盘",
+      "quality": "下品",
+      "base_price": 300,
+      "rationale": "4×3加格、气血体力各+10及状态上限；前期长期升级锚点。",
+      "suggested_buy_price": 450,
+      "suggested_sell_price": 150,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "当前使用阵盘禁直接出售；有估值不等于允许上架",
+      "runtime_effect_text": "出自青岚宗的制式阵盘。\n适用境界：凡人及以上。\n上限：气血+10，体力+10。\n自身增益上限：生机+4，轻灵+4。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 24
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.qinglan_board_2",
+      "name": "青岚 · 听风",
+      "category": "阵盘",
+      "quality": "凡品",
+      "base_price": 1200,
+      "rationale": "4×4及更高资源／状态上限；炼气估值，非青石镇上架承诺。",
+      "suggested_buy_price": 1800,
+      "suggested_sell_price": 600,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "境界价格梯度占位；缺少该阶段收入锚点，低置信度",
+      "runtime_effect_text": "出自青岚宗的制式阵盘。\n适用境界：炼气及以上。\n上限：气血+20，体力+15，灵力+10。\n自身增益上限：生机+8，轻灵+4，坚韧+2。\n施加减益上限：失衡+2，驱散+2。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 46
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.qinglan_board_3",
+      "name": "青岚 · 凝翠",
+      "category": "阵盘",
+      "quality": "良品",
+      "base_price": 4800,
+      "rationale": "5×4、筑基盘；先按境界价阶预估，必须与筑基收入复核。",
+      "suggested_buy_price": 7200,
+      "suggested_sell_price": 2400,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "境界价格梯度占位；缺少该阶段收入锚点，低置信度",
+      "runtime_effect_text": "出自青岚宗的制式阵盘。\n适用境界：筑基及以上。\n上限：气血+30，体力+20，灵力+30。\n自身增益上限：生机+12，轻灵+8，坚韧+4。\n施加减益上限：失衡+4，驱散+4。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 68
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.qinglan_board_4",
+      "name": "青岚 · 流霞",
+      "category": "阵盘",
+      "quality": "上品",
+      "base_price": 19200,
+      "rationale": "5×5、结丹盘；境界价阶预估，必须与结丹收入复核。",
+      "suggested_buy_price": 28800,
+      "suggested_sell_price": 9600,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "境界价格梯度占位；缺少该阶段收入锚点，低置信度",
+      "runtime_effect_text": "出自青岚宗的制式阵盘。\n适用境界：结丹及以上。\n上限：气血+40，体力+25，灵力+40。\n自身增益上限：生机+16，轻灵+8，坚韧+6。\n施加减益上限：失衡+6，驱散+6。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 90
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.qinglan_board_5",
+      "name": "青岚 · 凌霄",
+      "category": "阵盘",
+      "quality": "灵品",
+      "base_price": 76800,
+      "rationale": "6×5、元婴盘；境界价阶预估，必须与元婴收入复核。",
+      "suggested_buy_price": 115200,
+      "suggested_sell_price": 38400,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "境界价格梯度占位；缺少该阶段收入锚点，低置信度",
+      "runtime_effect_text": "出自青岚宗的制式阵盘。\n适用境界：元婴及以上。\n上限：气血+50，体力+30，灵力+50。\n自身增益上限：生机+20，轻灵+12，坚韧+8。\n施加减益上限：失衡+6，驱散+6。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 113
+      },
+      "preview_buy_price": null
+    },
+    {
+      "item_id": "base.map_item.qinglan_board_6",
+      "name": "青岚 · 太虚",
+      "category": "阵盘",
+      "quality": "玄品",
+      "base_price": 307200,
+      "rationale": "6×6、化神盘；境界价阶预估，必须与化神收入复核。",
+      "suggested_buy_price": 460800,
+      "suggested_sell_price": 153600,
+      "unit": "件",
+      "shop_scope": "宗门商铺",
+      "review_note": "境界价格梯度占位；缺少该阶段收入锚点，低置信度",
+      "runtime_effect_text": "出自青岚宗的制式阵盘。\n适用境界：化神及以上。\n上限：气血+60，体力+40，灵力+60。\n自身增益上限：生机+24，轻灵+12，坚韧+10。\n施加减益上限：失衡+8，驱散+8。",
+      "source": {
+        "path": "data/maps/qinglan_boards.json",
+        "line": 136
+      },
+      "preview_buy_price": null
+    }
+  ]
+}

@@ -2,9 +2,9 @@ extends SceneTree
 
 const SAVE := "res://artifacts/map-encounter-test.json"
 const EVENT := "base.map_event.qingshihewan.cliff_encounter"
-const POINT := "base.map.qingshihewan.point.n12"
-const NEIGHBOR := "base.map.qingshihewan.point.n14"
-const BEYOND := "base.map.qingshihewan.point.n11"
+const POINT := "base.map.qingshihewan.point.n30"
+const NEIGHBOR := "base.map.qingshihewan.point.n29"
+const BEYOND := "base.map.qingshihewan.point.n03"
 const ENEMY := "base.enemy.chisong_liaozhu"
 var checks := 0
 var failures := 0
@@ -56,8 +56,8 @@ func _run() -> void:
 	map.set_process(false)
 	await _settle()
 	_check(map.startup_error.is_empty(), "map starts with dialogue and encounter together")
-	_check(map.travel.node_positions[POINT].is_equal_approx(Vector2(2575, 319)), "encounter bound to screenshot northeast trail")
-	_check(not map.event_registry.by_point.has("base.map.qingshihewan.point.n30"), "old mistaken west node unbound")
+	_check(map.travel.node_positions[POINT].is_equal_approx(Vector2(1121, 777)), "pig encounter bound to red circle N30")
+	_check(not map.event_registry.events[map.event_registry.by_point["base.map.qingshihewan.point.n12"]].enabled, "N12 reserved for wolf")
 	for entry: Dictionary in map.loadout.storage.entries():
 		if entry.item_id == "base.map_item.qingshi_short_sword":
 			_check(map.loadout.place(map.loadout.drag_data("storage", entry.instance_id), Vector2i.ZERO), "isolated sword loadout prepared")
@@ -66,7 +66,7 @@ func _run() -> void:
 	var raw: Dictionary = map.event_registry.events[EVENT]
 	var validation := MapEventRegistry.new()
 	_check(validation.configure([raw], [POINT]).is_empty(), "valid encounter accepted")
-	for key in ["title", "enemy_id", "battle_scene", "enemy_rank", "description"]:
+	for key in ["title", "enemy_id", "battle_scene", "description"]:
 		var bad := raw.duplicate(true)
 		bad.erase(key)
 		_check(not validation.configure([bad], [POINT]).is_empty(), "missing encounter field rejected: " + key)
@@ -99,11 +99,11 @@ func _run() -> void:
 	var modal: MapEncounterDialog = map.encounter_dialog
 	_check(modal.visible and map.event_state.active_id == EVENT, "arrival automatically opens modal")
 	_check(map.travel.paused and map.player.animation == "idle", "arrival pauses travel and stands")
-	_check(modal.heading.text == "夹壁山径" and modal.description.text == raw.description, "exact requested story content")
+	_check(modal.heading.text == raw.title and map.loadout.registry.get_enemy(ENEMY).encounter_descriptions.has(modal.description.text), "named location and enemy narrative pool")
 	_check(modal.enemy_name.text == "赤鬃獠猪" and modal.rank_label.text == "凡人级·首领" and modal.category_label.text == "野兽类", "enemy name rank and category")
-	_check(modal.enemy_description.text == raw.enemy_description, "enemy introduction from data")
-	_check(modal.portrait.texture.resource_path == "res://assets/enemy-qshw-chisongliaozhu.webp", "requested portrait")
-	for path in ["battle-tanchuang-full", "enemy-qshw-chisongliaozhu", "enemy-level", "icon-enemy-health", "icon-enemy-attack", "icon-enemy-defense", "icon-enemy-chara"]:
+	_check(modal.enemy_description.text == map.loadout.registry.get_enemy(ENEMY).presentation.description, "enemy introduction from data")
+	_check(modal.portrait.texture.resource_path == "res://assets/portrait-enemy-chisongliaozhu.webp", "requested portrait")
+	for path in ["battle-tanchuang-full", "portrait-enemy-chisongliaozhu", "enemy-level", "icon-enemy-health", "icon-enemy-attack", "icon-enemy-defense", "icon-enemy-chara"]:
 		_check((load("res://assets/" + path + ".webp") as Texture2D).get_image().has_mipmaps(), "mipmap enabled: " + path)
 	_check(is_equal_approx(modal.canvas.get_global_rect().size.x / map.exit_dialog.canvas.get_global_rect().size.x, 4.0 / 3.0 * 0.8), "encounter scales down20percent from prior size")
 	_check(Rect2(Vector2.ZERO, map.size).encloses(modal.canvas.get_global_rect()), "entire encounter frame fits native viewport")

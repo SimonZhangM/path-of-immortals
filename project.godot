@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="Path of Immortals"
-run/main_scene="res://scenes/maps/qingshihewan.tscn"
+run/main_scene="res://scenes/maps/session_start.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
+UiButtonAudio="*res://scripts/ui/ui_button_audio.gd"
 MapPresentation="*res://scripts/map/map_presentation.gd"
 
 [display]

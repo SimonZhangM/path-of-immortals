@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-12",
+  "entry_count": 142,
+  "category_summary": [
+    {
+      "category": "武器",
+      "count": 36,
+      "min": 30,
+      "max": 216
+    },
+    {
+      "category": "防具",
+      "count": 36,
+      "min": 12,
+      "max": 176
+    },
+    {
+      "category": "法器",
+      "count": 22,
+      "min": 80,
+      "max": 228
+    },
+    {
+      "category": "丹药",
+      "count": 16,
+      "min": 8,
+      "max": 24
+    },
+    {
+      "category": "暗器",
+      "count": 5,
+      "min": 12,
+      "max": 20
+    },
+    {
+      "category": "妖材",
+      "count": 14,
+      "min": 16,
+      "max": 80
+    },
+    {
+      "category": "药材",
+      "count": 4,
+      "min": 4,
+      "max": 6
+    },
+    {
+      "category": "矿石",
+      "count": 2,
+      "min": 8,
+      "max": 8
+    },
+    {
+      "category": "阵盘",
+      "count": 7,
+      "min": 60,
+      "max": 307200
+    }
+  ],
+  "income_static_check": [
+    {
+      "enemy": "赤鬃獠猪",
+      "normal_expected_sale": 16.5,
+      "first_expected_sale": 52.5
+    },
+    {
+      "enemy": "灰脊山狼",
+      "normal_expected_sale": 6.75,
+      "first_expected_sale": 6.75
+    },
+    {
+      "enemy": "青壳河鼋",
+      "normal_expected_sale": 8.5,
+      "first_expected_sale": 8.5
+    },
+    {
+      "enemy": "青翎岩雉",
+      "normal_expected_sale": 7.75,
+      "first_expected_sale": 7.75
+    }
+  ],
+  "formula_count": 521,
+  "workbook": "output/spreadsheet/现有物品基准价_首版建议_2026-10-12.xlsx",
+  "proposal": "docs/sources/item-base-price-proposal-2026-10-12.json",
+  "validation": "142 runtime IDs complete and unique; all 521 formulas independently recalculated against cached values; source data and live price table hashes unchanged; no battle or economic simulation; native spreadsheet layout rendering unavailable."
+}

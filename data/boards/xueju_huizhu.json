@@ -1,0 +1,22 @@
+{
+  "id": "base.board.xueju_huizhu",
+  "name": "穴居灰蛛阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-xuejuhuizhu.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    173,
+    470,
+    783,
+    1081
+  ],
+  "y_lines": [
+    184,
+    465,
+    762,
+    1043
+  ]
+}

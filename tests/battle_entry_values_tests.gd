@@ -80,7 +80,7 @@ func run() -> void:
 	await settle()
 	var map = load("res://scenes/maps/qingshihewan.tscn").instantiate()
 	map.inventory_save_path = ""
-	map.arrival_point_id = "base.map.qingshihewan.point.n12"
+	map.arrival_point_id = "base.map.qingshihewan.point.n30"
 	root.add_child(map)
 	current_scene = map
 	await settle()

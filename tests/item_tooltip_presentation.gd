@@ -45,7 +45,7 @@ func _run() -> void:
 	var previews := {}
 	for card: MapInventoryItemCard in screen.grid.get_children():
 		var item := screen.loadout.registry.get_item(card.entry.id)
-		var tip := card._make_custom_tooltip(card.tooltip_text) as ItemTooltip
+		var tip := card.build_item_tooltip("") as ItemTooltip
 		_check(tip != null, "map storage creates shared tooltip")
 		root.add_child(tip)
 		tip.z_index = 100
@@ -96,11 +96,11 @@ func _run() -> void:
 	var jade_id := "owned.base.map_item.warm_jade.0"
 	screen.loadout.place(screen.loadout.drag_data("storage", jade_id), Vector2i.ZERO)
 	var point := screen.loadout_board.layout.footprint_rect(Vector2i.ZERO, Vector2i.ONE, screen.loadout_board.size).get_center()
-	var board_token := screen.loadout_board._get_tooltip(point)
-	var board_tip := screen.loadout_board._make_custom_tooltip(board_token) as ItemTooltip
+	var board_token := screen.loadout_board._tooltip_key_at(point)
+	var board_tip := screen.loadout_board.build_item_tooltip(board_token) as ItemTooltip
 	_check(board_token == jade_id and board_tip.description == previews["base.map_item.warm_jade"].description, "board and storage show identical item information")
 	board_tip.free()
-	_check(screen.loadout_board._get_tooltip(screen.loadout_board.layout.footprint_rect(Vector2i(2, 2), Vector2i.ONE, screen.loadout_board.size).get_center()).is_empty(), "empty board cell has no stale tooltip")
+	_check(screen.loadout_board._tooltip_key_at(screen.loadout_board.layout.footprint_rect(Vector2i(2, 2), Vector2i.ONE, screen.loadout_board.size).get_center()).is_empty(), "empty board cell has no stale tooltip")
 	var groups := [["qingshi_short_sword", "hemostatic_pill"], ["warm_jade", "detox_powder"], ["coarse_cloth_armor", "sinew_pill"]]
 	for index in groups.size():
 		var shown: Array[ItemTooltip] = []

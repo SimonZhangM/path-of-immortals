@@ -40,6 +40,7 @@ var board_texture: Texture2D
 var _tooltip_entry: Dictionary = {}
 
 func _ready() -> void:
+	ItemTooltipHost.bind(self, _tooltip_key_at, build_item_tooltip)
 	custom_minimum_size = Vector2(220, 220) if compact else Vector2(495, 495)
 	if display_side > 0:
 		custom_minimum_size = Vector2.ONE * display_side
@@ -388,7 +389,10 @@ func _notification(what: int) -> void:
 		_hover_cell = Vector2i(-100, -100)
 		queue_redraw()
 
-func _get_tooltip(at_position: Vector2) -> String:
+func _get_tooltip(_at_position: Vector2) -> String:
+	return ""
+
+func _tooltip_key_at(at_position: Vector2) -> String:
 	if inventory == null:
 		return ""
 	var entry := inventory.get_instance(inventory.item_at(_cell_at(at_position)))
@@ -398,7 +402,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 	_tooltip_entry = entry
 	return item.id
 
-func _make_custom_tooltip(_for_text: String) -> Object:
+func build_item_tooltip(_for_text: String) -> Object:
 	if _tooltip_entry.is_empty():
 		return null
 	var item := manager.registry.get_item(_tooltip_entry["item_id"])

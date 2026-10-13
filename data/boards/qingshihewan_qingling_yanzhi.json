@@ -1,0 +1,22 @@
+{
+  "id": "base.board.qingshihewan_qingling_yanzhi",
+  "name": "青翎岩雉阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-qinglingyanzhi.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    172,
+    475,
+    780,
+    1080
+  ],
+  "y_lines": [
+    180,
+    467,
+    752,
+    1028
+  ]
+}

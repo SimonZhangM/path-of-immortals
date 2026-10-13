@@ -1,4 +1,4 @@
-[gd_scene load_steps=85 format=3]
+[gd_scene load_steps=89 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/map-qingshizhen.webp" id="1_bg"]
 [ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="2_dot"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://assets/map-tiejiangpu.webp" id="6_forge"]
 [ext_resource type="Texture2D" path="res://assets/map-caoyaopu.webp" id="7_herb_shop"]
 [ext_resource type="Texture2D" path="res://assets/map-yiguan.webp" id="8_clinic"]
+[ext_resource type="Texture2D" path="res://assets/map-liandan.webp" id="26_alchemy"]
 [ext_resource type="Texture2D" path="res://assets/map-jiuguan.webp" id="9_tavern"]
 [ext_resource type="Texture2D" path="res://assets/map-shangpu.webp" id="10_shop"]
 [ext_resource type="Texture2D" path="res://assets/map-yizhan.webp" id="11_post"]
@@ -39,7 +40,11 @@ region = Rect2(31, 9, 234, 281)
 
 [sub_resource type="AtlasTexture" id="Atlas_clinic_icon"]
 atlas = ExtResource("8_clinic")
-region = Rect2(23, 3, 258, 295)
+region = Rect2(13, 22, 276, 253)
+
+[sub_resource type="AtlasTexture" id="Atlas_alchemy_icon"]
+atlas = ExtResource("26_alchemy")
+region = Rect2(10, 17, 286, 268)
 
 [sub_resource type="AtlasTexture" id="Atlas_tavern_icon"]
 atlas = ExtResource("9_tavern")
@@ -385,6 +390,20 @@ _data = {
 }
 point_count = 6
 
+[sub_resource type="Curve2D" id="Curve_41"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -12, 26, 2420, 943, 0, -32, 0, 38, 2412, 1030, -28, -28, 0, 0, 2489, 1141)
+}
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve_42"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, -2, 24, 2489, 1141, 22, -28, -20, 28, 2428, 1225, 12, -28, -14, 26, 2398, 1305, 38, -14, 0, 0, 2281, 1351)
+}
+point_count = 4
+
 [node name="MapContent" type="Node2D"]
 
 [node name="Background" type="Sprite2D" parent="."]
@@ -674,6 +693,20 @@ route_id = "base.map.qingshizhen.route.r39"
 start_point = NodePath("../../Points/N29")
 end_point = NodePath("../../Points/N30")
 
+[node name="R41_N14_N19" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_41")
+script = ExtResource("4_route")
+route_id = "base.map.qingshizhen.route.r41"
+start_point = NodePath("../../Points/N14")
+end_point = NodePath("../../Points/N19")
+
+[node name="R42_N19_N23" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_42")
+script = ExtResource("4_route")
+route_id = "base.map.qingshizhen.route.r42"
+start_point = NodePath("../../Points/N19")
+end_point = NodePath("../../Points/N23")
+
 [node name="Points" type="Node2D" parent="."]
 z_index = 2
 
@@ -683,7 +716,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n01"
-location_note = "修炼所"
+location_note = "宗门商铺"
 
 [node name="N02" type="Sprite2D" parent="Points"]
 position = Vector2(1695, 207)
@@ -699,7 +732,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n03"
-location_note = "家"
+location_note = "自己家"
 
 [node name="N04" type="Sprite2D" parent="Points"]
 position = Vector2(2992, 393)
@@ -715,7 +748,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n05"
-location_note = "仙门商铺"
+location_note = "修炼所"
 
 [node name="N06" type="Sprite2D" parent="Points"]
 position = Vector2(2673, 473)
@@ -767,7 +800,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n12"
-location_note = "仓库"
+location_note = "炼丹房"
 
 [node name="N13" type="Sprite2D" parent="Points"]
 position = Vector2(955, 884)
@@ -783,7 +816,7 @@ scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n14"
-location_note = "草药铺"
+location_note = "药材铺"
 
 [node name="N15" type="Sprite2D" parent="Points"]
 position = Vector2(123, 965)
@@ -939,7 +972,7 @@ scale = Vector2(0.95663265, 0.95663265)
 texture = SubResource("Atlas_forge_sign")
 
 [node name="LocationIcon" type="Sprite2D" parent="Points/N19/Sign"]
-scale = Vector2(0.712, 0.712)
+scale = Vector2(0.76087, 0.76087)
 texture = SubResource("Atlas_clinic_icon")
 
 [node name="Sign" type="Sprite2D" parent="Points/N23"]
@@ -975,8 +1008,8 @@ scale = Vector2(0.95663265, 0.95663265)
 texture = SubResource("Atlas_forge_sign")
 
 [node name="LocationIcon" type="Sprite2D" parent="Points/N12/Sign"]
-scale = Vector2(0.827, 0.827)
-texture = SubResource("Atlas_warehouse_icon")
+scale = Vector2(0.73427, 0.73427)
+texture = SubResource("Atlas_alchemy_icon")
 
 [node name="Sign" type="Sprite2D" parent="Points/N05"]
 position = Vector2(0, -223.928571)
@@ -984,8 +1017,8 @@ scale = Vector2(0.95663265, 0.95663265)
 texture = SubResource("Atlas_forge_sign")
 
 [node name="LocationIcon" type="Sprite2D" parent="Points/N05/Sign"]
-scale = Vector2(0.722, 0.722)
-texture = SubResource("Atlas_sect_shop_icon")
+scale = Vector2(0.766, 0.766)
+texture = SubResource("Atlas_training_icon")
 
 [node name="Sign" type="Sprite2D" parent="Points/N01"]
 position = Vector2(0, -223.928571)
@@ -993,8 +1026,8 @@ scale = Vector2(0.95663265, 0.95663265)
 texture = SubResource("Atlas_forge_sign")
 
 [node name="LocationIcon" type="Sprite2D" parent="Points/N01/Sign"]
-scale = Vector2(0.766, 0.766)
-texture = SubResource("Atlas_training_icon")
+scale = Vector2(0.722, 0.722)
+texture = SubResource("Atlas_sect_shop_icon")
 
 [node name="Sign" type="Sprite2D" parent="Points/N03"]
 position = Vector2(0, -223.928571)
