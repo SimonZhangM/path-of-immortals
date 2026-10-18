@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "兵炼",
-          "description": "：提高武器炼制的基础性能。"
+          "description": "：提高武器炼制的基础性能。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-01-binglian.webp"
         },
         {
           "name": "甲炼",
-          "description": "：提高防具炼制的防护、承载表现。"
+          "description": "：提高防具炼制的防护、承载表现。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-02-jialian.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "器炼",
-          "description": "：偏重法器与固有机制的炼制。"
+          "description": "：偏重法器与固有机制的炼制。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-03-qilian.webp"
         },
         {
           "name": "节材",
-          "description": "：减少普通、珍贵材料损耗。"
+          "description": "：减少普通、珍贵材料损耗。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-04-jiecai.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "合炼",
-          "description": "：擅长复合材料、双属性和复杂器具。"
+          "description": "：擅长复合材料、双属性和复杂器具。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-05-helian.webp"
         },
         {
           "name": "素炼",
-          "description": "：强化无属性器具的炼制表现。"
+          "description": "：强化无属性器具的炼制表现。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-06-sulian.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "精工",
-          "description": "：强化器方自带特殊机制的制作表现。"
+          "description": "：强化器方自带特殊机制的制作表现。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-07-jinggong.webp"
         },
         {
           "name": "返炉",
-          "description": "：提高拆解、回炉的材料回收。"
+          "description": "：提高拆解、回炉的材料回收。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-08-fanlu.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "天工",
-          "description": "：提高高阶器具的炼制上限。"
+          "description": "：提高高阶器具的炼制上限。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-09-tiangong.webp"
         },
         {
           "name": "简炼",
-          "description": "：降低复杂炼制的辅助成本，提高效率。"
+          "description": "：降低复杂炼制的辅助成本，提高效率。",
+          "icon": "res://assets/UI-metal-xuanjinbailianlu-effect-10-jianlian.webp"
         }
       ]
     }

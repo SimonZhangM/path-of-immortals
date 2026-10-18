@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "坤岳重击",
-          "description": "：主动土属性攻击的本体土伤＋10%。"
+          "description": "：主动土属性攻击的本体土伤＋10%。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-01-kunyuezhongji.webp"
         },
         {
           "name": "钝击增威",
-          "description": "：钝击武器本体的纯物理伤害＋10%。"
+          "description": "：钝击武器本体的纯物理伤害＋10%。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-02-dunjizengwei.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "乘克增威",
-          "description": "：本系攻击原有相克增伤额外＋10个百分点。"
+          "description": "：本系攻击原有相克增伤额外＋10个百分点。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-03-chengkezengwei.webp"
         },
         {
           "name": "逆克护身",
-          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。"
+          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-04-nikehushen.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "坚韧内鸣",
-          "description": "：自身坚韧每有效层的共鸣贡献由1%提高至1.5%。"
+          "description": "：自身坚韧每有效层的共鸣贡献由1%提高至1.5%。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-05-jianrenneiming.webp"
         },
         {
           "name": "疲伤外鸣",
-          "description": "：目标疲惫、重伤各自每有效层贡献由1%提高至1.25%。"
+          "description": "：目标疲惫、重伤各自每有效层贡献由1%提高至1.25%。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-06-pishangwaiming.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "厚土启式",
-          "description": "：土法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。"
+          "description": "：土法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-07-houtuqishi.webp"
         },
         {
           "name": "厚土承式",
-          "description": "：土法术作为合法连携的后续节点，该段追加比例＋10个百分点。"
+          "description": "：土法术作为合法连携的后续节点，该段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-08-houtuchengshi.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "坤岳同势",
-          "description": "：合法连携每增加一个连续土节点，后续本体土伤＋10%，最多＋20%。"
+          "description": "：合法连携每增加一个连续土节点，后续本体土伤＋10%，最多＋20%。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-09-kunyuetongshi.webp"
         },
         {
           "name": "重器合流",
-          "description": "：同条合法连携含土法术及钝击武器，从满足条件的段起追加比例＋10个百分点。"
+          "description": "：同条合法连携含土法术及钝击武器，从满足条件的段起追加比例＋10个百分点。",
+          "icon": "res://assets/UI-earth-houtuzhenjie-effect-10-zhongqiheliu.webp"
         }
       ]
     }

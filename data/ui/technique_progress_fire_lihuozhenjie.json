@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "离火炽盛",
-          "description": "：主动火属性攻击的本体火伤＋10%。"
+          "description": "：主动火属性攻击的本体火伤＋10%。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-01-lihuochisheng.webp"
         },
         {
           "name": "蓄炎增威",
-          "description": "：附炎追加伤害＋10%；消耗附炎的主动火攻本体另＋10%。"
+          "description": "：附炎追加伤害＋10%；消耗附炎的主动火攻本体另＋10%。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-02-xuyanzengwei.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "乘克增威",
-          "description": "：本系攻击原有相克增伤额外＋10个百分点。"
+          "description": "：本系攻击原有相克增伤额外＋10个百分点。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-03-chengkezengwei.webp"
         },
         {
           "name": "逆克护身",
-          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。"
+          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-04-nikehushen.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "附炎内鸣",
-          "description": "：自身附炎每有效层的共鸣贡献由1%提高至1.5%。"
+          "description": "：自身附炎每有效层的共鸣贡献由1%提高至1.5%。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-05-fuyanneiming.webp"
         },
         {
           "name": "灼甲外鸣",
-          "description": "：目标灼烧、破甲各自每有效层贡献由1%提高至1.25%。"
+          "description": "：目标灼烧、破甲各自每有效层贡献由1%提高至1.25%。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-06-zhuojiawaiming.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "离火启式",
-          "description": "：火法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。"
+          "description": "：火法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-07-lihuoqishi.webp"
         },
         {
           "name": "离火承式",
-          "description": "：火法术作为合法连携的后续节点，该段追加比例＋10个百分点。"
+          "description": "：火法术作为合法连携的后续节点，该段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-08-lihuochengshi.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "赤阳贯式",
-          "description": "：合法连携每增加一个连续火节点，后续本体火伤＋10%，最多＋20%。"
+          "description": "：合法连携每增加一个连续火节点，后续本体火伤＋10%，最多＋20%。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-09-chiyangguanshi.webp"
         },
         {
           "name": "炎兵合流",
-          "description": "：同条合法连携含火法术及武器或法器，从满足条件的段起追加比例＋10个百分点。"
+          "description": "：同条合法连携含火法术及武器或法器，从满足条件的段起追加比例＋10个百分点。",
+          "icon": "res://assets/UI-fire-lihuozhenjie-effect-10-yanbingheliu.webp"
         }
       ]
     }

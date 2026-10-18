@@ -38,7 +38,7 @@ func run() -> void:
 		var source_copy := FileAccess.get_file_as_string("res://" + String(art.content.source_document))
 		for record in records:
 			check(source_copy.contains("【%s】" % record.name) and source_copy.contains(record.description), "current name and complete numeric description match source")
-			check(not record.has("icon"), "concrete effect artwork reserved for later")
+			check(ResourceLoader.exists(record.icon), "concrete effect artwork available")
 		for viewport_size in [Vector2i(1920,1080),Vector2i(2560,1080),Vector2i(2560,1440)]:
 			root.size = viewport_size
 			await settle()
@@ -52,7 +52,21 @@ func run() -> void:
 			check(art.get_global_rect().get_center().is_equal_approx(Vector2(panel.get_center().x,(divider_y+panel.end.y)*0.5)), "same lower-container center as wood")
 			check(panel.encloses(art.get_global_rect()), "whole frame inside middle panel")
 			check(is_equal_approx(art.size.x/1576.0,art.size.y/456.0), "frame keeps aspect ratio")
-			check(art.icons.is_empty() and art.status_icons.is_empty() and art.status_backplates.is_empty(), "no borrowed effect or status artwork")
+			check(art.icons.size() == expected_count, "all skill and upgrade pictures shown")
+			check(art.status_icons.is_empty() and art.status_backplates.is_empty(), "status symbols remain reserved")
+			for icon_index in art.icons.size():
+				var icon: TextureRect = art.icons[icon_index]
+				check(icon.texture.resource_path == records[icon_index].icon, "picture matches ordered effect record")
+				var slug := String(art.books[book_id].content).get_file().trim_prefix("technique_progress_%s_" % element).trim_suffix(".json")
+				check(icon.texture.resource_path.begins_with("res://assets/UI-%s-%s-effect-%02d-" % [element,slug,icon_index+1]), "picture belongs to correct element, book and sequence")
+				check(icon.texture.get_size() == Vector2(376,376) and icon.texture.get_image().has_mipmaps(), "source size and mipmaps")
+				check(icon.material.get_shader_parameter("line_width") == 1.0 and icon.material.get_shader_parameter("corner_radius") == 3.0 and icon.material.get_shader_parameter("line_color") == Color("d9bb72"), "wood border styling retained")
+				var expected_rect: Rect2 = art.choice_icon_rect(icon.get_meta("group"),icon.get_meta("option")) if index <= 3 else art.icon_rect(icon.get_meta("group"),icon.get_meta("option"))
+				expected_rect.position.y += float(art.reference.get("overlay_offset_screen_y",0)) / art.get_global_transform_with_canvas().get_scale().y
+				check(icon.get_rect().is_equal_approx(expected_rect), "picture uses measured slot and screen offset")
+				check(art.get_global_rect().encloses(icon.get_global_rect()), "picture inside frame")
+				for label: Label in art.captions:
+					check(not icon.get_global_rect().intersects(label.get_global_rect()), "picture does not cover text")
 			var rank_count := 5 if index <= 3 else 8
 			check(art.captions.size() == expected_count + rank_count + (8 if index >= 4 else 0), "all names, ranks and battle summaries shown")
 			var names: Array[String] = []
@@ -82,7 +96,7 @@ func run() -> void:
 				await RenderingServer.frame_post_draw
 				var shot := root.get_texture().get_image()
 				shot.get_region(Rect2i(Vector2(panel.position.x,divider_y),Vector2(panel.size.x,panel.end.y-divider_y))).save_png("res://artifacts/technique-progress-%s-%02d.png" % [element,index])
-	# Existing wooden content restores its own pictures when leaving a text-only book.
+	# Existing wooden content restores its own pictures after browsing other elements.
 	screen.progress_art.show_book("base.cultivation_book.wood_05")
 	check(screen.progress_art.icons.size() == 12 and screen.progress_art.reference.texture == "res://assets/UI-wood-middown-8.webp", "wood icons and frame restore intact")
 	check(map.loadout.snapshot() == before, "presentation leaves player state unchanged")

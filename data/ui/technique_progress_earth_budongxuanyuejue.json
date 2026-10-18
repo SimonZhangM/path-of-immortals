@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "守岳式",
-        "description": "：待发后抵消下一次合格暴击，本次直接伤害包减伤20%。 冷却8秒；本术消耗6灵力。"
+        "description": "：待发后抵消下一次合格暴击，本次直接伤害包减伤20%。 冷却8秒；本术消耗6灵力。",
+        "icon": "res://assets/UI-earth-budongxuanyuejue-effect-01-shouyueshi.webp"
       },
       "choices": [
         {
           "name": "镇身",
           "description": "（减伤增强）：本术减伤提高至40%。",
-          "effect": "减伤增强"
+          "effect": "减伤增强",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-02-zhenshen.webp"
         },
         {
           "name": "蓄岳",
           "description": "（受击蓄韧）：原攻击结算后，自身获得4层坚韧。",
-          "effect": "受击蓄韧"
+          "effect": "受击蓄韧",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-03-xuyue.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "破岳式",
-        "description": "：待发后令下一次合格武器攻击保证暴击；钝击武器本体额外增伤20%。 冷却10秒；本术消耗8灵力。"
+        "description": "：待发后令下一次合格武器攻击保证暴击；钝击武器本体额外增伤20%。 冷却10秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-earth-budongxuanyuejue-effect-04-poyueshi.webp"
       },
       "choices": [
         {
           "name": "崩击",
           "description": "（钝击暴伤）：钝击武器本次暴击倍率由1.5提高至1.75。",
-          "effect": "钝击暴伤"
+          "effect": "钝击暴伤",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-05-bengji.webp"
         },
         {
           "name": "震伤",
           "description": "（施加重伤）：本次武器实际扣盾、甲或血，施加3层重伤。",
-          "effect": "施加重伤"
+          "effect": "施加重伤",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-06-zhenshang.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "镇脉诀",
-        "description": "：待发后令敌方下一次合格发动的非零资源费用＋50%，并施加3层重伤；资源不足可截断发动。 冷却10秒；本术消耗10灵力。"
+        "description": "：待发后令敌方下一次合格发动的非零资源费用＋50%，并施加3层重伤；资源不足可截断发动。 冷却10秒；本术消耗10灵力。",
+        "icon": "res://assets/UI-earth-budongxuanyuejue-effect-07-zhenmaijue.webp"
       },
       "choices": [
         {
           "name": "沉耗",
           "description": "（费用加重）：该次费用增幅提高至＋100%。",
-          "effect": "费用加重"
+          "effect": "费用加重",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-08-chenhao.webp"
         },
         {
           "name": "伤元",
           "description": "（重伤增层）：费用增幅改为＋25%，施加重伤提高至6层。",
-          "effect": "重伤增层"
+          "effect": "重伤增层",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-09-shangyuan.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "玄岳反震",
-        "description": "：待发后受到攻击、护甲实际受损且结算后仍存活，按本次损甲量的50%反击土伤。 冷却10秒；本术消耗12灵力。"
+        "description": "：待发后受到攻击、护甲实际受损且结算后仍存活，按本次损甲量的50%反击土伤。 冷却10秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-earth-budongxuanyuejue-effect-10-xuanyuefanzhen.webp"
       },
       "choices": [
         {
           "name": "借力",
           "description": "（反震增伤）：损甲转伤比例提高至100%。",
-          "effect": "反震增伤"
+          "effect": "反震增伤",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-11-jieli.webp"
         },
         {
           "name": "镇敌",
           "description": "（疲惫重伤）：转伤比例改为25%，反击命中施加2层疲惫、2层重伤。",
-          "effect": "疲惫重伤"
+          "effect": "疲惫重伤",
+          "icon": "res://assets/UI-earth-budongxuanyuejue-effect-12-zhendi.webp"
         }
       ]
     }

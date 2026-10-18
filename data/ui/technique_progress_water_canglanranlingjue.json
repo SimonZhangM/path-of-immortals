@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "燃灵指",
-        "description": "：命中并直接削减目标6点灵力。 基础伤害10；冷却4秒；本术消耗4灵力。"
+        "description": "：命中并直接削减目标6点灵力。 基础伤害10；冷却4秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-water-canglanranlingjue-effect-01-ranlingzhi.webp"
       },
       "choices": [
         {
           "name": "深蚀",
           "description": "（扣灵增强）：直接扣灵提高至9点。",
-          "effect": "扣灵增强"
+          "effect": "扣灵增强",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-02-shenshi.webp"
         },
         {
           "name": "回流",
           "description": "（扣灵回补）：把本术实际削减灵力的50%回补自身。",
-          "effect": "扣灵回补"
+          "effect": "扣灵回补",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-03-huiliu.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "断脉印",
-        "description": "：命中施加4层枯脉。 基础伤害18；冷却6秒；本术消耗8灵力。"
+        "description": "：命中施加4层枯脉。 基础伤害18；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-water-canglanranlingjue-effect-04-duanmaiyin.webp"
       },
       "choices": [
         {
           "name": "封灵",
           "description": "（枯脉耗灵）：施加者参与加层后，当前统一枯脉池扣灵＋25%，直到清空。",
-          "effect": "枯脉耗灵"
+          "effect": "枯脉耗灵",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-05-fengling.webp"
         },
         {
           "name": "困体",
           "description": "（枯脉耗体）：同样使当前枯脉池扣体＋25%；同一人同池只计一次，不同人可相加。",
-          "effect": "枯脉耗体"
+          "effect": "枯脉耗体",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-06-kunti.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "寒潮锁阵",
-        "description": "：命中施加6层寒霜，通常仍只触发1层冻结。 基础伤害16；冷却8秒；本术消耗12灵力。"
+        "description": "：命中施加6层寒霜，通常仍只触发1层冻结。 基础伤害16；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-water-canglanranlingjue-effect-07-hanchaosuozhen.webp"
       },
       "choices": [
         {
           "name": "积霜",
           "description": "（寒霜增层）：本术施加寒霜提高至10层。",
-          "effect": "寒霜增层"
+          "effect": "寒霜增层",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-08-jishuang.webp"
         },
         {
           "name": "骤冻",
           "description": "（冻结延长）：施法前目标已有寒霜，本次常规寒霜冻结额外＋0.2秒。",
-          "effect": "冻结延长"
+          "effect": "冻结延长",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-09-zhoudong.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "归墟断流",
-        "description": "：按目标现有灵力、体力的平均缺失比例P增伤：基础伤害×（1＋P），最高两倍。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：按目标现有灵力、体力的平均缺失比例P增伤：基础伤害×（1＋P），最高两倍。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-water-canglanranlingjue-effect-10-guixuduanliu.webp"
       },
       "choices": [
         {
           "name": "枯海",
           "description": "（缺损增伤）：缺失比例按1.5倍计入，最终仍最多两倍基础伤害。",
-          "effect": "缺损增伤"
+          "effect": "缺损增伤",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-11-kuhai.webp"
         },
         {
           "name": "回澜",
           "description": "（回补灵体）：取资源缺失增伤实际造成的有效损失，按自身资源剩余比例反向分配，恢复灵力与体力；溢出作废。",
-          "effect": "回补灵体"
+          "effect": "回补灵体",
+          "icon": "res://assets/UI-water-canglanranlingjue-effect-12-huilan.webp"
         }
       ]
     }

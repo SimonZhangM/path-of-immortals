@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "庚锋剑",
-        "description": "：直接金属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。"
+        "description": "：直接金属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-metal-xuangengjianjue-effect-01-gengfengjian.webp"
       },
       "choices": [
         {
           "name": "剑锋",
           "description": "（本体增伤）：本体伤害＋25%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-02-jianfeng.webp"
         },
         {
           "name": "留痕",
           "description": "（命中留痕）：命中施加3层锋痕。",
-          "effect": "命中留痕"
+          "effect": "命中留痕",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-03-liuhen.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "分光剑雨",
-        "description": "：一次金属性剑雨攻击。 基础伤害24；冷却6秒；本术消耗8灵力。"
+        "description": "：一次金属性剑雨攻击。 基础伤害24；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-metal-xuangengjianjue-effect-04-fenguangjianyu.webp"
       },
       "choices": [
         {
           "name": "骤雨",
           "description": "（冷却缩短）：本术冷却－25%。",
-          "effect": "冷却缩短"
+          "effect": "冷却缩短",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-05-zhouyu.webp"
         },
         {
           "name": "聚锋",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-06-jufeng.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "回锋剑幕",
-        "description": "：生成30点特殊剑幕，吸收率40%。 冷却8秒；本术消耗8灵力。"
+        "description": "：生成30点特殊剑幕，吸收率40%。 冷却8秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-metal-xuangengjianjue-effect-07-huifengjianmu.webp"
       },
       "choices": [
         {
           "name": "护主",
           "description": "（剑幕增厚）：本术剑幕值提高至50。",
-          "effect": "剑幕增厚"
+          "effect": "剑幕增厚",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-08-huzhu.webp"
         },
         {
           "name": "返剑",
           "description": "（破幕反击）：剑幕被攻击击破时，向攻击者反击15点基础金伤。",
-          "effect": "破幕反击"
+          "effect": "破幕反击",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-09-fanjian.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "玄庚归一剑",
-        "description": "：高威力金属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：高威力金属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-metal-xuangengjianjue-effect-10-xuangengguiyijian.webp"
       },
       "choices": [
         {
           "name": "破军",
           "description": "（本体增伤）：本体伤害＋40%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-11-pojun.webp"
         },
         {
           "name": "留煞",
           "description": "（锋痕流血）：本体伤害－20%，命中施加6层锋痕，真正伤及气血再施加3层流血。",
-          "effect": "锋痕流血"
+          "effect": "锋痕流血",
+          "icon": "res://assets/UI-metal-xuangengjianjue-effect-12-liusha.webp"
         }
       ]
     }

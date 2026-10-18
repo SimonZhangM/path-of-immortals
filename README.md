@@ -1,6 +1,6 @@
 # 修仙之路 · Path of Immortals
 
-七系下部展示（2026-10-18最新）：金水火土风雷30本已按技艺52a／总纲52b／状态53／战斗8接入各自所属系底图，并补齐名称、重数数字和战斗强化短说明；具体技能及状态图留空待后续接入。F8后F5重启，G选择对应系／书目查看。静态预览：`$env:TECHNIQUE_PROGRESS_ELEMENT = 'metal'`后运行`./tests/run_t01.ps1 -Script res://tests/technique_six_elements_progress_preview.gd -Render`，元素可换water／fire／earth／wind／thunder；结束可`Remove-Item Env:TECHNIQUE_PROGRESS_ELEMENT`。本轮仍为展示，不代表学习流程已接。
+七系下部展示（2026-10-19最新）：金水火土风雷30本已按技艺52a／总纲52b／状态53／战斗8接入各系底图、名称、重数及354张技能强化图，沿木系位置、金边圆角；七系共413张图齐全。31张旧技能名游戏素材已改名并同步引用，六系状态小图仍待后续。F8后F5重启，G选择对应系／书目查看。静态预览：`$env:TECHNIQUE_PROGRESS_ELEMENT = 'metal'`后运行`./tests/run_t01.ps1 -Script res://tests/technique_six_elements_progress_preview.gd -Render`，元素可换water／fire／earth／wind／thunder；结束可`Remove-Item Env:TECHNIQUE_PROGRESS_ELEMENT`。本轮仍为展示，不代表学习流程已接。
 
 七系融合手绘素材齐套（2026-10-18最新）：最后雷系五本59张技能及强化源图完成，见[雷系统一预览／80px查看](output/imagegen/thunder-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，六系计划354／354完成，含木系共413张。雷系待审阅，本轮未接游戏；覆盖下方旧批次接续进度。
 

@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "庚金凝锋",
-          "description": "：主动金属性攻击的本体金伤＋10%。"
+          "description": "：主动金属性攻击的本体金伤＋10%。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-01-gengjinningfeng.webp"
         },
         {
           "name": "百兵通心",
-          "description": "：武器本体的纯物理伤害＋10%。"
+          "description": "：武器本体的纯物理伤害＋10%。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-02-baibingtongxin.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "乘克增威",
-          "description": "：本系攻击原有相克增伤额外＋10个百分点。"
+          "description": "：本系攻击原有相克增伤额外＋10个百分点。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-03-chengkezengwei.webp"
         },
         {
           "name": "逆克护身",
-          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。"
+          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-04-nikehushen.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "反锋内鸣",
-          "description": "：自身反锋每有效层的共鸣贡献由1%提高至1.5%。"
+          "description": "：自身反锋每有效层的共鸣贡献由1%提高至1.5%。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-05-fanfengneiming.webp"
         },
         {
           "name": "痕血外鸣",
-          "description": "：目标锋痕、流血各自每有效层贡献由1%提高至1.25%。"
+          "description": "：目标锋痕、流血各自每有效层贡献由1%提高至1.25%。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-06-henxuewaiming.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "庚金启式",
-          "description": "：金法术作为某一段合法连携的起手，该段追加比例＋10个百分点。"
+          "description": "：金法术作为某一段合法连携的起手，该段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-07-gengjinqishi.webp"
         },
         {
           "name": "庚金承式",
-          "description": "：金法术作为合法连携的后续节点，该段追加比例＋10个百分点。"
+          "description": "：金法术作为合法连携的后续节点，该段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-08-gengjinchengshi.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "纯金贯式",
-          "description": "：合法连携相邻两节点均为金属性，本段追加比例＋10个百分点。"
+          "description": "：合法连携相邻两节点均为金属性，本段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-09-chunjinguanshi.webp"
         },
         {
           "name": "兵法合流",
-          "description": "：同条合法连携含金法术及武器或法器，从满足条件的段起追加比例＋10个百分点。"
+          "description": "：同条合法连携含金法术及武器或法器，从满足条件的段起追加比例＋10个百分点。",
+          "icon": "res://assets/UI-metal-gengjinzhenjie-effect-10-bingfaheliu.webp"
         }
       ]
     }

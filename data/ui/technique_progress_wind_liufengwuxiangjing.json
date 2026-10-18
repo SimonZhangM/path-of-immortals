@@ -8,15 +8,18 @@
       "choices": [
         {
           "name": "留影",
-          "description": "：轻灵帮助闪避后的耗层改为现有层数的三分之一向下取整，至少1层。"
+          "description": "：轻灵帮助闪避后的耗层改为现有层数的三分之一向下取整，至少1层。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-01-liuying.webp"
         },
         {
           "name": "留隙",
-          "description": "：失衡来源追击命中后的耗层改为三分之一向下取整，至少1层。"
+          "description": "：失衡来源追击命中后的耗层改为三分之一向下取整，至少1层。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-02-liuxi.webp"
         },
         {
           "name": "疾散",
-          "description": "：新施加驱散时，首次等待由2秒缩至1秒。"
+          "description": "：新施加驱散时，首次等待由2秒缩至1秒。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-03-jisan.webp"
         }
       ]
     },
@@ -25,15 +28,18 @@
       "choices": [
         {
           "name": "轻身",
-          "description": "：轻灵每层闪避率额外＋0.4个百分点。"
+          "description": "：轻灵每层闪避率额外＋0.4个百分点。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-04-qingshen.webp"
         },
         {
           "name": "破衡",
-          "description": "：失衡每层提高被命中率的效果额外＋0.4个百分点。"
+          "description": "：失衡每层提高被命中率的效果额外＋0.4个百分点。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-05-poheng.webp"
         },
         {
           "name": "拂尘",
-          "description": "：每层驱散正常拆除后，额外拆1层增益的概率＋10个百分点。"
+          "description": "：每层驱散正常拆除后，额外拆1层增益的概率＋10个百分点。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-06-fuchen.webp"
         }
       ]
     },
@@ -42,15 +48,18 @@
       "choices": [
         {
           "name": "生隙",
-          "description": "：成功闪避后，向攻击者施加2层失衡。"
+          "description": "：成功闪避后，向攻击者施加2层失衡。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-07-shengxi.webp"
         },
         {
           "name": "化影",
-          "description": "：二次追击成功命中，自身获得2层轻灵。"
+          "description": "：二次追击成功命中，自身获得2层轻灵。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-08-huaying.webp"
         },
         {
           "name": "乱势",
-          "description": "：一次驱散实际拆掉至少1层增益，向目标施加2层失衡。"
+          "description": "：一次驱散实际拆掉至少1层增益，向目标施加2层失衡。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-09-luanshi.webp"
         }
       ]
     },
@@ -59,15 +68,18 @@
       "choices": [
         {
           "name": "无影",
-          "description": "：轻灵每层闪避率再＋0.6个百分点。"
+          "description": "：轻灵每层闪避率再＋0.6个百分点。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-10-wuying.webp"
         },
         {
           "name": "失势",
-          "description": "：失衡每层提高被命中率的效果再＋0.6个百分点。"
+          "description": "：失衡每层提高被命中率的效果再＋0.6个百分点。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-11-shishi.webp"
         },
         {
           "name": "涤尘",
-          "description": "：额外拆1层增益的概率再＋15个百分点，与拂尘合计25%。"
+          "description": "：额外拆1层增益的概率再＋15个百分点，与拂尘合计25%。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-12-dichen.webp"
         }
       ]
     },
@@ -76,15 +88,18 @@
       "choices": [
         {
           "name": "乘虚",
-          "description": "：成功闪避后命中率＋10个百分点，持续10秒，重复触发只刷新。"
+          "description": "：成功闪避后命中率＋10个百分点，持续10秒，重复触发只刷新。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-13-chengxu.webp"
         },
         {
           "name": "连锋",
-          "description": "：追击的武器本体伤害比例由50%提高至75%，穿刺武器提高至100%。"
+          "description": "：追击的武器本体伤害比例由50%提高至75%，穿刺武器提高至100%。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-14-lianfeng.webp"
         },
         {
           "name": "无尘",
-          "description": "：每实际驱散5层，给敌方一件带冷却物品剩余冷却＋2秒；可超原上限，无目标时暂存机会。"
+          "description": "：每实际驱散5层，给敌方一件带冷却物品剩余冷却＋2秒；可超原上限，无目标时暂存机会。",
+          "icon": "res://assets/UI-wind-liufengwuxiangjing-effect-15-wuchen.webp"
         }
       ]
     }

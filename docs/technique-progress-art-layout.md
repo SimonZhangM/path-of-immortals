@@ -1,5 +1,47 @@
 # 功法中栏图文与技能树定位基准（2026-10-17）
 
+## 六系354张效果图与文件名同步（2026-10-19最新）
+
+30份technique_progress_{element}_{slug}.json的spell／choices已补齐icon，分别使用各自assets/UI-{element}-{slug}-effect-{NN}-{skill}.webp。每系10＋10＋15＋12＋12＝59张，六系354张；木系59张保持，七系共413张。五重顺stages→choices，八重每组spell在先、choices随后，对应两位序号01起。现有slot几何、52a／52b下移5屏幕px、名称／重数／描述不变；1px金边、3px圆角、376×376源图mipmap沿既有组件，未修改生产脚本或原图片像素。
+
+六系状态书仍reserve_status_space=true，不借木系状态图或圆框；仅具体技能大图接齐。本节覆盖下方“省略icon”历史状态。六系静态预览更新为有图核验，每系7021项、三分辨率总42126项通过，包含每图所属系／书／序号、纹理／mipmap、样式、槽位与不遮文字；30本渲染逐本目视通过。截图仍在artifacts/progress-review-{element}.jpg，源与缓存均已核验。
+
+金、水31张assets游戏素材根据现行branch_display_names从旧拼音名改名，表中新文件名只替换最后的技能拼音，其余前缀／序号保持；对应JSON及Godot导入均同步。output中的历史源图、生成计划及其原文件名保留，追溯时以元素／书／序号和下表对应。
+
+| 游戏素材旧文件名（省略.webp） | 新文件名末尾 | 当前显示名 |
+| --- | --- | --- |
+| UI-metal-gengjinzhenjie-effect-01-ruijin | gengjinningfeng | 庚金凝锋 |
+| UI-metal-gengjinzhenjie-effect-02-bingxin | baibingtongxin | 百兵通心 |
+| UI-metal-gengjinzhenjie-effect-03-chengke | chengkezengwei | 乘克增威 |
+| UI-metal-gengjinzhenjie-effect-04-nike | nikehushen | 逆克护身 |
+| UI-metal-gengjinzhenjie-effect-05-neiming | fanfengneiming | 反锋内鸣 |
+| UI-metal-gengjinzhenjie-effect-06-waiming | henxuewaiming | 痕血外鸣 |
+| UI-metal-gengjinzhenjie-effect-07-qishi | gengjinqishi | 庚金启式 |
+| UI-metal-gengjinzhenjie-effect-08-chengshi | gengjinchengshi | 庚金承式 |
+| UI-metal-jinshacangfengjing-effect-07-fanfengshenghen | shenghen | 生痕 |
+| UI-metal-jinshacangfengjing-effect-08-fenghenjianxue | jianxue | 见血 |
+| UI-metal-jinshacangfengjing-effect-09-xueyangfengshi | yangfeng | 养锋 |
+| UI-metal-jinshacangfengjing-effect-13-fanfengzhenbing | zhenbing | 镇兵 |
+| UI-metal-jinshacangfengjing-effect-14-fenghenrugu | tougu | 透骨 |
+| UI-metal-jinshacangfengjing-effect-15-xueshibujue | xuxue | 续血 |
+| UI-metal-xuanjinbailianlu-effect-10-huafanweijian | jianlian | 简炼 |
+| UI-water-hanmailiuzhuanjing-effect-07-yingliuchenghu | yinghu | 盈护 |
+| UI-water-hanmailiuzhuanjing-effect-08-kujishenghan | shenghan | 生寒 |
+| UI-water-hanmailiuzhuanjing-effect-09-shuanghuihuoshui | huirun | 回润 |
+| UI-water-hanmailiuzhuanjing-effect-13-zhouliubuxi | zhouliu | 周流 |
+| UI-water-hanmailiuzhuanjing-effect-14-kuhaiduanliu | duanliu | 断流 |
+| UI-water-hanmailiuzhuanjing-effect-15-hanchaoliushuang | liushuang | 留霜 |
+| UI-water-lingmoxuanfulu-effect-09-yifurushen | shenzhuan | 神篆 |
+| UI-water-lingmoxuanfulu-effect-10-baifuchengshu | baifu | 百符 |
+| UI-water-xuanshuizhenjie-effect-01-shuifeng | xuanshuiningfeng | 玄水凝锋 |
+| UI-water-xuanshuizhenjie-effect-02-liuxi | xuanshuiyangxi | 玄水养息 |
+| UI-water-xuanshuizhenjie-effect-03-chengke | chengkezengwei | 乘克增威 |
+| UI-water-xuanshuizhenjie-effect-04-nike | nikehushen | 逆克护身 |
+| UI-water-xuanshuizhenjie-effect-05-neiming | runmaineiming | 润脉内鸣 |
+| UI-water-xuanshuizhenjie-effect-06-waiming | kushuangwaiming | 枯霜外鸣 |
+| UI-water-xuanshuizhenjie-effect-07-qishi | xuanshuiqishi | 玄水启式 |
+| UI-water-xuanshuizhenjie-effect-08-chengshi | xuanshuichengshi | 玄水承式 |
+
 ## 六系30本框架与文字（2026-10-18最新）
 
 technique_progress_books.json现登记七系35本。新增六系按各书ID尾号01→52a、02→52b、03→53、04／05→8；每本layout复用木系对应几何JSON，layout_overrides.texture指向assets/UI-{metal|water|fire|earth|wind|thunder}-middown-{52a|52b|53|8}.webp，baseline_sha256记录该实际源图。24张均1605×567、mipmap开启，维持共同display_crop、placement_crop及下部中心，不改素材像素或借用木系配色。

@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "风羽矢",
-        "description": "：风属性攻击，本术命中率额外＋15个百分点。 基础伤害10；冷却4秒；本术消耗4灵力。"
+        "description": "：风属性攻击，本术命中率额外＋15个百分点。 基础伤害10；冷却4秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-wind-qingmingpokongjue-effect-01-fengyushi.webp"
       },
       "choices": [
         {
           "name": "疾羽",
           "description": "（冷却缩短）：本术冷却－25%，灵力费用不变，初学为3秒／4灵力。",
-          "effect": "冷却缩短"
+          "effect": "冷却缩短",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-02-jiyu.webp"
         },
         {
           "name": "透风",
           "description": "（本体增伤）：本体伤害＋25%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-03-toufeng.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "穿云枪",
-        "description": "：直接风属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。"
+        "description": "：直接风属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-wind-qingmingpokongjue-effect-04-chuanyunqiang.webp"
       },
       "choices": [
         {
           "name": "贯云",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-05-guanyun.webp"
         },
         {
           "name": "破隙",
           "description": "（失衡增伤）：命中后按目标预存失衡，每层追加2点基础风伤。",
-          "effect": "失衡增伤"
+          "effect": "失衡增伤",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-06-poxi.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "裂空罡风",
-        "description": "：命中施加4层失衡。 基础伤害40；冷却8秒；本术消耗12灵力。"
+        "description": "：命中施加4层失衡。 基础伤害40；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-wind-qingmingpokongjue-effect-07-liekonggangfeng.webp"
       },
       "choices": [
         {
           "name": "风暴",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-08-fengbao.webp"
         },
         {
           "name": "乱流",
           "description": "（失衡增层）：本术施加失衡提高至8层。",
-          "effect": "失衡增层"
+          "effect": "失衡增层",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-09-luanliu.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "青冥贯日",
-        "description": "：高威力风属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：高威力风属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-wind-qingmingpokongjue-effect-10-qingmingguanri.webp"
       },
       "choices": [
         {
           "name": "贯日",
           "description": "（盾后增伤）：本体伤害＋40%，盾后余伤再＋15%，可继续扣甲和气血。",
-          "effect": "盾后增伤"
+          "effect": "盾后增伤",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-11-guanri.webp"
         },
         {
           "name": "逐隙",
           "description": "（失衡增伤）：每层预存失衡使本体伤害＋1%，本项最高＋50%；命中再施加6层失衡。",
-          "effect": "失衡增伤"
+          "effect": "失衡增伤",
+          "icon": "res://assets/UI-wind-qingmingpokongjue-effect-12-zhuxi.webp"
         }
       ]
     }

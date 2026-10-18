@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "雷光指",
-        "description": "：直接雷属性攻击。 基础伤害10；冷却4秒；本术消耗4灵力。"
+        "description": "：直接雷属性攻击。 基础伤害10；冷却4秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-01-leiguangzhi.webp"
       },
       "choices": [
         {
           "name": "疾电",
           "description": "（减耗提速）：本术冷却、灵力费用各－25%。",
-          "effect": "减耗提速"
+          "effect": "减耗提速",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-02-jidian.webp"
         },
         {
           "name": "刻雷",
           "description": "（命中刻印）：命中施加3层雷印。",
-          "effect": "命中刻印"
+          "effect": "命中刻印",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-03-kelei.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "玄霆枪",
-        "description": "：命中施加2层雷印。 基础伤害26；冷却6秒；本术消耗8灵力。"
+        "description": "：命中施加2层雷印。 基础伤害26；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-04-xuantingqiang.webp"
       },
       "choices": [
         {
           "name": "贯霆",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-05-guanting.webp"
         },
         {
           "name": "引印",
           "description": "（雷印增层）：本术施加雷印提高至5层。",
-          "effect": "雷印增层"
+          "effect": "雷印增层",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-06-yinyin.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "连霆术",
-        "description": "：提供额外一次连环机会：未引雷时可触发两记连环闪电，引雷时可雷击后再连环；仍需已有状态。 基础伤害30；冷却8秒；本术消耗12灵力。"
+        "description": "：提供额外一次连环机会：未引雷时可触发两记连环闪电，引雷时可雷击后再连环；仍需已有状态。 基础伤害30；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-07-liantingshu.webp"
       },
       "choices": [
         {
           "name": "疾霆",
           "description": "（减耗提速）：本术冷却、灵力费用各－25%。",
-          "effect": "减耗提速"
+          "effect": "减耗提速",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-08-jiting.webp"
         },
         {
           "name": "重链",
           "description": "（连环增伤）：额外机会产生的那记连环闪电伤害＋50%，不强化第一记普通连环或雷击。",
-          "effect": "连环增伤"
+          "effect": "连环增伤",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-09-zhonglian.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "九霄雷落",
-        "description": "：高威力雷属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：高威力雷属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-10-jiuxiaoleiluo.webp"
       },
       "choices": [
         {
           "name": "镇邪",
           "description": "（邪类特攻）：本术直接雷伤对鬼、妖、魔再＋30个百分点，合计＋50%；不加到雷印雷击。",
-          "effect": "邪类特攻"
+          "effect": "邪类特攻",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-11-zhenxie.webp"
         },
         {
           "name": "引劫",
           "description": "（雷击增伤）：本术实际引发的雷印雷击伤害＋50%，本体不变。",
-          "effect": "雷击增伤"
+          "effect": "雷击增伤",
+          "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-12-yinjie.webp"
         }
       ]
     }

@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "赤焰刃",
-        "description": "：直接火属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。"
+        "description": "：直接火属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-01-chiyanren.webp"
       },
       "choices": [
         {
           "name": "烈锋",
           "description": "（盾后增伤）：本体伤害＋25%，盾后余伤再＋10%，可继续扣甲和气血。",
-          "effect": "盾后增伤"
+          "effect": "盾后增伤",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-02-liefeng.webp"
         },
         {
           "name": "蓄焰",
           "description": "（命中蓄炎）：命中后自身获得3层附炎。",
-          "effect": "命中蓄炎"
+          "effect": "命中蓄炎",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-03-xuyan.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "炎龙枪",
-        "description": "：直接火属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。"
+        "description": "：直接火属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-04-yanlongqiang.webp"
       },
       "choices": [
         {
           "name": "贯阳",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-05-guanyang.webp"
         },
         {
           "name": "熔锋",
           "description": "（施加破甲）：实际扣除护甲时，施加3层破甲。",
-          "effect": "施加破甲"
+          "effect": "施加破甲",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-06-rongfeng.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "烈阳印",
-        "description": "：命中时按目标预存灼烧产生爆燃：每层追加1点基础火伤。 基础伤害40；冷却8秒；本术消耗12灵力。"
+        "description": "：命中时按目标预存灼烧产生爆燃：每层追加1点基础火伤。 基础伤害40；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-07-lieyangyin.webp"
       },
       "choices": [
         {
           "name": "阳爆",
           "description": "（本体增伤）：本体直接伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-08-yangbao.webp"
         },
         {
           "name": "焚印",
           "description": "（爆燃增强）：本术爆燃追加伤害＋50%，本体不变。",
-          "effect": "爆燃增强"
+          "effect": "爆燃增强",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-09-fenyin.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "赤阳天火",
-        "description": "：高威力火属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：高威力火属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-10-chiyangtianhuo.webp"
       },
       "choices": [
         {
           "name": "焚灭",
           "description": "（本体增伤）：本体伤害＋40%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-11-fenmie.webp"
         },
         {
           "name": "天火余烬",
           "description": "（灼烧破甲）：本体伤害－20%，命中施加6层灼烧，实际扣甲再施加4层破甲。",
-          "effect": "灼烧破甲"
+          "effect": "灼烧破甲",
+          "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-12-tianhuoyujin.webp"
         }
       ]
     }

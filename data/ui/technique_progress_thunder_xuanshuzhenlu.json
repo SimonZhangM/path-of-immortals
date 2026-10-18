@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "精刻",
-          "description": "：提高阵眼制作质量与基础效果。"
+          "description": "：提高阵眼制作质量与基础效果。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-01-jingke.webp"
         },
         {
           "name": "节材",
-          "description": "：减少布阵、制阵材料损耗。"
+          "description": "：减少布阵、制阵材料损耗。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-02-jiecai.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "疾启",
-          "description": "：缩短阵法重新入阵的准备时间。"
+          "description": "：缩短阵法重新入阵的准备时间。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-03-jiqi.webp"
         },
         {
           "name": "稳阵",
-          "description": "：增强抵抗敌方冷却干预的能力。"
+          "description": "：增强抵抗敌方冷却干预的能力。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-04-wenzhen.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "聚枢",
-          "description": "：强化阵眼的核心效果。"
+          "description": "：强化阵眼的核心效果。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-05-jushu.webp"
         },
         {
           "name": "借势",
-          "description": "：阵法发动后，让参与器具获得配合收益。"
+          "description": "：阵法发动后，让参与器具获得配合收益。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-06-jieshi.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "疾转",
-          "description": "：缩短阵眼轮转冷却。"
+          "description": "：缩短阵眼轮转冷却。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-07-jizhuan.webp"
         },
         {
           "name": "强阵",
-          "description": "：提高阵法最终效果。"
+          "description": "：提高阵法最终效果。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-08-qiangzhen.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "合流",
-          "description": "：化神后让阵法效果参与器具连携。"
+          "description": "：化神后让阵法效果参与器具连携。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-09-heliu.webp"
         },
         {
           "name": "催转",
-          "description": "：阵法发动后推进参与器具的冷却。"
+          "description": "：阵法发动后推进参与器具的冷却。",
+          "icon": "res://assets/UI-thunder-xuanshuzhenlu-effect-10-cuizhuan.webp"
         }
       ]
     }

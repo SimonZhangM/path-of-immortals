@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "引焰诀",
-        "description": "：自身获得6层附炎。 冷却6秒；本术消耗4灵力。"
+        "description": "：自身获得6层附炎。 冷却6秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-01-yinyanjue.webp"
       },
       "choices": [
         {
           "name": "聚炎",
           "description": "（附炎增层）：本次获得附炎提高至10层。",
-          "effect": "附炎增层"
+          "effect": "附炎增层",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-02-juyan.webp"
         },
         {
           "name": "疾引",
           "description": "（减耗提速）：本术冷却、灵力费用各－25%。",
-          "effect": "减耗提速"
+          "effect": "减耗提速",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-03-jiyin.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "熔甲炎",
-        "description": "：命中施加4层破甲；预存破甲且本体实际入甲时，每预存层额外产生0.5点护甲专属熔爆火伤。 基础伤害18；冷却6秒；本术消耗8灵力。"
+        "description": "：命中施加4层破甲；预存破甲且本体实际入甲时，每预存层额外产生0.5点护甲专属熔爆火伤。 基础伤害18；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-04-rongjiayan.webp"
       },
       "choices": [
         {
           "name": "深熔",
           "description": "（破甲增层）：本术施加破甲提高至6层。",
-          "effect": "破甲增层"
+          "effect": "破甲增层",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-05-shenrong.webp"
         },
         {
           "name": "炽裂",
           "description": "（熔爆增强）：本术熔爆追加伤害＋50%，仍只扣甲。",
-          "effect": "熔爆增强"
+          "effect": "熔爆增强",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-06-chilie.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "燎原火",
-        "description": "：命中施加6层灼烧。 基础伤害30；冷却8秒；本术消耗12灵力。"
+        "description": "：命中施加6层灼烧。 基础伤害30；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-07-liaoyuanhuo.webp"
       },
       "choices": [
         {
           "name": "续燃",
           "description": "（灼烧增层）：本术施加灼烧提高至10层。",
-          "effect": "灼烧增层"
+          "effect": "灼烧增层",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-08-xuran.webp"
         },
         {
           "name": "烈灼",
           "description": "（减灼增伤）：本体伤害＋40%，施加灼烧减至3层。",
-          "effect": "减灼增伤"
+          "effect": "减灼增伤",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-09-liezhuo.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "离火真炎",
-        "description": "：目标预存灼烧、破甲合计每层，使本体火伤＋1%，本项最高＋100%。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：目标预存灼烧、破甲合计每层，使本体火伤＋1%，本项最高＋100%。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-10-lihuozhenyan.webp"
       },
       "choices": [
         {
           "name": "炎尽",
           "description": "（按层增伤）：每层增伤提高至1.5%，本项最高＋150%。",
-          "effect": "按层增伤"
+          "effect": "按层增伤",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-11-yanjin.webp"
         },
         {
           "name": "余火",
           "description": "（蓄炎续效）：命中后获得6层附炎，并刷新目标已有灼烧和破甲的持续时间。",
-          "effect": "蓄炎续效"
+          "effect": "蓄炎续效",
+          "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-12-yuhuo.webp"
         }
       ]
     }

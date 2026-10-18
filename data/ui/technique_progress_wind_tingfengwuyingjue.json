@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "听风步",
-        "description": "：待发后保证闪避下一次合格可闪避攻击。 冷却8秒；本术消耗6灵力。"
+        "description": "：待发后保证闪避下一次合格可闪避攻击。 冷却8秒；本术消耗6灵力。",
+        "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-01-tingfengbu.webp"
       },
       "choices": [
         {
           "name": "留风",
           "description": "（闪避轻灵）：本术成功闪避后获得4层轻灵。",
-          "effect": "闪避轻灵"
+          "effect": "闪避轻灵",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-02-liufeng.webp"
         },
         {
           "name": "借势",
           "description": "（闪避提速）：本术成功闪避后，己方一件正在冷却的穿刺武器剩余冷却－2秒。",
-          "effect": "闪避提速"
+          "effect": "闪避提速",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-03-jieshi.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "追风式",
-        "description": "：待发后，武器原始攻击命中时保证发动一次追击；伤害取首击盾甲前武器本体的50%，另判命中。 冷却10秒；本术消耗8灵力。"
+        "description": "：待发后，武器原始攻击命中时保证发动一次追击；伤害取首击盾甲前武器本体的50%，另判命中。 冷却10秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-04-zhuifengshi.webp"
       },
       "choices": [
         {
           "name": "贯影",
           "description": "（追击增伤）：本术追击比例提高至75%，穿刺武器提高至100%；与逐影连锋增量相加。",
-          "effect": "追击增伤"
+          "effect": "追击增伤",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-05-guanying.webp"
         },
         {
           "name": "疾追",
           "description": "（追击命中）：本术追击命中率＋15个百分点。",
-          "effect": "追击命中"
+          "effect": "追击命中",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-06-jizhui.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "回风引",
-        "description": "：推进己方一件合格物品剩余冷却2秒。 冷却8秒；本术消耗8灵力。"
+        "description": "：推进己方一件合格物品剩余冷却2秒。 冷却8秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-07-huifengyin.webp"
       },
       "choices": [
         {
           "name": "顺风",
           "description": "（冷却推进）：推进量提高至4秒。",
-          "effect": "冷却推进"
+          "effect": "冷却推进",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-08-shunfeng.webp"
         },
         {
           "name": "逆风",
           "description": "（冷却延后）：改为敌方一件合格物品剩余冷却＋2秒，同次不再推进己方。",
-          "effect": "冷却延后"
+          "effect": "冷却延后",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-09-nifeng.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "清风涤尘",
-        "description": "：命中施加8层驱散，按驱散规则拆除增益。 基础伤害16；冷却8秒；本术消耗12灵力。"
+        "description": "：命中施加8层驱散，按驱散规则拆除增益。 基础伤害16；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-10-qingfengdichen.webp"
       },
       "choices": [
         {
           "name": "洗尘",
           "description": "（驱散强化）：施加驱散提高至12层，本术所施驱散额外拆1层的概率＋20个百分点。",
-          "effect": "驱散强化"
+          "effect": "驱散强化",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-11-xichen.webp"
         },
         {
           "name": "乘风",
           "description": "（冷却推进）：命中并成功施加驱散，己方一件正在冷却的穿刺武器或其他风法剩余冷却－2秒，不要求已拆增益。",
-          "effect": "冷却推进"
+          "effect": "冷却推进",
+          "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-12-chengfeng.webp"
         }
       ]
     }

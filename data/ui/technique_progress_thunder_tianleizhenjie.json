@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "天雷震威",
-          "description": "：主动雷属性攻击的本体雷伤＋10%。"
+          "description": "：主动雷属性攻击的本体雷伤＋10%。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-01-tianleizhenwei.webp"
         },
         {
           "name": "雷罡固御",
-          "description": "：新雷盾值＋10%，攻击破盾麻痹由1秒增至1.5秒，雷罡反震与雷返式伤害各＋20%。"
+          "description": "：新雷盾值＋10%，攻击破盾麻痹由1秒增至1.5秒，雷罡反震与雷返式伤害各＋20%。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-02-leigangguyu.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "乘克增威",
-          "description": "：本系攻击原有相克增伤额外＋10个百分点。"
+          "description": "：本系攻击原有相克增伤额外＋10个百分点。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-03-chengkezengwei.webp"
         },
         {
           "name": "逆克护身",
-          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。"
+          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-04-nikehushen.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "雷蕴内鸣",
-          "description": "：自身雷蕴（含存活雷盾每层折算10层的等效雷蕴）每有效层的共鸣贡献由1%提高至1.5%。"
+          "description": "：自身雷蕴（含存活雷盾每层折算10层的等效雷蕴）每有效层的共鸣贡献由1%提高至1.5%。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-05-leiyunneiming.webp"
         },
         {
           "name": "印环外鸣",
-          "description": "：目标雷印、连环各自每有效层贡献由1%提高至1.25%。"
+          "description": "：目标雷印、连环各自每有效层贡献由1%提高至1.25%。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-06-yinhuanwaiming.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "天雷启式",
-          "description": "：雷法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。"
+          "description": "：雷法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-07-tianleiqishi.webp"
         },
         {
           "name": "天雷承式",
-          "description": "：雷法术作为合法连携的后续节点，该段追加比例＋10个百分点。"
+          "description": "：雷法术作为合法连携的后续节点，该段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-08-tianleichengshi.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "万雷同势",
-          "description": "：合法连携每增加一个连续雷节点，后续本体雷伤＋10%，最多＋20%。"
+          "description": "：合法连携每增加一个连续雷节点，后续本体雷伤＋10%，最多＋20%。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-09-wanleitongshi.webp"
         },
         {
           "name": "雷兵合流",
-          "description": "：同条合法连携含雷法术及雷属性武器或法器，追加比例＋10个百分点；本次有独立雷附伤也可取得器具资格。"
+          "description": "：同条合法连携含雷法术及雷属性武器或法器，追加比例＋10个百分点；本次有独立雷附伤也可取得器具资格。",
+          "icon": "res://assets/UI-thunder-tianleizhenjie-effect-10-leibingheliu.webp"
         }
       ]
     }

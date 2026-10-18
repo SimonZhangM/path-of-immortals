@@ -8,15 +8,18 @@
       "choices": [
         {
           "name": "回蕴",
-          "description": "：每层雷盾被攻击击破并成功麻痹攻击者，自身获得3层雷蕴。"
+          "description": "：每层雷盾被攻击击破并成功麻痹攻击者，自身获得3层雷蕴。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-01-huiyun.webp"
         },
         {
           "name": "留印",
-          "description": "：每成功引发一记雷印雷击，扣10层后返3层雷印。"
+          "description": "：每成功引发一记雷印雷击，扣10层后返3层雷印。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-02-liuyin.webp"
         },
         {
           "name": "连势",
-          "description": "：目标连环由0变为正数时，额外施加2层连环。"
+          "description": "：目标连环由0变为正数时，额外施加2层连环。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-03-lianshi.webp"
         }
       ]
     },
@@ -25,15 +28,18 @@
       "choices": [
         {
           "name": "凝罡",
-          "description": "：新生成雷盾值＋10%。"
+          "description": "：新生成雷盾值＋10%。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-04-ninggang.webp"
         },
         {
           "name": "震印",
-          "description": "：雷印雷击伤害＋10%。"
+          "description": "：雷印雷击伤害＋10%。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-05-zhenyin.webp"
         },
         {
           "name": "连霆",
-          "description": "：连环闪电伤害＋10%。"
+          "description": "：连环闪电伤害＋10%。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-06-lianting.webp"
         }
       ]
     },
@@ -42,15 +48,18 @@
       "choices": [
         {
           "name": "刻印",
-          "description": "：每层雷盾被攻击击破并成功麻痹，给攻击者2层雷印。"
+          "description": "：每层雷盾被攻击击破并成功麻痹，给攻击者2层雷印。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-07-keyin.webp"
         },
         {
           "name": "结环",
-          "description": "：每记成功引雷，事件结束后给目标2层连环，供后续攻击使用。"
+          "description": "：每记成功引雷，事件结束后给目标2层连环，供后续攻击使用。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-08-jiehuan.webp"
         },
         {
           "name": "养蕴",
-          "description": "：每次连环闪电成功触发，自身获得1层雷蕴，最终零伤也计。"
+          "description": "：每次连环闪电成功触发，自身获得1层雷蕴，最终零伤也计。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-09-yangyun.webp"
         }
       ]
     },
@@ -59,15 +68,18 @@
       "choices": [
         {
           "name": "固罡",
-          "description": "：新雷盾值＋20%，雷盾吸收率由60%提高至80%；旧盾值不追溯。"
+          "description": "：新雷盾值＋20%，雷盾吸收率由60%提高至80%；旧盾值不追溯。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-10-gugang.webp"
         },
         {
           "name": "震威",
-          "description": "：雷印雷击伤害再＋20%。"
+          "description": "：雷印雷击伤害再＋20%。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-11-zhenwei.webp"
         },
         {
           "name": "烈霆",
-          "description": "：连环闪电伤害再＋20%。"
+          "description": "：连环闪电伤害再＋20%。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-12-lieting.webp"
         }
       ]
     },
@@ -76,15 +88,18 @@
       "choices": [
         {
           "name": "反震",
-          "description": "：一击至少破一层雷盾，按本击实际损失雷盾总值的50%反震雷伤，每击一次。"
+          "description": "：一击至少破一层雷盾，按本击实际损失雷盾总值的50%反震雷伤，每击一次。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-13-fanzhen.webp"
         },
         {
           "name": "双霆",
-          "description": "：攻击前已有20雷印时，合格雷攻最多引发两记雷击，逐记扣10层；目标死亡即停止。"
+          "description": "：攻击前已有20雷印时，合格雷攻最多引发两记雷击，逐记扣10层；目标死亡即停止。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-14-shuangting.webp"
         },
         {
           "name": "续霆",
-          "description": "：每第5次合法连环闪电不消耗连环层数。"
+          "description": "：每第5次合法连环闪电不消耗连环层数。",
+          "icon": "res://assets/UI-thunder-leichiyintingjing-effect-15-xuting.webp"
         }
       ]
     }

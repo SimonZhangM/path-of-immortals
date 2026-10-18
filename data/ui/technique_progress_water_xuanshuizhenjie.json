@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "玄水凝锋",
-          "description": "：主动水属性攻击的本体水伤＋10%。"
+          "description": "：主动水属性攻击的本体水伤＋10%。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-01-xuanshuiningfeng.webp"
         },
         {
           "name": "玄水养息",
-          "description": "：水系灵力、体力恢复量各＋10%。"
+          "description": "：水系灵力、体力恢复量各＋10%。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-02-xuanshuiyangxi.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "乘克增威",
-          "description": "：本系攻击原有相克增伤额外＋10个百分点。"
+          "description": "：本系攻击原有相克增伤额外＋10个百分点。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-03-chengkezengwei.webp"
         },
         {
           "name": "逆克护身",
-          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。"
+          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-04-nikehushen.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "润脉内鸣",
-          "description": "：自身润脉每有效层的共鸣贡献由1%提高至1.5%。"
+          "description": "：自身润脉每有效层的共鸣贡献由1%提高至1.5%。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-05-runmaineiming.webp"
         },
         {
           "name": "枯霜外鸣",
-          "description": "：目标枯脉、寒霜各自每有效层贡献由1%提高至1.25%。"
+          "description": "：目标枯脉、寒霜各自每有效层贡献由1%提高至1.25%。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-06-kushuangwaiming.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "玄水启式",
-          "description": "：水法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。"
+          "description": "：水法术作为某一段合法连携的起手，该段窗口由2秒延至3秒。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-07-xuanshuiqishi.webp"
         },
         {
           "name": "玄水承式",
-          "description": "：水法术作为合法连携的后续节点，该段追加比例＋10个百分点。"
+          "description": "：水法术作为合法连携的后续节点，该段追加比例＋10个百分点。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-08-xuanshuichengshi.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "沧澜同流",
-          "description": "：合法连携每增加一个连续水节点，后续节点本体水伤、灵力和体力恢复各＋10%，最多＋20%。"
+          "description": "：合法连携每增加一个连续水节点，后续节点本体水伤、灵力和体力恢复各＋10%，最多＋20%。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-09-canglantongliu.webp"
         },
         {
           "name": "玄水两仪",
-          "description": "：自身有润脉且目标有枯脉或寒霜，主动水伤及水系两项资源恢复各＋10%。"
+          "description": "：自身有润脉且目标有枯脉或寒霜，主动水伤及水系两项资源恢复各＋10%。",
+          "icon": "res://assets/UI-water-xuanshuizhenjie-effect-10-xuanshuiliangyi.webp"
         }
       ]
     }

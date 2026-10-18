@@ -8,15 +8,18 @@
       "choices": [
         {
           "name": "活泉",
-          "description": "：新获得润脉时，首次恢复等待由2秒缩至1.5秒。"
+          "description": "：新获得润脉时，首次恢复等待由2秒缩至1.5秒。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-01-huoquan.webp"
         },
         {
           "name": "潜枯",
-          "description": "：新施加枯脉时，首次扣资源等待由2秒缩至1.5秒。"
+          "description": "：新施加枯脉时，首次扣资源等待由2秒缩至1.5秒。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-02-qianku.webp"
         },
         {
           "name": "初霜",
-          "description": "：目标原无寒霜、本次成功施加时额外＋1层；这额外一层不能由本击触发。"
+          "description": "：目标原无寒霜、本次成功施加时额外＋1层；这额外一层不能由本击触发。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-03-chushuang.webp"
         }
       ]
     },
@@ -25,15 +28,18 @@
       "choices": [
         {
           "name": "养脉",
-          "description": "：润脉每跳灵力、体力恢复量各＋10%。"
+          "description": "：润脉每跳灵力、体力恢复量各＋10%。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-04-yangmai.webp"
         },
         {
           "name": "蚀脉",
-          "description": "：枯脉每跳灵力、体力扣量各＋10%。"
+          "description": "：枯脉每跳灵力、体力扣量各＋10%。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-05-shimai.webp"
         },
         {
           "name": "凝霜",
-          "description": "：按成功触发冻结的寒霜层数计数，每第5层触发后不消耗。"
+          "description": "：按成功触发冻结的寒霜层数计数，每第5层触发后不消耗。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-06-ningshuang.webp"
         }
       ]
     },
@@ -42,15 +48,18 @@
       "choices": [
         {
           "name": "盈护",
-          "description": "：润脉恢复及合法资源转移后，剩余恢复量按50%转灵盾；起始双资源已满也可。"
+          "description": "：润脉恢复及合法资源转移后，剩余恢复量按50%转灵盾；起始双资源已满也可。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-07-yinghu.webp"
         },
         {
           "name": "生寒",
-          "description": "：一跳枯脉把任一正数资源扣至0，施加1层寒霜，每跳至多一次。"
+          "description": "：一跳枯脉把任一正数资源扣至0，施加1层寒霜，每跳至多一次。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-08-shenghan.webp"
         },
         {
           "name": "回润",
-          "description": "：主动水攻成功触发寒霜冻结，自身获得1层润脉，每次攻击至多一次。"
+          "description": "：主动水攻成功触发寒霜冻结，自身获得1层润脉，每次攻击至多一次。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-09-huirun.webp"
         }
       ]
     },
@@ -59,15 +68,18 @@
       "choices": [
         {
           "name": "长养",
-          "description": "：润脉两项恢复量再＋20%。"
+          "description": "：润脉两项恢复量再＋20%。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-10-changyang.webp"
         },
         {
           "name": "深枯",
-          "description": "：枯脉两项扣量再＋20%。"
+          "description": "：枯脉两项扣量再＋20%。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-11-shenku.webp"
         },
         {
           "name": "玄霜",
-          "description": "：寒霜每层冻结时间由0.5秒提高至1秒。"
+          "description": "：寒霜每层冻结时间由0.5秒提高至1秒。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-12-xuanshuang.webp"
         }
       ]
     },
@@ -76,15 +88,18 @@
       "choices": [
         {
           "name": "周流",
-          "description": "：润脉溢出恢复跨资源转移的效率由50%提高至100%。"
+          "description": "：润脉溢出恢复跨资源转移的效率由50%提高至100%。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-13-zhouliu.webp"
         },
         {
           "name": "断流",
-          "description": "：枯脉不足部分转扣另一资源的效率由50%提高至100%。"
+          "description": "：枯脉不足部分转扣另一资源的效率由50%提高至100%。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-14-duanliu.webp"
         },
         {
           "name": "留霜",
-          "description": "：每层寒霜触发后有20%概率保留；凝霜对应的第5层必留，不对同层重复结算保留。"
+          "description": "：每层寒霜触发后有20%概率保留；凝霜对应的第5层必留，不对同层重复结算保留。",
+          "icon": "res://assets/UI-water-hanmailiuzhuanjing-effect-15-liushuang.webp"
         }
       ]
     }

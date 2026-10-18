@@ -7,18 +7,21 @@
       "level": 1,
       "spell": {
         "name": "岩罡锤",
-        "description": "：直接土属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。"
+        "description": "：直接土属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。",
+        "icon": "res://assets/UI-earth-hanyueliedijue-effect-01-yangangchui.webp"
       },
       "choices": [
         {
           "name": "重岳",
           "description": "（本体增伤）：本体伤害＋25%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-02-zhongyue.webp"
         },
         {
           "name": "震乏",
           "description": "（命中致乏）：命中施加4层疲惫。",
-          "effect": "命中致乏"
+          "effect": "命中致乏",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-03-zhenfa.webp"
         }
       ]
     },
@@ -26,18 +29,21 @@
       "level": 3,
       "spell": {
         "name": "坠岳印",
-        "description": "：命中后按目标预存疲惫，每层追加2点震溃基础土伤，不消耗疲惫。 基础伤害24；冷却6秒；本术消耗8灵力。"
+        "description": "：命中后按目标预存疲惫，每层追加2点震溃基础土伤，不消耗疲惫。 基础伤害24；冷却6秒；本术消耗8灵力。",
+        "icon": "res://assets/UI-earth-hanyueliedijue-effect-04-zhuiyueyin.webp"
       },
       "choices": [
         {
           "name": "镇山",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-05-zhenshan.webp"
         },
         {
           "name": "乘乏",
           "description": "（震溃增强）：本术震溃追加伤害＋50%。",
-          "effect": "震溃增强"
+          "effect": "震溃增强",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-06-chengfa.webp"
         }
       ]
     },
@@ -45,18 +51,21 @@
       "level": 5,
       "spell": {
         "name": "地脉震",
-        "description": "：命中使敌方武器定身1秒，暂停武器入阵、轮转并禁止外部调用。 基础伤害30；冷却8秒；本术消耗12灵力。"
+        "description": "：命中使敌方武器定身1秒，暂停武器入阵、轮转并禁止外部调用。 基础伤害30；冷却8秒；本术消耗12灵力。",
+        "icon": "res://assets/UI-earth-hanyueliedijue-effect-07-dimaizhen.webp"
       },
       "choices": [
         {
           "name": "裂地",
           "description": "（本体增伤）：本体伤害＋30%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-08-liedi.webp"
         },
         {
           "name": "沉岳",
           "description": "（定身重伤）：定身提高至2秒，命中施加3层重伤。",
-          "effect": "定身重伤"
+          "effect": "定身重伤",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-09-chenyue.webp"
         }
       ]
     },
@@ -64,18 +73,21 @@
       "level": 7,
       "spell": {
         "name": "山河崩",
-        "description": "：命中后按目标预存重伤，每层追加2点崩体基础土伤，不消耗重伤。 基础伤害60；冷却10秒；本术消耗20灵力。"
+        "description": "：命中后按目标预存重伤，每层追加2点崩体基础土伤，不消耗重伤。 基础伤害60；冷却10秒；本术消耗20灵力。",
+        "icon": "res://assets/UI-earth-hanyueliedijue-effect-10-shanhebeng.webp"
       },
       "choices": [
         {
           "name": "倾岳",
           "description": "（本体增伤）：本体伤害＋40%。",
-          "effect": "本体增伤"
+          "effect": "本体增伤",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-11-qingyue.webp"
         },
         {
           "name": "伤崩",
           "description": "（崩体增强）：本术崩体追加伤害＋50%。",
-          "effect": "崩体增强"
+          "effect": "崩体增强",
+          "icon": "res://assets/UI-earth-hanyueliedijue-effect-12-shangbeng.webp"
         }
       ]
     }

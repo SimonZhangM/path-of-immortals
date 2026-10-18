@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "调墨",
-          "description": "：提高灵墨与符材契合度、成符稳定性。"
+          "description": "：提高灵墨与符材契合度、成符稳定性。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-01-tiaomo.webp"
         },
         {
           "name": "惜材",
-          "description": "：减少制符材料损耗。"
+          "description": "：减少制符材料损耗。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-02-xicai.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "精篆",
-          "description": "：提高单张符箓的品质与效力。"
+          "description": "：提高单张符箓的品质与效力。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-03-jingzhuan.webp"
         },
         {
           "name": "疾书",
-          "description": "：提高批量制符效率。"
+          "description": "：提高批量制符效率。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-04-jishu.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "纳灵",
-          "description": "：更充分发挥特殊核心材料的性质。"
+          "description": "：更充分发挥特殊核心材料的性质。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-05-naling.webp"
         },
         {
           "name": "合墨",
-          "description": "：处理复合灵墨与复杂配方。"
+          "description": "：处理复合灵墨与复杂配方。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-06-hemo.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "攻篆",
-          "description": "：偏重攻击、召唤类符箓。"
+          "description": "：偏重攻击、召唤类符箓。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-07-gongzhuan.webp"
         },
         {
           "name": "策篆",
-          "description": "：偏重控制、干扰、增益类符箓。"
+          "description": "：偏重控制、干扰、增益类符箓。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-08-cezhuan.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "神篆",
-          "description": "：提高高阶单符的制作上限。"
+          "description": "：提高高阶单符的制作上限。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-09-shenzhuan.webp"
         },
         {
           "name": "百符",
-          "description": "：提高产量、材料利用率与备符能力。"
+          "description": "：提高产量、材料利用率与备符能力。",
+          "icon": "res://assets/UI-water-lingmoxuanfulu-effect-10-baifu.webp"
         }
       ]
     }

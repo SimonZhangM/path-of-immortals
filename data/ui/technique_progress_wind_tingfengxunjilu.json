@@ -8,11 +8,13 @@
       "choices": [
         {
           "name": "辨途",
-          "description": "：发现额外隐路与捷径；主线必经路线不以此为唯一入口。"
+          "description": "：发现额外隐路与捷径；主线必经路线不以此为唯一入口。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-01-biantu.webp"
         },
         {
           "name": "寻迹",
-          "description": "：辨认人物、兽类、妖物的活动痕迹。"
+          "description": "：辨认人物、兽类、妖物的活动痕迹。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-02-xunji.webp"
         }
       ]
     },
@@ -21,11 +23,13 @@
       "choices": [
         {
           "name": "疾行",
-          "description": "：缩短旅行耗时。"
+          "description": "：缩短旅行耗时。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-03-jixing.webp"
         },
         {
           "name": "潜行",
-          "description": "：减少不必要的遭遇。"
+          "description": "：减少不必要的遭遇。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-04-qianxing.webp"
         }
       ]
     },
@@ -34,11 +38,13 @@
       "choices": [
         {
           "name": "寻隐",
-          "description": "：发现隐秘地点、入口与遗迹。"
+          "description": "：发现隐秘地点、入口与遗迹。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-05-xunyin.webp"
         },
         {
           "name": "追踪",
-          "description": "：深入追索已发现的线索。"
+          "description": "：深入追索已发现的线索。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-06-zhuizong.webp"
         }
       ]
     },
@@ -47,11 +53,13 @@
       "choices": [
         {
           "name": "越险",
-          "description": "：减轻复杂地形带来的不利影响。"
+          "description": "：减轻复杂地形带来的不利影响。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-07-yuexian.webp"
         },
         {
           "name": "避凶",
-          "description": "：提前察觉伏击与高危区域。"
+          "description": "：提前察觉伏击与高危区域。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-08-bixiong.webp"
         }
       ]
     },
@@ -60,11 +68,13 @@
       "choices": [
         {
           "name": "逐风",
-          "description": "：提高远行及已探索区域的通行效率。"
+          "description": "：提高远行及已探索区域的通行效率。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-09-zhufeng.webp"
         },
         {
           "name": "听微",
-          "description": "：提高发现高价值隐秘线索的能力。"
+          "description": "：提高发现高价值隐秘线索的能力。",
+          "icon": "res://assets/UI-wind-tingfengxunjilu-effect-10-tingwei.webp"
         }
       ]
     }
