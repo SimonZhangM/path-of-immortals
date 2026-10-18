@@ -4,9 +4,13 @@ extends Control
 signal cancelled
 signal purchase_requested(item_id: String, quantity: int)
 signal sale_requested(item_id: String, quantity: int)
+signal dialogue_requested(action: String, topic: String)
+signal benefit_tooltip_shown
 
 const FRAME := Rect2(32,32,1474,840)
 const GOLD := Color("f3d58c")
+const DISCOUNT_INK := Color("86e79a")
+const SimpleTooltip := preload("res://scripts/ui/simple_tooltip.gd")
 const METRICS = preload("res://scripts/map/map_texture_metrics.gd")
 # Source-canvas slots retain the original eight positions. Future products reuse these
 # positions by page, never add a ninth slot or individual item-specific geometry.
@@ -43,6 +47,10 @@ var quantity_label: Label
 var price_label: Label
 var total_label: Label
 var balance_label: Label
+var balance_caption: Label
+var balance_row: HBoxContainer
+var apprentice_badge: PanelContainer
+var apprentice_label: Label
 var message: Label
 var empty_label: Label
 var shop: MapShop
@@ -54,6 +62,10 @@ var quantity := 1
 var busy := false
 var selling := false
 var crafting := false
+var conversing := false
+var conversation_tab: Button
+var conversation_view: MapClinicDialog
+var _presentation: Dictionary = {}
 var _visible_products: Array = []
 var _kai := SystemFont.new()
 var _song := SystemFont.new()
@@ -84,9 +96,7 @@ func _init() -> void:
 	description_label = _label(canvas,"",Rect2(624,181,792,40),23)
 	leave_button = _button("离开商铺",Rect2(1218,107,171,57),27)
 	leave_button.add_theme_font_override("font",_hei)
-	leave_button.add_theme_stylebox_override("hover",StyleBoxEmpty.new())
-	for state_name in ["font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:
-		leave_button.add_theme_color_override(state_name,leave_button.get_theme_color("font_color"))
+	_style_leave_button(leave_button)
 	leave_button.pressed.connect(func(): if not busy: cancelled.emit())
 	# Match the reduced mode frames in the updated source artwork.
 	buy_tab = _button("购买",Rect2(624,233,192,49),28)
@@ -99,6 +109,9 @@ func _init() -> void:
 	_style_tab(craft_tab,false)
 	craft_tab.pressed.connect(set_crafting)
 	craft_tab.hide()
+	conversation_tab = _button("交谈",Rect2(624,233,192,49),28)
+	conversation_tab.hide()
+	conversation_tab.pressed.connect(set_conversation)
 	var trade_start := canvas.get_child_count()
 	for index in MapShop.PAGE_SIZE:
 		var origin := SLOT_ORIGIN + Vector2(index%4,index/4)*SLOT_STEP
@@ -163,8 +176,36 @@ func _init() -> void:
 		else: purchase_requested.emit(selected_id,quantity)
 	)
 	for child: CanvasItem in canvas.get_children().slice(trade_start): trade_controls.append(child)
-	balance_label = _label(canvas,"",Rect2(1044,240,372,37),19)
-	balance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	balance_row = HBoxContainer.new()
+	balance_row.name = "ShopBalance"
+	balance_row.mouse_filter = MOUSE_FILTER_IGNORE
+	balance_row.alignment = BoxContainer.ALIGNMENT_END
+	balance_row.add_theme_constant_override("separation",4)
+	# Bottom-align visible KaiTi glyphs (allow for the font's descent below ink).
+	_place(balance_row,Rect2(1224,260,192,28))
+	balance_caption = _label(balance_row,"持有灵石：",Rect2(),19)
+	balance_caption.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	_coin(balance_row,"res://assets/tanchuang-jiaoyi-coin.webp",Vector2(18,22))
+	(balance_row.get_child(1) as Control).size_flags_vertical = SIZE_SHRINK_CENTER
+	balance_label = _label(balance_row,"",Rect2(),19)
+	balance_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	apprentice_badge = preload("res://scripts/ui/observed_tooltip_panel.gd").new()
+	apprentice_badge.tooltip_shown.connect(func(): benefit_tooltip_shown.emit())
+	apprentice_badge.name = "ApprenticeDiscount"
+	apprentice_badge.mouse_filter = MOUSE_FILTER_STOP
+	var benefit_style := StyleBoxFlat.new()
+	benefit_style.bg_color = Color("133429")
+	benefit_style.border_color = DISCOUNT_INK
+	benefit_style.set_border_width_all(1)
+	benefit_style.set_corner_radius_all(4)
+	benefit_style.content_margin_left = 8
+	benefit_style.content_margin_right = 8
+	apprentice_badge.add_theme_stylebox_override("panel",benefit_style)
+	SimpleTooltip.apply(apprentice_badge)
+	_place(apprentice_badge,Rect2(1308.75,226.725,104.5,27.55))
+	apprentice_label = _label(apprentice_badge,"",Rect2(),18,true)
+	apprentice_label.add_theme_color_override("font_color",DISCOUNT_INK)
+	apprentice_badge.hide()
 	message = _label(canvas,"",Rect2(623,797,794,23),17,true)
 	message.add_theme_color_override("font_color",Color("ebd6a9"))
 	trade_controls.append(message)
@@ -229,6 +270,13 @@ func _selection_box(fill := true) -> StyleBoxFlat:
 	box.set_border_width_all(1)
 	box.set_corner_radius_all(5)
 	return box
+
+func _style_leave_button(button: Button) -> void:
+	# Keep the text-only exit: a subtle ink highlight, without a new frame or scale.
+	button.add_theme_stylebox_override("hover",StyleBoxEmpty.new())
+	button.add_theme_color_override("font_hover_color",Color("fffbea"))
+	button.add_theme_color_override("font_hover_pressed_color",Color("e5c985"))
+	button.add_theme_color_override("font_pressed_color",Color("e5c985"))
 
 func _style_tab(button: Button, selected: bool) -> void:
 	button.add_theme_font_override("font",_hei)
@@ -321,9 +369,50 @@ func _price_row(rect: Rect2) -> Label:
 	row.mouse_filter = MOUSE_FILTER_IGNORE
 	_place(row,rect)
 	_coin(row,"res://assets/tanchuang-jiaoyi-coin.webp",Vector2(21,23))
-	return _label(row,"",Rect2(),22)
+	var original := _label(row,"",Rect2(),22)
+	original.name = "OriginalPrice"
+	original.add_theme_color_override("font_color",Color("92958c"))
+	var strike := ColorRect.new()
+	strike.name = "PriceStrike"
+	strike.mouse_filter = MOUSE_FILTER_IGNORE
+	strike.color = Color("c4c1ad")
+	original.add_child(strike)
+	strike.anchor_right = 1
+	strike.anchor_top = 0.5
+	strike.anchor_bottom = 0.5
+	strike.offset_top = -0.5
+	strike.offset_bottom = 0.5
+	original.hide()
+	var actual := _label(row,"",Rect2(),22)
+	actual.set_meta("original_price_label",original)
+	return actual
 
-func present(event: Dictionary, catalog: MapShop, loadout: MapLoadoutState) -> void:
+func _show_price(label: Label, value: String, original := -1) -> void:
+	var old: Label = label.get_meta("original_price_label")
+	old.text = str(original) if original>=0 else ""
+	old.visible = original>=0
+	label.text = value
+	label.add_theme_color_override("font_color",DISCOUNT_INK if original>=0 else Color("f8ecc8"))
+
+func present(event: Dictionary, catalog: MapShop, loadout: MapLoadoutState, status: MapPlayerStatus = null) -> void:
+	if is_instance_valid(conversation_view): conversation_view.free()
+	conversation_view = null
+	conversing = false
+	canvas.show()
+	get_child(0).show()
+	# A conversation page can be authored before its NPC dialogue is supplied.
+	var has_conversation: bool = event.presentation.has("conversation_background")
+	var four_tabs: bool = has_conversation and catalog.definition.get("crafting_tab",false)
+	_presentation = event.presentation.duplicate(true)
+	conversation_tab.visible = has_conversation
+	buy_tab.position = Vector2(828 if has_conversation else 624,233)-FRAME.position
+	buy_tab.size.x = 185 if has_conversation else 192
+	sell_button.position = Vector2(1025 if has_conversation else 828,233)-FRAME.position
+	sell_button.size.x = 191 if has_conversation else 185
+	craft_tab.position = Vector2(1227 if four_tabs else 1025,233)-FRAME.position
+	craft_tab.size.x = 192 if four_tabs else 191
+	# Four mode frames occupy the full row; keep the wallet above the fourth frame.
+	balance_row.position = Vector2(1224,194 if four_tabs else 260)-FRAME.position
 	if shop!=null and shop.pricing.changed.is_connected(_refresh_page): shop.pricing.changed.disconnect(_refresh_page)
 	if state!=null and state.changed.is_connected(_on_inventory_changed): state.changed.disconnect(_on_inventory_changed)
 	shop = catalog
@@ -350,9 +439,9 @@ func present(event: Dictionary, catalog: MapShop, loadout: MapLoadoutState) -> v
 	leave_button.text = shop.definition.get("leave_label","离开商铺")
 	craft_tab.visible = shop.definition.get("crafting_tab",false)
 	craft_tab.text = shop.definition.get("crafting_label","打造")
-	var balance_rect := Rect2(1224,240,192,37) if craft_tab.visible else Rect2(1044,240,372,37)
-	balance_label.position = balance_rect.position-FRAME.position
-	balance_label.size = balance_rect.size
+	var benefit: Dictionary = shop.definition.get("purchase_discount",{})
+	apprentice_label.text = benefit.get("label","")
+	apprentice_badge.tooltip_text = benefit.get("tooltip","")
 	message.text = ""
 	for filter: Button in filters.values(): filter.free()
 	filters.clear()
@@ -373,9 +462,55 @@ func present(event: Dictionary, catalog: MapShop, loadout: MapLoadoutState) -> v
 	show()
 	_refresh_page()
 	_layout()
+	if has_conversation:
+		conversation_view = MapClinicDialog.new()
+		conversation_view.name = "ShopConversation"
+		add_child(conversation_view)
+		conversation_view.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+		conversation_view.cancelled.connect(func(): cancelled.emit())
+		conversation_view.dialogue_requested.connect(func(action,topic):
+			if action!="after_treatment": dialogue_requested.emit(action,topic)
+		)
+		var talk_event := event.duplicate(true)
+		talk_event.title = shop.definition.title
+		talk_event.description = shop.definition.description
+		talk_event.leave_label = shop.definition.get("leave_label","离开商铺")
+		talk_event.presentation.background = event.presentation.conversation_background
+		conversation_view.present(talk_event,loadout,status)
+		_style_leave_button(conversation_view.leave_button)
+		conversation_view.treatment_tab.hide()
+		var buy := conversation_view._button("购买",Rect2(828,233,185,49),28)
+		buy.name = "ShopBuyTab"
+		buy.pressed.connect(func(): set_selling(false))
+		var sell := conversation_view._button("出售",Rect2(1025,233,191,49),28)
+		sell.name = "ShopSellTab"
+		sell.pressed.connect(func(): set_selling(true))
+		conversation_view._style_tab(buy,false)
+		conversation_view._style_tab(sell,false)
+		if four_tabs:
+			var craft := conversation_view._button(craft_tab.text,Rect2(1227,233,192,49),28)
+			craft.name = "ShopCraftTab"
+			craft.pressed.connect(set_crafting)
+			conversation_view._style_tab(craft,false)
+		set_conversation()
+
+func set_conversation() -> void:
+	if busy or conversation_view==null: return
+	conversing = true
+	crafting = false
+	selling = false
+	canvas.hide()
+	get_child(0).hide()
+	conversation_view.show()
+	conversation_view.refresh_dialogue()
 
 func set_selling(value: bool) -> void:
-	if busy or (not crafting and selling==value): return
+	if busy or (not conversing and not crafting and selling==value): return
+	conversing = false
+	if conversation_view!=null: conversation_view.hide()
+	canvas.show()
+	get_child(0).show()
+	_style_tab(conversation_tab,false)
 	crafting = false
 	selling = value
 	page = 0
@@ -387,6 +522,11 @@ func set_selling(value: bool) -> void:
 
 func set_crafting() -> void:
 	if busy or crafting or not shop.definition.get("crafting_tab",false): return
+	conversing = false
+	if conversation_view!=null: conversation_view.hide()
+	canvas.show()
+	get_child(0).show()
+	_style_tab(conversation_tab,false)
 	crafting = true
 	selling = false
 	page = 0
@@ -397,6 +537,11 @@ func set_crafting() -> void:
 	_refresh_page()
 
 func _refresh_trade_art() -> void:
+	var background_path: String = _presentation.get("crafting_background",_presentation.background) if crafting else _presentation.background
+	var background := AtlasTexture.new()
+	background.atlas = load(background_path)
+	background.region = FRAME
+	backing.texture = background
 	var prefix := "res://assets/tanchuang-huifu-cangku" if selling else "res://assets/tanchuang-baoxiang-dakai"
 	buy_button.texture_normal = _trimmed(prefix+"1.webp")
 	buy_button.texture_hover = _trimmed(prefix+"2.webp")
@@ -501,7 +646,9 @@ func _refresh_page(auto_select := true) -> void:
 		price_row.mouse_filter = MOUSE_FILTER_IGNORE
 		slot_contents[index].add_child(price_row)
 		_coin(price_row,"res://assets/player-status-coin.webp",Vector2(18,21))
-		var price := _unit_price(row.item_id)
+		# Shelf prices remain the normal quote; apprentice savings appear in checkout.
+		var price := shop.pricing.sell_unit_price(row.item_id) if selling else shop.pricing.buy_unit_price(row.item_id)
+		if not selling and row.has("fixed_buy_price"): price = int(row.fixed_buy_price)
 		_label(price_row,str(price) if price>=0 else "待定",Rect2(),21)
 	page_label.text = "%d / %d" % [page+1,maxi(1,ceili(products.size()/8.0))]
 	previous_button.disabled = page==0
@@ -586,17 +733,26 @@ func refresh_checkout() -> void:
 	var limit := _quantity_limit()
 	quantity = clampi(quantity,1,maxi(1,limit))
 	var price := _unit_price(selected_id)
-	price_label.text = str(price) if price>=0 else ("待定" if not selected_id.is_empty() else "—")
-	total_label.text = str(price*quantity) if price>=0 else "—"
+	var quote := {} if selling else shop.buy_quote(selected_id,quantity)
+	var discounted: bool = quote.get("discounted",false)
+	var total: int = price*quantity if selling else int(quote.get("total",-1))
+	_show_price(price_label,str(price) if price>=0 else ("待定" if not selected_id.is_empty() else "—"),int(quote.original_unit) if discounted else -1)
+	_show_price(total_label,str(total) if total>=0 else "—",int(quote.original_total) if discounted else -1)
 	quantity_label.text = str(quantity)
-	balance_label.text = "持有灵石：%d" % state.spirit_stones
+	balance_label.text = str(state.spirit_stones)
+	# Long balances shrink the text only enough to stay clear of the third tab.
+	var wallet_size := 19
+	while wallet_size>12 and _kai.get_string_size(balance_caption.text+balance_label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,wallet_size).x+26>balance_row.size.x:
+		wallet_size -= 1
+	for label in [balance_caption,balance_label]: label.add_theme_font_size_override("font_size",wallet_size)
+	apprentice_badge.visible = shop.definition.has("purchase_discount") and not crafting
 	minus_button.disabled = busy or selected_id.is_empty() or quantity<=1
 	plus_button.disabled = busy or selected_id.is_empty() or quantity>=limit
 	for button: TextureButton in [minus_button,plus_button]:
 		button.get_node("QuantityHover").visible = not button.disabled and button.is_hovered()
 	buy_button.disabled = busy or crafting or selected_id.is_empty() or price<0 or limit<=0
 	buy_button.tooltip_text = "价格待定，暂不能交易。" if price<0 and not selected_id.is_empty() else ""
-	total_label.add_theme_color_override("font_color",Color("f1a598") if not selling and price*quantity>state.spirit_stones else GOLD)
+	total_label.add_theme_color_override("font_color",DISCOUNT_INK if discounted else (Color("f1a598") if not selling and total>state.spirit_stones else GOLD))
 	_refresh_buy_color()
 
 func set_busy(value: bool) -> void:

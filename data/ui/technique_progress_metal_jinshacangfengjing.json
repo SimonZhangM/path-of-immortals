@@ -1,0 +1,93 @@
+{
+  "book_id": "base.cultivation_book.metal_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《金煞藏锋经》 状态专精（习得生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "回锋",
+          "description": "：反锋触发后保留25%层数。"
+        },
+        {
+          "name": "留痕",
+          "description": "：锋痕触发后保留25%层数；本次仍按触发前层数结算。"
+        },
+        {
+          "name": "血沸",
+          "description": "：向已有流血的目标再加流血，刷新持续时间，新增层立即结算一次。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "蕴锋",
+          "description": "：反锋伤害＋10%。"
+        },
+        {
+          "name": "刻痕",
+          "description": "：锋痕追加伤害＋10%。"
+        },
+        {
+          "name": "炼血",
+          "description": "：流血跳伤＋10%。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "生痕",
+          "description": "：反锋真正伤及气血，施加1层锋痕。"
+        },
+        {
+          "name": "见血",
+          "description": "：锋痕真正伤及气血，施加1层流血。"
+        },
+        {
+          "name": "养锋",
+          "description": "：流血每次成功结算，自身获得1层反锋。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "化锋",
+          "description": "：反锋伤害再＋20%。"
+        },
+        {
+          "name": "深痕",
+          "description": "：锋痕追加伤害再＋20%。"
+        },
+        {
+          "name": "沸血",
+          "description": "：流血跳伤再＋20%；与第二重同向强化合计＋30%。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "镇兵",
+          "description": "：触发反锋的敌方武器下一轮冷却延长1秒。"
+        },
+        {
+          "name": "透骨",
+          "description": "：本次触发前锁定的锋痕每层，使武器本体伤害＋1%。"
+        },
+        {
+          "name": "续血",
+          "description": "：主动攻击命中已有流血的目标且伤及气血，再加1层流血并刷新持续时间，每次攻击至多一次。"
+        }
+      ]
+    }
+  ],
+  "reserve_status_space": true
+}

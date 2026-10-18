@@ -33,8 +33,13 @@ var chest_observation_dialog: Control
 var gathering_dialog: MapGatheringDialog
 var gathering_result: Control
 var rest_dialog: MapRestDialog
+var cultivation_dialog: MapCultivationDialog
+var cultivation_progress_dialog: MapCultivationProgressDialog
+var cultivation_session: MapCultivationSession
+var _cultivation_adjusting := false
 var shop_dialog: MapShopDialog
 var clinic_dialog: MapClinicDialog
+var inn_dialog: MapInnDialog
 var shops: Dictionary = {}
 var _gathering_rng := RandomNumberGenerator.new()
 var _chest_rng := RandomNumberGenerator.new()
@@ -52,6 +57,7 @@ var player_status: MapPlayerStatus
 var status_header: MapStatusHeader
 var calendar_readout: MapCalendarReadout
 var inventory_screen: MapInventoryScreen
+var technique_screen: Control
 var inventory_catalog: MapInventoryCatalog
 var _last_view_size := Vector2.ZERO
 @onready var map_viewport: Control = $MapViewport
@@ -143,12 +149,16 @@ func _setup_status_header() -> void:
 	_setup_inventory(registry)
 	if startup_error.is_empty():
 		calendar_readout = MapCalendarReadout.new()
-		# Date is shown over fullscreen inventory/warehouse, not map travel.
+		# Shared date banner for fullscreen inventory, warehouse and techniques.
 		calendar_readout.hide()
 		add_child(calendar_readout)
 		inventory_screen.visibility_changed.connect(_update_calendar_visibility)
+		technique_screen.visibility_changed.connect(_update_calendar_visibility)
 		resized.connect(_layout_calendar)
 		_update_calendar_readout()
+
+func _refresh_travel_capacity() -> void:
+	travel.set_running_allowed(not loadout.storage_over_capacity())
 
 func _setup_inventory(registry: ContentRegistry) -> void:
 	inventory_save_path = MapLoadoutStore.session_path(inventory_save_path)
@@ -167,6 +177,8 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 		loadout = null
 		push_error(startup_error)
 		return
+	loadout.changed.connect(_refresh_travel_capacity)
+	_refresh_travel_capacity()
 	event_state.reward_claimed = loadout.has_reward
 	event_state.chest_resolver = func(event: Dictionary): return MapChestRewards.current_event(loadout,event)
 	event_state.enemy_lookup = registry.get_enemy
@@ -183,6 +195,10 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 			startup_error = shop.load_catalog(event.catalog,loadout)
 			if not startup_error.is_empty(): return
 			shops[event.id] = shop
+		if event.type == "inn" and event.has("food_catalog"):
+			var food_shop := MapShop.new()
+			startup_error = food_shop.load_catalog(event.food_catalog,loadout)
+			if not startup_error.is_empty(): return
 		if event.type == "gathering" and (not loadout.records.has(event.item_id) or loadout.records[event.item_id].category not in ["plant", "mineral"]):
 			startup_error = "采集点引用了未知材料。"
 			return
@@ -210,7 +226,6 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 			push_error(startup_error)
 			return
 	inventory_catalog.replace_entries(loadout.storage_records())
-	_sync_completed_signs()
 	player_status.apply_board(loadout.board)
 	_sync_currency()
 	loadout.changed.connect(_sync_currency)
@@ -218,7 +233,9 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	loadout.changed.connect(_sync_player_name)
 	loadout.changed.connect(func(): player_status.apply_board(loadout.board))
 	loadout.changed.connect(_sync_calendar)
-	_sync_calendar()
+	# Restore persisted deadlines before the first frame, without completion fades.
+	_sync_calendar(false)
+	_sync_completed_signs()
 	inventory_screen = MapInventoryScreen.new()
 	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout, player_status)
 	inventory_screen.formation_save_callback = _save_loadout
@@ -230,8 +247,19 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	inventory_screen.warehouse_quantity_transfer_requested.connect(func(id: String, item_id: String, withdraw: bool, quantity: int): _transfer_warehouse(id,item_id,withdraw,false,quantity))
 	inventory_screen.warehouse_undo_requested.connect(_undo_warehouse)
 	inventory_screen.warehouse_history_provider = func(): return warehouse_transfers.view_history(loadout)
+	technique_screen = preload("res://scripts/map/map_technique_screen.gd").new()
+	var technique_memory := preload("res://scripts/map/map_technique_view_memory.gd")
+	technique_screen.selected_book_id = technique_memory.read_book(inventory_save_path, registry.library)
+	technique_screen.configure(registry.library)
+	technique_screen.book_selected.connect(func(book_id: String):
+		if technique_memory.save_book(inventory_save_path, registry.library, book_id) != OK:
+			push_warning("功法浏览记录保存失败，本次选择仍保留，重启后可能无法恢复。"))
+	add_child(technique_screen)
+	technique_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	technique_screen.close_requested.connect(func(): set_technique_open(false))
 	if sign_motion != null:
-		inventory_screen.visibility_changed.connect(func(): sign_motion.set_suspended(inventory_screen.visible))
+		inventory_screen.visibility_changed.connect(func(): sign_motion.set_suspended(is_inventory_open() or is_technique_open()))
+		technique_screen.visibility_changed.connect(func(): sign_motion.set_suspended(is_inventory_open() or is_technique_open()))
 		sign_motion.set_suspended(inventory_screen.visible)
 
 var warehouse_transfers := preload("res://scripts/map/map_warehouse_transfer.gd").new()
@@ -259,9 +287,12 @@ func _finish_warehouse_command(error: String) -> void:
 		notice.popup_centered()
 	inventory_screen._refresh_warehouse_actions.call_deferred()
 
-func _sync_calendar() -> void:
+func _sync_calendar(animate_signs: bool = true) -> void:
+	player_status.food_modifiers = MapFood.modifiers(loadout)
+	player_status.cultivation_bonus_percent = loadout.cultivation_bonus_percent()
 	player_status.apply_calendar(loadout.calendar)
 	var today := WorldCalendar.current_day(loadout.calendar)
+	if cultivation_session!=null: cultivation_session.sync_calendar(today)
 	for event: Dictionary in event_registry.events.values():
 		var managed := false
 		var waiting := false
@@ -275,7 +306,7 @@ func _sync_calendar() -> void:
 		var was_waiting := event_state.completed.has(event.id)
 		if waiting: event_state.completed[event.id] = true
 		else: event_state.completed.erase(event.id)
-		if was_waiting != waiting: _on_encounter_changed(event.id)
+		if was_waiting != waiting: _on_encounter_changed(event.id, animate_signs)
 	_update_calendar_readout()
 
 func _update_calendar_readout() -> void:
@@ -286,7 +317,7 @@ func _update_calendar_readout() -> void:
 
 func _update_calendar_visibility() -> void:
 	if calendar_readout == null: return
-	calendar_readout.visible = is_inventory_open()
+	calendar_readout.visible = is_inventory_open() or is_technique_open()
 	if calendar_readout.visible: _layout_calendar.call_deferred()
 
 func _layout_calendar() -> void:
@@ -296,6 +327,62 @@ func _layout_calendar() -> void:
 func is_inventory_open() -> bool:
 	return inventory_screen != null and inventory_screen.visible
 
+func is_technique_open() -> bool:
+	return technique_screen != null and technique_screen.visible
+
+func set_technique_open(open: bool) -> void:
+	if technique_screen == null or is_technique_open() == open: return
+	if open and (is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
+	ItemTooltipHost.for_control(self).dismiss()
+	technique_screen.visible = open
+	status_header.map_title.visible = not open and bool(definition.get("show_map_title", true))
+	_end_drag()
+	_clear_hover()
+	if open: player.pause()
+	else:
+		if _cultivation_adjusting:
+			_cultivation_adjusting = false
+			cultivation_session.suspend("inventory", false, WorldCalendar.current_day(loadout.calendar))
+			cultivation_progress_dialog.show()
+			status_header.map_title.hide()
+			return
+		player.play()
+
+func _prepare_inventory_close() -> bool:
+	inventory_screen.close_board_change_dialog()
+	inventory_screen.close_formation_dialog()
+	inventory_screen.cancel_item_drag()
+	var save_error := _save_loadout()
+	if save_error.is_empty(): return true
+	var notice := AcceptDialog.new()
+	notice.dialog_text = save_error
+	add_child(notice)
+	notice.confirmed.connect(notice.queue_free)
+	notice.popup_centered()
+	return false
+
+func _handle_fullscreen_switch(event: InputEventKey) -> bool:
+	var focus := get_viewport().gui_get_focus_owner()
+	if focus is LineEdit or focus is TextEdit: return false
+	var to_techniques := event.is_action_pressed("map_techniques") and is_inventory_open()
+	var to_inventory := event.is_action_pressed("map_inventory") and (is_technique_open() or (is_inventory_open() and not inventory_screen.warehouse_id.is_empty()))
+	if not to_techniques and not to_inventory: return false
+	if is_inventory_open():
+		if not _prepare_inventory_close(): return true
+		if not inventory_screen.warehouse_id.is_empty(): _close_home_warehouse()
+		else: inventory_screen.hide()
+	if is_technique_open(): technique_screen.hide()
+	if to_techniques: technique_screen.show()
+	else:
+		inventory_screen.set_warehouse()
+		inventory_screen.show()
+	ItemTooltipHost.for_control(self).dismiss()
+	status_header.map_title.hide()
+	player.pause()
+	_end_drag()
+	_clear_hover()
+	return true
+
 func is_exit_open() -> bool:
 	return exit_dialog != null and exit_dialog.visible
 
@@ -303,22 +390,11 @@ func set_inventory_open(open: bool) -> void:
 	if not open and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
 		_close_home_warehouse()
 		return
-	if inventory_screen == null or is_exit_open() or (open and event_state != null and event_state.is_active()):
+	if inventory_screen == null or is_technique_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
 		return
 	if is_inventory_open() == open:
 		return
-	if not open:
-		inventory_screen.close_board_change_dialog()
-		inventory_screen.close_formation_dialog()
-		inventory_screen.cancel_item_drag()
-		var save_error := _save_loadout()
-		if not save_error.is_empty():
-			var notice := AcceptDialog.new()
-			notice.dialog_text = save_error
-			add_child(notice)
-			notice.confirmed.connect(notice.queue_free)
-			notice.popup_centered()
-			return
+	if not open and not _prepare_inventory_close(): return
 	inventory_screen.visible = open
 	status_header.map_title.visible = not open and bool(definition.get("show_map_title", true))
 	_end_drag()
@@ -326,6 +402,12 @@ func set_inventory_open(open: bool) -> void:
 	if open:
 		player.pause()
 	else:
+		if _cultivation_adjusting:
+			_cultivation_adjusting=false
+			cultivation_session.suspend("inventory",false,WorldCalendar.current_day(loadout.calendar))
+			cultivation_progress_dialog.show()
+			status_header.map_title.hide()
+			return
 		player.play()
 
 func _save_loadout() -> String:
@@ -353,6 +435,27 @@ func _sync_player_name() -> void:
 		player_status.changed.emit()
 
 func _input(event: InputEvent) -> void:
+	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo:
+		if _handle_fullscreen_switch(event):
+			get_viewport().set_input_as_handled()
+			return
+	if not Engine.is_editor_hint() and is_technique_open():
+		if event is InputEventKey and event.pressed and not event.echo:
+			if event.keycode == KEY_ESCAPE or event.is_action_pressed("map_techniques"):
+				set_technique_open(false)
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "inn":
+		if inn_dialog.handle_continue_input(event):
+			get_viewport().set_input_as_handled()
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed: _close_inn()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventKey:
+			if event.pressed and event.keycode == KEY_ESCAPE: _close_inn()
+			get_viewport().set_input_as_handled()
+		return
 	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "clinic":
 		if clinic_dialog.handle_continue_input(event):
 			get_viewport().set_input_as_handled()
@@ -365,6 +468,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "shop":
+		if shop_dialog.conversing and shop_dialog.conversation_view.handle_continue_input(event):
+			get_viewport().set_input_as_handled()
+			return
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 			if event.pressed: _close_shop()
 			get_viewport().set_input_as_handled()
@@ -375,6 +481,27 @@ func _input(event: InputEvent) -> void:
 	if not Engine.is_editor_hint() and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
 		if event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or (event.is_action_pressed("map_inventory") and not get_viewport().gui_get_focus_owner() is LineEdit)):
 			_close_home_warehouse()
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "cultivation":
+		if _cultivation_adjusting:
+			if event is InputEventKey and event.pressed and not event.echo:
+				if event.keycode==KEY_ESCAPE or (event.is_action_pressed("map_inventory") and not get_viewport().gui_get_focus_owner() is LineEdit):
+					if inventory_screen.is_board_change_dialog_open(): inventory_screen.close_board_change_dialog()
+					elif inventory_screen.is_formation_dialog_open(): inventory_screen.close_formation_dialog()
+					else: set_inventory_open(false)
+					get_viewport().set_input_as_handled()
+			return
+		if cultivation_progress_dialog.technique_choice.visible:
+			if (event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT) or (event is InputEventKey and event.keycode==KEY_ESCAPE):
+				if event.pressed: cultivation_progress_dialog.technique_choice.close()
+				get_viewport().set_input_as_handled()
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed: _close_cultivation()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventKey:
+			if event.pressed and event.keycode == KEY_ESCAPE: _close_cultivation()
 			get_viewport().set_input_as_handled()
 		return
 	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "rest" and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
@@ -434,6 +561,9 @@ func _input(event: InputEvent) -> void:
 			return
 		set_inventory_open(not is_inventory_open())
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("map_techniques") and not is_inventory_open():
+		set_technique_open(true)
+		get_viewport().set_input_as_handled()
 
 func _setup_events() -> void:
 	var files: Variant = definition.get("event_files", [])
@@ -490,18 +620,43 @@ func _setup_events() -> void:
 	rest_dialog.rest_requested.connect(_confirm_rest)
 	rest_dialog.warehouse_requested.connect(_open_home_warehouse)
 	rest_dialog.cancelled.connect(_cancel_rest)
+	cultivation_dialog=MapCultivationDialog.new()
+	add_child(cultivation_dialog)
+	cultivation_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	cultivation_dialog.cancelled.connect(_close_cultivation)
+	cultivation_dialog.cultivation_requested.connect(_request_cultivation)
+	cultivation_progress_dialog=MapCultivationProgressDialog.new()
+	add_child(cultivation_progress_dialog)
+	cultivation_progress_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	cultivation_progress_dialog.ended.connect(_close_cultivation)
+	cultivation_progress_dialog.pause_requested.connect(_toggle_cultivation_pause)
+	cultivation_progress_dialog.board_requested.connect(_open_cultivation_inventory)
+	cultivation_progress_dialog.technique_requested.connect(_open_cultivation_techniques)
+	cultivation_progress_dialog.technique_choice.technique_chosen.connect(func(id: String): cultivation_session.choose_technique(id))
+	cultivation_progress_dialog.technique_choice.closed.connect(func():
+		if cultivation_session!=null: cultivation_session.suspend("choice",false,WorldCalendar.current_day(loadout.calendar))
+	)
 	shop_dialog = MapShopDialog.new()
 	add_child(shop_dialog)
 	shop_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	shop_dialog.cancelled.connect(_close_shop)
 	shop_dialog.purchase_requested.connect(_purchase_shop_item)
 	shop_dialog.sale_requested.connect(_sell_shop_item)
+	shop_dialog.dialogue_requested.connect(_shop_dialogue_command)
+	shop_dialog.benefit_tooltip_shown.connect(_shop_benefit_tooltip_shown)
 	clinic_dialog = MapClinicDialog.new()
 	add_child(clinic_dialog)
 	clinic_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	clinic_dialog.cancelled.connect(_close_clinic)
 	clinic_dialog.dialogue_requested.connect(_clinic_dialogue_command)
 	clinic_dialog.treatment_requested.connect(_confirm_clinic_treatment)
+	inn_dialog = MapInnDialog.new()
+	add_child(inn_dialog)
+	inn_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	inn_dialog.cancelled.connect(_close_inn)
+	inn_dialog.dialogue_requested.connect(_inn_dialogue_command)
+	inn_dialog.lodging_requested.connect(_confirm_inn_lodging)
+	inn_dialog.food_purchase_requested.connect(_purchase_inn_food)
 	encounter_dialog = MapEncounterDialog.new()
 	add_child(encounter_dialog)
 	encounter_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -555,10 +710,10 @@ func _sync_completed_signs(animate: bool = false) -> void:
 			else:
 				point.get_node("Sign").hide()
 
-func _on_encounter_changed(event_id: String) -> void:
+func _on_encounter_changed(event_id: String, animate_signs: bool = true) -> void:
 	var point_id: String = event_registry.events[event_id].point_id
 	if event_state.completed.has(event_id):
-		_sync_completed_signs(true)
+		_sync_completed_signs(animate_signs)
 	elif sign_motion != null:
 		sign_motion.restore(point_id)
 	else:
@@ -569,6 +724,15 @@ func _on_encounter_changed(event_id: String) -> void:
 func _advance_dialogue() -> void:
 	if event_state == null or not event_state.is_active():
 		return
+	var event := event_state.active_event()
+	if event_state.phase=="dialogue" and event_state.line_index+1==event.get("lines",[]).size():
+		var flags: Array = event.get("story_flags_on_complete",[])
+		if not flags.is_empty():
+			var error := NpcDialogueActions.set_story_flags(loadout,flags,inventory_save_path)
+			if not error.is_empty():
+				dialogue.text_label.text = event_state.current_line()+"\n"+error
+				return
+			_saved_loadout_revision = loadout.revision
 	var completed_id := event_state.advance()
 	_present_event_progress(completed_id)
 
@@ -581,21 +745,32 @@ func _present_event_progress(completed_id: String = "") -> void:
 		gathering_dialog.hide()
 		gathering_result.hide()
 		rest_dialog.hide()
+		cultivation_dialog.hide()
+		cultivation_progress_dialog.hide()
 		shop_dialog.hide()
 		clinic_dialog.hide()
+		inn_dialog.hide()
 		travel.paused = false
 		_sync_completed_signs(true)
 		_end_drag()
 		_clear_hover()
 	elif event_state.phase == "shop":
-		shop_dialog.present(event_state.active_event(),shops[event_state.active_id],loadout)
+		shop_dialog.present(event_state.active_event(),shops[event_state.active_id],loadout,player_status)
+		if shop_dialog.conversation_view!=null: _shop_dialogue_command("visit","")
+	elif event_state.phase == "inn":
+		inn_dialog.present(event_state.active_event(),loadout,player_status)
+		_inn_dialogue_command("visit","")
 	elif event_state.phase == "clinic":
 		clinic_dialog.present(event_state.active_event(),loadout,player_status)
 		_clinic_dialogue_command("visit","")
+	elif event_state.phase == "cultivation":
+		dialogue.hide()
+		reward_dialog.hide()
+		cultivation_dialog.present(event_state.active_event())
 	elif event_state.phase == "rest":
 		dialogue.hide()
 		reward_dialog.hide()
-		rest_dialog.present(event_state.active_event(),player_status.needs_rest())
+		rest_dialog.present(event_state.active_event(),player_status.needs_rest(),loadout)
 	elif event_state.phase == "gathering":
 		var event := event_state.active_event()
 		if not MapGatheringRewards.pending(loadout,event).is_empty():
@@ -714,7 +889,7 @@ func _close_home_warehouse() -> void:
 	_clear_hover()
 
 func _purchase_shop_item(item_id: String, quantity: int) -> void:
-	if event_state.phase != "shop" or not shop_dialog.visible or shop_dialog.busy or shop_dialog.selling or shop_dialog.crafting: return
+	if event_state.phase != "shop" or not shop_dialog.visible or shop_dialog.busy or shop_dialog.selling or shop_dialog.crafting or shop_dialog.conversing: return
 	shop_dialog.set_busy(true)
 	var shop: MapShop = shops[event_state.active_id]
 	var error := shop.purchase(loadout,item_id,quantity,inventory_save_path)
@@ -724,7 +899,7 @@ func _purchase_shop_item(item_id: String, quantity: int) -> void:
 	shop_dialog.message.text = error if not error.is_empty() else "已购买 %s ×%d，已放入储物袋。" % [loadout.records[item_id].name,quantity]
 
 func _sell_shop_item(item_id: String, quantity: int) -> void:
-	if event_state.phase != "shop" or not shop_dialog.visible or shop_dialog.busy or not shop_dialog.selling or shop_dialog.crafting: return
+	if event_state.phase != "shop" or not shop_dialog.visible or shop_dialog.busy or not shop_dialog.selling or shop_dialog.crafting or shop_dialog.conversing: return
 	shop_dialog.set_busy(true)
 	var shop: MapShop = shops[event_state.active_id]
 	var before := loadout.spirit_stones
@@ -755,26 +930,126 @@ func _close_clinic() -> void:
 	_end_drag()
 	_clear_hover()
 
+func _close_inn() -> void:
+	if not event_state.close_inn(): return
+	travel.stop_at_current_node()
+	inn_dialog.hide()
+	travel.paused = false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
+
+func _confirm_inn_lodging(room_id: String) -> void:
+	if event_state.phase!="inn" or not inn_dialog.visible or inn_dialog.mode!="lodging" or inn_dialog.lodging_content.busy: return
+	inn_dialog.lodging_content.set_busy(true)
+	var result := MapInnLodging.stay(loadout,player_status,event_state.active_event().get("lodging",{}),room_id,inventory_save_path)
+	if result.error.is_empty(): _saved_loadout_revision = loadout.revision
+	inn_dialog.lodging_content.set_busy(false)
+	inn_dialog.lodging_content.refresh(result.error if not result.error.is_empty() else "已歇息一晚，三项状态已恢复。")
+
+func _purchase_inn_food(item_id: String, quantity: int) -> void:
+	if event_state.phase!="inn" or not inn_dialog.visible or inn_dialog.mode!="food" or inn_dialog.food_view.busy: return
+	var view := inn_dialog.food_view
+	view.set_busy(true)
+	var error := inn_dialog.food_shop.purchase(loadout,item_id,quantity,inventory_save_path)
+	if error.is_empty(): _saved_loadout_revision = loadout.revision
+	view.set_busy(false)
+	view.message.text = error if not error.is_empty() else "已购买 %s ×%d，已放入储物袋。" % [loadout.records[item_id].name,quantity]
+
+func _inn_dialogue_command(action: String, topic: String) -> void:
+	if event_state.phase!="inn" or inn_dialog.library==null or inn_dialog.mode!="conversation": return
+	var context := {"resources":player_status.resources,"maxima":player_status.maxima}
+	var error := NpcDialogueActions.command(loadout,inn_dialog.library,action,inventory_save_path,topic,context)
+	if error.is_empty(): _saved_loadout_revision = loadout.revision
+	inn_dialog.refresh_dialogue(error)
+
 func _clinic_dialogue_command(action: String, topic: String) -> void:
 	if event_state.phase!="clinic" or clinic_dialog.library==null: return
-	var error := NpcDialogueActions.command(loadout,clinic_dialog.library,action,inventory_save_path,topic)
+	var context := {"resources":player_status.resources,"maxima":player_status.maxima}
+	var error := NpcDialogueActions.command(loadout,clinic_dialog.library,action,inventory_save_path,topic,context)
 	if error.is_empty(): _saved_loadout_revision = loadout.revision
 	clinic_dialog.refresh_dialogue(error)
+
+func _shop_dialogue_command(action: String, topic: String) -> void:
+	if event_state.phase!="shop" or not shop_dialog.conversing: return
+	var view: MapClinicDialog = shop_dialog.conversation_view
+	if view==null or view.library==null: return
+	var context := {"resources":player_status.resources,"maxima":player_status.maxima}
+	var error := NpcDialogueActions.command(loadout,view.library,action,inventory_save_path,topic,context)
+	if error.is_empty(): _saved_loadout_revision = loadout.revision
+	view.refresh_dialogue(error)
+
+func _shop_benefit_tooltip_shown() -> void:
+	if event_state.phase!="shop" or shop_dialog.conversing or not shop_dialog.apprentice_badge.is_visible_in_tree(): return
+	var benefit: Dictionary = shop_dialog.shop.definition.get("purchase_discount",{})
+	var flag: String = benefit.get("dialogue_unlock_flag","")
+	if flag.is_empty(): return
+	var error := NpcDialogueActions.record_dialogue_fact(loadout,flag,inventory_save_path)
+	var previous_error: String = shop_dialog.apprentice_badge.get_meta("unlock_error","")
+	if error.is_empty():
+		_saved_loadout_revision = loadout.revision
+		if not previous_error.is_empty() and shop_dialog.message.text==previous_error: shop_dialog.message.text = ""
+	else: shop_dialog.message.text = error
+	shop_dialog.apprentice_badge.set_meta("unlock_error",error)
 
 func _confirm_clinic_treatment() -> void:
 	if event_state.phase!="clinic" or not clinic_dialog.visible or clinic_dialog.mode!="treatment": return
 	var event := event_state.active_event()
-	var result := MapClinicTreatment.treat(loadout,player_status,event.get("treatment",{}),inventory_save_path)
+	var result := MapClinicTreatment.treat(loadout,player_status,event.get("treatment",{}),inventory_save_path,clinic_dialog.library)
 	if result.error.is_empty(): _saved_loadout_revision = loadout.revision
 	clinic_dialog.treatment_content.refresh(result.error if not result.error.is_empty() else "诊治完成，气血已恢复。")
 
+func _request_cultivation(mode_id: String, duration_days: int) -> void:
+	if event_state.phase != "cultivation" or not cultivation_dialog.visible: return
+	var session:=MapCultivationSession.new()
+	if not session.begin(event_state.active_event(),mode_id,duration_days,WorldCalendar.current_day(loadout.calendar)): return
+	cultivation_session=session
+	cultivation_dialog.hide()
+	cultivation_progress_dialog.present(session)
+
+func _toggle_cultivation_pause() -> void:
+	if cultivation_session==null or not cultivation_session.active: return
+	cultivation_session.set_paused(not cultivation_session.paused,WorldCalendar.current_day(loadout.calendar))
+
+func _open_cultivation_techniques() -> void:
+	if cultivation_session==null or not cultivation_progress_dialog.visible: return
+	cultivation_session.suspend("choice",true,WorldCalendar.current_day(loadout.calendar))
+	cultivation_progress_dialog.technique_choice.present_techniques(cultivation_session.techniques,cultivation_session.selected_technique_id)
+
+func _open_cultivation_inventory() -> void:
+	if cultivation_session==null or not cultivation_progress_dialog.visible: return
+	cultivation_session.suspend("inventory",true,WorldCalendar.current_day(loadout.calendar))
+	_cultivation_adjusting=true
+	cultivation_progress_dialog.hide()
+	inventory_screen.set_warehouse()
+	inventory_screen.show()
+	status_header.map_title.hide()
+	player.pause()
+	_end_drag()
+	_clear_hover()
+
+func _close_cultivation() -> void:
+	if _cultivation_adjusting: return
+	if not event_state.close_cultivation(): return
+	cultivation_progress_dialog.technique_choice.close()
+	if cultivation_session!=null: cultivation_session.finish(WorldCalendar.current_day(loadout.calendar))
+	cultivation_progress_dialog.hide()
+	travel.stop_at_current_node()
+	cultivation_dialog.hide()
+	status_header.map_title.visible=bool(definition.get("show_map_title",true))
+	travel.paused=false
+	player.present(travel)
+	_end_drag()
+	_clear_hover()
+
 func _confirm_rest() -> void:
 	if event_state.phase != "rest" or not rest_dialog.visible or rest_dialog.start_button.disabled: return
+	if rest_dialog.food_choice.visible: return
 	rest_dialog.set_busy(true)
 	var event := event_state.active_event()
-	var result := MapTimeActions.rest(loadout,player_status,event,inventory_save_path)
+	var result := MapTimeActions.rest(loadout,player_status,event,inventory_save_path,rest_dialog.selected_food_id)
 	if not result.error.is_empty():
-		rest_dialog.present(event,player_status.needs_rest())
+		rest_dialog.set_busy(false)
 		rest_dialog.error_label.text = result.error
 		return
 	_saved_loadout_revision = loadout.revision
@@ -782,12 +1057,16 @@ func _confirm_rest() -> void:
 
 func _cancel_rest() -> void:
 	if event_state.phase != "rest" or rest_dialog.later_button.disabled: return
+	if rest_dialog.food_choice.visible:
+		rest_dialog.food_choice.close()
+		return
 	_close_rest()
 
 func _close_rest() -> void:
 	travel.stop_at_current_node()
 	event_state.close_rest()
 	rest_dialog.hide()
+	rest_dialog.food_choice.close()
 	travel.paused = false
 	player.present(travel)
 	_end_drag()
@@ -973,7 +1252,7 @@ func _start_encounter_battle() -> void:
 	queue_free()
 
 func _try_open_exit(point_id: String) -> bool:
-	if exit_dialog == null or is_exit_open() or is_inventory_open() or event_state.is_active() or travel.mode != "idle" or point_id != travel.current_node_id or not exits_by_point.has(point_id):
+	if exit_dialog == null or is_exit_open() or is_inventory_open() or is_technique_open() or event_state.is_active() or travel.mode != "idle" or point_id != travel.current_node_id or not exits_by_point.has(point_id):
 		return false
 	_active_exit = exits_by_point[point_id].duplicate(true)
 	travel.paused = true
@@ -1095,7 +1374,7 @@ func _setup_player() -> void:
 	_clamp_position()
 
 func _process(delta: float) -> void:
-	if is_inventory_open() or is_exit_open():
+	if is_inventory_open() or is_technique_open() or is_exit_open():
 		return
 	if travel != null and player != null:
 		if event_state == null or not event_state.is_active():
@@ -1103,7 +1382,7 @@ func _process(delta: float) -> void:
 		player.present(travel)
 
 func _select_destination(pointer: Vector2) -> void:
-	if travel == null or is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if travel == null or is_inventory_open() or is_technique_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		return
 	var closest_id := _node_at(pointer)
 	if not closest_id.is_empty():
@@ -1131,7 +1410,7 @@ func _node_at(pointer: Vector2) -> String:
 	return closest_id
 
 func _refresh_cursor() -> void:
-	if is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_inventory_open() or is_technique_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		mouse_default_cursor_shape = Control.CURSOR_ARROW
 	elif _dragging:
 		mouse_default_cursor_shape = Control.CURSOR_MOVE
@@ -1189,7 +1468,7 @@ func _zoom_at(factor: float, anchor: Vector2) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or definition.is_empty():
 		return
-	if is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_inventory_open() or is_technique_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		accept_event()
 		return
 	if event is InputEventMouse and not map_viewport.get_rect().has_point(event.position):

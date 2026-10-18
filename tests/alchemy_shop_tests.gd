@@ -56,10 +56,11 @@ func run() -> void:
 		check(not MapShop.new().configure(shop.definition,map.loadout,rules).is_empty(),"category count outside 1-4 rejected")
 	await open_store(map,ALCHEMY_POINT)
 	var dialog: MapShopDialog = map.shop_dialog
+	dialog.set_selling(false)
 	check(map.event_state.active_id==ALCHEMY,"opens alchemy event")
 	check(dialog.title_label.text=="炼丹房" and dialog.leave_button.text=="离开炼丹房","alchemy captions")
 	check("|".join(dialog.filters.values().map(func(b):return b.text))=="丹药|丹方","two approved alchemy categories")
-	check(dialog.craft_tab.visible and dialog.craft_tab.text=="炼丹","third interaction labeled alchemy")
+	check(dialog.craft_tab.visible and dialog.craft_tab.text=="炼丹","fourth interaction labeled alchemy")
 	check(dialog._visible_products.size()==3 and dialog.selected_id==PILL,"three existing pills transferred")
 	check(dialog.backing.texture.atlas.resource_path.ends_with("liandanfang.webp") and dialog.illustration.texture.resource_path.ends_with("liandanfang-boss.webp"),"dedicated artwork")
 	for texture: Texture2D in [dialog.backing.texture.atlas,dialog.illustration.texture]: check(texture.get_image().has_mipmaps(),"new art mipmaps")

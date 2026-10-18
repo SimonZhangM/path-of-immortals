@@ -1,0 +1,93 @@
+{
+  "book_id": "base.cultivation_book.fire_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《炎煞流火经》 状态专精（习得生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "余焰",
+          "description": "：消耗附炎的攻击被闪避，返还本次所耗附炎的50%。"
+        },
+        {
+          "name": "复燃",
+          "description": "：向已有灼烧的目标再施灼烧，刷新后5秒内正常跳伤×1.2；刷新不叠倍数。"
+        },
+        {
+          "name": "熔痕",
+          "description": "：目标已有破甲时，主动火攻真正作用到护甲可刷新破甲10秒稳定期。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "蕴火",
+          "description": "：附炎追加伤害＋10%。"
+        },
+        {
+          "name": "炽灼",
+          "description": "：灼烧伤害＋10%。"
+        },
+        {
+          "name": "初熔",
+          "description": "：破甲每层绕甲比例由1%提高至1.5%。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "引灼",
+          "description": "：附炎追加伤害真正伤及气血，施加2层灼烧。"
+        },
+        {
+          "name": "回炎",
+          "description": "：每3次实际扣盾、甲或血的灼烧跳伤，自身获得1层附炎。"
+        },
+        {
+          "name": "熔灼",
+          "description": "：破甲绕甲伤害真正伤及气血，施加2层灼烧。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "炽炎",
+          "description": "：附炎追加伤害再＋20%。"
+        },
+        {
+          "name": "深灼",
+          "description": "：灼烧伤害再＋20%。"
+        },
+        {
+          "name": "深熔",
+          "description": "：破甲每层绕甲比例再＋0.5个百分点；与初熔同修为2%／层，最终绕甲不超过100%。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "留炎",
+          "description": "：使用附炎的攻击命中后保留50%附炎；与闪避返层分别处理，不重复返还。"
+        },
+        {
+          "name": "灼骨",
+          "description": "：仅实际进入气血层的灼烧伤害＋50%，不增加扣盾、扣甲。"
+        },
+        {
+          "name": "抑甲",
+          "description": "：每完整10层破甲，使目标新增、恢复护甲量降低10%，最低为0。"
+        }
+      ]
+    }
+  ],
+  "reserve_status_space": true
+}

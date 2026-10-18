@@ -27,6 +27,8 @@ var map_visited: Dictionary = {}
 var map_location: Dictionary = {}
 var content_grants: Dictionary = {"t01.115.v1": true, "qinglan.boards.v1": true, "starter.bag.v1": true}
 var calendar: Dictionary = {}
+var lodging_bonus: Dictionary = {}
+var food_bonus: Dictionary = {}
 var narrative: Dictionary = DialogueJournal.initial()
 var encounter_cooldowns: Dictionary = {}
 var storage_capacity_rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/storage_capacity.json"))
@@ -85,7 +87,7 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 	for record: Dictionary in definitions:
 		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(record.get("buff_bonuses", {})):
 			return "物品常驻增益加成无效。"
-		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable", "plant", "beast", "mineral", "board"]:
+		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable", "plant", "beast", "mineral", "board", "food"]:
 			return "此物品尚未接入行囊战斗：" + String(record.name)
 		if record.get("rule_version", 0) == 0 and record.category in ["artifact", "pill"] and (not record.get("effects") is Array or not ContentRegistry._positive_number(record.get("cooldown"))):
 			return "法器／丹药缺少战斗效果或轮转：" + String(record.name)
@@ -109,6 +111,9 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 		else:
 			raw.effects = record.effects.duplicate(true)
 			raw.uses_per_unit = record.get("uses_per_unit", 0)
+		if record.category == "food":
+			if not MapFood.valid_definition(record.get("food")): return "食品效果无效。"
+			raw.combat = {"description": MapFood.effect_text(record), "flavor_description": record.get("description", "")}
 		if record.category == "board":
 			if registry.get_board(record.get("board_layout", "")) == null or registry.get_cultivation(record.get("required_cultivation", "")).is_empty():
 				return "阵盘引用或境界无效。"
@@ -194,7 +199,7 @@ func add_reward(reward: Dictionary) -> String:
 					index += 1
 			next.owned_units["reward.%s.%d" % [reward.id, index]] = reward.item_id
 			index += 1
-	return restore(next)
+	return restore(next, true)
 
 func _unit(id: String, item_id: String) -> Dictionary:
 	return {"instance_id": id, "item_id": item_id, "units": [{"id": id, "uses_left": registry.get_item(item_id).uses_per_unit}]}
@@ -213,6 +218,9 @@ func storage_records() -> Array:
 func storage_capacity_limit() -> int:
 	var test_limit := int(storage_capacity_rules.get("test_capacity_override", 0))
 	return test_limit if test_limit > 0 else bag_capacity
+
+func storage_over_capacity() -> bool:
+	return storage_used_slots() > storage_capacity_limit()
 
 func warehouse_records(id: String) -> Array:
 	var grouped := SharedStorage.new()
@@ -268,7 +276,7 @@ func transfer_warehouse(id: String, item_id: String, withdraw: bool, all_items: 
 				moved += 1
 	if moved == 0: return "该侧已没有此物品。"
 	if next.warehouses[id].is_empty(): next.warehouses.erase(id)
-	return restore(next)
+	return restore(next, true)
 
 func storage_used_slots() -> int:
 	var kinds := {}
@@ -276,10 +284,29 @@ func storage_used_slots() -> int:
 		kinds[entry.item_id] = true
 	return kinds.size()
 
+# Legacy overfull bags may be organized without deleting items. Each successful
+# operation may keep/reduce their kind count, never increase it beyond capacity.
+func storage_capacity_error(projected: SharedStorage) -> String:
+	return capacity_error(storage, projected, storage_capacity_limit())
+
+static func capacity_error(current: SharedStorage, projected: SharedStorage, limit: int) -> String:
+	var before := {}
+	var after := {}
+	for entry: Dictionary in current.entries(): before[entry.item_id] = true
+	for entry: Dictionary in projected.entries(): after[entry.item_id] = true
+	return "储物袋容量不足（上限%d种），请先将物品存入仓库。" % limit if after.size() > maxi(limit, before.size()) else ""
+
+static func projected_storage(current: SharedStorage, additions: Array, remove_id: String = "", remove_count: int = 0) -> SharedStorage:
+	var projected := SharedStorage.new()
+	for entry: Dictionary in current.entries(): projected.put(entry)
+	if remove_count > 0: projected.take_units(remove_id, remove_count)
+	for entry: Dictionary in additions: projected.put(entry)
+	return projected
+
 # Better bags update this durable value; the test override is not saved.
-# Capacity enforcement is deferred during testing.
 func set_bag_capacity(value: int) -> String:
 	if value <= 0: return "储物袋容量须为正整数。"
+	if value < storage_used_slots(): return "请先整理储物袋，再降低容量。"
 	if bag_capacity == value: return ""
 	bag_capacity = value
 	revision += 1
@@ -305,6 +332,8 @@ func select_board(item_id: String) -> String:
 	for entry: Dictionary in storage.entries(): next_storage.put(entry)
 	for entry: Dictionary in inventory.get_instances():
 		if next_inventory.put(entry, entry.cell).is_empty(): next_storage.put(entry)
+	var capacity_issue := storage_capacity_error(next_storage)
+	if not capacity_issue.is_empty(): return capacity_issue
 	board = selected
 	inventory = next_inventory
 	storage = next_storage
@@ -337,7 +366,7 @@ func placement_kind(data: Variant, cell: Vector2i) -> String:
 		if not inventory.swap_target(data.id, cell).is_empty(): return "swap"
 		return "place" if inventory.can_move(data.id, cell) else "invalid"
 	var item := registry.get_item(entry.item_id)
-	if item.category in ["plant", "beast", "mineral", "board"]: return "invalid"
+	if item.category in ["plant", "beast", "mineral", "board", "food"]: return "invalid"
 	if item.is_consumable():
 		var matching := inventory.matching_stack(item.id)
 		if entry.units.size() > 10:
@@ -376,6 +405,9 @@ func place(data: Variant, cell: Vector2i) -> bool:
 					return false
 			if replacement.put(entry, cell).is_empty():
 				return false
+			if not storage_capacity_error(projected_storage(storage, [displaced], data.id, entry.units.size())).is_empty():
+				interaction.emit("invalid")
+				return false
 			inventory = replacement
 			storage.take_units(data.id, entry.units.size())
 			storage.put(displaced)
@@ -402,6 +434,9 @@ func equip_random(id: String, quantity: int = 1) -> bool:
 func take_back(data: Variant) -> bool:
 	if not valid_drag(data) or data.source != "board":
 		return false
+	if inventory.locked or not storage_capacity_error(projected_storage(storage, [inventory.get_instance(data.id)])).is_empty():
+		interaction.emit("invalid")
+		return false
 	storage.put(inventory.take(data.id))
 	_commit()
 	return true
@@ -419,6 +454,8 @@ func snapshot() -> Dictionary:
 	result.purchase_serial = purchase_serial
 	result.respawn_rules_version = RESPAWN_RULES.VERSION
 	if not calendar.is_empty(): result.calendar = calendar.duplicate(true)
+	if not lodging_bonus.is_empty(): result.lodging_bonus = lodging_bonus.duplicate(true)
+	if not food_bonus.is_empty(): result.food_bonus = food_bonus.duplicate(true)
 	result.narrative = narrative.duplicate(true)
 	if not encounter_cooldowns.is_empty(): result.encounter_cooldowns = encounter_cooldowns.duplicate(true)
 	result.owned_units = {}
@@ -444,6 +481,13 @@ func snapshot() -> Dictionary:
 func layout_snapshot() -> Dictionary:
 	return {"version": 1, "board_id": board.id, "placements": formation_snapshot().placements}
 
+func cultivation_bonus_percent() -> int:
+	var today := WorldCalendar.current_day(calendar)
+	return int(lodging_bonus.percent) if not lodging_bonus.is_empty() and today>=int(lodging_bonus.start_day) and today<int(lodging_bonus.expires_day) else 0
+
+func cultivation_bonus_days() -> int:
+	return maxi(0,int(lodging_bonus.expires_day)-WorldCalendar.current_day(calendar)) if not lodging_bonus.is_empty() else 0
+
 func advance_days(days: int, source_id: String) -> String:
 	var error := WorldCalendar.advance(calendar,days,source_id)
 	if not error.is_empty(): return error
@@ -459,7 +503,8 @@ func formation_snapshot() -> Dictionary:
 	_sort_placements(placements)
 	return {"placements": placements}
 
-func restore(raw: Variant) -> String:
+# Hydration accepts legacy overflow; inventory-changing commands opt into the guard.
+func restore(raw: Variant, enforce_capacity: bool = false) -> String:
 	if not raw is Dictionary:
 		return "行囊存档格式无效。"
 	var saved_stones: Variant = raw.get("spirit_stones", int(JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json")).spirit_stones))
@@ -469,6 +514,10 @@ func restore(raw: Variant) -> String:
 	if not ContentRegistry._positive_integer(saved_capacity): return "储物袋容量存档无效。"
 	var saved_calendar: Variant = raw.get("calendar",WorldCalendar.initial())
 	if not WorldCalendar.valid_record(saved_calendar): return "游戏日历存档无效。"
+	var saved_lodging: Variant = raw.get("lodging_bonus",{})
+	if not MapInnLodging.valid_bonus(saved_lodging): return "住宿加成存档无效。"
+	var saved_food: Variant = raw.get("food_bonus",{})
+	if not MapFood.valid_bonus(saved_food,records): return "进食加成存档无效。"
 	var saved_narrative: Variant = raw.get("narrative",DialogueJournal.initial())
 	if not DialogueJournal.valid_record(saved_narrative): return "人物姓名或对话存档无效。"
 	var enemy_waiting: Variant = raw.get("encounter_cooldowns",{})
@@ -552,6 +601,9 @@ func restore(raw: Variant) -> String:
 	var checked := _validate_layout(raw, carried, true, selected)
 	if not checked.error.is_empty():
 		return checked.error
+	if enforce_capacity:
+		var capacity_issue := capacity_error(storage, checked.storage, mini(storage_capacity_limit(), int(saved_capacity)))
+		if not capacity_issue.is_empty(): return capacity_issue
 	if not raw.get("formations", []) is Array:
 		return "阵型存档格式无效。"
 	var restored_formations: Array[Dictionary] = []
@@ -578,6 +630,12 @@ func restore(raw: Variant) -> String:
 	chest_offers = offers.duplicate(true)
 	chest_cooldowns = chest_waiting.duplicate(true)
 	calendar = WorldCalendar.normalized(saved_calendar)
+	lodging_bonus = saved_lodging.duplicate(true)
+	food_bonus = saved_food.duplicate(true)
+	if not food_bonus.is_empty():
+		for key in ["start_day","expires_day"]: food_bonus[key] = int(food_bonus[key])
+	if not lodging_bonus.is_empty():
+		for key in ["percent","start_day","expires_day"]: lodging_bonus[key] = int(lodging_bonus[key])
 	narrative = DialogueJournal.normalized(saved_narrative)
 	bag_capacity = int(saved_capacity)
 	spirit_stones = int(saved_stones)
@@ -739,5 +797,7 @@ func apply_formation(id: String) -> String:
 	var checked := _validate_layout({"version": 1, "board_id": board.id, "placements": placements})
 	if not checked.error.is_empty():
 		return "当前阵盘无法容纳此阵型，原布局保持不变。"
+	var capacity_issue := storage_capacity_error(checked.storage)
+	if not capacity_issue.is_empty(): return capacity_issue
 	_apply_checked_layout(checked)
 	return ""

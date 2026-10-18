@@ -71,6 +71,11 @@ static func undo_error(state: MapLoadoutState, receipt: Dictionary) -> String:
 		if destination.get(unit_id,"") != units[unit_id]: return "相关物品已被消耗、上阵或再次转移，暂时无法撤销。"
 		if receipt.get("withdraw",false) and state.records[units[unit_id]].get("board_layout","") == state.board.id:
 			return "相关阵盘正在使用，暂时无法撤销。"
+	if not receipt.get("withdraw",false):
+		var additions: Array = []
+		for unit_id: String in units: additions.append(state._unit(unit_id,units[unit_id]))
+		var capacity_issue := state.storage_capacity_error(MapLoadoutState.projected_storage(state.storage,additions))
+		if not capacity_issue.is_empty(): return capacity_issue
 	return ""
 
 static func undo(state: MapLoadoutState, receipt: Dictionary, path: String) -> String:
@@ -87,7 +92,7 @@ static func undo(state: MapLoadoutState, receipt: Dictionary, path: String) -> S
 		if receipt.withdraw: next.warehouses[id][unit_id] = receipt.units[unit_id]
 		else: next.warehouses[id].erase(unit_id)
 	if next.warehouses[id].is_empty(): next.warehouses.erase(id)
-	error = candidate.restore(next)
+	error = candidate.restore(next, true)
 	if not error.is_empty(): return error
 	error = MapLoadoutStore.save(candidate,path)
 	if not error.is_empty(): return error
@@ -103,4 +108,5 @@ static func preview(state: MapLoadoutState, id: String, item_id: String, withdra
 	var extra := 0 if item_id.is_empty() or destination.any(func(record: Dictionary): return record.id == item_id) else 1
 	var capacity := state.storage_capacity_limit() if withdraw else state.warehouse_capacity_limit(id)
 	var blocked: bool = not withdraw and state.records.get(item_id,{}).get("board_layout","") == state.board.id
+	if withdraw and used+extra > maxi(used,capacity): blocked = true
 	return {"available":available,"used":used,"projected":used+extra,"capacity":capacity,"sufficient":used+extra <= capacity,"blocked":blocked}

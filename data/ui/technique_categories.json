@@ -1,0 +1,9 @@
+[
+  {"element_id": "base.element.metal", "label": "金", "color": "ffdf66"},
+  {"element_id": "base.element.wood", "label": "木", "color": "a2f56d"},
+  {"element_id": "base.element.water", "label": "水", "color": "62c8ff"},
+  {"element_id": "base.element.fire", "label": "火", "color": "ff7168"},
+  {"element_id": "base.element.earth", "label": "土", "color": "d9b56c"},
+  {"element_id": "base.element.wind", "label": "风", "color": "70f0e4"},
+  {"element_id": "base.element.thunder", "label": "雷", "color": "d0a0ff"}
+]

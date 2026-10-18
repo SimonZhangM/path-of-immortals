@@ -16,5 +16,5 @@
     "scene": "res://scenes/maps/qingshihewan.tscn",
     "target_point": "base.map.qingshihewan.point.east_exit"
   }],
-  "event_files": ["res://data/map_events/qingshizhen_home_rest.json", "res://data/map_events/qingshizhen_shop.json", "res://data/map_events/qingshizhen_blacksmith.json", "res://data/map_events/qingshizhen_herbalist.json", "res://data/map_events/qingshizhen_sect.json", "res://data/map_events/qingshizhen_alchemy.json", "res://data/map_events/qingshizhen_clinic.json"]
+  "event_files": ["res://data/map_events/qingshizhen_home_rest.json", "res://data/map_events/qingshizhen_shop.json", "res://data/map_events/qingshizhen_blacksmith.json", "res://data/map_events/qingshizhen_herbalist.json", "res://data/map_events/qingshizhen_sect.json", "res://data/map_events/qingshizhen_alchemy.json", "res://data/map_events/qingshizhen_clinic.json", "res://data/map_events/qingshizhen_inn.json"]
 }

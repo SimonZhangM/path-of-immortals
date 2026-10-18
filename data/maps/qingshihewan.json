@@ -23,6 +23,7 @@
     }
   ],
   "event_files": [
+    "res://data/map_events/qingshihewan_cultivation_n32.json",
     "res://data/map_events/qingshihewan_rest_n05.json",
     "res://data/map_events/qingshihewan_rest_n13.json",
     "res://data/map_events/qingshihewan_mining_n19.json",

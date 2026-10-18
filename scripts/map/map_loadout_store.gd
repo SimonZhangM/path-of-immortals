@@ -35,6 +35,9 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 	if not error.is_empty(): return {"state": null, "error": error}
 	definitions.append_array(catalog.visible_entries())
 	var boards: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/qinglan_boards.json"))
+	error = catalog.load_entries("res://data/maps/foods.json")
+	if not error.is_empty(): return {"state": null, "error": error}
+	definitions.append_array(catalog.visible_entries())
 	if not boards is Array: return {"state": null, "error": "阵盘目录必须为数组。"}
 	error = catalog.replace_entries(boards)
 	if not error.is_empty(): return {"state": null, "error": error}

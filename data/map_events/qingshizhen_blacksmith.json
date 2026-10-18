@@ -4,9 +4,13 @@
   "point_id": "base.map.qingshizhen.point.n23",
   "trigger": "click",
   "catalog": "res://data/shops/qingshizhen_blacksmith.json",
+  "dialogue": "res://data/dialogues/hantieshan.json",
   "presentation": {
     "title_center_y": 133.0,
-    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-tiejiangpu.webp",
+    "background": "res://assets/tanchuang-qingshizhen-tiejiangpu.webp",
+    "conversation_background": "res://assets/tanchuang-qingshizhen-tiejiangpu2.webp",
+    "crafting_background": "res://assets/tanchuang-qingshizhen-tiejiangpu2.webp",
+    "conversation_portrait": "res://assets/ui-portrait-hantieshan.webp",
     "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-tiejiangpu-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   }

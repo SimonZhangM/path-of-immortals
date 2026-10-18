@@ -101,6 +101,7 @@ func _ready() -> void:
 				party[0].inventory = loadout.inventory
 				party[0].board = loadout.board
 				party[0].definition.board_layout = loadout.board.id
+				party[0].definition.food_modifiers = MapFood.modifiers(loadout)
 				storage = loadout.storage
 		if not startup_error.is_empty():
 			DebugLogger.error(startup_error)
@@ -273,6 +274,10 @@ func change_board(storage_id: String) -> bool:
 	var overflow: Array[Dictionary] = []
 	for placed: Dictionary in previous.get_instances():
 		if next_inventory.put(placed, placed.cell).is_empty(): overflow.append(placed)
+	var capacity_issue := _storage_capacity_error(overflow)
+	if not capacity_issue.is_empty():
+		feedback.emit(capacity_issue)
+		return _inventory_result(false)
 	# Keep retained instance IDs and runtime clocks; only detach actual overflow.
 	for returned: Dictionary in overflow:
 		simulation.remember_paused_item(returned.instance_id, returned.units)
@@ -335,6 +340,10 @@ func equip(storage_id: String, member_index: int, cell: Vector2i, quantity: int 
 	var placed := ""
 	var displaced := bag.replacement_target(entry, cell) if not stacking else ""
 	if not displaced.is_empty():
+		var capacity_issue := _storage_capacity_error([bag.get_instance(displaced)],storage_id,quantity)
+		if not capacity_issue.is_empty():
+			feedback.emit(capacity_issue)
+			return _inventory_result(false)
 		var returned := bag.replace_item(entry, cell)
 		if returned.is_empty():
 			return _inventory_result(false)
@@ -371,12 +380,21 @@ func equip_random(storage_id: String, quantity: int = 1) -> bool:
 	return equip(storage_id, selected_member_index, cells[_placement_rng.randi_range(0, cells.size() - 1)], quantity)
 
 func can_unequip(member_index: int, id: String) -> bool:
-	return can_edit_inventory() and member_index >= 0 and member_index < party.size() and party[member_index].inventory.returnable_count(id) > 0
+	return can_edit_inventory() and member_index >= 0 and member_index < party.size() and party[member_index].inventory.returnable_count(id) > 0 and _storage_capacity_error([party[member_index].inventory.get_instance(id)]).is_empty()
+
+func _storage_capacity_error(additions: Array, remove_id: String = "", remove_count: int = 0) -> String:
+	if _durable_loadout == null: return ""
+	var physical := additions.filter(func(entry: Dictionary): return not entry.is_empty() and registry.get_item(entry.item_id).category not in ["spell","book"])
+	return MapLoadoutState.capacity_error(storage,MapLoadoutState.projected_storage(storage,physical,remove_id,remove_count),_durable_loadout.storage_capacity_limit())
 
 func unequip(member_index: int, id: String, single: bool = false) -> bool:
 	if not can_edit_inventory() or member_index < 0 or member_index >= party.size():
 		return _inventory_result(false)
 	var bag := party[member_index].inventory
+	var capacity_issue := _storage_capacity_error([bag.get_instance(id)])
+	if not capacity_issue.is_empty():
+		feedback.emit(capacity_issue)
+		return _inventory_result(false)
 	var entry := bag.take_returnable(id, single)
 	if entry.is_empty():
 		feedback.emit("已开启的丹药需留在阵盘用完，不能收回")

@@ -53,7 +53,7 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 	if not _available(event): return false
 	if event.type == "chest" and reward_claimed.is_valid() and reward_claimed.call(event.reward_id): return false
 	# Arrival encounters can be retried by clicking while standing at the node.
-	if event.get("trigger", "click") != trigger and not (event.type in ["encounter", "chest", "gathering", "rest", "shop", "clinic"] and trigger == "click"):
+	if event.get("trigger", "click") != trigger and not (event.type in ["encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation"] and trigger == "click"):
 		return false
 	for prerequisite in registry.events[event_id].get("requires_completed", []):
 		if not completed.has(prerequisite):
@@ -66,7 +66,7 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 		var descriptions: Array = enemy.get("encounter_descriptions", [])
 		if not descriptions.is_empty(): _active_snapshot.description = descriptions[narrative_rng.randi_range(0, descriptions.size() - 1)]
 	line_index = 0
-	phase = event.type if event.type in ["encounter","chest","gathering","rest","shop","clinic"] else ("illustration" if event.presentation.has("illustration") else "dialogue")
+	phase = event.type if event.type in ["encounter","chest","gathering","rest","shop","clinic","inn","cultivation"] else ("illustration" if event.presentation.has("illustration") else "dialogue")
 	if event.type == "chest" and event.has("observation"):
 		phase = "chest_observation"
 	return true
@@ -89,7 +89,7 @@ func current_speaker_id() -> String:
 func advance() -> String:
 	if not is_active():
 		return ""
-	if phase in ["reward", "encounter", "chest_observation", "chest", "gathering", "gathering_reward", "rest", "shop", "clinic"]:
+	if phase in ["reward", "encounter", "chest_observation", "chest", "gathering", "gathering_reward", "rest", "shop", "clinic", "inn", "cultivation"]:
 		return ""
 	if phase == "illustration":
 		phase = "dialogue"
@@ -141,6 +141,20 @@ func close_shop() -> bool:
 
 func close_clinic() -> bool:
 	if phase != "clinic": return false
+	active_id = ""
+	phase = ""
+	line_index = 0
+	return true
+
+func close_cultivation() -> bool:
+	if phase != "cultivation": return false
+	active_id = ""
+	phase = ""
+	line_index = 0
+	return true
+
+func close_inn() -> bool:
+	if phase != "inn": return false
 	active_id = ""
 	phase = ""
 	line_index = 0

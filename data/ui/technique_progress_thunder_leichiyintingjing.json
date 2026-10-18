@@ -1,0 +1,93 @@
+{
+  "book_id": "base.cultivation_book.thunder_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《雷池引霆经》 状态专精（习得生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "回蕴",
+          "description": "：每层雷盾被攻击击破并成功麻痹攻击者，自身获得3层雷蕴。"
+        },
+        {
+          "name": "留印",
+          "description": "：每成功引发一记雷印雷击，扣10层后返3层雷印。"
+        },
+        {
+          "name": "连势",
+          "description": "：目标连环由0变为正数时，额外施加2层连环。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "凝罡",
+          "description": "：新生成雷盾值＋10%。"
+        },
+        {
+          "name": "震印",
+          "description": "：雷印雷击伤害＋10%。"
+        },
+        {
+          "name": "连霆",
+          "description": "：连环闪电伤害＋10%。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "刻印",
+          "description": "：每层雷盾被攻击击破并成功麻痹，给攻击者2层雷印。"
+        },
+        {
+          "name": "结环",
+          "description": "：每记成功引雷，事件结束后给目标2层连环，供后续攻击使用。"
+        },
+        {
+          "name": "养蕴",
+          "description": "：每次连环闪电成功触发，自身获得1层雷蕴，最终零伤也计。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "固罡",
+          "description": "：新雷盾值＋20%，雷盾吸收率由60%提高至80%；旧盾值不追溯。"
+        },
+        {
+          "name": "震威",
+          "description": "：雷印雷击伤害再＋20%。"
+        },
+        {
+          "name": "烈霆",
+          "description": "：连环闪电伤害再＋20%。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "反震",
+          "description": "：一击至少破一层雷盾，按本击实际损失雷盾总值的50%反震雷伤，每击一次。"
+        },
+        {
+          "name": "双霆",
+          "description": "：攻击前已有20雷印时，合格雷攻最多引发两记雷击，逐记扣10层；目标死亡即停止。"
+        },
+        {
+          "name": "续霆",
+          "description": "：每第5次合法连环闪电不消耗连环层数。"
+        }
+      ]
+    }
+  ],
+  "reserve_status_space": true
+}

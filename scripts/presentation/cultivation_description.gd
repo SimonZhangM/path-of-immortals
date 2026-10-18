@@ -4,8 +4,32 @@ extends RefCounted
 static func number(value: float) -> String:
 	return EffectSystem.number_text(value)
 
+static func book(p: Dictionary) -> String:
+	var lines: PackedStringArray = ["%s，共%d重。" % [p.role, int(p.max_level)]]
+	var role := str(p.role)
+	if role.begins_with("属性总纲"):
+		lines.append("【上阵生效】原书上阵并完成入阵后，已学总纲强化生效。")
+	elif role.begins_with("状态专精"):
+		lines.append("【学成常驻】已学状态专精无需原书上阵。")
+	elif role.begins_with("战斗"):
+		lines.append("【学成常驻】已学战斗被动无需原书上阵。")
+		lines.append("【上阵生效】解锁法术须独立上阵使用，无需同时上阵原书。")
+	else:
+		lines.append("技艺分支强化专长，具体生产、探索玩法尚待接入。")
+	lines.append("【上阵参悟】原书须放入阵盘，并在具备修习资格时赢得战斗，才可获得该书经验；正式经验积累尚待接入。")
+	lines.append("分支确认后不能直接更换；当前不开放重选。")
+	var pending: Dictionary = p.get("deferred_branches", {})
+	if not pending.is_empty():
+		var names: PackedStringArray = []
+		for key: String in pending:
+			names.append(str(p.get("branch_display_names", {}).get(key, key)))
+		lines.append("【%s】连携系统开放后可用；当前仅可预览，可保留待选，不阻止继续升重。" % "／".join(names))
+	if p.has("deferred"): lines.append(str(p.deferred))
+	return "\n".join(lines)
+
 static func spell(p: Dictionary) -> String:
 	var lines: PackedStringArray = []
+	lines.append("【上阵生效】本术须独立放入阵盘使用，无需同时上阵原书。")
 	lines.append("冷却：%s秒，实际发动消耗%s灵力。" % [number(p.cooldown*(1+float(p.get("cd_pct",0)))),number(p.spirit_cost*(1+float(p.get("cost_pct",0))))])
 	lines.append("原书第%d重习得，独立占%d格。" % [int(p.learned_at_book_level),int(p.cells)])
 	match p.opcode:
@@ -35,6 +59,6 @@ static func spell(p: Dictionary) -> String:
 	if p.has("missing_scale"): lines.append("按敌方体力与灵力平均缺失比例增伤；两项上限为0的资源不参与均值。")
 	if p.get("return_resources",false): lines.append("额外增伤部分的实际伤害按自身缺失比例回补体力与灵力。")
 	if p.get("extra_chain",false): lines.append("引雷后可追加一次连环；未引雷时最多逐次触发两次连环。")
-	if p.has("deferred"): lines.append("当前分支暂未启用："+str(p.deferred))
+	if p.has("deferred"): lines.append("连携系统开放后可用；当前仅可预览，不能确认选择。")
 	lines.append("开启后CD完成进入待发，满足条件才付费；可单独关闭。" if p.prepared else "支持手动／自动，资源不足时保留就绪。")
 	return "\n".join(lines)

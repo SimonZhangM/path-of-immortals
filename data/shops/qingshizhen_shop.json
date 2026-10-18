@@ -67,6 +67,18 @@
     {
       "item_id": "base.map_item.t01_0074",
       "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0039",
+      "category": "weapon"
+    },
+    {
+      "item_id": "base.map_item.t01_0062",
+      "category": "armor"
+    },
+    {
+      "item_id": "base.map_item.t01_0056",
+      "category": "armor"
     }
   ]
 }

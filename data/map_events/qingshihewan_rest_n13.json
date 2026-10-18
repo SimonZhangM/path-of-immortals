@@ -10,8 +10,9 @@
   "action_label": "入内休息",
   "recovery_percent": 50,
   "duration_days": 1,
+  "allow_food": true,
   "presentation": {
-    "background": "res://assets/tanchuang-huifu-shinei.webp",
+    "background": "res://assets/tanchuang-qingshizhen-xiuxi-shandaoxieshe.webp",
     "illustration": "res://assets/tanchuang-huifu-shandaoxieshe.webp"
   }
 }

@@ -52,6 +52,8 @@ func replace_entries(records: Array) -> String:
 		if raw.has("subcategory"):
 			if not raw.subcategory is String or raw.subcategory.strip_edges().is_empty():
 				return "物品细分类须为非空文字。"
+		if raw.category == "food" and not MapFood.valid_definition(raw.get("food")):
+			return "食品恢复或辅助效果无效。"
 		if not ContentRegistry._nonnegative_integer(raw.get("enhancement_level", 0)):
 			return "强化等级须为非负整数。"
 		for key in ["acquired_at", "quantity"]:

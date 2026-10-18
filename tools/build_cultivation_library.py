@@ -64,7 +64,7 @@ S(0,10,8,B('崩击',blunt_critical=1.75),B('震伤',injury=3),opcode='force_crit
 S(0,10,10,B('沉耗',surcharge=1),B('伤元',surcharge=.25,injury=6),opcode='tax_cast',prepared=True,surcharge=.5,injury=3),
 S(0,10,12,B('借力',ratio=1),B('镇敌',ratio=.25,statuses=[H('疲惫',2),H('重伤',2)]),opcode='armor_counter',prepared=True,ratio=.5)],
 'wind':[
-S(10,4,4,B('疾羽',cd_pct=-.25,cost_pct=-.25),B('透风',damage_pct=.25),hit_bonus=.15),
+S(10,4,4,B('疾羽',cd_pct=-.25),B('透风',damage_pct=.25),hit_bonus=.15),
 S(26,6,8,B('贯云',damage_pct=.3),B('破隙',burst_status='失衡',burst_ratio=2)),
 S(40,8,12,B('风暴',damage_pct=.3),B('乱流',statuses=[H('失衡',8)]),statuses=[H('失衡',4)]),
 S(60,10,20,B('贯日',damage_pct=.4,armor_bonus=.15),B('逐隙',damage_layers=['失衡'],layer_ratio=.01,layer_cap=.5,statuses=[H('失衡',6)])),
@@ -81,6 +81,144 @@ S(0,6,4,B('聚罡',statuses=[H('雷蕴',10,'always','self')]),B('疾护',cd_pct=
 S(18,6,8,B('深印',statuses=[H('雷印',10)]),B('疾引',cd_pct=-.25,cost_pct=-.25),statuses=[H('雷印',6)]),
 S(24,10,8,B('震返',damage_pct=.3),B('连锁',statuses=[H('连环',4)]),opcode='thunder_counter',prepared=True),
 S(40,8,12,B('锁狱',paralysis_extension=2),B('雷刑',damage_pct=.3,statuses=[H('雷印',8)]),paralysis_extension=1,statuses=[H('雷印',4)])]}
+# Display names may change; legacy branch keys remain stable for saves and effects.
+branch_display_names={
+'base.cultivation_book.wood_02':dict(zip(
+ '木锋 木息 乘克 逆克 内鸣 外鸣 启式 承式'.split(),
+ '青木凝锋 青木护生 乘克增威 逆克护身 生机内鸣 毒缠外鸣 青木启式 青木承式'.split())),
+'base.cultivation_book.wood_03':dict(zip(
+ '以毒养生 缚毒相生 缠生回息 生息绵长 蚀骨渐深 盘根愈固 生生不息 蚀骨难消 盘根不绝'.split(),
+ '毒养 缚毒 缠生 滋荣 蚀髓 固根 生机障 留毒 续缠'.split()))}
+# Confirmed six-element and craft display names (core 01 section 1.67).
+branch_display_names.update({
+ "base.cultivation_book.metal_01": {
+  "化繁为简": "简炼"
+ },
+ "base.cultivation_book.metal_02": {
+  "锐金": "庚金凝锋",
+  "兵心": "百兵通心",
+  "乘克": "乘克增威",
+  "逆克": "逆克护身",
+  "内鸣": "反锋内鸣",
+  "外鸣": "痕血外鸣",
+  "启式": "庚金启式",
+  "承式": "庚金承式"
+ },
+ "base.cultivation_book.metal_03": {
+  "反锋生痕": "生痕",
+  "锋痕见血": "见血",
+  "血养锋势": "养锋",
+  "反锋镇兵": "镇兵",
+  "锋痕入骨": "透骨",
+  "血势不绝": "续血"
+ },
+ "base.cultivation_book.water_01": {
+  "一符入神": "神篆",
+  "百符成术": "百符"
+ },
+ "base.cultivation_book.water_02": {
+  "水锋": "玄水凝锋",
+  "流息": "玄水养息",
+  "乘克": "乘克增威",
+  "逆克": "逆克护身",
+  "内鸣": "润脉内鸣",
+  "外鸣": "枯霜外鸣",
+  "启式": "玄水启式",
+  "承式": "玄水承式"
+ },
+ "base.cultivation_book.water_03": {
+  "盈流成护": "盈护",
+  "枯极生寒": "生寒",
+  "霜回活水": "回润",
+  "周流不息": "周流",
+  "枯海断流": "断流",
+  "寒潮留霜": "留霜"
+ },
+ "base.cultivation_book.fire_01": {
+  "众丹同成": "丰丹"
+ },
+ "base.cultivation_book.fire_02": {
+  "烈火": "离火炽盛",
+  "蓄炎": "蓄炎增威",
+  "乘克": "乘克增威",
+  "逆克": "逆克护身",
+  "内鸣": "附炎内鸣",
+  "外鸣": "灼甲外鸣",
+  "启式": "离火启式",
+  "承式": "离火承式"
+ },
+ "base.cultivation_book.fire_03": {
+  "炎入灼痕": "引灼",
+  "灼势回炎": "回炎",
+  "熔火生灼": "熔灼",
+  "炎势炽盛": "炽炎",
+  "灼火入骨": "深灼",
+  "火种不灭": "留炎",
+  "熔甲难复": "抑甲"
+ },
+ "base.cultivation_book.earth_02": {
+  "坤击": "坤岳重击",
+  "重兵": "钝击增威",
+  "乘克": "乘克增威",
+  "逆克": "逆克护身",
+  "内鸣": "坚韧内鸣",
+  "外鸣": "疲伤外鸣",
+  "启式": "厚土启式",
+  "承式": "厚土承式"
+ },
+ "base.cultivation_book.earth_03": {
+  "疲势难消": "留疲",
+  "岳势反镇": "反镇",
+  "乏极成伤": "疲生伤",
+  "伤深养韧": "养韧",
+  "山岳不倾": "不倾",
+  "疲势崩裂": "疲裂",
+  "伤势反噬": "反噬"
+ },
+ "base.cultivation_book.wind_02": {
+  "风锋": "御风凝锋",
+  "灵行": "乘风灵行",
+  "乘克": "乘克增威",
+  "逆克": "逆克护身",
+  "内鸣": "轻灵内鸣",
+  "外鸣": "衡散外鸣",
+  "启式": "御风启式",
+  "承式": "御风承式"
+ },
+ "base.cultivation_book.wind_03": {
+  "避实成隙": "生隙",
+  "乘隙化影": "化影",
+  "清风乱势": "乱势",
+  "乘风留影": "乘虚",
+  "逐影连锋": "连锋",
+  "风过无尘": "无尘"
+ },
+ "base.cultivation_book.thunder_01": {
+  "阵法合流": "合流",
+  "阵势回流": "催转"
+ },
+ "base.cultivation_book.thunder_02": {
+  "霆威": "天雷震威",
+  "雷罡": "雷罡固御",
+  "乘克": "乘克增威",
+  "逆克": "逆克护身",
+  "内鸣": "雷蕴内鸣",
+  "外鸣": "印环外鸣",
+  "启式": "天雷启式",
+  "承式": "天雷承式"
+ },
+ "base.cultivation_book.thunder_03": {
+  "盾破留印": "刻印",
+  "雷击成环": "结环",
+  "连环回蕴": "养蕴",
+  "雷罡凝实": "固罡",
+  "雷印震威": "震威",
+  "连霆增势": "烈霆",
+  "雷罡反震": "反震",
+  "双霆引印": "双霆",
+  "连霆不绝": "续霆"
+ }
+})
 books=[]; spells=[]
 for b in m['books']:
  b={k:v for k,v in b.items() if k not in ['status','dependencies']}
@@ -93,6 +231,9 @@ for b in m['books']:
  elif index==3:b['branches']={str(i+1):x.split() for i,x in enumerate(specs[e])}
  else:
   b['branches']={str(2+2*i):list(D[e][(index-4)*4+i]['branches']) for i in range(4)}
+  pending={name:patch['deferred'] for s in D[e][(index-4)*4:(index-3)*4] for name,patch in s['branches'].items() if 'deferred' in patch}
+  if pending:b['deferred_branches']=pending
+ if b['id'] in branch_display_names:b['branch_display_names']=branch_display_names[b['id']]
  books.append(b)
 for old in m['spells']:
  s={k:v for k,v in old.items() if k not in ['status','dependencies']}

@@ -1,0 +1,262 @@
+{
+  "base.cultivation_book.wood_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "content": "res://data/ui/technique_progress_baishou.json"
+  },
+  "base.cultivation_book.wood_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "content": "res://data/ui/technique_progress_qingmu.json"
+  },
+  "base.cultivation_book.wood_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "content": "res://data/ui/technique_progress_kurong.json"
+  },
+  "base.cultivation_book.wood_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "content": "res://data/ui/technique_progress_wanmu.json"
+  },
+  "base.cultivation_book.wood_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "content": "res://data/ui/technique_progress_qingluo.json"
+  },
+  "base.cultivation_book.metal_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-metal-middown-52a.webp",
+      "baseline_sha256": "314c3a677d225b41f32e550846c18acacd3b95e4d332bdf436b608a16df43312"
+    },
+    "content": "res://data/ui/technique_progress_metal_xuanjinbailianlu.json"
+  },
+  "base.cultivation_book.metal_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-metal-middown-52b.webp",
+      "baseline_sha256": "3a3b5c114a025d8ce88596a1092663a946425e5c3071b4e761b650617f9f182d"
+    },
+    "content": "res://data/ui/technique_progress_metal_gengjinzhenjie.json"
+  },
+  "base.cultivation_book.metal_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-metal-middown-53.webp",
+      "baseline_sha256": "5124c8fa1c6cc219650fdbe8dde2c35ad9decea749edb7a042c24323515f73a8"
+    },
+    "content": "res://data/ui/technique_progress_metal_jinshacangfengjing.json"
+  },
+  "base.cultivation_book.metal_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-metal-middown-8.webp",
+      "baseline_sha256": "4beef24c40c467e6c5faf3904ae238eb8140301f1a2b868262bfdab74d5610d2"
+    },
+    "content": "res://data/ui/technique_progress_metal_xuangengjianjue.json"
+  },
+  "base.cultivation_book.metal_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-metal-middown-8.webp",
+      "baseline_sha256": "4beef24c40c467e6c5faf3904ae238eb8140301f1a2b868262bfdab74d5610d2"
+    },
+    "content": "res://data/ui/technique_progress_metal_baibingyulingjue.json"
+  },
+  "base.cultivation_book.water_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-water-middown-52a.webp",
+      "baseline_sha256": "697446e4b6ac58ffbc2110e572fb321f098d3e54bdb375cfb2343192c92b0bae"
+    },
+    "content": "res://data/ui/technique_progress_water_lingmoxuanfulu.json"
+  },
+  "base.cultivation_book.water_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-water-middown-52b.webp",
+      "baseline_sha256": "bc3bc89af1bcee6ae13b84d0693e57b5a0250db2787b66d1a01bab0905101567"
+    },
+    "content": "res://data/ui/technique_progress_water_xuanshuizhenjie.json"
+  },
+  "base.cultivation_book.water_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-water-middown-53.webp",
+      "baseline_sha256": "35ba7ad29628f3129c5205ab0c7b98d143ade48f3ce67bf2ca73530a19c6b0d1"
+    },
+    "content": "res://data/ui/technique_progress_water_hanmailiuzhuanjing.json"
+  },
+  "base.cultivation_book.water_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-water-middown-8.webp",
+      "baseline_sha256": "e141869400ad12842d44a5125422f6da9fb0bba58d57e15a342fcb6043be8aed"
+    },
+    "content": "res://data/ui/technique_progress_water_hanyueningbingjue.json"
+  },
+  "base.cultivation_book.water_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-water-middown-8.webp",
+      "baseline_sha256": "e141869400ad12842d44a5125422f6da9fb0bba58d57e15a342fcb6043be8aed"
+    },
+    "content": "res://data/ui/technique_progress_water_canglanranlingjue.json"
+  },
+  "base.cultivation_book.fire_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-fire-middown-52a.webp",
+      "baseline_sha256": "0f2965c00299b1ccdfbdec2984cefe5c114160d7db6beb83ff22841e0ba1c7ac"
+    },
+    "content": "res://data/ui/technique_progress_fire_chiludanjing.json"
+  },
+  "base.cultivation_book.fire_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-fire-middown-52b.webp",
+      "baseline_sha256": "a88461865f1ef3ffde9194cbf10b9518462fb721d9b767b7909fce2adac7fd3c"
+    },
+    "content": "res://data/ui/technique_progress_fire_lihuozhenjie.json"
+  },
+  "base.cultivation_book.fire_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-fire-middown-53.webp",
+      "baseline_sha256": "02e2e8b6d3f055030a9615a077450037d8de8815e8a9c12171692b1a86bb5eef"
+    },
+    "content": "res://data/ui/technique_progress_fire_yanshaliuhuojing.json"
+  },
+  "base.cultivation_book.fire_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-fire-middown-8.webp",
+      "baseline_sha256": "4b21430fc057515873dade4f8e2fe40ad18bbb1ec3b4160b90877ae93d52afda"
+    },
+    "content": "res://data/ui/technique_progress_fire_chiyangzhenhuojue.json"
+  },
+  "base.cultivation_book.fire_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-fire-middown-8.webp",
+      "baseline_sha256": "4b21430fc057515873dade4f8e2fe40ad18bbb1ec3b4160b90877ae93d52afda"
+    },
+    "content": "res://data/ui/technique_progress_fire_lihuoliaoyuanjue.json"
+  },
+  "base.cultivation_book.earth_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-earth-middown-52a.webp",
+      "baseline_sha256": "eb5b19015f8f43e21490f64e2683cf93bbd3ff6fd2bd62cd21894010a7802859"
+    },
+    "content": "res://data/ui/technique_progress_earth_kunyuandimailu.json"
+  },
+  "base.cultivation_book.earth_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-earth-middown-52b.webp",
+      "baseline_sha256": "fc48a8dfb9459a9864909b0f8897588e6a51a7b94c1aa76dd769fd942147a6ab"
+    },
+    "content": "res://data/ui/technique_progress_earth_houtuzhenjie.json"
+  },
+  "base.cultivation_book.earth_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-earth-middown-53.webp",
+      "baseline_sha256": "3cff250cfc47dfcba6944c23c0dd0023aa33c2bb0956da54dc8ecc5391fdf435"
+    },
+    "content": "res://data/ui/technique_progress_earth_zhenyuechenyuanjing.json"
+  },
+  "base.cultivation_book.earth_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-earth-middown-8.webp",
+      "baseline_sha256": "d3bae216c244d4d06a0a29063b6dbb8e3353b019dc356175182d1ebf3fd71539"
+    },
+    "content": "res://data/ui/technique_progress_earth_hanyueliedijue.json"
+  },
+  "base.cultivation_book.earth_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-earth-middown-8.webp",
+      "baseline_sha256": "d3bae216c244d4d06a0a29063b6dbb8e3353b019dc356175182d1ebf3fd71539"
+    },
+    "content": "res://data/ui/technique_progress_earth_budongxuanyuejue.json"
+  },
+  "base.cultivation_book.wind_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-wind-middown-52a.webp",
+      "baseline_sha256": "6ea7c0d78aa7281970abf9af4e994667756524ae4a0c319c6740e0bb8ef4b32b"
+    },
+    "content": "res://data/ui/technique_progress_wind_tingfengxunjilu.json"
+  },
+  "base.cultivation_book.wind_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-wind-middown-52b.webp",
+      "baseline_sha256": "91f1ff95a4646e1afc2b9967cec87061892065986399a02b059dd35e376f4022"
+    },
+    "content": "res://data/ui/technique_progress_wind_yufengzhenjie.json"
+  },
+  "base.cultivation_book.wind_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-wind-middown-53.webp",
+      "baseline_sha256": "edcf066ec53c7a78be8a32a6a7b0e1ea9d49d55eaaa2ccf6fac05a862984ff96"
+    },
+    "content": "res://data/ui/technique_progress_wind_liufengwuxiangjing.json"
+  },
+  "base.cultivation_book.wind_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-wind-middown-8.webp",
+      "baseline_sha256": "bd59cfc302557c7e55a0c2e91a7104bfc3767750d656c0ab87a3396b12c31257"
+    },
+    "content": "res://data/ui/technique_progress_wind_qingmingpokongjue.json"
+  },
+  "base.cultivation_book.wind_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-wind-middown-8.webp",
+      "baseline_sha256": "bd59cfc302557c7e55a0c2e91a7104bfc3767750d656c0ab87a3396b12c31257"
+    },
+    "content": "res://data/ui/technique_progress_wind_tingfengwuyingjue.json"
+  },
+  "base.cultivation_book.thunder_01": {
+    "layout": "res://data/ui/technique_progress_art_52a.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-thunder-middown-52a.webp",
+      "baseline_sha256": "ab25a5fffce887341e45cec517b1609321a6d424e9348bda7a6265456fee2df5"
+    },
+    "content": "res://data/ui/technique_progress_thunder_xuanshuzhenlu.json"
+  },
+  "base.cultivation_book.thunder_02": {
+    "layout": "res://data/ui/technique_progress_art_52b.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-thunder-middown-52b.webp",
+      "baseline_sha256": "6a60afbbbadf406ee5c5ed44f79337a5c0c74f065b7d06eb544967e5746576ce"
+    },
+    "content": "res://data/ui/technique_progress_thunder_tianleizhenjie.json"
+  },
+  "base.cultivation_book.thunder_03": {
+    "layout": "res://data/ui/technique_progress_art_53.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-thunder-middown-53.webp",
+      "baseline_sha256": "4fe83fcd5c3d49aa17fb2b822743de588f6aec613078372be42874b02c78e6b9"
+    },
+    "content": "res://data/ui/technique_progress_thunder_leichiyintingjing.json"
+  },
+  "base.cultivation_book.thunder_04": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-thunder-middown-8.webp",
+      "baseline_sha256": "2a5ecbde09f9b1dde8f785e7e3b240005e9b697c8ceadd6e35968b0f608cf9ee"
+    },
+    "content": "res://data/ui/technique_progress_thunder_jiuxiaotingguangjue.json"
+  },
+  "base.cultivation_book.thunder_05": {
+    "layout": "res://data/ui/technique_progress_art.json",
+    "layout_overrides": {
+      "texture": "res://assets/UI-thunder-middown-8.webp",
+      "baseline_sha256": "2a5ecbde09f9b1dde8f785e7e3b240005e9b697c8ceadd6e35968b0f608cf9ee"
+    },
+    "content": "res://data/ui/technique_progress_thunder_leigangzhenyujue.json"
+  }
+}

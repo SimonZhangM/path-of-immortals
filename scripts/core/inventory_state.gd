@@ -119,7 +119,7 @@ func put(entry: Dictionary, cell: Vector2i) -> String:
 	return entry["instance_id"]
 
 func equipment_allowed(item: ItemData, ignore_id: String = "") -> bool:
-	if item.category in ["plant", "beast", "mineral", "board"]: return false
+	if item.category in ["plant", "beast", "mineral", "board", "food"]: return false
 	if item.rule_version != 1:
 		return true
 	for entry: Dictionary in _instances.values():

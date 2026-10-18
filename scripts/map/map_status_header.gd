@@ -327,8 +327,12 @@ func _image(path: String, region: Rect2) -> TextureRect:
 func _counter_number(caption: Label, previous_prefix: String) -> Label:
 	var number := _label(20, Color("ece6b5"))
 	var prefix_width := caption.get_theme_font("font").get_string_size(previous_prefix, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x
-	number.position = caption.position + Vector2(prefix_width + 15, 0)
+	var zero_width := number.get_theme_font("font").get_string_size("0", HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x
+	# Keep the old single-zero center fixed, even when the text grows past 40px.
+	number.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	number.size = Vector2(40, 25)
+	number.position = caption.position + Vector2(prefix_width + 15 + zero_width * 0.5 - 20, 0)
 	number.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	return number
 

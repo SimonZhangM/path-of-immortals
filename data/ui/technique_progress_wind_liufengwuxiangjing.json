@@ -1,0 +1,93 @@
+{
+  "book_id": "base.cultivation_book.wind_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《流风无相经》 状态专精（习得生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "留影",
+          "description": "：轻灵帮助闪避后的耗层改为现有层数的三分之一向下取整，至少1层。"
+        },
+        {
+          "name": "留隙",
+          "description": "：失衡来源追击命中后的耗层改为三分之一向下取整，至少1层。"
+        },
+        {
+          "name": "疾散",
+          "description": "：新施加驱散时，首次等待由2秒缩至1秒。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "轻身",
+          "description": "：轻灵每层闪避率额外＋0.4个百分点。"
+        },
+        {
+          "name": "破衡",
+          "description": "：失衡每层提高被命中率的效果额外＋0.4个百分点。"
+        },
+        {
+          "name": "拂尘",
+          "description": "：每层驱散正常拆除后，额外拆1层增益的概率＋10个百分点。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "生隙",
+          "description": "：成功闪避后，向攻击者施加2层失衡。"
+        },
+        {
+          "name": "化影",
+          "description": "：二次追击成功命中，自身获得2层轻灵。"
+        },
+        {
+          "name": "乱势",
+          "description": "：一次驱散实际拆掉至少1层增益，向目标施加2层失衡。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "无影",
+          "description": "：轻灵每层闪避率再＋0.6个百分点。"
+        },
+        {
+          "name": "失势",
+          "description": "：失衡每层提高被命中率的效果再＋0.6个百分点。"
+        },
+        {
+          "name": "涤尘",
+          "description": "：额外拆1层增益的概率再＋15个百分点，与拂尘合计25%。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "乘虚",
+          "description": "：成功闪避后命中率＋10个百分点，持续10秒，重复触发只刷新。"
+        },
+        {
+          "name": "连锋",
+          "description": "：追击的武器本体伤害比例由50%提高至75%，穿刺武器提高至100%。"
+        },
+        {
+          "name": "无尘",
+          "description": "：每实际驱散5层，给敌方一件带冷却物品剩余冷却＋2秒；可超原上限，无目标时暂存机会。"
+        }
+      ]
+    }
+  ],
+  "reserve_status_space": true
+}

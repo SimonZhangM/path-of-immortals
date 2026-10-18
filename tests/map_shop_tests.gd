@@ -70,10 +70,10 @@ func transactions(map: Node) -> void:
 
 func interaction(map: Node) -> void:
 	var dialog: MapShopDialog = map.shop_dialog
-	check(dialog.page==0 and dialog.previous_button.disabled and dialog.next_button.disabled,"single category page boundaries")
+	check(dialog.page==0 and dialog.previous_button.disabled and not dialog.next_button.disabled,"first of two category pages")
 	for key in ["weapon","armor"]:
 		await click(dialog.filters[key])
-		check(dialog.category==key and dialog._visible_products.size()==8 and dialog.next_button.disabled,"category filters "+key)
+		check(dialog.category==key and dialog._visible_products.size()==(9 if key=="weapon" else 10) and not dialog.next_button.disabled,"category filters "+key)
 	for key in ["food","grocery"]:
 		await click(dialog.filters[key])
 		check(dialog.category==key and dialog._visible_products.is_empty() and dialog.buy_button.disabled,"reserved category empty "+key)
@@ -166,10 +166,10 @@ func run() -> void:
 	check(map._try_start_event(POINT,"click",true),"manual click opens shop")
 	await settle()
 	check(dialog.visible and map.event_state.phase=="shop" and map.travel.paused,"manual interaction opens modal shop")
-	check(map.shops[EVENT].products().size()==16 and dialog.slots.size()==8,"16 general products in eight reusable slots")
+	check(map.shops[EVENT].products().size()==19 and dialog.slots.size()==8,"19 general products in eight reusable slots")
 	check(not dialog.sell_button.disabled,"sale preview tab available")
 	for key in ["weapon","armor"]:
-		check(map.shops[EVENT].products(key).size()==8,"eight configured products: "+key)
+		check(map.shops[EVENT].products(key).size()==(9 if key=="weapon" else 10),"state-source stock per category: "+key)
 	for row: Dictionary in map.shops[EVENT].products():
 		var item: ItemData = map.loadout.registry.get_item(row.item_id)
 		check(not ItemTooltip.effect_text(item).is_empty(),"real effect exists: "+item.display_name)

@@ -1,0 +1,93 @@
+{
+  "book_id": "base.cultivation_book.water_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《寒脉流转经》 状态专精（习得生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "活泉",
+          "description": "：新获得润脉时，首次恢复等待由2秒缩至1.5秒。"
+        },
+        {
+          "name": "潜枯",
+          "description": "：新施加枯脉时，首次扣资源等待由2秒缩至1.5秒。"
+        },
+        {
+          "name": "初霜",
+          "description": "：目标原无寒霜、本次成功施加时额外＋1层；这额外一层不能由本击触发。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "养脉",
+          "description": "：润脉每跳灵力、体力恢复量各＋10%。"
+        },
+        {
+          "name": "蚀脉",
+          "description": "：枯脉每跳灵力、体力扣量各＋10%。"
+        },
+        {
+          "name": "凝霜",
+          "description": "：按成功触发冻结的寒霜层数计数，每第5层触发后不消耗。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "盈护",
+          "description": "：润脉恢复及合法资源转移后，剩余恢复量按50%转灵盾；起始双资源已满也可。"
+        },
+        {
+          "name": "生寒",
+          "description": "：一跳枯脉把任一正数资源扣至0，施加1层寒霜，每跳至多一次。"
+        },
+        {
+          "name": "回润",
+          "description": "：主动水攻成功触发寒霜冻结，自身获得1层润脉，每次攻击至多一次。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "长养",
+          "description": "：润脉两项恢复量再＋20%。"
+        },
+        {
+          "name": "深枯",
+          "description": "：枯脉两项扣量再＋20%。"
+        },
+        {
+          "name": "玄霜",
+          "description": "：寒霜每层冻结时间由0.5秒提高至1秒。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "周流",
+          "description": "：润脉溢出恢复跨资源转移的效率由50%提高至100%。"
+        },
+        {
+          "name": "断流",
+          "description": "：枯脉不足部分转扣另一资源的效率由50%提高至100%。"
+        },
+        {
+          "name": "留霜",
+          "description": "：每层寒霜触发后有20%概率保留；凝霜对应的第5层必留，不对同层重复结算保留。"
+        }
+      ]
+    }
+  ],
+  "reserve_status_space": true
+}

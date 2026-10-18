@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.wood_01",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《百兽驭灵录》 技艺",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "辨兽",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-01-bianshou.webp"
+        },
+        {
+          "name": "精饵",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-02-jinger.webp"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "精养",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-03-jingyang.webp"
+        },
+        {
+          "name": "群养",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-04-qunyang.webp"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "猛育",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-05-mengyu.webp"
+        },
+        {
+          "name": "辅育",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-06-fuyu.webp"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "同群",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-07-tongqun.webp"
+        },
+        {
+          "name": "异契",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-08-yiqi.webp"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "主契",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-09-zhuqi.webp"
+        },
+        {
+          "name": "群狩",
+          "icon": "res://assets/UI-wood-baishouyulinglu-effect-10-qunshou.webp"
+        }
+      ]
+    }
+  ]
+}

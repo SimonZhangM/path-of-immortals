@@ -89,7 +89,14 @@ func configure(speaker: String, lines: Array, library: NpcDialogueLibrary, statu
 		var crop: Array = status.character_definition.get("portrait_region",[])
 		atlas.region = Rect2(crop[0],crop[1],crop[2],crop[3]) if crop.size()==4 else Rect2(Vector2.ZERO,atlas.atlas.get_size())
 		face = atlas
-	else: face = load(library.definition.portrait)
+	else:
+		face = load(library.definition.portrait)
+		if library.definition.has("portrait_region"):
+			var atlas := AtlasTexture.new()
+			atlas.atlas = face
+			var crop: Array = library.definition.portrait_region
+			atlas.region = Rect2(crop[0],crop[1],crop[2],crop[3])
+			face = atlas
 	portrait = _image(face,Rect2(portrait_x+8,20,88,88))
 	var mask := ShaderMaterial.new()
 	mask.shader = preload("res://scripts/ui/portrait_mask.gdshader")

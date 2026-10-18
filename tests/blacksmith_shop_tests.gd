@@ -91,7 +91,7 @@ func exercise(map: Node) -> void:
 	check(map._try_start_event(POINT,"click",true),"normal shop still opens")
 	await settle()
 	check(not dialog.craft_tab.visible and dialog.leave_button.text=="离开商铺","normal shop stays two modes")
-	check(dialog.balance_label.get_rect()==Rect2(Vector2(1044,240)-dialog.FRAME.position,Vector2(372,37)),"normal shop balance layout restored")
+	check(dialog.balance_row.get_rect()==Rect2(Vector2(1224,260)-dialog.FRAME.position,Vector2(192,28)),"normal shop uses shared lower wallet row")
 	check(dialog._visible_products.size()==8 and dialog.category=="weapon","normal stock restored")
 	dialog.set_crafting()
 	check(not dialog.crafting,"normal shop cannot enter craft mode")

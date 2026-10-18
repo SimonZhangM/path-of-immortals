@@ -1,0 +1,42 @@
+{
+  "id": "base.map_event.qingshizhen.inn",
+  "type": "inn",
+  "trigger": "click",
+  "point_id": "base.map.qingshizhen.point.n13",
+  "title": "清石客栈",
+  "dialogue": "res://data/dialogues/tongwantang.json",
+  "description": "山路行人歇脚处，一壶暖酒，几样热菜，也是一日辛劳后的安稳。",
+  "leave_label": "离开客栈",
+  "food_catalog": "res://data/shops/qingshizhen_inn.json",
+  "lodging": {
+    "duration_days": 1,
+    "rooms": [
+      {
+        "id": "base.lodging.qingshizhen.standard",
+        "name": "普通客房",
+        "description": "整洁雅致的二楼客房，\n一榻一枕，供行旅之人安歇一夜。",
+        "image": "res://assets/tanchuang-qingshizhen-kezhan3-putong.webp",
+        "fee": 20,
+        "bonus_percent": 10,
+        "bonus_days": 10
+      },
+      {
+        "id": "base.lodging.qingshizhen.premium",
+        "name": "高级客房",
+        "description": "宽敞清静的雅致客房，\n安枕舒眠，养足精神再启程。",
+        "image": "res://assets/tanchuang-qingshizhen-kezhan3-gaoji.webp",
+        "fee": 50,
+        "bonus_percent": 20,
+        "bonus_days": 15
+      }
+    ]
+  },
+  "presentation": {
+    "background": "res://assets/tanchuang-qingshizhen-kezhan1.webp",
+    "food_background": "res://assets/tanchuang-qingshizhen-kezhan2.webp",
+    "lodging_background": "res://assets/tanchuang-qingshizhen-kezhan3.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-kezhan-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp",
+    "conversation_portrait": "res://assets/ui-portrait-tongwantang.webp"
+  }
+}

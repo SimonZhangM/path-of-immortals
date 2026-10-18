@@ -266,7 +266,7 @@ func register_item(raw: Dictionary) -> bool:
 		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
-	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "plant", "beast", "mineral", "board"]:
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "plant", "beast", "mineral", "board", "food"]:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"

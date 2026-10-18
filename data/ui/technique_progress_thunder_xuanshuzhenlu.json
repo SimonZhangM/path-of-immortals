@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.thunder_01",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《玄枢阵录》 技艺",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "精刻",
+          "description": "：提高阵眼制作质量与基础效果。"
+        },
+        {
+          "name": "节材",
+          "description": "：减少布阵、制阵材料损耗。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "疾启",
+          "description": "：缩短阵法重新入阵的准备时间。"
+        },
+        {
+          "name": "稳阵",
+          "description": "：增强抵抗敌方冷却干预的能力。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "聚枢",
+          "description": "：强化阵眼的核心效果。"
+        },
+        {
+          "name": "借势",
+          "description": "：阵法发动后，让参与器具获得配合收益。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "疾转",
+          "description": "：缩短阵眼轮转冷却。"
+        },
+        {
+          "name": "强阵",
+          "description": "：提高阵法最终效果。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "合流",
+          "description": "：化神后让阵法效果参与器具连携。"
+        },
+        {
+          "name": "催转",
+          "description": "：阵法发动后推进参与器具的冷却。"
+        }
+      ]
+    }
+  ]
+}

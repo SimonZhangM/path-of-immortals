@@ -1,0 +1,352 @@
+{
+  "base.cultivation_book.wood_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wood-baishouyulinglu-title.webp",
+    "label": "res://assets/UI-wood-baishouyulinglu-label.webp",
+    "book": "res://assets/UI-wood-baishouyulinglu-book.webp",
+    "calligraphy": "res://assets/UI-wood-baishouyulinglu-calligraphy.webp",
+    "poem": "林深各有语，不向众生喧。\n识得山中性，同行万里云。",
+    "origin": "此录原出古代御兽传承，后经御兽大修栖鹿山人重订。山人以木灵察兽息，将辨性、精饵、育兽与群契协同之法分门录入，后世高修续有增注。其故居门前不列弟子姓名，唯刻同游灵兽之形。",
+    "origin_width_sample": "此录原出古代御兽传承，后经御兽大修栖"
+  },
+  "base.cultivation_book.wood_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wood-qingmuzhenjie-title.webp",
+    "label": "res://assets/UI-wood-qingmuzhenjie-label.webp",
+    "book": "res://assets/UI-wood-qingmuzhenjie-book.webp",
+    "calligraphy": "res://assets/UI-wood-qingmuzhenjie-calligraphy.webp",
+    "poem": "草木不言枯荣理，\n一枝深处有春秋。",
+    "origin": "由古代木道宗门历代高修参订，原为弟子辨明长养与攻伐之理的根本经义。书中以木灵运转贯通伤敌、疗伤与护身，并参生机、毒蚀、缠绕共鸣；卷内并存数家论说，不以生、杀任何一途为旁门。",
+    "origin_width_sample": "由古代木道宗门历代高修参订，原为弟子"
+  },
+  "base.cultivation_book.wood_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wood-kurongshengmiejing-title.webp",
+    "label": "res://assets/UI-wood-kurongshengmiejing-label.webp",
+    "book": "res://assets/UI-wood-kurongshengmiejing-book.webp",
+    "calligraphy": "res://assets/UI-wood-kurongshengmiejing-calligraphy.webp",
+    "poem": "一枝含露，一叶辞秋。\n枯荣相望，生灭同流。",
+    "origin": "古修枯荣散人所述，后经木道高修续注。以木灵参草木荣枯，精研生机长养、毒蚀耗敌与缠绕应火雷之变。卷首引青萝仙子旧言，卷末却题：“长养非强留，凋零亦有时。”",
+    "origin_width_sample": "古修枯荣散人所述，后经木道高修续注。"
+  },
+  "base.cultivation_book.wood_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wood-wanmushengshajue-title.webp",
+    "label": "res://assets/UI-wood-wanmushengshajue-label.webp",
+    "book": "res://assets/UI-wood-wanmushengshajue-book.webp",
+    "calligraphy": "res://assets/UI-wood-wanmushengshajue-calligraphy.webp",
+    "poem": "莫道青枝只报春，\n万林锋起亦惊尘。",
+    "origin": "本为古代木修护持灵林的攻伐秘传，后由门人完整传录。以木灵凝刺成刃，推至灵矢、森罗万木，可择毒蚀伤敌或夺生自养；旧祠遗刻所记的不只是退敌之日，还有战后重新栽下的第一株树。",
+    "origin_width_sample": "本为古代木修护持灵林的攻伐秘传，后由"
+  },
+  "base.cultivation_book.wood_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wood-qingluohuashengjue-title.webp",
+    "label": "res://assets/UI-wood-qingluohuashengjue-label.webp",
+    "book": "res://assets/UI-wood-qingluohuashengjue-book.webp",
+    "calligraphy": "res://assets/UI-wood-qingluohuashengjue-calligraphy.png",
+    "poem": "生生不息，藤缠八荒。\n以柔济刚，化生万物。",
+    "origin": "上古青萝仙子所留，详述藤木之道。以木灵为引，融催生、缚敌、蚀脉、疗伤于一诀；以生机为根，以缠绕为势，攻守兼备。",
+    "origin_width_sample": "上古青萝仙子所留，详述藤木之道。以木"
+  },
+  "base.cultivation_book.metal_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-metal-xuanjinbailianlu-title.webp",
+    "label": "res://assets/UI-metal-xuanjinbailianlu-label.webp",
+    "book": "res://assets/UI-metal-xuanjinbailianlu-book.webp",
+    "calligraphy": "res://assets/UI-metal-xuanjinbailianlu-calligraphy.webp",
+    "poem": "顽铁经炉火，寒锋出百锤。\n方寸藏机巧，千磨始见真。",
+    "origin": "上古炼器大修九炼真君重订之录。真君于百炼天炉以金元察材、神识驭炼，贯通兵甲与法器诸法，兼论精工节材。天炉沉寂后，此录随器道传人流布诸域，卷末仍存未删的败炉批记。",
+    "origin_width_sample": "上古炼器大修九炼真君重订之录。真君于百炼"
+  },
+  "base.cultivation_book.metal_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-metal-gengjinzhenjie-title.webp",
+    "label": "res://assets/UI-metal-gengjinzhenjie-label.webp",
+    "book": "res://assets/UI-metal-gengjinzhenjie-book.webp",
+    "calligraphy": "res://assets/UI-metal-gengjinzhenjie-calligraphy.webp",
+    "poem": "金性藏锋非独刚，\n百兵得法各生芒。",
+    "origin": "古代金道诸宗论法时合编，经历代高修增订而成。书中不独尊剑，亦不轻诸兵，以金元贯通术法与器锋，兼论反锋、锋痕、流血之共鸣；不同传本保留诸家相左的批注，皆以明辨金性为本。",
+    "origin_width_sample": "古代金道诸宗论法时合编，经历代高修增订而"
+  },
+  "base.cultivation_book.metal_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-metal-jinshacangfengjing-title.webp",
+    "label": "res://assets/UI-metal-jinshacangfengjing-label.webp",
+    "book": "res://assets/UI-metal-jinshacangfengjing-book.webp",
+    "calligraphy": "res://assets/UI-metal-jinshacangfengjing-calligraphy.webp",
+    "poem": "寒锋不露，来势自偿；\n一痕未尽，余痛犹长。",
+    "origin": "源出一支失传的金修兵道，原经刻在护身甲片之内，后经高修参订流传。其法不争一击之烈，专研反锋、锋痕与流血的留存和衔接，令来势有偿、余伤难尽；今本仍沿用甲片旧次分章。",
+    "origin_width_sample": "源出一支失传的金修兵道，原经刻在护身甲片"
+  },
+  "base.cultivation_book.metal_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-metal-xuangengjianjue-title.webp",
+    "label": "res://assets/UI-metal-xuangengjianjue-label.webp",
+    "book": "res://assets/UI-metal-xuangengjianjue-book.webp",
+    "calligraphy": "res://assets/UI-metal-xuangengjianjue-calligraphy.webp",
+    "poem": "一线寒光开暮色，\n千重剑雨敛归锋。",
+    "origin": "传自古代剑修遗留的试剑石刻，后由门人将庚锋、分光、回锋与归一诸式录成全本。修者以金气凝剑攻敌，亦可结幕护身；石上曾被两度磨去的剑痕，在不同传本里留下了不同注解。",
+    "origin_width_sample": "传自古代剑修遗留的试剑石刻，后由门人将庚"
+  },
+  "base.cultivation_book.metal_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-metal-baibingyulingjue-title.webp",
+    "label": "res://assets/UI-metal-baibingyulingjue-label.webp",
+    "book": "res://assets/UI-metal-baibingyulingjue-book.webp",
+    "calligraphy": "res://assets/UI-metal-baibingyulingjue-calligraphy.webp",
+    "poem": "不拘一剑名，各取百兵长。\n一念通金铁，诸锋应我声。",
+    "origin": "原法相传出于古代御兵一脉，九炼真君曾为其重校器性篇。以神识御阵中实兵，授附灵、化盾与群兵合击之法，不凭空化出百兵；今本仍留炼器者与御兵者互答的旁注，各论兵器之长。",
+    "origin_width_sample": "原法相传出于古代御兵一脉，九炼真君曾为其"
+  },
+  "base.cultivation_book.water_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-water-lingmoxuanfulu-title.webp",
+    "label": "res://assets/UI-water-lingmoxuanfulu-label.webp",
+    "book": "res://assets/UI-water-lingmoxuanfulu-book.webp",
+    "calligraphy": "res://assets/UI-water-lingmoxuanfulu-calligraphy.webp",
+    "poem": "一砚收江色，落毫寂无声。\n寸笺藏万象，未动已含灵。",
+    "origin": "出自古代符道宗门的授法传本，以水灵调墨，神识引篆，讲求灵墨、符材与灵息相契。由稳符惜材至复合灵墨、精篆备符，历代高修各有增注；宗门虽已无存，授法旧砚仍见于后人记述。",
+    "origin_width_sample": "出自古代符道宗门的授法传本，以水灵调墨，"
+  },
+  "base.cultivation_book.water_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-water-xuanshuizhenjie-title.webp",
+    "label": "res://assets/UI-water-xuanshuizhenjie-label.webp",
+    "book": "res://assets/UI-water-xuanshuizhenjie-book.webp",
+    "calligraphy": "res://assets/UI-water-xuanshuizhenjie-calligraphy.webp",
+    "poem": "水行有势，静亦藏锋。\n一脉不竭，百川自通。",
+    "origin": "源自古代水修临江论道之典，经后世高修汇注成书。其法以玄水流转贯通攻势与回灵回体，参润脉、枯脉、寒霜之应；澹月真君曾作旁注，称凝冰与流水并非两道，故今本并存寒流二解。",
+    "origin_width_sample": "源自古代水修临江论道之典，经后世高修汇注"
+  },
+  "base.cultivation_book.water_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-water-hanmailiuzhuanjing-title.webp",
+    "label": "res://assets/UI-water-hanmailiuzhuanjing-label.webp",
+    "book": "res://assets/UI-water-hanmailiuzhuanjing-book.webp",
+    "calligraphy": "res://assets/UI-water-hanmailiuzhuanjing-calligraphy.webp",
+    "poem": "清泉循脉续，寒意逐流深。\n盈枯各有路，冰水本同心。",
+    "origin": "古代水道秘传，由数代高修以灵脉盈枯之理参订。经中精修润脉续养、枯脉耗敌与寒霜凝阵，使盈、枯、寒各成一路。旧本附有不同年代绘下的泉眼图，修法一脉相承，图上水势却几经变化。",
+    "origin_width_sample": "古代水道秘传，由数代高修以灵脉盈枯之理参"
+  },
+  "base.cultivation_book.water_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-water-hanyueningbingjue-title.webp",
+    "label": "res://assets/UI-water-hanyueningbingjue-label.webp",
+    "book": "res://assets/UI-water-hanyueningbingjue-book.webp",
+    "calligraphy": "res://assets/UI-water-hanyueningbingjue-calligraphy.webp",
+    "poem": "月落寒江凝作刃，\n潮翻霜雪尽成锋。",
+    "origin": "相传为古修澹月真君于照月台悟成。真君观寒江凝月，以水灵敛锋，由冰刃推至寒潮天河，兼取破坚覆霜之势。后世传本皆留一句：“月可碎，水不绝。”台上剑痕是否出自真君，已无人能断。",
+    "origin_width_sample": "相传为古修澹月真君于照月台悟成。真君观寒"
+  },
+  "base.cultivation_book.water_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-water-canglanranlingjue-title.webp",
+    "label": "res://assets/UI-water-canglanranlingjue-label.webp",
+    "book": "res://assets/UI-water-canglanranlingjue-book.webp",
+    "calligraphy": "res://assets/UI-water-canglanranlingjue-calligraphy.webp",
+    "poem": "潮声未歇，灵泉先涸。\n待到归墟，一水断流。",
+    "origin": "出自古代水修对阵强敌时的秘传，后由同门据法诀与斗法录整理成书。所谓燃灵，乃以水法削灵耗体、凝霜扰阵，待敌元气空乏，再施归墟断流；附卷兼收敌我两方手记，对同场交锋各有说辞。",
+    "origin_width_sample": "出自古代水修对阵强敌时的秘传，后由同门据"
+  },
+  "base.cultivation_book.fire_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-fire-chiludanjing-title.webp",
+    "label": "res://assets/UI-fire-chiludanjing-label.webp",
+    "book": "res://assets/UI-fire-chiludanjing-book.webp",
+    "calligraphy": "res://assets/UI-fire-chiludanjing-calligraphy.webp",
+    "poem": "炉底三分火，丹中百草春。\n炎心须守静，方得一丸真。",
+    "origin": "古代丹道名宿赤霞丹君重订之经。丹君曾于落霞丹台开炉授法，以火灵调和百草、炼取药性，兼授单丹精炼与众丹同成之道。传本末附历次败炉记录，既书成丹之得，亦不掩失手之因。",
+    "origin_width_sample": "古代丹道名宿赤霞丹君重订之经。丹君曾于落"
+  },
+  "base.cultivation_book.fire_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-fire-lihuozhenjie-title.webp",
+    "label": "res://assets/UI-fire-lihuozhenjie-label.webp",
+    "book": "res://assets/UI-fire-lihuozhenjie-book.webp",
+    "calligraphy": "res://assets/UI-fire-lihuozhenjie-calligraphy.webp",
+    "poem": "火有明灭，势有藏扬。\n得其真性，寸焰成阳。",
+    "origin": "源出古代火道诸脉的论法集，经后世大修删繁汇订为总纲。其义不以焰大为胜，而辨火攻蓄发、附炎助势及灼烧、破甲之应；攻伐修士与丹道传人各留批注，共参离火，却各有取舍。",
+    "origin_width_sample": "源出古代火道诸脉的论法集，经后世大修删繁"
+  },
+  "base.cultivation_book.fire_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-fire-yanshaliuhuojing-title.webp",
+    "label": "res://assets/UI-fire-yanshaliuhuojing-label.webp",
+    "book": "res://assets/UI-fire-yanshaliuhuojing-book.webp",
+    "calligraphy": "res://assets/UI-fire-yanshaliuhuojing-calligraphy.webp",
+    "poem": "焰过犹留种，甲深未隔炎。\n余烬微微动，星星不肯眠。",
+    "origin": "源出古代火修的三卷秘传，最初分刻于耐火灵玉，经后世高修合参成经。其法精研附炎留存、灼烧延续与破甲绕防，使余火续势、炎伤透甲；三卷末尾各留不同署记，成经者未抹去先人旧名。",
+    "origin_width_sample": "源出古代火修的三卷秘传，最初分刻于耐火灵"
+  },
+  "base.cultivation_book.fire_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-fire-chiyangzhenhuojue-title.webp",
+    "label": "res://assets/UI-fire-chiyangzhenhuojue-label.webp",
+    "book": "res://assets/UI-fire-chiyangzhenhuojue-book.webp",
+    "calligraphy": "res://assets/UI-fire-chiyangzhenhuojue-calligraphy.webp",
+    "poem": "一线赤锋分夜色，\n长天烈日坠掌中。",
+    "origin": "古代火道大修于绝壁演法所留，后由弟子依壁录成此诀。以真火凝刃成枪，继而结烈阳之印、引赤阳天火，重在正面爆发并借灼烧爆燃；壁下旧记不称其战绩，只载诸弟子各自看懂了哪一式。",
+    "origin_width_sample": "古代火道大修于绝壁演法所留，后由弟子依壁"
+  },
+  "base.cultivation_book.fire_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-fire-lihuoliaoyuanjue-title.webp",
+    "label": "res://assets/UI-fire-lihuoliaoyuanjue-label.webp",
+    "book": "res://assets/UI-fire-lihuoliaoyuanjue-book.webp",
+    "calligraphy": "res://assets/UI-fire-lihuoliaoyuanjue-calligraphy.webp",
+    "poem": "一星藏草底，未必照人衣。\n待得原野赤，方知寸焰威。",
+    "origin": "来自古代火修的护山传承，由历代持法修士增订。先积附炎，再布灼烧与破甲，最后借预存火势壮大真炎，重在蓄势而后发。旧本夹有一封退敌后的传书，不夸燎原之威，只叮嘱后人记得收火。",
+    "origin_width_sample": "来自古代火修的护山传承，由历代持法修士增"
+  },
+  "base.cultivation_book.earth_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-earth-kunyuandimailu-title.webp",
+    "label": "res://assets/UI-earth-kunyuandimailu-label.webp",
+    "book": "res://assets/UI-earth-kunyuandimailu-book.webp",
+    "calligraphy": "res://assets/UI-earth-kunyuandimailu-calligraphy.webp",
+    "poem": "山藏千岁骨，石有未言珍。\n循得深根脉，方知大地心。",
+    "origin": "本为古代地师一脉的勘脉秘典，经历代土修高人续订，负岳老人亦曾批注山川形势。修者以土灵感脉、神识辨材，求隐矿、识珍性，兼论精采与丰收；今本保留旧山势图，并不删去后来变迁的河谷。",
+    "origin_width_sample": "本为古代地师一脉的勘脉秘典，经历代土修高"
+  },
+  "base.cultivation_book.earth_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-earth-houtuzhenjie-title.webp",
+    "label": "res://assets/UI-earth-houtuzhenjie-label.webp",
+    "book": "res://assets/UI-earth-houtuzhenjie-book.webp",
+    "calligraphy": "res://assets/UI-earth-houtuzhenjie-calligraphy.webp",
+    "poem": "山岳无言藏厚力，\n千钧有势落尘中。",
+    "origin": "古代土道宗门的根本法义，后随传人散布诸域，经高修反复汇注。以厚土之性贯通土法与钝兵，参坚韧、疲惫、重伤之应；传法古殿曾并陈一枚岳印与一柄旧锤，以示法、器虽异，沉势相通。",
+    "origin_width_sample": "古代土道宗门的根本法义，后随传人散布诸域"
+  },
+  "base.cultivation_book.earth_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-earth-zhenyuechenyuanjing-title.webp",
+    "label": "res://assets/UI-earth-zhenyuechenyuanjing-label.webp",
+    "book": "res://assets/UI-earth-zhenyuechenyuanjing-book.webp",
+    "calligraphy": "res://assets/UI-earth-zhenyuechenyuanjing-calligraphy.webp",
+    "poem": "岳立任风急，根深不易倾。\n待他筋力尽，沉势自成城。",
+    "origin": "原为古代守关土修代代参订的沉元秘经。经中以坚韧抗暴，以疲惫助暴，以重伤抑制回血、加重消耗，贵在己稳而敌弱。负岳老人留有旁批：“可守者不止一人。”现存关碑尚能辨出几处蒙尘的名字。",
+    "origin_width_sample": "原为古代守关土修代代参订的沉元秘经。经中"
+  },
+  "base.cultivation_book.earth_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-earth-hanyueliedijue-title.webp",
+    "label": "res://assets/UI-earth-hanyueliedijue-label.webp",
+    "book": "res://assets/UI-earth-hanyueliedijue-book.webp",
+    "calligraphy": "res://assets/UI-earth-hanyueliedijue-calligraphy.webp",
+    "poem": "一锤惊石骨，一印压山河。\n地脉翻深响，群峰应势折。",
+    "origin": "古代土修从山岳移势、地脉震荡中参得的攻伐之诀，经门人传录而存。岩锤、坠岳由轻入重，地脉震可暂制敌兵，山河崩再乘其旧伤。传本附有与静守之法的辩论，双方都未将异说删去。",
+    "origin_width_sample": "古代土修从山岳移势、地脉震荡中参得的攻伐"
+  },
+  "base.cultivation_book.earth_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-earth-budongxuanyuejue-title.webp",
+    "label": "res://assets/UI-earth-budongxuanyuejue-label.webp",
+    "book": "res://assets/UI-earth-budongxuanyuejue-book.webp",
+    "calligraphy": "res://assets/UI-earth-budongxuanyuejue-calligraphy.webp",
+    "poem": "不争先手胜，静候百锋来。\n千钧藏未发，一震动尘埃。",
+    "origin": "相传由土修大能负岳老人传下。老人以厚土蓄势，授待发抗暴、武器重击、镇脉增耗与借势反震之法，主张不争先手而不失后机。旧传其独守石关七日，关外碑文只留一句：“身后有人，不可退。”",
+    "origin_width_sample": "相传由土修大能负岳老人传下。老人以厚土蓄"
+  },
+  "base.cultivation_book.wind_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wind-tingfengxunjilu-title.webp",
+    "label": "res://assets/UI-wind-tingfengxunjilu-label.webp",
+    "book": "res://assets/UI-wind-tingfengxunjilu-book.webp",
+    "calligraphy": "res://assets/UI-wind-tingfengxunjilu-calligraphy.webp",
+    "poem": "风过草先语，人行叶有痕。\n不须问远客，山径自开门。",
+    "origin": "游方大修渡尘客所传，以气灵听风辨息，以神识循痕察隐，兼论寻路、追踪与避险。渡尘客一生未立山门，行迹却遍及诸域；各地传本法义相通，所附路记从不完整，末页常留一处未署名的渡口。",
+    "origin_width_sample": "游方大修渡尘客所传，以气灵听风辨息，以神"
+  },
+  "base.cultivation_book.wind_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wind-yufengzhenjie-title.webp",
+    "label": "res://assets/UI-wind-yufengzhenjie-label.webp",
+    "book": "res://assets/UI-wind-yufengzhenjie-book.webp",
+    "calligraphy": "res://assets/UI-wind-yufengzhenjie-calligraphy.webp",
+    "poem": "不借千钧力，偏寻一线隙。\n风行无定处，进退有先机。",
+    "origin": "源出古代气修诸脉的传法经义，经历代高修汇参，不独尊一门身法。其法贯通风攻、命中、闪避与追击，兼参轻灵、失衡、驱散及穿刺武器配合；传本各有侧重，却都保留“快非先，得隙为先”的旧训。",
+    "origin_width_sample": "源出古代气修诸脉的传法经义，经历代高修汇"
+  },
+  "base.cultivation_book.wind_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wind-liufengwuxiangjing-title.webp",
+    "label": "res://assets/UI-wind-liufengwuxiangjing-label.webp",
+    "book": "res://assets/UI-wind-liufengwuxiangjing-book.webp",
+    "calligraphy": "res://assets/UI-wind-liufengwuxiangjing-calligraphy.webp",
+    "poem": "来时不见影，过处已无尘。\n才从锋外过，又向隙中寻。",
+    "origin": "由古代气修一脉的身法秘经演成，后世高修将乘隙与涤势之理续入。专研轻灵避实、失衡追击与驱散拆益，求无定之中自有章法；旧本署名多被传人省去，唯各代补注的笔迹仍清晰可辨。",
+    "origin_width_sample": "由古代气修一脉的身法秘经演成，后世高修将"
+  },
+  "base.cultivation_book.wind_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wind-qingmingpokongjue-title.webp",
+    "label": "res://assets/UI-wind-qingmingpokongjue-label.webp",
+    "book": "res://assets/UI-wind-qingmingpokongjue-book.webp",
+    "calligraphy": "res://assets/UI-wind-qingmingpokongjue-calligraphy.webp",
+    "poem": "一矢穿云惊宿雾，\n长风逐隙入青冥。",
+    "origin": "相传为古代气修在高天罡风中演成，以灵力凝风作矢，推至裂空与贯日诸式，专取命中与敌方失衡之隙。其传承最初刻于迎风石壁，后人分赴数座险峰摹录，才将散刻整理为今日全本。",
+    "origin_width_sample": "相传为古代气修在高天罡风中演成，以灵力凝"
+  },
+  "base.cultivation_book.wind_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-wind-tingfengwuyingjue-title.webp",
+    "label": "res://assets/UI-wind-tingfengwuyingjue-label.webp",
+    "book": "res://assets/UI-wind-tingfengwuyingjue-book.webp",
+    "calligraphy": "res://assets/UI-wind-tingfengwuyingjue-calligraphy.webp",
+    "poem": "兵未至，身先远；\n风再回，锋已随。",
+    "origin": "本为古代游斗修士的秘传，渡尘客行经诸域时曾校录其散佚旧注。以听风预备闪避，以追风催动兵锋，又以回风进退调节器具发动，兼借清风拆除增益；卷末不载胜负，只录数次险中全身而退的经过。",
+    "origin_width_sample": "本为古代游斗修士的秘传，渡尘客行经诸域时"
+  },
+  "base.cultivation_book.thunder_01": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-thunder-xuanshuzhenlu-title.webp",
+    "label": "res://assets/UI-thunder-xuanshuzhenlu-label.webp",
+    "book": "res://assets/UI-thunder-xuanshuzhenlu-book.webp",
+    "calligraphy": "res://assets/UI-thunder-xuanshuzhenlu-calligraphy.webp",
+    "poem": "数点分虚实，诸纹引去来。\n一枢牵众势，静处有风雷。",
+    "origin": "天机古域阵道大修藏机真君所留，相传成书于问枢塔。以雷灵察阵机、神识统阵眼，论刻阵、稳阵与诸器应势，所布之阵并不限雷属。真君晚年闭塔不出，此录却在数百年后传出，送书之人未留姓名。",
+    "origin_width_sample": "天机古域阵道大修藏机真君所留，相传成书于"
+  },
+  "base.cultivation_book.thunder_02": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-thunder-tianleizhenjie-title.webp",
+    "label": "res://assets/UI-thunder-tianleizhenjie-label.webp",
+    "book": "res://assets/UI-thunder-tianleizhenjie-book.webp",
+    "calligraphy": "res://assets/UI-thunder-tianleizhenjie-calligraphy.webp",
+    "poem": "未鸣先蓄势，既动便惊空。\n掌里雷光敛，攻守一脉通。",
+    "origin": "古代雷道宗门传出的根本经义，经多代高修校定。统论雷法增威与雷罡反制，参雷蕴、雷印、连环共鸣及器具配合；旧时入殿受法，先试敛雷而后试发雷，故卷首只书一个“蓄”字。",
+    "origin_width_sample": "古代雷道宗门传出的根本经义，经多代高修校"
+  },
+  "base.cultivation_book.thunder_03": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-thunder-leichiyintingjing-title.webp",
+    "label": "res://assets/UI-thunder-leichiyintingjing-label.webp",
+    "book": "res://assets/UI-thunder-leichiyintingjing-book.webp",
+    "calligraphy": "res://assets/UI-thunder-leichiyintingjing-calligraphy.webp",
+    "poem": "池深藏未响，印落候天声。\n一电牵余电，千钧次第鸣。",
+    "origin": "古代雷修于雷池旁参法所成，经后世高修续订，玄霆尊者亦留有护罡批注。经中分述雷蕴成盾、雷印引击与连环续电，重在留存、增效和衔接；池畔刻石深浅不一，仍能辨出数代参悟的先后。",
+    "origin_width_sample": "古代雷修于雷池旁参法所成，经后世高修续订"
+  },
+  "base.cultivation_book.thunder_04": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-thunder-jiuxiaotingguangjue-title.webp",
+    "label": "res://assets/UI-thunder-jiuxiaotingguangjue-label.webp",
+    "book": "res://assets/UI-thunder-jiuxiaotingguangjue-book.webp",
+    "calligraphy": "res://assets/UI-thunder-jiuxiaotingguangjue-calligraphy.webp",
+    "poem": "指端才有电，云外已生雷。\n万籁收声处，九霄一霆来。",
+    "origin": "出自古代雷修登峰引霆的攻伐传承，由弟子将各处石刻录为全诀。自雷光指至九霄雷落，重在正面雷伤，兼借雷印、连环续起锋势；登峰旧路留有历代修士题记，亦记妖修与人修并肩御敌之事。",
+    "origin_width_sample": "出自古代雷修登峰引霆的攻伐传承，由弟子将"
+  },
+  "base.cultivation_book.thunder_05": {
+    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "title": "res://assets/UI-thunder-leigangzhenyujue-title.webp",
+    "label": "res://assets/UI-thunder-leigangzhenyujue-label.webp",
+    "book": "res://assets/UI-thunder-leigangzhenyujue-book.webp",
+    "calligraphy": "res://assets/UI-thunder-leigangzhenyujue-calligraphy.webp",
+    "poem": "雷敛周身静，锋来霹雳还。\n一声惊未定，余电已成关。",
+    "origin": "古代化神修士玄霆尊者所留。以雷蕴凝盾、雷印候击，借破盾麻痹之机还霆镇敌，并以雷狱锁延留余威。门人据镇狱台刻痕整理成诀；尊者殒落后，台中依残阵维持的守禁法念仍循旧令。",
+    "origin_width_sample": "古代化神修士玄霆尊者所留。以雷蕴凝盾、雷"
+  }
+}

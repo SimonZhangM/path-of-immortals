@@ -38,6 +38,24 @@ func resolved(member: PartyMemberState, id: String) -> Dictionary:
 	result.merge(result.branches.get(branch, {}), true)
 	return result
 
+func branch_key(book_id: String, choice: String) -> String:
+	# Scope aliases to their book; shared names in other elements are unchanged.
+	var names: Dictionary = books.get(book_id, {}).get("branch_display_names", {})
+	for key: String in names:
+		if names[key] == choice: return key
+	return choice
+
+func branch_display_name(book_id: String, choice: String) -> String:
+	return str(books.get(book_id, {}).get("branch_display_names", {}).get(choice, choice))
+
+func branch_unavailable_reason(book_id: String, stage: int, choice: String) -> String:
+	choice = branch_key(book_id, choice)
+	if not books.has(book_id) or choice not in books[book_id].branches.get(str(stage), []):
+		return "该重没有此分支"
+	if books[book_id].get("deferred_branches", {}).has(choice):
+		return "连携系统开放后可用；当前仅可预览，可保留待选并继续修习后续重数"
+	return ""
+
 
 static func validate_spell(raw: Dictionary, branch := false) -> bool:
 	var allowed := "absorption advance_cd agility armor_bonus armor_only bleed blunt_critical blunt_pct book_id branches burst_armor_only burst_pct burst_ratio burst_status cd_pct cells chain_bonus cooldown core_references cost_pct counter counter_bonus damage damage_layers damage_pct deferred delay_cd dispel_bonus drain_return drain_spirit element extra_chain followup_bonus followup_hit freeze_extra heal heal_pct hit_bonus icon id injury layer_cap layer_ratio learned_at_book_level life_per_hp main_ratio missing_scale name opcode other_ratio paralysis_extension pierce_bonus poison_entangle prepared race_bonus ratio reduction refresh_fire return_edge return_resources root shield source spirit_cost statuses strike_bonus surcharge tenacity weapon_pct wither_resource".split(" ")

@@ -6,6 +6,15 @@
     "sell_rounding": "floor"
   },
   "profiles": {
+    "base.shop_profile.inn": {
+      "label": "客栈吃食",
+      "categories": [
+        {"id":"drink","label":"酒水","inventory_categories":["food"],"subcategories":["酒水"]},
+        {"id":"staple","label":"主食","inventory_categories":["food"],"subcategories":["主食"]},
+        {"id":"dish","label":"菜品","inventory_categories":["food"],"subcategories":["菜品"]},
+        {"id":"soup","label":"热汤","inventory_categories":["food"],"subcategories":["热汤"]}
+      ]
+    },
     "base.shop_profile.general": {
       "label": "普通商铺",
       "categories": [

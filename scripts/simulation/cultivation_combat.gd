@@ -293,13 +293,15 @@ func damage_bonus(owner: PartyMemberState, target: PartyMemberState, element: St
 	if source.get("kind", "active") in ["active", "counter", "followup"] and owner.temporary_effects.get("weakness", {}).get("until", 0) > sim.state.time_usec: value -= .2
 	return value
 
-func hit_chance(owner: PartyMemberState, target: PartyMemberState, base: float, element: String, at: int) -> float:
+func hit_chance(owner: PartyMemberState, target: PartyMemberState, base: float, element: String, at: int, active := true) -> float:
 	var imbalance := status_source(target, "失衡")
 	var attack := rules.layers(target,"失衡") * (.01+bonus(imbalance,"wind",2,"破衡",.004)+bonus(imbalance,"wind",4,"失势",.006))
 	var evade := rules.layers(target,"轻灵") * (.01+bonus(target,"wind",2,"轻身",.004)+bonus(target,"wind",4,"无影",.006))
 	if general(target,"wind",1,"灵行"): evade += .1
-	if element == "base.element.wind" and general(owner,"wind",1,"灵行"): attack += .1
+	if active and element == "base.element.wind" and general(owner,"wind",1,"风锋"): attack += .1
 	if owner.temporary_effects.get("wind_accuracy",{}).get("until",0)>at: attack += .1
+	attack += float(owner.definition.get("food_modifiers",{}).get("accuracy",0))
+	evade += float(target.definition.get("food_modifiers",{}).get("evasion",0))
 	return clampf(base + attack - evade,0,1)
 
 func dodged(member: PartyMemberState, attacker: PartyMemberState, at: int) -> void:
@@ -333,7 +335,7 @@ func absorption(member: PartyMemberState) -> float:
 
 func counter_attack(owner: PartyMemberState, target: PartyMemberState, value: float, element: String, p: Dictionary, at: int) -> void:
 	if owner.hp<=0 or target.hp<=0: return
-	if rules.roll() >= hit_chance(owner,target,.95,"base.element."+element,at):
+	if rules.roll() >= hit_chance(owner,target,.95,"base.element."+element,at,false):
 		rules.half_consume(target,"轻灵")
 		dodged(target,owner,at)
 		return
@@ -443,7 +445,7 @@ func followup(owner: PartyMemberState, target: PartyMemberState, item: ItemData,
 	if not guaranteed and (rules.layers(target,"失衡")<=0 or rules.roll()>=chance): return
 	var p := trigger(id,at) if guaranteed else {}
 	if guaranteed and p.is_empty(): return
-	if rules.roll()>=hit_chance(owner,target,float(item.combat.get("hit_chance",.9))+float(p.get("followup_hit",0)),item.element,at):
+	if rules.roll()>=hit_chance(owner,target,float(item.combat.get("hit_chance",.9))+float(p.get("followup_hit",0)),item.element,at,false):
 		rules.half_consume(target,"轻灵")
 		dodged(target,owner,at)
 		return

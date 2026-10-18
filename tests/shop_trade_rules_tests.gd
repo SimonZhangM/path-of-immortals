@@ -11,14 +11,14 @@ func verify_data(state: MapLoadoutState) -> Array[MapShop]:
 		check(shop.load_catalog("res://data/shops/%s.json" % CATALOGS[index],state).is_empty(),"catalog valid "+CATALOGS[index])
 		shops.append(shop)
 		check("|".join(shop.categories().map(func(row): return row.label))==LABELS[index],"approved ordered tabs")
-		check(shop.products().size()==[16,4,3,4,3][index],"approved stock including herbs and ores")
+		check(shop.products().size()==[19,4,3,4,3][index],"approved stock including herbs and ores")
 		for row: Dictionary in shop.products():
 			check(not ids.has(row.item_id),"sample not duplicated across shops")
 			ids[row.item_id] = true
 			check(shop.category_for(state.records[row.item_id])==row.category,"stock matches venue scope")
-			check(shop.buy_unit_price(row.item_id)==shop.pricing.buy_unit_price(row.item_id),"stock uses approved base price")
+			check(shop.buy_quote(row.item_id).original_unit==shop.pricing.buy_unit_price(row.item_id),"undiscounted stock quote uses approved base price")
 			check(shop.pricing.sell_unit_price(row.item_id)>0,"stock has an approved sale quote")
-	check(ids.size()==30,"five catalogs contain 30 stock entries")
+	check(ids.size()==33,"five catalogs contain 33 stock entries")
 	for record: Dictionary in state.records.values():
 		var venues := shops.filter(func(shop): return not shop.category_for(record).is_empty())
 		check(venues.size()==1,"one intended venue for existing item "+record.name)

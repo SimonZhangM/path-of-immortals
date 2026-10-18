@@ -1,0 +1,39 @@
+{
+  "book_id": "base.cultivation_book.wood_05",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《青萝化生诀》 战斗",
+  "stages": [
+    {
+      "level": 1,
+      "spell": {"name": "缚灵藤", "effect": "缠绕3层", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-01-fulingteng.webp"},
+      "choices": [
+        {"name": "盘根", "effect": "缠绕增层", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-02-pangen.webp"},
+        {"name": "疾藤", "effect": "减耗提速", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-03-jiteng.webp"}
+      ]
+    },
+    {
+      "level": 3,
+      "spell": {"name": "蚀脉荆", "effect": "毒蚀4层", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-04-shimaijing.webp"},
+      "choices": [
+        {"name": "入骨", "effect": "毒蚀增层", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-05-rugu.webp"},
+        {"name": "蔓生", "effect": "遇毒加缠", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-06-mansheng.webp"}
+      ]
+    },
+    {
+      "level": 5,
+      "spell": {"name": "回春术", "effect": "回血＋生机", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-07-huichunshu.webp"},
+      "choices": [
+        {"name": "急生", "effect": "即时强疗", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-08-jisheng.webp"},
+        {"name": "长养", "effect": "生机增层", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-09-changyang.webp"}
+      ]
+    },
+    {
+      "level": 7,
+      "spell": {"name": "青萝天罗", "effect": "缠绕＋定身", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-10-qingluotianluo.webp"},
+      "choices": [
+        {"name": "天罗固缚", "effect": "缠缚强化", "icon": "res://assets/UI-wood-qingluohuashengjue-effect-11-tianluogufu.webp"},
+        {"name": "引火召雷", "effect": "火雷连携", "deferred": true, "icon": "res://assets/UI-wood-qingluohuashengjue-effect-12-yinhuozhaolei.webp"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1340 @@
+{
+  "id": "base.npc.hantieshan",
+  "name": "韩铁山",
+  "portrait": "res://assets/ui-portrait-hantieshan.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.hantieshan.welcome",
+  "topics": [
+    {
+      "id": "shop",
+      "label": "铁匠铺近况",
+      "initial": [
+        "base.dialogue.hantieshan.shop.01",
+        "base.dialogue.hantieshan.shop.02"
+      ],
+      "story": [],
+      "revisits": [
+        "base.dialogue.hantieshan.shop.03"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 1
+    },
+    {
+      "id": "equipment",
+      "label": "器具心得",
+      "initial": [
+        "base.dialogue.hantieshan.equipment.01",
+        "base.dialogue.hantieshan.equipment.02"
+      ],
+      "story": [
+        "base.dialogue.hantieshan.equipment.03"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.hantieshan.chat.01",
+        "base.dialogue.hantieshan.chat.02"
+      ],
+      "story": [
+        "base.dialogue.hantieshan.story.region",
+        "base.dialogue.hantieshan.story.military",
+        "base.dialogue.hantieshan.story.wall"
+      ],
+      "revisits": [
+        "base.dialogue.hantieshan.visit.01",
+        "base.dialogue.hantieshan.visit.02",
+        "base.dialogue.hantieshan.visit.03",
+        "base.dialogue.hantieshan.visit.04",
+        "base.dialogue.hantieshan.visit.05",
+        "base.dialogue.hantieshan.visit.06"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 2
+    }
+  ],
+  "clues": {},
+  "segments": {
+    "base.dialogue.hantieshan.welcome": {
+      "topic": "welcome",
+      "label": "初次欢迎",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "来了？那边有凳子。"
+        },
+        {
+          "speaker": "npc",
+          "text": "炉边烫，别挨着站。想问什么就问，我听着。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.shop.01": {
+      "topic": "shop",
+      "label": "铁匠铺近况",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，农具、兵器都有人等着要，您这边先做哪样？"
+        },
+        {
+          "speaker": "npc",
+          "text": "看什么时候答应的，也看人家急不急用。"
+        },
+        {
+          "speaker": "player",
+          "text": "打兵器挣得多些，也不先做？"
+        },
+        {
+          "speaker": "npc",
+          "text": "人家等着下地，锄头坏了，地就晾着？"
+        },
+        {
+          "speaker": "npc",
+          "text": "真有急事，跟前头的人商量。不能谁多出几个钱，就把别人的活儿一直往后推。"
+        },
+        {
+          "speaker": "player",
+          "text": "要是实在赶不及呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "早些说。人家还来得及另想办法。"
+        },
+        {
+          "speaker": "player",
+          "text": "我看您接活的时候，总要问什么时候用。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。问清了，才知道能不能答应。"
+        },
+        {
+          "speaker": "npc",
+          "text": "架上那些是已经做好的，别和案边的混了。每家要取什么，我记在纸上了。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.shop.02": {
+      "topic": "shop",
+      "label": "这块料能不能用？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，怎么知道一块矿石好不好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先得知道它是什么。杂质多少，质地如何，受火后有什么变化，这些都要看。"
+        },
+        {
+          "speaker": "player",
+          "text": "光看外表，看得出来吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时能看出些门道，可不能全凭眼睛。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你看这块，已经开过料了。外头瞧着不错，里面却不是那么回事。"
+        },
+        {
+          "speaker": "player",
+          "text": "所以收回来，还不能直接拿去做器具？"
+        },
+        {
+          "speaker": "npc",
+          "text": "得先辨明白。适合做什么、不适合做什么，分开放。"
+        },
+        {
+          "speaker": "player",
+          "text": "用在别处也不行的呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就不能硬用。不能为了省这一点料，把后面的东西也做坏了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "料子有好有坏，怎么用，是手艺人的事。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪您每回收到矿石，都要仔细检查。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不检查，出了事找谁去？砸坏东西倒是小事。若是兵器用到一半断了，拿它的人怎么办？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这些已经分清了。以后拿不准的料，先别急着定用途，问明白再说。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.shop.03": {
+      "topic": "shop",
+      "label": "同样的料，不同的用处",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，铺里也要用外地来的材料？"
+        },
+        {
+          "speaker": "npc",
+          "text": "要。有些本地找不着，得托人捎。"
+        },
+        {
+          "speaker": "player",
+          "text": "也是找钱掌柜？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时找他。陆丹师也常托他办这类事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有回一份料送到镇上，我们三个人围着看，问的倒是三回事。"
+        },
+        {
+          "speaker": "player",
+          "text": "哪三回事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "钱掌柜先核对送来的是不是订的货。陆丹师看药性，我看能不能用进要做的器具。"
+        },
+        {
+          "speaker": "player",
+          "text": "那同一份料，你们还能看出不同的好坏？"
+        },
+        {
+          "speaker": "npc",
+          "text": "对他合用，对我未必。不是谁认错了，是要做的东西不同。"
+        },
+        {
+          "speaker": "player",
+          "text": "最后怎么分？"
+        },
+        {
+          "speaker": "npc",
+          "text": "谁订的，先交给谁。真想要别人的那份，就好好商量。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为您和陆丹师要争个高下。"
+        },
+        {
+          "speaker": "npc",
+          "text": "争赢了，料又不会自己多出一份。😄"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.equipment.01": {
+      "topic": "equipment",
+      "label": "器具心得",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，行囊里多放几件兵器，进山是不是更稳妥？"
+        },
+        {
+          "speaker": "npc",
+          "text": "体力够不够？防具留了多少地方？"
+        },
+        {
+          "speaker": "player",
+          "text": "我想着尽快把对面打倒，省得拖久了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "想法没错。可几件东西都要耗体力，你总得供得上。"
+        },
+        {
+          "speaker": "player",
+          "text": "那少放一件兵器，换件防具？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先看缺什么。体力接不上，就先顾体力；护不住自己，就给防具留地方。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不是把格子塞满，就叫备齐了。"
+        },
+        {
+          "speaker": "player",
+          "text": "所以您先看的，不是哪件兵器最厉害？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先看这一套能不能用得住，再看还能怎么添。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我得把整盘放在一起想。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。别单看一件东西就下主意。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.equipment.02": {
+      "topic": "equipment",
+      "label": "防具怎么配？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，身甲、护臂、护腿都能护身，是不是只挑防护最多的就行？"
+        },
+        {
+          "speaker": "npc",
+          "text": "还得看占多少地方、各自有什么作用。整套怎么配，比只挑一件更要紧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "防具当然不能什么都挡住。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可有时候，多挡一下，人就多一点机会。"
+        },
+        {
+          "speaker": "player",
+          "text": "我回头也得仔细检查一下自己的行囊。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。别只盯着能打出去多少伤害。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（拿起一件尚未完成的护臂，用手指压了压连接处。）能好好回来，下回才能接着打。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.equipment.03": {
+      "topic": "equipment",
+      "label": "有人同行的时候",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，若有人一起对付敌人，是不是就能少顾虑些？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先弄清对方能帮什么，不能帮什么。"
+        },
+        {
+          "speaker": "player",
+          "text": "有人护着，总比自己一个人稳妥吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "稳妥些，不是就能不管自己了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "人家替你挡了一下，你得趁这个工夫缓过来。不能觉得有人照应，便把余力都用尽。"
+        },
+        {
+          "speaker": "player",
+          "text": "不然对方一时顾不上，我这边就接不住了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。还有，自己撑不住时，早些让人知道。别等出了事，旁人才发觉。"
+        },
+        {
+          "speaker": "player",
+          "text": "我怕说出来，反倒让同行的人分心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你不说，他照着原来的打算做，才容易出岔子。"
+        },
+        {
+          "speaker": "player",
+          "text": "所以不是各打各的，只在最后帮一把。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。真要一起走，彼此能做到什么，心里都得有数。"
+        }
+      ],
+      "any_of": [
+        {
+          "requires_flags": [
+            "base.story.qinglan.combat_experienced"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.combat.cooperation_encountered"
+          ]
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，往边上站点。"
+        },
+        {
+          "speaker": "player",
+          "text": "怎么了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "火星子。你那衣袖宽，别凑得太近。"
+        },
+        {
+          "speaker": "player",
+          "text": "我站这里行吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "再往旁边一点。对，就那儿。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（继续敲了几下铁。）那边有凳子，坐着吧。"
+        },
+        {
+          "speaker": "player",
+          "text": "您这儿天天这么热，不觉得难受？"
+        },
+        {
+          "speaker": "npc",
+          "text": "习惯了。"
+        },
+        {
+          "speaker": "player",
+          "text": "夏天也这么烧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不烧炉子，打什么铁？"
+        },
+        {
+          "speaker": "player",
+          "text": "那倒也是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过夏天也得歇口气。烧铁可以，不能把自己也给烧糊了。"
+        },
+        {
+          "speaker": "player",
+          "text": "哈哈，韩师傅，您也会开玩笑。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我又不是铁打的。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.chat.02": {
+      "topic": "chat",
+      "label": "街坊的活儿",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，镇上来找您的人，您都认得？"
+        },
+        {
+          "speaker": "npc",
+          "text": "常来的认得。脸认不清，有时也记得他拿什么来做过。"
+        },
+        {
+          "speaker": "player",
+          "text": "您是记人，还是记东西？"
+        },
+        {
+          "speaker": "npc",
+          "text": "都记。有人急，有人慢，有人临走了才想起来少说一句。"
+        },
+        {
+          "speaker": "player",
+          "text": "钱掌柜是哪一种？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他说得多，我得挑要紧的听。"
+        },
+        {
+          "speaker": "player",
+          "text": "他知道您这么说他吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当面说过。他说那是怕我漏听。"
+        },
+        {
+          "speaker": "player",
+          "text": "那叶伯呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "要什么说得清楚，也不乱催。活儿交回去，合不合用，他会告诉我。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来您跟大家都处得不错。"
+        },
+        {
+          "speaker": "npc",
+          "text": "住在一条街上，总有彼此搭把手的时候。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.visit.01": {
+      "topic": "chat",
+      "label": "那双旧护手",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，把那边的护手递我一下。"
+        },
+        {
+          "speaker": "player",
+          "text": "这双？都磨成这样了，您还用啊？"
+        },
+        {
+          "speaker": "npc",
+          "text": "能用。"
+        },
+        {
+          "speaker": "player",
+          "text": "这边的皮都快磨穿了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就该换了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为您要说“补补还能用”。"
+        },
+        {
+          "speaker": "npc",
+          "text": "该补的补，该换的换。护手磨穿了还硬戴，烫伤的是自己的手。"
+        },
+        {
+          "speaker": "player",
+          "text": "您对工具倒挺舍得。"
+        },
+        {
+          "speaker": "npc",
+          "text": "工具坏了能换。手伤了，活儿就干不了了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（把旧护手放进一旁的杂物筐。）去，把架上那双新的拿来。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.visit.02": {
+      "topic": "chat",
+      "label": "衣带收好",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "衣带收好，末端拖出来了，容易挂着。"
+        },
+        {
+          "speaker": "player",
+          "text": "刚才坐下时松了，我重新系一下。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（韩铁山下意识伸手，辰宇已经将衣带拢好。他便把手收了回去。）"
+        },
+        {
+          "speaker": "player",
+          "text": "这样就行吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。末端也收进去。"
+        },
+        {
+          "speaker": "player",
+          "text": "在药铺天天扎药包，打个结我还是会的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "看出来了。那就自己弄妥当。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.visit.03": {
+      "topic": "chat",
+      "label": "歇手的时候",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，您有时候坐着看炉火，也是在做活？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些时候要等，不是一直敲才算做活。"
+        },
+        {
+          "speaker": "player",
+          "text": "我以前还怕这时候来，会耽误您。"
+        },
+        {
+          "speaker": "npc",
+          "text": "真顾不上，我会告诉你。能说话的时候，说两句不碍事。"
+        },
+        {
+          "speaker": "player",
+          "text": "那现在呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "现在能歇歇手。"
+        },
+        {
+          "speaker": "player",
+          "text": "您早说，我还一直站着。"
+        },
+        {
+          "speaker": "npc",
+          "text": "凳子不是摆在那儿了？还得我替你坐下？"
+        },
+        {
+          "speaker": "player",
+          "text": "那倒不用。😄"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.visit.04": {
+      "topic": "chat",
+      "label": "一只锅盖",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，兵器和锅盖都找您，您这铺子还真是什么活儿都有。"
+        },
+        {
+          "speaker": "npc",
+          "text": "能做的就做。不能做的，给人指个地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "这只锅盖哪里有问题？"
+        },
+        {
+          "speaker": "npc",
+          "text": "提手松了。盖子又沉，盛着热汤的时候脱了手，可不是闹着玩的。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪送来的人急着等。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，家里还等着开饭。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我不碍着您，您先做。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不碍事，已经收好了。你看，往这边放稳，别再拿进待做的那堆里。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.visit.05": {
+      "topic": "chat",
+      "label": "招牌太小",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "钱掌柜劝我把招牌做大些。"
+        },
+        {
+          "speaker": "player",
+          "text": "怕有人找不着铺子？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他说，站在巷口就该看见。"
+        },
+        {
+          "speaker": "player",
+          "text": "您答应了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我让他去巷口听听。"
+        },
+        {
+          "speaker": "player",
+          "text": "光听锤声就能找到这里了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "他也是这么说。不过又添一句，名字总该写清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "这个您总不能不认吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "认。字重新描过了，牌子没换。"
+        },
+        {
+          "speaker": "player",
+          "text": "也算听进去一半。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有道理的就听。又不是非得跟他争。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.visit.06": {
+      "topic": "chat",
+      "label": "收火以后",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，您收火以后，还留在铺里吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "收拾完就歇着。有时出去走走。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为您连晚上也在想着明天打什么。"
+        },
+        {
+          "speaker": "npc",
+          "text": "明天的活儿，今天记清楚就行。想一夜，也不会自己做好。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我闲下来，能过来坐坐？"
+        },
+        {
+          "speaker": "npc",
+          "text": "能。门开着就来。"
+        },
+        {
+          "speaker": "player",
+          "text": "不嫌我话多？"
+        },
+        {
+          "speaker": "npc",
+          "text": "真嫌了，我会说。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我可当您答应了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "本来就答应了。来坐坐，又不是什么大事。"
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.story.region": {
+      "topic": "chat",
+      "label": "王畿不只有王城",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，您熟悉河川王畿吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我就是那边人。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为您是青石镇附近来的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不是。王畿西南，靠海的地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "那离王城远吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "远。王畿大着呢，到了王城，不等于把别处也看过了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您有阵子没回去了吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些年了。如今各处怎么样，我也不敢说都清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我以后去了，回来给您讲讲。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。讲你自己看见的就行。"
+        }
+      ],
+      "any_of": [
+        {
+          "requires_flags": [
+            "base.story.hechuan.region_known"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.hechuan.military_equipment_known"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.hechuan.seawall_records_read"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.hechuan.seawall_visited"
+          ]
+        }
+      ],
+      "set_facts": [
+        "base.story.hantieshan.origin_known"
+      ],
+      "variants": [
+        {
+          "id": "visited",
+          "requires_flags": [
+            "base.story.hechuan.region_visited"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "韩师傅，您熟悉河川王畿吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "我就是那边人。"
+            },
+            {
+              "speaker": "player",
+              "text": "我还以为您是青石镇附近来的。"
+            },
+            {
+              "speaker": "npc",
+              "text": "不是。王畿西南，靠海的地方。"
+            },
+            {
+              "speaker": "player",
+              "text": "那离王城远吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "远。王畿大着呢，到了王城，不等于把别处也看过了。"
+            },
+            {
+              "speaker": "player",
+              "text": "您有阵子没回去了吧？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有些年了。如今各处怎么样，我也不敢说都清楚。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我给您讲讲，我去过的地方如今是什么样。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。讲你自己看见的就行。"
+            }
+          ]
+        },
+        {
+          "id": "wall_visited",
+          "requires_flags": [
+            "base.story.hechuan.seawall_visited"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "韩师傅，您熟悉河川王畿吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "我就是那边人。"
+            },
+            {
+              "speaker": "player",
+              "text": "我还以为您是青石镇附近来的。"
+            },
+            {
+              "speaker": "npc",
+              "text": "不是。王畿西南，靠海的地方。"
+            },
+            {
+              "speaker": "player",
+              "text": "那离王城远吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "远。王畿大着呢，到了王城，不等于把别处也看过了。"
+            },
+            {
+              "speaker": "player",
+              "text": "您有阵子没回去了吧？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有些年了。如今各处怎么样，我也不敢说都清楚。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我给您讲讲，我去过的地方如今是什么样。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。讲你自己看见的就行。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.story.military": {
+      "topic": "chat",
+      "label": "军中的器具",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，军中的护具，为什么许多部件看着都差不多？"
+        },
+        {
+          "speaker": "npc",
+          "text": "人多，用起来得方便交接。哪处出了问题，也好及时处理。"
+        },
+        {
+          "speaker": "player",
+          "text": "不像您替客人打造，每个人都可以有些不同。"
+        },
+        {
+          "speaker": "npc",
+          "text": "用处不同。军中还得考虑整队人怎么备、怎么运，不光看一个人使着合不合适。"
+        },
+        {
+          "speaker": "player",
+          "text": "您以前替军中做过器具？"
+        },
+        {
+          "speaker": "npc",
+          "text": "在军中待过，也带过人。这些事得管，慢慢就熟了。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪您把军中怎么备器具，说得这么清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "吃过亏，就得记住。不能下一次还照旧。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您现在做器具，也会想着那些用过的人？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。东西交出去，总得知道自己交的是不是能用的。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.hechuan.military_equipment_known",
+        "base.story.hantieshan.military_story_ready"
+      ],
+      "set_facts": [
+        "base.story.hantieshan.military_known"
+      ],
+      "variants": [
+        {
+          "id": "cooperation_read",
+          "requires_done": [
+            "base.dialogue.hantieshan.equipment.03"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "韩师傅，军中的护具，为什么许多部件看着都差不多？"
+            },
+            {
+              "speaker": "npc",
+              "text": "人多，用起来得方便交接。哪处出了问题，也好及时处理。"
+            },
+            {
+              "speaker": "player",
+              "text": "不像您替客人打造，每个人都可以有些不同。"
+            },
+            {
+              "speaker": "npc",
+              "text": "用处不同。军中还得考虑整队人怎么备、怎么运，不光看一个人使着合不合适。"
+            },
+            {
+              "speaker": "player",
+              "text": "您以前替军中做过器具？"
+            },
+            {
+              "speaker": "npc",
+              "text": "在军中待过，也带过人。这些事得管，慢慢就熟了。"
+            },
+            {
+              "speaker": "player",
+              "text": "难怪您讲起同行应对危险的事，那么清楚。"
+            },
+            {
+              "speaker": "npc",
+              "text": "吃过亏，就得记住。不能下一次还照旧。"
+            },
+            {
+              "speaker": "player",
+              "text": "那您现在做器具，也会想着那些用过的人？"
+            },
+            {
+              "speaker": "npc",
+              "text": "嗯。东西交出去，总得知道自己交的是不是能用的。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.hantieshan.story.wall": {
+      "topic": "chat",
+      "label": "海防长墙",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "韩师傅，我看见关于王畿西南海防长墙的记载。您以前在那边，知道这道墙吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "知道。那道墙，我带人修过。"
+        },
+        {
+          "speaker": "player",
+          "text": "是您带人修的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。那次海妖退了以后，沿海不能再照原样放着，就开始修。"
+        },
+        {
+          "speaker": "player",
+          "text": "那么长的防线，得花多少工夫。"
+        },
+        {
+          "speaker": "npc",
+          "text": "很多人一起做，才连得起来。运料的、砌筑的、守着还没建好的地方的，少了哪边都不行。"
+        },
+        {
+          "speaker": "player",
+          "text": "墙建好以后，您才来青石镇？"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。该交接的交接完，我就离开了。"
+        },
+        {
+          "speaker": "player",
+          "text": "如今那边怎么样，您知道吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "近年的事，不敢说清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你以后若顺路到了那边，看看你经过的那一段就好。墙有没有人照看，附近的人日子过得如何。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，我把看见的记下来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。不必为了我的话，专门往险处走。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.hantieshan.seawall_story_ready"
+      ],
+      "any_of": [
+        {
+          "requires_flags": [
+            "base.story.hechuan.seawall_records_read"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.hechuan.seawall_visited",
+            "base.story.hechuan.seawall_report_ready"
+          ]
+        }
+      ],
+      "set_facts": [
+        "base.story.hantieshan.seawall_known"
+      ],
+      "variants": [
+        {
+          "id": "visited_report",
+          "requires_flags": [
+            "base.story.hechuan.seawall_visited",
+            "base.story.hechuan.seawall_report_ready"
+          ],
+          "lines": [
+            {
+              "speaker": "npc",
+              "text": "你看过哪一段？慢慢说，我听着。"
+            },
+            {
+              "speaker": "player",
+              "text": "韩师傅，您也熟悉那一带？"
+            },
+            {
+              "speaker": "npc",
+              "text": "知道。那道墙，我带人修过。"
+            },
+            {
+              "speaker": "player",
+              "text": "是您带人修的？"
+            },
+            {
+              "speaker": "npc",
+              "text": "嗯。那次海妖退了以后，沿海不能再照原样放着，就开始修。"
+            },
+            {
+              "speaker": "player",
+              "text": "那么长的防线，得花多少工夫。"
+            },
+            {
+              "speaker": "npc",
+              "text": "很多人一起做，才连得起来。运料的、砌筑的、守着还没建好的地方的，少了哪边都不行。"
+            },
+            {
+              "speaker": "player",
+              "text": "墙建好以后，您才来青石镇？"
+            },
+            {
+              "speaker": "npc",
+              "text": "对。该交接的交接完，我就离开了。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我把沿路看见的情形讲给您听。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。讲你自己看见的就行，拿不准的不用猜。"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "greetings": {
+    "low_ratio": 0.5,
+    "close_interval": 0,
+    "ordinary": [
+      "base.dialogue.hantieshan.greeting.daily.01",
+      "base.dialogue.hantieshan.greeting.daily.02",
+      "base.dialogue.hantieshan.greeting.daily.03",
+      "base.dialogue.hantieshan.greeting.daily.04",
+      "base.dialogue.hantieshan.greeting.daily.05"
+    ],
+    "close": [],
+    "phases": [],
+    "once": [
+      {
+        "entry": "base.dialogue.hantieshan.greeting.return",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.qinglan.first_town_return"
+        ]
+      },
+      {
+        "entry": "base.dialogue.hantieshan.greeting.departure",
+        "requires_flags": [
+          "base.story.qinglan.departure_ready"
+        ],
+        "excludes_flags": [
+          "base.story.qinglan.joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.hantieshan.greeting.river",
+        "requires_flags": [
+          "base.story.hantieshan.knows_river_danger"
+        ],
+        "any_of": [
+          {
+            "requires_flags": [
+              "base.story.qingshihewan.danger_experienced"
+            ]
+          },
+          {
+            "requires_flags": [
+              "base.story.qingshihewan.rescue_completed"
+            ]
+          }
+        ]
+      },
+      {
+        "entry": "base.dialogue.hantieshan.greeting.craft_used",
+        "requires_flags": [
+          "base.story.hantieshan.first_craft_received",
+          "base.story.hantieshan.first_craft_used"
+        ]
+      },
+      {
+        "entry": "base.dialogue.hantieshan.greeting.craft_received",
+        "requires_flags": [
+          "base.story.hantieshan.first_craft_received"
+        ],
+        "excludes_flags": [
+          "base.story.hantieshan.first_craft_used"
+        ]
+      }
+    ],
+    "entries": {
+      "base.dialogue.hantieshan.greeting.daily.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "来了？坐。今天想问点什么？"
+          }
+        ]
+      },
+      "base.dialogue.hantieshan.greeting.daily.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "进来吧。铁料放那边，人坐这边，别弄混了。"
+          }
+        ]
+      },
+      "base.dialogue.hantieshan.greeting.daily.03": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "有事直说。能给你说明白的，我不藏着。"
+          }
+        ]
+      },
+      "base.dialogue.hantieshan.greeting.daily.04": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "又来听锤子响了？行，找个不碍事的地方坐。"
+          }
+        ],
+        "requires_done": [
+          "base.dialogue.hantieshan.chat.01",
+          "base.dialogue.hantieshan.chat.02"
+        ]
+      },
+      "base.dialogue.hantieshan.greeting.daily.05": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，来了。正好歇歇手，你说。"
+          }
+        ],
+        "requires_done": [
+          "base.dialogue.hantieshan.chat.01",
+          "base.dialogue.hantieshan.chat.02"
+        ]
+      },
+      "base.dialogue.hantieshan.greeting.injured": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "脸色不对。先歇会儿，别硬站着。"
+          }
+        ],
+        "requires_done": [
+          "base.dialogue.hantieshan.chat.01",
+          "base.dialogue.hantieshan.chat.02"
+        ]
+      },
+      "base.dialogue.hantieshan.greeting.return": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "韩师傅，我从青岚宗回来了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "回来了？来，坐会儿。"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.hantieshan.greeting.departure": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "韩师傅，我要去青岚宗了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "要进仙门了？好事。往后练的本事多了，也别忘了护住自己。"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.hantieshan.greeting.river": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "河湾那边野兽不少。下回进山，防护可得留心。"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.hantieshan.greeting.craft_used": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "那件东西用过了？怎么样，趁手不趁手？"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.hantieshan.greeting.craft_received": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "东西收到了吧。先看看，有不明白的就问。"
+          }
+        ],
+        "archive_topic": "chat"
+      }
+    },
+    "injured": "base.dialogue.hantieshan.greeting.injured"
+  }
+}

@@ -28,6 +28,9 @@ func load_map() -> void:
 	await settle()
 	check(map.startup_error.is_empty(), "river initializes with motion")
 	map.sign_motion.set_process(false)
+	# Motion fixtures inspect every sign; exploration visibility is tested separately.
+	map.loadout.map_visited[map.definition.id] = map.travel.adjacency.keys()
+	map._visit_exploration(map.travel.current_node_id)
 
 func focus(sign: Sprite2D) -> void:
 	map.content.position += map.map_viewport.size * 0.5 - map.map_viewport.get_global_transform().affine_inverse() * sign.global_position

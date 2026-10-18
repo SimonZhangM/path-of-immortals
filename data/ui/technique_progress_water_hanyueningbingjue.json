@@ -1,0 +1,83 @@
+{
+  "book_id": "base.cultivation_book.water_04",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《寒月凝冰诀》 战斗功法",
+  "stages": [
+    {
+      "level": 1,
+      "spell": {
+        "name": "寒月刃",
+        "description": "：直接水属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。"
+      },
+      "choices": [
+        {
+          "name": "凝锋",
+          "description": "（盾后增伤）：本体伤害＋25%，盾后余伤再＋10%，可继续扣甲和气血。",
+          "effect": "盾后增伤"
+        },
+        {
+          "name": "覆霜",
+          "description": "（命中施霜）：命中施加3层寒霜。",
+          "effect": "命中施霜"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "spell": {
+        "name": "玄冰枪",
+        "description": "：直接水属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。"
+      },
+      "choices": [
+        {
+          "name": "贯寒",
+          "description": "（克制增伤）：本体伤害＋30%，适用相克收益再＋10个百分点。",
+          "effect": "克制增伤"
+        },
+        {
+          "name": "裂冰",
+          "description": "（攻甲强化）：按实际入甲伤害另加30%护甲专属伤害，额外量不溢出扣血。",
+          "effect": "攻甲强化"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "spell": {
+        "name": "沧澜寒潮",
+        "description": "：较强水属性攻击。 基础伤害40；冷却8秒；本术消耗12灵力。"
+      },
+      "choices": [
+        {
+          "name": "叠浪",
+          "description": "（减耗提速）：本术冷却、灵力费用各－25%。",
+          "effect": "减耗提速"
+        },
+        {
+          "name": "凝潮",
+          "description": "（增伤施霜）：本体伤害＋30%，命中施加2层寒霜。",
+          "effect": "增伤施霜"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "spell": {
+        "name": "寒月天河",
+        "description": "：高威力水属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+      },
+      "choices": [
+        {
+          "name": "断江",
+          "description": "（盾后增伤）：本体伤害＋40%，盾后余伤再＋15%，可继续扣甲和气血。",
+          "effect": "盾后增伤"
+        },
+        {
+          "name": "覆海",
+          "description": "（舍伤施霜）：本体伤害－20%，命中施加6层寒霜。",
+          "effect": "舍伤施霜"
+        }
+      ]
+    }
+  ]
+}

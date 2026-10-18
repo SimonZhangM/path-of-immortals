@@ -18,6 +18,7 @@ var warehouse_history_provider: Callable
 var _equipment_sections: Array[Control] = []
 
 const GOLD := Color("dec995")
+const WarehouseTransfer := preload("res://scripts/map/map_warehouse_transfer.gd")
 const MUTED := Color("85989f")
 const SECTION_TITLE_COLOR := Color("f9f8c8")
 const MAIN_PANEL_BORDER_COLOR := Color("d9bb72")
@@ -117,7 +118,7 @@ var order_picker: Button
 var level_sort: OptionButton
 var search_box: LineEdit
 var _level_values: Array[int] = []
-const STORAGE_CAPACITY_DISPLAY_PREVIEW := Vector2i(100,100) # Visual test only; use (-1,-1) to restore live numbers.
+const STORAGE_CAPACITY_DISPLAY_PREVIEW := Vector2i(-1,-1) # Both bag and warehouse show actual kind counts.
 const BOARD_CAPACITY_DISPLAY_PREVIEW := Vector2i(99,99) # Visual test only; use (-1,-1) to restore live occupancy.
 var storage_toolbar: VBoxContainer
 var empty_state: VBoxContainer
@@ -269,7 +270,9 @@ func _warehouse_item_depositable(item_id: String) -> bool:
 func _refresh_warehouse_actions() -> void:
 	if warehouse_actions == null or warehouse_id.is_empty(): return
 	var has_deposit := loadout.storage_records().any(func(entry: Dictionary): return _warehouse_item_depositable(entry.id))
-	warehouse_actions.set_available(not _selected_warehouse_item(true).is_empty(), not loadout.warehouses.get(warehouse_id,{}).is_empty(), _warehouse_item_depositable(_selected_warehouse_item(false)), has_deposit)
+	var selected_withdraw := _selected_warehouse_item(true)
+	var withdraw_info := WarehouseTransfer.preview(loadout,warehouse_id,selected_withdraw,true)
+	warehouse_actions.set_available(not selected_withdraw.is_empty() and not withdraw_info.blocked, not loadout.warehouses.get(warehouse_id,{}).is_empty(), _warehouse_item_depositable(_selected_warehouse_item(false)), has_deposit)
 	var withdraw := not _selected_warehouse_item(true).is_empty()
 	var item_id := _selected_warehouse_item(withdraw)
 	var rows: Array[Dictionary] = []
@@ -667,7 +670,7 @@ func _build_sidebar(board: BoardLayout) -> void:
 			health_atlas.region = Rect2((source.get_size() - health_region_size) * 0.5, health_region_size)
 			icon_texture = health_atlas
 		board_bonus_values[keys[index]] = _attribute_row(properties, keys[index], captions[index], icon_texture, RESOURCE_MEANINGS[keys[index]], "+%d" % board.resource_bonus(keys[index]), kai, true)
-	cultivation_bonus_value = _attribute_row(properties, "cultivation", "修为", load("res://assets/player-status-level.webp"), "修炼速度的额外加成，可由阵盘提供。", "+0%", kai, true)
+	cultivation_bonus_value = _attribute_row(properties, "cultivation", "修为", load("res://assets/player-status-level.webp"), "修为收益的额外加成，住宿加成也适用于战斗胜利修为。", "+0%", kai, true)
 	var buffs: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_buffs.json"))
 	for buff: Dictionary in buffs:
 		if buff.id not in ["armor", "shield"]: continue
@@ -736,6 +739,9 @@ func _attribute_row(parent: Control, key: String, caption_text: String, texture:
 	return value
 
 func _refresh_buff_bonuses() -> void:
+	if cultivation_bonus_value!=null:
+		var percent := loadout.cultivation_bonus_percent() if loadout!=null else 0
+		cultivation_bonus_value.text = "+%d%%" % percent
 	var rank := {}
 	var board := loadout.board if loadout != null else _bonus_board
 	for key in board_bonus_values:

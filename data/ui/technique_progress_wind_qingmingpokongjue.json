@@ -1,0 +1,83 @@
+{
+  "book_id": "base.cultivation_book.wind_04",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《青冥破空诀》 战斗功法",
+  "stages": [
+    {
+      "level": 1,
+      "spell": {
+        "name": "风羽矢",
+        "description": "：风属性攻击，本术命中率额外＋15个百分点。 基础伤害10；冷却4秒；本术消耗4灵力。"
+      },
+      "choices": [
+        {
+          "name": "疾羽",
+          "description": "（冷却缩短）：本术冷却－25%，灵力费用不变，初学为3秒／4灵力。",
+          "effect": "冷却缩短"
+        },
+        {
+          "name": "透风",
+          "description": "（本体增伤）：本体伤害＋25%。",
+          "effect": "本体增伤"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "spell": {
+        "name": "穿云枪",
+        "description": "：直接风属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。"
+      },
+      "choices": [
+        {
+          "name": "贯云",
+          "description": "（本体增伤）：本体伤害＋30%。",
+          "effect": "本体增伤"
+        },
+        {
+          "name": "破隙",
+          "description": "（失衡增伤）：命中后按目标预存失衡，每层追加2点基础风伤。",
+          "effect": "失衡增伤"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "spell": {
+        "name": "裂空罡风",
+        "description": "：命中施加4层失衡。 基础伤害40；冷却8秒；本术消耗12灵力。"
+      },
+      "choices": [
+        {
+          "name": "风暴",
+          "description": "（本体增伤）：本体伤害＋30%。",
+          "effect": "本体增伤"
+        },
+        {
+          "name": "乱流",
+          "description": "（失衡增层）：本术施加失衡提高至8层。",
+          "effect": "失衡增层"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "spell": {
+        "name": "青冥贯日",
+        "description": "：高威力风属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+      },
+      "choices": [
+        {
+          "name": "贯日",
+          "description": "（盾后增伤）：本体伤害＋40%，盾后余伤再＋15%，可继续扣甲和气血。",
+          "effect": "盾后增伤"
+        },
+        {
+          "name": "逐隙",
+          "description": "（失衡增伤）：每层预存失衡使本体伤害＋1%，本项最高＋50%；命中再施加6层失衡。",
+          "effect": "失衡增伤"
+        }
+      ]
+    }
+  ]
+}

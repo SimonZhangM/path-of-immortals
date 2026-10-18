@@ -10,8 +10,9 @@
   "action_label": "稍作歇脚",
   "recovery_percent": 30,
   "duration_days": 1,
+  "allow_food": true,
   "presentation": {
-    "background": "res://assets/tanchuang-huifu-shiwai.webp",
+    "background": "res://assets/tanchuang-qingshizhen-xiuxi-linjiangouhuo.webp",
     "illustration": "res://assets/tanchuang-huifu-linjiangouhuo.webp"
   }
 }

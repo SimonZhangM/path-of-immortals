@@ -1,5 +1,265 @@
 # 地图节点互动与桥头对话（2026-09-15）
 
+## 重进地图时恢复路牌状态（2026-10-17）
+
+初始化先无动画同步存档中的日历／节点期限，再统一隐藏已完成路牌，在首个可绘制帧之前完成。初始化不能把历史完成状态当成新完成事件播放0.3秒淡出；立即隐藏操作可以收尾已经开始的淡出。运行中完成事件仍沿用0.3秒淡出，路径圆点和路线不变；遭遇击败后20天、宝箱领取后40天恢复路牌，按当前轮次领取记录判断，含第二轮及后续宝箱。上述持久化冷却覆盖下方早期“重启恢复怪物”的历史说明；采集的重启恢复测试规则保持。
+
+针对性验证：tests/map_sign_restore_tests.gd使用隔离存档，清空会话标记模拟新进程，检查首帧之前和连续启动帧、同进程重进、11遭遇／5宝箱、冷却到期与过期存档、正常可用节点、淡出及立即隐藏；headless和OpenGL各148项通过。tests/map_sign_motion_tests.gd明确预先探索全部节点用于动画检查，766项通过。
+
+## 瀑下静台修炼第二阶段：界面与进度接口（2026-10-15）
+
+### 新版底图适配：信息框下移／按钮文字居中（2026-10-15最新）
+
+同日最新用户微调覆盖下文初版文字位置：状态说明整体上移5源图px，最终(850,189,562,79)，实际底图边界仍194～273，使用STATUS_DESCRIPTION_OFFSET_Y=-5作视觉偏移。底部三个主标题各右移6源图px，最终(844,708,197,41)、(1048,708,197,41)、(1252,708,197,41)，中心相对按钮右偏共11px；暂停／继续共用该位置。其余图标、细框、按钮命中、字体及底部小字不动。必要静态Render53项通过，未改交互。
+
+用户已替换puxiajingtai2底图，原图仍1536×901，外框／按钮总体大小不变。修炼信息外框顶边从y260下移到y273（+13），其标题区y242→255、三图标随底图下移，三个内框已从新底图删除。现以独立透明Panel补回三个1px灰色细框（#899296），不覆盖原图标；位置为(863,306,175,61)、(1047,306,175,61)、(1231,306,176,61)，保持下方历史基准的尺寸／水平间距与相对偏移。三段文字区域y298→311，x／宽／高／字体不变。三框由INFO_FRAME_RECTS集中管理，不依赖旧图快照运行。
+
+单行状态说明区域变为(850,194,562,79)，按标题横线y194和新版信息框上边y273重新居中（中心233.5），文字／楷体21／左对齐保留。底图内按钮小图标已由用户缩小，本轮不再缩放／重画原图。三项主文字区域分别为(838,708,197,41)、(1042,708,197,41)、(1246,708,197,41)，共同使用楷体25、水平／垂直居中，文字中心仅比按钮中心右偏5源图px用于避让左侧小图标，较旧版明显向左靠中，y710→708对齐新图标中心。底部小字、按钮命中区域、交互／暂停逻辑不变。
+
+本轮重新导入该底图，mipmap保留；只运行cultivation_stage_two_tests -Render，53项静态检查通过，查看2K空态面板，无重叠或截字；未跑鼠标／玩法／完整回归。下方是换图前的保留基准，不是当前绝对y位置。
+
+### 换图前历史：修炼信息三框定位基准（2026-10-15）
+
+用户即将更换阶段2底图，要求保留三个内部小框的相对设置。当前三框及山峰／太极／沙漏图标均烘焙在底图中，并非独立代码边框；本轮未移动三框／其文字。原图1536×901，可见弹窗区(32,32,1474,840)，所有下列坐标为原图坐标，不是屏幕px。当前底图已复制至不入Git的`artifacts/cultivation-phase2-layout-baseline-20261015.webp`供下一次替换时对照；坐标记录为持久依据。
+
+修炼信息外框上边约y260、左边约x845，三框共用上沿y293、底沿y354，中心线约y323.5；小框边线约1源图px，颜色／内底仍由原图决定。三个小框可见尺寸约175×61（末框约176宽），左右净隙约9～10px、中心间距184px。外框左上角作为相对基准时，小框位置约如下：
+
+| 内容 | 小框原图区域（约x,y,w,h） | 相对外框左上角（约x,y） | 当前叠加文字区域（精确x,y,w,h） |
+| --- | --- | --- | --- |
+| 地点 | 863,293,175,61 | 18,33 | 912,298,122,50 |
+| 方式 | 1047,293,175,61 | 202,33 | 1100,298,119,50 |
+| 时长 | 1231,293,176,61 | 386,33 | 1284,298,120,50 |
+
+三段文字水平／垂直居中，楷体21源图字号、沿用INK颜色；图标仍在各框左侧，不把文字居中点误改成整框中心。整体缩放为min(视口宽/1920,视口高/1080)×0.9，当前2K为1.2，故重排要使用上述源图坐标。
+
+状态说明本轮合并为一行“凝神静坐，调息凝气。暂离尘嚣，专注眼前的修行。”，左对齐与楷体21不变；区域从(850,198,562,46)改为(850,194,562,66)，在标题分割线y194与信息外框上边y260间垂直居中，中心y227。代码`STATUS_DESCRIPTION_BAND`集中记录这两条边。**换新底图后须重新量这两条边并微调状态说明的垂直位置；当前坐标不是对新版底图的锁死值。**若新图去掉三内部框，以上基准可用于恢复独立边框，但本轮不提前叠画，避免双框。
+
+N32阶段1的进入按钮现打开MapCultivationProgressDialog，不再提示待接入；方式ID不变，balanced显示名改“兼修并进”。使用tanchuang-qingshizhen-xiulian-puxiajingtai2及场景-2，两图开启mipmap，源素材未改。背景可见区仍为(32,32,1474,840)，整体按min(视口宽/1920,视口高/1080)×0.9缩放；左侧huifu-picframe仍693×694、中心(460,451)、内缩4并等比覆盖裁切，和阶段1一致。
+
+修炼中标题／结束入口沿现有黑体与楷体；状态描述位于标题分割线下，最新单行居中区域见上节。修炼信息／修炼进度标题用HarmonyOS Sans SC Regular 400。信息三格只写地名、方式名、持续XX天，无“地点／方式／时间：”前缀，读取阶段1实际选择。天数条绿色，修为黄色，功法蓝色；三个CultivationProgressBar原生控件在源图x1050、宽284高17，y470／534／617，填充两端颜色固定并随已填宽度拉伸、由深至浅。修为为首行数值、次行进度条及比例、第三行状态，当前首行刻意留空且比例“—”；功法首行未选择功法、比例“—”，不伪造正式成长值。
+
+左图中心槽(404,400.5,112,112)为金色虚线／大加号，点击打开MapTechniqueChoiceDialog，复用UI-jiaohu-size-m与菜品选择排版，标题功法选择、最多五列居中滚动，按钮沿菜品选择当前下移14px的位置。正式列表为空时显示“当前没有功法可选”，确定禁用并压暗；取消／Esc／右键只关闭选书层。未来由set_available_techniques提供标准物品卡记录，choose_technique选中后把图标／名称／progress_current与progress_target送入场景槽及功法行；不自动装入旧测试书、不将场景画里的基础吐纳法当成道具。
+
+MapCultivationSession是无场景树／无墙钟的会话模型：begin记下游戏日；MapScreen._sync_calendar通过已有日期更新信号调用sync_calendar，累计正向日期差、重复日／倒退不重复计，天数封顶所选时长。set_paused、suspend(inventory／choice)期间不计天数，返回保留原手动暂停状态。两栏各四条文案放事件stage_two配置，以已修炼游戏日整除5循环；未选对应方式、没选功法、暂停、时段已满分别显示真实状态。set_cultivation_progress(current,target,caption)只接受有限非负current及正target，比例限制0～1。
+
+底部阵盘调整打开真实储物袋，修炼页隐藏、会话暂挂，关闭后回到修炼页；不误返回大地图，嵌套阵盘确认优先处理。暂停修炼／继续修炼切换状态；结束修炼（含右上、Esc／右键）结束本会话、恢复地图操作、节点仍可重入。按钮沿全局click.ogg。结束仅结束界面会话，未结算未来修炼收益。
+
+**边界：**用户确认按游戏日期计时，本轮只接读日历／进度接口；既有日期靠耗时行为推进，停留本弹窗不会自动流逝。本轮未添加任何现实秒→游戏日换算、修炼推进日期动作、实际修为／功法收益或会话存档。已有功法资格／多书并修规则不因当前单槽UI改变。正式数值、目录和日期推进方式待后续，不借此扩展T03。
+
+必要专项tests/cultivation_stage_two_tests.gd：headless55项、Render32项通过；阶段1接续检查headless108项／Render113项通过。仅测试注入6/15天、修为50/100、测试功法42/100检查比例与渐变，不进入正式页面／真实存档。Render只静态渲染，鼠标链路仅在本次确有交互变化的headless检查中执行。截图与对照详见design-qa及最新进度，下文阶段1旧“待接入”状态已被本节覆盖。
+
+## 瀑下静台修炼第一阶段（2026-10-15）
+
+青石河湾N32（原西瀑下支路）正式命名瀑下静台，稳定节点ID／路线不变；新事件base.map_event.qingshihewan.cultivation_n32到达自动打开、站定可点击重开。配置位于data/map_events/qingshihewan_cultivation_n32.json，事件类型cultivation；MapEventRegistry在加载时校验三种方式、三档时长、默认项、图片与必需文案，不借用休息恢复／对话完成流程。
+
+MapCultivationDialog第一阶段：底图tanchuang-qingshizhen-xiulian-puxiajingtai，左侧-1场景及huifu-picframe的尺寸、中心、裁切与林间篝火一致，整体90%。地名同休息弹窗；描述从参考图取文，置于标题分割线下(850,200,562,70)、左对齐并垂直居中（2026-10-15最新调整）；右上稍后再说，整块背景含箭头均可点击离开，另支持右键／Esc。
+
+方式三栏按底图预留位置，用水蓝实线框／金色选中框取代细虚框，分别专注修为／专注功法／兼修；图片UI-xiulian-zzxw／zzgf／jx的1、2号随选中切换，独立互斥。时间三档5／10／15天使用同款状态容器；默认专注修为／10天，按参考图。8张实际使用图均开启mipmap，-2阶段场景尚未引用。底部进入修炼状态使用baoxiang-dakai1白字／dakai2黑字、楷体居中，按钮点击沿用全局click.ogg。
+
+同日后续：底图刷新，进入按钮／文字源图矩形改(984,700,300,96)，中线y748对齐飞云线。六个选择框所有状态边宽1px，选中5px柔光不改。六张方式图按可见本体高84源图px、中心y379等比布局，以原选中专注修为为基准；复用MapTextureMetrics的0.02透明度边界忽略导出杂点，仅用于尺寸定位、不裁改原图。修炼方式与修炼时间两标题改HarmonyOS Sans SC Regular（400），原26号／颜色／区域保持。
+
+同日最新方式图切换修正：zzxw蓝黄两态共用当前蓝图中心y378、可见高84；zzgf蓝黄两态共用中心y380，等比缩小5%后可见高79.8。覆盖此前仅蓝图偏移的实现，避免选中后返回y379造成跳动；方式图使用浮点位置／尺寸与已等比计算的直接绘制，消除透明边距不同导致的独立取整误差。兼修两态仍84高／中心y379，其他控件取整不变。
+
+阶段1初版仅选择UI，曾由cultivation_requested(mode_id,duration_days)提示“第二阶段尚未开放，本次未消耗时间。”；该提示已由上节阶段2入口替代。当前仍不自行推进日历、不扣资源、不改修为／功法／住宿加成、不写真实存档、不标记事件完成。专项tests/cultivation_stage_one_tests.gd已更新为验证进入阶段2；headless仅相关输入／状态／无副作用，-Render仅布局及三张2K预览，详见最新PROJECT_PROGRESS。
+
+## 林间篝火进食／清石客栈菜品（2026-10-15）
+
+同日食品效果后续（按用户方向更正）：选中食品图相对原位向右10px（x879），效果第二行向右5px（x960），上行标题保持x955。第二行通过MapFood.meal_summary显示所有真实额外恢复与辅助效果，采用“进食效果：额外恢复 气血+…%、体力+…%，额外增加 命中／闪避+2%”，无辅助时省略后半段；400源图px范围内文字按宽度适配，单行避开箭头。食品悬浮及商品效果中辅助加成显示+2%，不改内部百分点计算与持续时间；闪避复用命中浅青色。提示两行整体依实际行高调整，使首行中线对齐底图感叹号中心y703。
+
+同日菜品选择按钮微调：确定／取消在原基础上再下移8设计px，累计相对通用弹窗下移14px；内部文字随按钮，卡片及滚动区域保持不变。覆盖下方初版下移6px的位置说明，不改通用离开弹窗。
+
+同日休息排版最新：选菜版林间篝火与山道歇舍统一使用描述区域(850,199,562,123)，含5源图px字形补偿，以标题横线与室内／外休息点可见文字之间的视觉中心为准；两页“耗时”标题均y503，数值／单位不动；休息按钮及文字共用(1142,699,270,91)，即篝火在上次y694基础上再下移5px，山舍同步最终位置。尺寸、自己家及休息机制不变，覆盖下述旧按钮位置。
+
+青石河湾N05林间篝火换用tanchuang-qingshizhen-xiuxi-linjiangouhuo，原左景框及90%整体尺寸不变；恢复框文案上移30源图px、室外休息点居中新横线。2026-10-15后续：底部改左右结构，左侧提示“状态不满也可以休息，\n但恢复不会超过各上限值。”固定从“但”换行，源图区域(902,687,236,74)；右侧休息按钮上移到(1142,684,270,91)。N13山道歇舍换用tanchuang-qingshizhen-xiuxi-shandaoxieshe，复用相同恢复框／选菜／底部布局，保留室内描述、50%恢复及1天；两个事件均allow_food=true。新版底图已有离开箭头，不再叠画旧箭头。自己家／客栈住宿不自动增加进食入口。
+
+新增MapFoodChoiceDialog复用UI-jiaohu-size-m，标题菜品选择、确认／取消按钮下移6设计px；仅列随身储物袋实际食品，一行至多5张，不足一行居中，超过5张滚动；物品卡轻亮悬浮与现有完整物品说明共用。选中并确定只更新预览，不耗菜品；取消／Esc／右键仅退回休息弹窗。确认休息才消耗1份，整次休息失败或保存失败不消耗、不恢复、不推进日期。未选食品仍沿原30%三资源恢复、1天。
+
+[九种食品](../data/maps/foods.json)为独立稳定base.food.*记录，大类food／食物，细类酒水、主食、菜品、热汤；使用UI-caipu九图并开启mipmap，下品、不自动赠送、不能放阵盘，占格提示隐藏，随身及仓储继续按同类堆叠。恢复／辅助数值按用户本次截图落实，商品介绍暂用简短说明；完整数值由同一food配置生成物品悬浮及商店效果文本。
+
+清石客栈吃食页接[专属目录](../data/shops/qingshizhen_inn.json)，四个分类按酒水／主食／菜品／热汤排列，无全部。MapInnFoodView复用MapShopDialog的商品框、详情、数量及购买结算，保留客栈自己的背景、场景与三大页签。售价2／3／3／7／9／4／5／5／9为最终买价，以fixed_buy_price显式标注，不再乘普通商店150%；其他店定价与出售不变，本次未指定食品回售价。购买后入袋、灵石与库存一次持久保存；容量仍遵守测试期允许超额规则。
+
+MapFood负责校验、食品恢复预览和辅助效果解析，MapTimeActions先推进候选日历、消耗具体随身单位并记录food_bonus，再保存并发布三资源；按状态上限增加表内额外百分比且封顶。用户明确清神命中+2个百分点、轻身闪避+2个百分点从休息结束后起算1游戏日，日期不推进不扣时间，次日到期，随存档保存；每次休息1天，故上次食品辅助已到期，不累叠。战斗入口传入已解析的accuracy／evasion比例，CultivationCombat原命中流水线计算并限制0～1，不让模拟依赖日历、UI或现实时间。食品恢复本身继续既有地图资源运行期生命周期，未扩展完整角色资源磁盘存档。
+
+必要专项tests/food_rest_tests.gd：默认校验九品数值／买价、消费／封顶／存档与失败、实际战斗命中计算、购买与选菜输入；-Render仅静态预览客栈／篝火／选择框，不跑鼠标。均隔离存档，具体结果见最新进度。覆盖下方“吃食空页”历史；人物对话及住宿不改。
+
+## 清石客栈／佟晚棠对话接入（2026-10-14）
+
+N13的qingshizhen_inn事件新增dialogue指向data/dialogues/tongwantang.json，NPC ID为base.npc.tongwantang。19段207条基础台词、5个条件分支、6日常及6一次欢迎；人物与两稿取舍见[佟晚棠设计](tongwantang-dialogue-design.md)，本轮不把人物记录写入核心01。标题清石客栈／城镇青石镇，用户已确认保留现行两房型恢复100%及修为收益加成；此次未改lodging／presentation或结算，吃食保持空页。
+
+MapInnDialog已经继承MapClinicDialog，map_screen已有visit／select／advance及继续输入路由，本轮直接绑定数据，不增加共享引擎分支。欢迎末句后点击开启，三话题独立推进；切页保持状态，再入店重新欢迎。普通chat按90日2段，news的隐私段独立90日1段，事件不借日期解锁；保存仍经NpcDialogueActions候选事务，仅保存成功发布，人物进度独立，无需重置既有六人日志。
+
+钱掌柜救援须rescue_completed与tongwantang.qian_told_rescue；河湾情境欢迎须真实遇险及辰宇告知；road_news_ready须主线允许且佟亲见旅客行为。回镇两欢迎分别处理已知／未知入宗，未知时辰宇先告知，完成后set_facts记录knows_joined／return_greeted防止两版连续重播；“回来办事”还需town_business_ready。全部完整事实名及未来写入责任见人物设计；这些主线接口当前尚未由正式剧情落地，不从测试修为、赠玉或单次击杀推断。
+
+news.01依玩家是否实际认识谢云舒、是否同门和她的后期阶段选择固定分支；听到名字不设置xieyunshu.name_known。后续行路变化发生后新读news.02使用旧闻回顾，不强迫补听假装当前的消息；已开始分支保持原文。来源模板／溪水调查不注册。专项tests/tongwantang_dialogue_tests.gd含模型、N13点击开启／切页和隔离存档，Render只静态预览；inn_tabs_tests旧空对话断言已同步，具体结果见最新进度。
+
+## 客栈客房标签视觉补充（2026-10-14）
+
+两房型标签默认都显示金色细边框，悬浮不改变字体或边框样式；选中态使用交互大类同款金色填充、亮边及柔光。右侧房型标题改为Rect2(1049,323.5,344,40)，与左侧标签Rect2(644,326,348,35)共用源图中心线y343.5。仅视觉调整；必要静态预览入口tests/inn_room_style_preview.gd，检查两房型并生成inn-room-style-0／1.png，不执行鼠标或住宿事务。
+
+## 客栈住宿正式接入（2026-10-14）
+
+覆盖下方住宿空页状态：N13“清石客栈”住宿页由MapInnLodgingView展示，数据在qingshizhen_inn.lodging。普通／高级客房左框顶部选择，内图Rect2(651,378,336,265)等比覆盖并clip，边框保持可见。右中框显示全状态恢复及图标后的1天／20或50灵石；其下是+10%／10天或+20%／15天，dakai1白字／dakai2黑字按钮。共用医馆字体／标题结构，参考图地点文案原样接入；未按示例180定价，未开放吃食或人物正文。
+
+MapInnLodging.stay执行候选扣费、advance_days(1)、替换lodging_bonus、save后发布，再恢复气血／体力／灵力；已满也可住，资金不足／保存失败不生效。新住宿完全覆盖旧加成（高级转普通也降为10%），期限从住宿后次日起计，采用游戏日而非现实时间。MapLoadoutState持久保存四字段source_id／percent／start_day／expires_day，旧档默认{}、非法记录拒绝、加载整数归一化；有效区间start_day≤当前日<expires_day。到期getter返回0，不依赖每帧轮询。
+
+地图_sync_calendar同步MapPlayerStatus收益率；储物袋侧栏读取实际百分比。战斗胜利在掉落成功持久结算后从durable_loadout取有效加成，只增修为、不增历练或物品，重复结算不重复发放。修为现为一位小数，cultivation_gain提供同口径计算入口，未来正式修炼再调用；未扩展功法书经验、离线收益或完整角色进度存档。三资源／实际修为仍沿既有运行期生命周期，加成与日历／币已经存档。
+
+必要专项inn_lodging_tests（-Render两档与左栏）、inn_battle_bonus_tests（实际战斗结算），最终结果见最新进度。无真实存档操作。
+
+## 客栈三页框架（2026-10-14）
+
+青石镇N13原酒馆由用户确认改为客栈，节点／路线／原路牌图案不动。data/map_events/qingshizhen_inn.json使用独立inn类型，click触发；MapInnDialog继承现有MapClinicDialog的场景框／对话画布，隐藏医馆诊治控件，提供交谈／吃食／住宿三页。presentation.background、food_background、lodging_background分别引用tanchuang-qingshizhen-kezhan1／2／3；illustration用kezhan-boss，conversation_portrait预绑定ui-portrait-tongwantang，全部mipmap。共享底图区域Rect2(32,32,1474,840)，页签沿原三框位置，场景不随切页移动。
+
+现默认交谈，尚无dialogue词库；吃食和住宿内容容器为空，底图自带资源条不代表真实状态。标题暂为“客栈”、介绍留空，后续逐页提供内容再接入，不自行填菜单、住宿费用／时间／恢复量或人物台词。未来对话可沿event.dialogue与已有NpcDialogueActions接口接入。离开／右键／Esc关闭且不标记完成，下次可重开；当前所有切页均不改变任何玩法状态。检查入口tests/inn_tabs_tests.gd，Render仅三页静态画面，结果见最新进度。
+
+## 苏清禾场景／头像美术更新（2026-10-14）
+
+医馆事件的illustration更新为tanchuang-jiaoyi-qingshizhen-yiguan-boss.webp，交谈／诊治共用既有场景框与尺寸；聊天头像仍为UI-portrait-suqinghe.webp，重新导入用户更新图，两素材mipmap开启。旧场景文件保留，人物正文与诊疗不变。必要静态检查tests/clinic_art_refresh_preview.gd -Render，结果见最新进度。
+
+## 苏清禾成长定位与出发分支（2026-10-14）
+
+原story.depart增加medical_path固定分支15句，门槛仍为base.story.qinglan.departure_ready，主角joined后退休；该事实仍待正式主线写入，不由测试境界或90日日期触发。初次阅读由现有_reveal选中并保存；旧已读／中断无variant记录的继续取原11句base，全部其他base和旧variants保持。无句数迁移、无新增回访轨道，content_revision仍3，不改共用引擎或真实存档。
+
+用户最终时序为清禾炼气篇中段入宗、后段医药任务正式同行；前段决定及宗门重逢正文保存在[人物设计](suqinghe-dialogue-design.md)，未注册到医馆三话题。未来正式章节须先实现人物实际在场、代诊与轮诊交接，区分医馆营业／清禾本人／随队辅助；不能仅设置入宗标记就让医馆与远行队伍同时出现她。正文完成也不授予新队友、技能、恋爱或服务。
+
+直接验证tests/suqinghe_positioning_tests.gd：相关原纯模型、旧出发11个读数、新分支中断存取／失败保存／过时段、静态换行与实际启动；Render只输出两张静态2K预览，不注入鼠标操作。结果见[最新进度](../PROJECT_PROGRESS.md)。
+
+## 六人关系补充与新回访计时（2026-10-14）
+
+已按用户授权接入五段：清禾medical后续两段作为90日一批、chat末尾两段；云舒chat末尾一段，末批不足两段只开放剩余正文。叶伯与清禾chat改90日2段，已开放旧段保留，读完现有批次后再计下一周期。其他四人节奏与所有交易保持，医馆说明已适配两行。
+
+清禾与陆的合作、清禾与云舒相熟采用附件提供的既有生活背景，不由玩家替她们建立关系；跨NPC已读只影响辰宇接话，不作为关系发生开关。行商图明确现在为熟悉地点草稿，完整路线留将来。替换正文以新固定variant接入，原base lines供既有已读／中断记录使用；不改旧ID或将未读伪装成历史。
+
+清禾content_revision=3，仅新增医馆回访计时需要迁移：topic.revisit_added_revision=3，在旧版本该初始话题已读完且没有回访计时的情况下，从首次更新访问日志的游戏日开始90日；原chat计时保持。旧1→2句数映射继续先执行，再补3版计时；原v2不会重复映射。NpcDialogueActions、DialogueJournal.visit及MapClinicTreatment都向upgrade_journal传实际日历日，候选仍先存盘再发布。新版本缺失既有计时仍拒绝，不普遍修补损坏存档。
+
+直接专项tests/npc_relations_tests.gd（含更新后的原清禾纯模型与旧版本迁移），Render仅静态新增内容，未增加鼠标操作验证。原npc_dialogue／yesongnian／xieyunshu专项的回访或段数断言已同步；后两整套未追加运行。实际结果与五图核对见[最新进度](../PROJECT_PROGRESS.md)。
+
+## 谢云舒对话与姓氏称呼（2026-10-14）
+
+N01 qingshizhen_sect.dialogue绑定data/dialogues/xieyunshu.json，覆盖下方空交谈状态，沿用三页和ui-portrait-xieyunshu。23段278基础句（含较高阶段回顾）、2正文分支、12欢迎组，复用独立日志、条件／历史、候选保存与欢迎后点击门槛。DialogueJournal.render_text新增{player.surname}，谢云舒“师弟”称呼读取玩家姓氏，兼容复姓及其他已有姓名模板。
+
+原欢迎入宗后retire，once初识补同门自我介绍并记录姓名／入宗知情，不伪造原欢迎完成。调查按说明差事→真实可见对照→已核实且已告知结果分层，正文分支固定；具体材料与结论待正式主线，条件接口见[合并设计](xieyunshu-dialogue-design.md)。普通90日2段／货市独立90日，当前无自动排班或替班商人。专项tests/xieyunshu_dialogue_tests.gd；共享欢迎npc_greeting_tests、三页sect_three_tabs_tests，本轮实际结果见PROJECT_PROGRESS。
+
+## 韩铁山对话与熟悉后状态欢迎（2026-10-14）
+
+N23 qingshizhen_blacksmith.dialogue绑定data/dialogues/hantieshan.json，覆盖下方空交谈状态，沿用四页及ui-portrait-hantieshan专用头像。三话题和欢迎保持base.npc.hantieshan独立日志，现有欢迎后点击门槛／续读／历史／候选保存逻辑不变。DialogueGreetings.arrive在受伤／疲惫资源阈值匹配前检查该欢迎entry的DialogueConditions，支持韩铁山初始闲聊两段完成后才使用低气血问候；无附加条件的旧角色保持原行为。
+
+18段181基础句、4正文分支，5日常＋1状态＋5事件欢迎。军旅旧话题引用、已去王畿／长墙的分支在开始时固定；实际经历和NPC知情分开，重要揭露另需剧情就绪。普通闲聊90日2段、材料后续90日1段。完整字段来源与未实现主线接口见[合并设计](hantieshan-dialogue-design.md)，不重复维护规则。专项tests/hantieshan_dialogue_tests.gd；共享欢迎npc_greeting_tests、页签blacksmith_four_tabs_tests。实际验证范围见PROJECT_PROGRESS，家事与后期收束稿不注册、打造仍预留。
+
+## 宗门铺三页与谢云舒头像（2026-10-14）
+
+qingshizhen_sect事件N01的background=tanchuang-qingshizhen-zongmenpu.webp，conversation_background=tanchuang-qingshizhen-zongmenpu2.webp，conversation_portrait=ui-portrait-xieyunshu.webp，均mipmap。复用三页与默认交谈逻辑，原boss图／框、商品目录与价格不变；没有dialogue时交谈留空，后续接谢云舒词库会沿用已绑定头像。专项tests/sect_three_tabs_tests.gd，Render仅交谈／购买静态预览，结果见最新进度。
+
+## 铁匠铺四页与专用人物头像（2026-10-14）
+
+N23 qingshizhen_blacksmith配置新background=tanchuang-qingshizhen-tiejiangpu，conversation_background／crafting_background=tiejiangpu2；直接复用四页及默认交谈，打造仍空容器、买卖原样。conversation_portrait=ui-portrait-hantieshan是后续词库头像绑定：注册表校验图片，MapClinicDialog载入有效library后应用专用头像并清除portrait_region，无词库时不显示虚构气泡。陆怀真正式词库已直接改ui-portrait-luhuaizhen并移除旧场景区域，其他台词／条件／存档不变。两背景和两头像均mipmap。直接检查tests/blacksmith_four_tabs_tests.gd，Render生成交谈／购买／打造及隔离陆头像气泡预览；结果见进度。
+
+## 陆怀真独立对话与多来源线索（2026-10-14）
+
+N12的qingshizhen_alchemy.dialogue绑定data/dialogues/luhuaizhen.json，复用现有四页与MapClinicDialog；欢迎末句点击开启话题，读档／续读／归档沿用NpcDialogueActions的候选保存发布。头像复用现有liandanfang-boss图的portrait_region=[327,344,252,252]，源图不改。其他NPC日志保持独立。
+
+DialogueConditions增加可选any_of数组：至少一支满足，其他外层条件仍须全部满足，配置逐支校验。陆异常段按叶伯clue／清禾clue／河湾water_observed任一实际来源开放；variants固定已读开场，默认河湾分支只用N37真实信息。普通chat配置90／2，alchemy珍材回访90／1；正式剧情走story，不受时间及旧话题阻挡。入门段retire_flags=正式修炼／入宗，回顾段只在原段未读完时开放，已读句不丢失。无需改存档版本或清档。
+
+知情使用set_facts，不推动story_revision。修士救助单设cultivator_rescued，与钱掌柜使用的rescue_completed分开；正式主线未实现时维持条件入口。完整映射见[陆怀真设计](luhuaizhen-dialogue-design.md)。原炼丹交谈空页现被本次正文替换，购买／出售功能和炼丹空页保留。直接专项luhuaizhen_dialogue_tests、alchemy_four_tabs_tests；共享条件旧行为用qianwanshun_dialogue_tests，实际验证见最新进度。
+
+## 炼丹房四页框架（2026-10-14）
+
+qingshizhen_alchemy的background改tanchuang-qingshizhen-liandanfang.webp，conversation_background与crafting_background都为tanchuang-qingshizhen-liandanfang2.webp，均开启mipmap。同时有交谈底图与crafting_tab时，MapShopDialog从左交谈／购买／出售／生产，生产按钮源图Rect2(1227,233,192,49)，余额源图(1224,194,192,28)避开第四框；其他店仍用既有布局。交谈页也提供ShopCraftTab，生产切换隐藏交谈画布并还原交易画布、使用空页底图／隐藏交易内容；回交谈清理生产模式以允许反复进入。生产底图可选，未配置的铁匠铺不改。现炼丹为预留空页，陆怀真对话尚无配置，后续接正式dialogue即可，不提前生成NPC进度或生产机制。直接专项tests/alchemy_four_tabs_tests.gd，Render仅三页静态预览；验证见最新进度。
+
+## 钱万顺独立日志与条件内容（2026-10-14）
+
+N16事件dialogue指向data/dialogues/qianwanshun.json，复用原MapShopDialog → MapClinicDialog，普通商铺交谈空页现已有正式内容，买卖与底图不改。头像用原商铺人物图的portrait_region=[305,294,215,215]运行时AtlasTexture，不修改或生成素材；NpcDialogueLibrary校验区域边界，其他NPC无区域仍沿原图。
+
+DialogueJournal补可选revisit_interval_days／revisit_batch_size，钱掌柜chat=90／2，其他话题／人物默认1日1段或重要剧情变化。定周期话题不因story_revision提早更新；一批未完不继续解锁，整批完成刷新计时基准，避免晚读后当天再补发。revisits现在也检查各段条件，钱掌柜后两段需救援。retire_flags可停止过时段的未读部分，next_segment与advance／view都过滤，原seen／done／order不重写；welcome_finished同时支持已完成或已过时首次欢迎，救后首次来店不伪造旧欢迎历史。
+
+可选address_rules按实际事实选择称呼，每条正文揭示时存入该NPC addresses[segment_id]，同段后续句可采用新关系、过去句保留当时称呼。候选恢复验证数组与已读句数一致。set_facts只保存对话知情、不推进story_revision，保持主线set_flags语义。调查／引荐和归来均使用JSON条件及固定分支，不另写人物专属业务逻辑。
+
+DialogueGreetings允许npc／player双向台词，once条目可用archive_topic归档已读句、followup在新一次继续操作接下一组一次欢迎，仍先保存候选再发布。钱掌柜姓名补段完成记录knows_name，再接正式道谢；已知姓名则跳过。已完成欢迎不重复，末句沿原点击开启话题。普通欢迎按救前／救后条件筛选，不会随三个月轮换回救前态度。
+
+剧情事实表及未接主线边界见[钱万顺设计](qianwanshun-dialogue-design.md)；未改现有赠玉、战斗结算、价格或奖励。专项qianwanshun_dialogue_tests覆盖三月边界、退休历史、姓名／道谢、首章跳读、保存失败与重载；-Render仅实际页面必要流程及4张2K，结果以最新进度为准。general_shop_conversation_tests和叶伯跨店断言已更新为钱掌柜独立对话。
+
+## 学徒买药／诊治收费条件闲聊（2026-10-14）
+
+两人的JSON在chat.story末尾各追加稳定段ID，叶伯chat.apprentice_price共10句、清禾chat.treatment_fee共11句；各需独立base.story.yesongnian.apprentice_discount_seen／base.story.suqinghe.treatment_used。沿用条件段优先、单次读完归档、中断续读与三话题呈现，不增加第四话题或自动播放；重要主线排在费用闲聊前，原首次／每日闲聊进度保留。
+
+药材铺purchase_discount.dialogue_unlock_flag配置解锁事实。ObservedTooltipPanel仅替换学徒标签的脚本，仍由Godot原生悬浮延时／退出控制，以TooltipLabel主题显示原文；工具提示节点实际可见且所属弹窗可见后才发tooltip_shown，WeakRef及可见／文本校验防止延迟回调误报。MapScreen检查当前商铺状态并调用NpcDialogueActions.record_dialogue_fact，候选保存成功再发布，失败显示错误且下次悬浮重试；成功清除该次失败提示，重复已知事实不写档。
+
+医馆treatment.dialogue_unlock_flag在MapClinicTreatment同一个候选事务内记录，与支付／诊治问候一起保存，保存成功后才恢复气血。预览、满血、余额不足、失败均不记录；没有配置的其他医馆不解锁这段。两处配置提前校验命名空间标记。小事实直接设置narrative.flags而不递增story_revision，避免误作重要剧情而放出额外每日闲聊；原set_story_flags接口语义不变。新增段不改content_revision与原计数映射，旧档缺标记按未触发处理，不从临时欢迎状态追认历史。
+
+直接专项`./tests/run_t01.ps1 -Script res://tests/npc_fee_chat_tests.gd`；本专项`-Render`也验证本次真实悬浮／按钮链路，并输出学徒提示和两人新闲聊三张2K图。结果见最新进度。不扩展货架、免费领药、好感、任务或治疗动作。
+
+## 青石商铺交谈空页与新底图（2026-10-14）
+
+N16事件qingshizhen_shop的presentation.background为tanchuang-qingshizhen-shangpu.webp，conversation_background为tanchuang-qingshizhen-shangpu2.webp，两图均mipmap。MapShopDialog依conversation_background存在开启三页，默认交谈；无需先配dialogue，缺少台词时MapClinicDialog保留空白内容，隐藏继续／话题，不创建NPC日志。页签沿现有624／828／1025源图x坐标，标题、原boss图／场景框、离开和商品详情复用；买卖报价／结算不改。后续钱万顺只需添加正式dialogue配置与内容，复用现有对话入口，当前不虚构台词。其他商铺按原配置，药材铺已有对话照常。直接专项tests/general_shop_conversation_tests.gd，-Render只输出交谈／购买静态2K；结果见进度。
+
+## 药材铺学徒8折与共用余额栏（2026-10-14）
+
+同日后续（优先于下方初版视觉参数）：货架显示正常原价，优惠只在右侧结算展示，实际8折独立整单取整不变。学徒字号18、容器源图Rect2(1308.75,226.725,104.5,27.55)，原中心缩小5%后下移5px；提示首句为“正在叶伯铺中帮忙学药”。余额灵石槽位SIZE_SHRINK_CENTER以对齐右侧数字。五店及药材铺交谈页离开文字共用_style_leave_button，悬浮fffbea、按下e5c985，不加框或缩放；字号／布局不改，医馆不受影响。专项tests/shop_visual_refinement_tests.gd -Render仅静态预览与断言，结果见最新进度。
+
+qingshizhen_herbalist新增purchase_discount：factor_bps=8000、标签／提示文案及四种草药item_ids白名单。配置校验倍率、非空文案、有效且不重复ID；允许未来另行指定丹药ID，不自动扩张经营范围或货架。其他四店不配置此优惠，出售沿用原价。MapShop.buy_quote(item_id,quantity)统一返回original_unit／original_total／unit_price／total／discounted；先读现行正常单价，再以整数基点分别向上取整单件和整单，purchase实际扣款直接用total。buy_unit_price只作为单件显示，禁止再用于折后整单相乘。原6×10打八折实付48，缺价仍拒绝、余额不足／保存失败保持原子性。
+
+共用交易详情单价／总价HBox内添加OriginalPrice与1px横线，优惠时显灰色划线原价、右侧86e79a实际价，和19号学徒标签同色；无优惠、空分类及出售隐藏旧价。商品格显示折后单件价。学徒PanelContainer位于源图(1306,221,110,29)，复用医馆133429底／绿色细边及simple_tooltip.apply，切其他店清空隐藏，交谈页随交易画布隐藏。文案为“曾在叶伯铺中帮忙学药，购入常规药材与常用丹药时，可享八折学徒优惠。”，实际范围以白名单为准。
+
+五店余额统一ShopBalance HBox(1224,260,192,28)，内容依次持有灵石、18×22槽位灵石图（沿用80%面积）、真实数量；楷体19号、字底对齐页签底边，超长余额缩字避开第三页签。必要专项tests/shop_apprentice_discount_tests.gd，无界面只测本次报价／结算／新增标签命中及实际购买，-Render仅学徒十件／普通店余额2K预览。结果见最新进度；原shop_trade_rules_tests／blacksmith_shop_tests旧断言已同步但本次未整套运行。
+
+## 医馆分项费用／紧凑诊疗布局（2026-10-14）
+
+同日视觉后续：医馆说明改ClinicNoteContent VBoxContainer，在原(700,533,650,99)区域内将标题／图标／两行正文作为一组垂直居中，字体不变。费用区所有常驻文字字号减1（标题／实际支付24、标签19、问诊原价／免收／两费用名称21、耗材数字23、总价26）；问诊费与药材及耗材均楷体。灵石图宽高乘0.9、原中心保持；题句改居中，与确认按钮中心x1230对齐，按钮宽高300×92→285×87.4，以原中心缩小5%，内部29号文字不缩小且继续水平／垂直居中。收费、状态提示与简易悬浮内容不变。
+
+qingshizhen_clinic.treatment由单一fee改为consultation_hp_per_stone=20、supplies_fee=5、waive_consultation=true；MapClinicTreatment.preview统一返回consultation_fee=ceil((气血上限−当前气血)/20)、waived_fee、supplies_fee和fee=问诊费−免收费＋耗材费。苏清禾“熟识照顾”全免问诊费，实际每次有效诊治只收5灵石；此免收属于该医馆配置，非全局规则，其他医馆可独立配置比例、耗材费和是否免收。满气血仍禁止支付，页面保留5灵石报价；不耗时、只回满气血、余额不足／保存失败不扣费及成功诊治问候保持。
+
+新版yiguan-2底图保留mipmap。费用移至源图(672,651)附近的360×132窄框，依次为标题＋绿色熟识照顾、划线原问诊费＋免收、药材及耗材、灵石图＋实际支付；字段读取同一个权威预览。熟识照顾PanelContainer复用simple_tooltip.apply，鼠标可命中、标签文字穿透，原生简易悬浮显示“与清禾自幼相识，诊治时免收问诊费，只需支付实际所需的药材及耗材费用。”，不常驻侧边大框。诊疗状态／正常支付说明移至预计恢复下方(1136,468,208,37)，医馆说明整体上移76源图px、字体／内容不变；原题句移至确认按钮上方留白，确认按钮原位不动。
+
+必要专项tests/clinic_fee_layout_tests.gd：无界面只检查分项取整／免收／可配置收费／失败与重复请求及新增标签命中；-Render仅受伤／满气血静态布局。具体结果见最新进度，原clinic_treatment_tests的配置字段断言同步。
+
+## 所有人物欢迎结束后点击开启话题（2026-10-13）
+
+MapClinicDialog（含药材铺复用视图）在欢迎最后一句时保持三个话题按钮及其框／图标／新标记隐藏，将原继续按钮文案切为“点击开启话题”；再点击提示、弹窗非按钮区域或按一次空格，仅展开三话题，欢迎末句保留。界面本地记录本次欢迎的展开状态，不改DialogueJournal权威读数、不额外保存、不自动开始话题；切诊治／买卖保持状态，真正重入或开始不同欢迎重置。继续输入保持按钮排除、长按过滤及拖拽保护。叶伯medicine.01首句由“来得正好，考你个简单的。”改为“来，考你个简单的。”，其他同词句不改。
+
+直接专项tests/npc_topic_gate_tests.gd验证两人的首次／单句日常／受伤欢迎、苏清禾诊治欢迎、切页保持与额外点击无玩法状态变化；-Render仅两人开启前／后静态2K。原clinic_continue_input_tests及npc_dialogue_tests／yesongnian_dialogue_tests的对应步骤已适配；本次实际执行范围见最新进度。下方历史“欢迎结束即出现话题”说明由此覆盖。
+
+## 苏清禾小修与旧档阅读迁移（2026-10-13）
+
+本次接续此前已写入但未收尾的修改。suqinghe.json为21段159条基础正文，回访欢迎16组30条；指定段落替换见[设计正文](suqinghe-dialogue-design.md)文首。医馆03仍独立于叶伯话题，医馆04完成后的原名／历史行为沿既有实现，未创建“河湾有新发现吗？”后续按钮。
+
+content_revision=2配合legacy_seen_maps与legacy_greeting_seen_maps，只迁移六段正文与三组欢迎的已显示句数；已完成／中断、cursor、order、visits与线索不变。NpcDialogueLibrary先验证映射、在候选日志上迁移及复核，再由NpcDialogueActions正常保存发布；诊治入口也先迁移验证，失败不收费。DialogueJournal初建记录时把JSON版本号规范为整数，保证内存与存档重载一致。无版本的旧记录视为1，叶伯仍使用原版本。
+
+DialogueGreetings日常池按每条excludes_flags筛选，保留原池索引及4次亲近轮次；苏清禾daily.05排除joined。一次性欢迎可配置low_resource和excludes_seen：return_injured需要joined／first_town_return、低气血且story.return未开始，先于普通受伤／疲倦问候。once_seen保留中断位置，once_done仅完成欢迎本身；不进入正式seen／done／order，不自动诊治。后续story.return通过requires_greetings选中after_injured_greeting，省略已替换的普通开头两句，保留12条正文；开始后沿既有variants机制固定，普通版14条仍可供健康回镇及已开始旧档使用。
+
+专项`./tests/run_t01.ps1 -Script res://tests/suqinghe_revision_tests.gd`覆盖迁移各中断点、已读历史、条件边界、一次欢迎、显式诊治、隔离保存重载及失败回滚；`-Render`仅静态2K欢迎／信任末段／受伤回镇。具体本次结果见PROJECT_PROGRESS；下方旧数量及“无需迁移”说明属于先前版本。
+
+## 药材铺叶松年交谈接入（2026-10-13）
+
+N14的qingshizhen_herbalist.json新增dialogue路径及presentation.conversation_background，原shop类型、目录和交易保留。MapShopDialog有对话配置时默认第一交谈，其后买卖；持有一个MapClinicDialog共用视图，交谈显示其画布／遮罩、交易显示原画布／遮罩，任何时刻只显示一份。共用标题／说明／离开／左图保持，话题／头像／气泡沿用医馆规则；新底图yaocaipu-2及头像ui-portrait-yesongnian已开启mipmap，源图保留。没有对话的其他店仍用原买卖／打造配置。
+
+MapScreen只在实际打开店铺时发visit，页签切换只换展示、刷新，不重播欢迎或推进正文。shop模态将空格和对话区点击转给共用视图，按钮仍走自身原生输入；交谈期间拒绝交易命令。原销售价格、商品范围、成交事务和退出操作不变。
+
+data/dialogues/yesongnian.json含20段208条基础台词、药理02的11条完整替代版本、9短欢迎。首次欢迎／3药铺／3药理／2首次闲聊／6回访／2入宗剧情／2药铺后续／1救助补充；三固定话题shop／medicine／chat独立历史。姓名模板、六次闲聊的日历／剧情变化解锁、完成后历史等沿用通用日志。DialogueGreetings增加可选一次性组once／once_done、可选状态词和close_interval=0（关闭亲近池），苏清禾配置／已有存档兼容。
+
+DialogueConditions校验并计算requires_flags／excludes_flags／requires_clues／requires_done／requires_dialogues；最后一项明确引用NPC与段落，避免把玩家获知当NPC获知。segment.variants可按事实选择台词与set_flags，第一次阅读记录在npc.variants，基础版由seen锁定；以后读取有效版本核对进度、还原历史。set_flags只在全段读完后设置，新事实才增加story_revision；NpcDialogueActions沿用候选保存成功再发布。
+
+事实与绑定：
+
+- base.story.qingshihewan.rescue_completed：按用户答复，仅留NpcDialogueActions.set_story_flag接口；当前赠玉、到达节点、结束受伤修士现有段落均不设置。
+- base.story.yesongnian.knows_rescue：药理02救助后分支或同话题补充汇报全部读完时设置；救助完成本身不设置。知情且救助完成才用对应特殊欢迎。
+- base.story.qingshihewan.water_observed：qingshihewan_bridge_dialogue的story_flags_on_complete绑定；MapScreen在最后一次继续结束事件前保存批量事实，失败保留末句显示错误，重试成功才结束。只访问N37不算，旧档不凭到访回填。
+- shop.water须water_observed及shop.03完成；shop.merge须叶伯shop.03与苏清禾medical.02完成，由辰宇首先转述，保留未定因果。
+- 入宗继续既有base.story.qinglan.departure_ready／joined／first_town_return；测试境界不解锁，已加入不会新播“即将离镇”。
+
+专项tests/yesongnian_dialogue_tests.gd使用隔离内存／artifacts存档，覆盖分支冻结／失败回滚、NPC知情、两NPC独立记录、回访耗尽、原生页签／继续／买卖／重入与桥头事实。-Render只出静态yesongnian-welcome／topics／buy／sell.png；结果见最新进度。原稿与修订边界见[设计正文](yesongnian-dialogue-design.md)，规则见核心01第1.55。
+
+## 苏清禾回访问候接入（2026-10-13）
+
+data/dialogues/suqinghe.json在原21段146条正式正文外新增greetings配置：10日常、3状态／诊治、2阶段，共15组24条；表情统一Emoji，首次欢迎与回镇开头保持原条数，旧seen／done／cursor无需迁移。具体确认规则见核心01第1.54，提供稿与来源见[苏清禾对话设计](suqinghe-dialogue-design.md)。
+
+DialogueGreetings为纯状态模块，NpcDialogueLibrary在加载前校验词库／条件／轮换参数。NPC可选greeting记录保存当前问候、读数、轮换位置、阶段交替与同次诊治标记；不放进正式seen／done／order。NpcDialogueActions在实际visit后选择问候，view覆盖当前显示但保留原选中话题，select清除已读问候并恢复话题；欢迎未读完暂不显示三话题。旧档缺字段兼容，欢迎轮换经候选存档保存后发布，重启保留上次选词与循环位置。纯DialogueJournal.visit仍只负责正式话题回访解锁，实际医馆通过NpcDialogueActions.command进入。
+
+优先级：未读首次欢迎→低气血（低于50%）→低体力（低于50%）→符合条件的阶段／通用交替。阶段先匹配已完成story.return，再匹配药材异常线索；日常每4次用一条06／08／10，其余七条轮换。状态问候不消耗阶段／日常轮次，阶段问候不消耗日常轮次。特定状态持续时可再次说同一状态问候；日常及阶段交替避免连续相同。主线未绑定的入宗长对话仍不会因测试境界自动开放。
+
+MapClinicTreatment.treat可接收当前NPC词库，在收费候选中原子写pending_treatment，保存失败不产生标记；MapClinicDialog返回交谈只发送after_treatment命令消费标记，不自行判定已治疗。同次成功治疗只播一次，此后切页签保留读数；首次欢迎未完则先读完，下一次继续才播诊治欢迎。实际重新打开医馆清除上次未消费的诊治标记，选择新到访问候。
+
+专项：./tests/run_t01.ps1 -Script res://tests/npc_greeting_tests.gd，-Render输出artifacts/suqinghe-daily-greeting.png、suqinghe-injured-greeting.png及suqinghe-emoji-dialogue.png。已验证范围与结果见最新进度；下方首次接入段落中的“已读欢迎不重复”仅指首次固定欢迎，现普通回访已启用新词库。
+
 ## 医馆诊治页与5灵石治疗（2026-10-13）
 
 最新排版：诊金右侧说明区Rect2(978,527,371,51)，较原上移4设计px；正常两行由VBox整体垂直居中，满气血／错误提示原位替换，不再放在按钮上方。满气血按钮文字“无需诊治”，disabled使用普通底图、白字及箭头光标，悬浮不切换且不可扣费；受伤后重新按余额决定能否诊治。按钮及其文字上移12设计px，箴言左移54／上移13设计px。治疗仍只回气血。Render同时输出clinic-treatment.png和clinic-treatment-full.png。
@@ -92,7 +352,7 @@ N23绑定base.map_event.qingshizhen.blacksmith，事件文件data/map_events/qin
 
 2026-10-12已接入：用户批准首轮价格基线及13项微调，普通商铺可实际买卖；四店经营配置与价目共用，其他三店的场景入口保持待接。出售以权威随身单位重新校验范围／收藏／关键任务／当前装备保护、数量、单价与灵石上限，候选快照扣物加钱一次保存后发布。售空后不自动选中另一种商品，避免连续点击误售。自动／手动用药机制不改。
 
-**最新货架与出售范围：**武器、防具各8件，各6下品＋2凡品；食物／杂货空，不借用其他库存大类填充。武器为青石短剑、柴斧、猎弓、短柄铁锤、匕首、长枪、雷鞭、清风印；防具原6＋2保持。16件均读取批准基准价，匕首／长枪买入45／108灵石。出售按商铺经营类别收购，不受当前货架16件限制。
+**最新货架与出售范围（2026-10-15）：**武器9件（6下品＋3凡品）、防具10件（6下品＋4凡品），每页8格；食物／杂货空，不借用其他库存大类填充。原16件保持，追加现有雷纹弓、木纹冠、水纹衣，配合原清风印保障连环／生机／润脉／驱散的早期购买来源；映射及验证见[书术清单文首](t01_书术与控制实施清单_2026-09-29.md)，规则01第1.64。19件均读取批准基准价，匕首／长枪买入45／108灵石不变；未新增定价或直接赠送。出售按商铺经营类别收购，不受当前上架池限制。
 
 **出售列表：**MapShop.sale_items读取state.storage中的松散随身单位，按经营范围筛选并统计真实数量；不依赖上架池、不以缺少价格为由隐藏物品，排除favorite、key_item、quest_item／关键类别、当前使用阵盘；盘内及仓库单位天然不计入。共用弹窗切换购买／出售保留当前主分类，重置页码／数量，出售每页8种、按获得时间降序和ID稳定排序。卡片及右详情显示可售数量、实际分类／效果；加减限制在可售数量和单次999保护内。库存changed即时刷新、删除末页物品后页码回退；空栏清空详情及单价／总价。
 

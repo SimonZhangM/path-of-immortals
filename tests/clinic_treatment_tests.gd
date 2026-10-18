@@ -71,7 +71,9 @@ func run() -> void:
 		check(map.player_status.resources.stamina==29 and map.player_status.resources.spirit==23,"only hp restored")
 		var expected := original.duplicate(true)
 		expected.spirit_stones = 0
-		check(map.loadout.snapshot()==expected,"inventory, calendar, narrative and other progress unchanged")
+		expected.narrative.flags["base.story.suqinghe.treatment_used"] = true
+		expected.narrative.npcs["base.npc.suqinghe"].greeting.pending_treatment = true
+		check(map.loadout.snapshot()==expected,"payment queues greeting without altering inventory calendar or formal dialogue")
 		check(view.confirm_button.disabled and view.gain_label.text=="+0","full hp cannot pay again")
 		check(view.confirm_label.text=="无需诊治" and view.message.text=="气血已满，无需诊治。" and not view.payment_notes.visible,"full hp replaces payment instructions and button caption")
 		move = InputEventMouseMotion.new()
@@ -90,7 +92,7 @@ func run() -> void:
 		var saved: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
 		check(saved.spirit_stones==0,"deduction persisted")
 		check(not MapClinicTreatment.treat(map.loadout,map.player_status,config,path).error.is_empty() and map.loadout.spirit_stones==0,"repeat full-hp request cannot charge twice")
-		for key in ["fee","resource","recovery_percent","duration_days"]:
+		for key in ["consultation_hp_per_stone","supplies_fee","resource","recovery_percent","duration_days"]:
 			var invalid := config.duplicate(true)
 			invalid[key] = "spirit" if key=="resource" else -1
 			check(not MapClinicTreatment.configuration_error(invalid).is_empty(),"invalid treatment configuration rejected: "+key)

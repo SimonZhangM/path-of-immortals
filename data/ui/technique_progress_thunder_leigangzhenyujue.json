@@ -1,0 +1,83 @@
+{
+  "book_id": "base.cultivation_book.thunder_05",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《雷罡镇狱诀》 战斗功法",
+  "stages": [
+    {
+      "level": 1,
+      "spell": {
+        "name": "雷罡护体",
+        "description": "：自身获得6层雷蕴，战斗中每10层可转为一层雷盾，仍受存活层数限制。 冷却6秒；本术消耗4灵力。"
+      },
+      "choices": [
+        {
+          "name": "聚罡",
+          "description": "（雷蕴增层）：本次获得雷蕴提高至10层。",
+          "effect": "雷蕴增层"
+        },
+        {
+          "name": "疾护",
+          "description": "（减耗提速）：本术冷却、灵力费用各－25%。",
+          "effect": "减耗提速"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "spell": {
+        "name": "引雷印",
+        "description": "：命中施加6层雷印；新印不回溯触发本次引雷。 基础伤害18；冷却6秒；本术消耗8灵力。"
+      },
+      "choices": [
+        {
+          "name": "深印",
+          "description": "（雷印增层）：本术施加雷印提高至10层。",
+          "effect": "雷印增层"
+        },
+        {
+          "name": "疾引",
+          "description": "（减耗提速）：本术冷却、灵力费用各－25%。",
+          "effect": "减耗提速"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "spell": {
+        "name": "雷返式",
+        "description": "：待发后任一雷盾层被攻击击破且成功麻痹攻击者，发动一次雷属性反击，独立判命中。 基础伤害24；冷却10秒；本术消耗8灵力。"
+      },
+      "choices": [
+        {
+          "name": "震返",
+          "description": "（反击增伤）：本术反击伤害＋30%。",
+          "effect": "反击增伤"
+        },
+        {
+          "name": "连锁",
+          "description": "（反击生环）：反击命中施加4层连环，新层供后续攻击使用。",
+          "effect": "反击生环"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "spell": {
+        "name": "雷狱锁",
+        "description": "：命中施加4层雷印；目标命中前已麻痹，则剩余麻痹延长1秒。 基础伤害40；冷却8秒；本术消耗12灵力。"
+      },
+      "choices": [
+        {
+          "name": "锁狱",
+          "description": "（麻痹延长）：对已有麻痹目标的延长量提高至2秒。",
+          "effect": "麻痹延长"
+        },
+        {
+          "name": "雷刑",
+          "description": "（增伤加印）：本体伤害＋30%，施加雷印提高至8层，仍保留基础延长1秒。",
+          "effect": "增伤加印"
+        }
+      ]
+    }
+  ]
+}

@@ -160,9 +160,12 @@ func present(state: MapLoadoutState, id: String, item_id: String, withdraw: bool
 	status.text = target + ("空间充足" if sufficient else "空间不足") if not item_id.is_empty() else "请选择物品"
 	status.add_theme_color_override("font_color",GOLD if sufficient else Color("f18d67"))
 	capacity_text.text = "转移后：%d/%d" % [info.projected,info.capacity] if not item_id.is_empty() else ""
-	hint.text = "同类合并占一个位置" if sufficient else "测试期允许超额转移"
+	hint.text = "同类合并占一个位置" if sufficient else ("请先存入物品腾出空间" if withdraw else "仓库暂允许超额存放")
+	if withdraw and not info.blocked and info.projected > info.capacity:
+		status.text = "可合并同类"
+		hint.text = "未新增种类，仍处于超额"
 	if item_id.is_empty(): hint.text = "选中后预览转移方向"
-	if info.blocked: hint.text = "使用中的阵盘不能存入"
+	if info.blocked: hint.text = "储物袋已满，无法新增种类" if withdraw else "使用中的阵盘不能存入"
 	_present_history(state,rows)
 
 func set_quantity(value: int) -> void:

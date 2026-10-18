@@ -1,0 +1,1939 @@
+{
+  "id": "base.npc.xieyunshu",
+  "name": "谢云舒",
+  "portrait": "res://assets/ui-portrait-xieyunshu.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.xieyunshu.welcome",
+  "topics": [
+    {
+      "id": "shop",
+      "label": "商铺见闻",
+      "initial": [
+        "base.dialogue.xieyunshu.shop.01",
+        "base.dialogue.xieyunshu.shop.02"
+      ],
+      "story": [
+        "base.dialogue.xieyunshu.shop.result",
+        "base.dialogue.xieyunshu.shop.inquiry",
+        "base.dialogue.xieyunshu.shop.compare"
+      ],
+      "revisits": [
+        "base.dialogue.xieyunshu.shop.03"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 1
+    },
+    {
+      "id": "cultivation",
+      "label": "宗门修行",
+      "initial": [
+        "base.dialogue.xieyunshu.cultivation.01",
+        "base.dialogue.xieyunshu.cultivation.02"
+      ],
+      "story": [
+        "base.dialogue.xieyunshu.cultivation.joined",
+        "base.dialogue.xieyunshu.cultivation.life_review",
+        "base.dialogue.xieyunshu.cultivation.water_review",
+        "base.dialogue.xieyunshu.cultivation.practice"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.xieyunshu.chat.01",
+        "base.dialogue.xieyunshu.chat.02"
+      ],
+      "story": [],
+      "revisits": [
+        "base.dialogue.xieyunshu.visit.01",
+        "base.dialogue.xieyunshu.visit.02",
+        "base.dialogue.xieyunshu.visit.03",
+        "base.dialogue.xieyunshu.visit.04",
+        "base.dialogue.xieyunshu.visit.05",
+        "base.dialogue.xieyunshu.visit.06",
+        "base.dialogue.xieyunshu.visit.07",
+        "base.dialogue.xieyunshu.visit.08",
+        "base.dialogue.xieyunshu.visit.09"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 2
+    }
+  ],
+  "clues": {},
+  "segments": {
+    "base.dialogue.xieyunshu.welcome": {
+      "topic": "welcome",
+      "label": "初次欢迎",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "来看看宗里的低阶法器和丹药？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我叫谢云舒，是青岚宗的外门弟子，跟顾师兄来镇上当值。你想找什么，先跟我说说。"
+        },
+        {
+          "speaker": "player",
+          "text": "我叫张辰宇，在镇上的药材铺做学徒，先来看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那你认药应该比我熟。正好，你看不明白的器具可以问我，我有拿不准的药材，也能问问你。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过先看你的，我可不能一见面就把客人拉来帮忙。😄"
+        }
+      ],
+      "retire_flags": [
+        "base.story.qinglan.joined"
+      ],
+      "set_facts": [
+        "base.story.xieyunshu.name_known"
+      ]
+    },
+    "base.dialogue.xieyunshu.shop.01": {
+      "topic": "shop",
+      "label": "商铺见闻",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，你会不会觉得，我在这儿卖东西，跟普通商铺的掌柜也没什么两样？"
+        },
+        {
+          "speaker": "player",
+          "text": "倒也没有。不过你不是修士吗？怎么还要管铺子里的买卖？"
+        },
+        {
+          "speaker": "npc",
+          "text": "修士就不用做事啦？再说了，这活儿我还挺喜欢。"
+        },
+        {
+          "speaker": "player",
+          "text": "你从小就会做买卖？"
+        },
+        {
+          "speaker": "npc",
+          "text": "也谈不上会。我家在天河商域，从小就见惯了人家讨价还价、收货对账。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时候大人谈生意，我在旁边听着听着，便记住了些门道。"
+        },
+        {
+          "speaker": "player",
+          "text": "你在这里能自己做主了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "接待、认货、核数量，这些我能做。正式交接有顾师兄一起，宗门定的价钱也不能随意改。"
+        },
+        {
+          "speaker": "player",
+          "text": "那熟人来买，也一样？"
+        },
+        {
+          "speaker": "npc",
+          "text": "价钱不能私改。可他究竟用不用得上，我可以替他多想一想。"
+        },
+        {
+          "speaker": "player",
+          "text": "用不上，你也会说？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然。买回去不合用，下次见面多尴尬。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我想让人记得“云舒替我挑的东西好用”，又不是“云舒特别会让我花钱”。"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.shop.02": {
+      "topic": "shop",
+      "label": "你怎么辨认货物？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你说自己擅长辨货，怎么辨？看外表吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然不只是外表。来，我拿两件给你看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "看这两件。款式一样，都是核验过的，能正常使用。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你要我看什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "系扣边上，这一道细纹。两件收尾的地方不一样。"
+        },
+        {
+          "speaker": "player",
+          "text": "还真是。这件多绕了一点。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我整理的时候先看见了，后来才拿到一起比。"
+        },
+        {
+          "speaker": "player",
+          "text": "那就能知道是哪一件更好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不能。纹样不同，不等于作用不同。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是核对货物的时候，这些小地方有时能帮上忙。究竟意味着什么，还得再查。"
+        },
+        {
+          "speaker": "player",
+          "text": "你倒分得挺清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然。眼力好，可不能连自己看见的和自己猜的都混在一起。"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.shop.03": {
+      "topic": "shop",
+      "label": "天河的货市",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "天河最让我舍不得的，不只是铺子多，是总能看见从别处来的船。"
+        },
+        {
+          "speaker": "player",
+          "text": "你小时候常去看？"
+        },
+        {
+          "speaker": "npc",
+          "text": "家里人经过水边的时候，我总爱多看一会儿。船上的东西还没卸完，我就想知道它们从哪里来的。"
+        },
+        {
+          "speaker": "player",
+          "text": "都是什么稀奇东西？"
+        },
+        {
+          "speaker": "npc",
+          "text": "也不全稀奇。很多就是别处常见、我们那里少见的东西。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可我那时候觉得有意思呀。一件东西摆到眼前，就像有人从很远的地方，带了一小块见闻过来。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪你想自己出去看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。光听人说，还是不一样。我想知道那些东西原本放在哪里，人们为什么要用它，又是怎么做出来的。"
+        },
+        {
+          "speaker": "player",
+          "text": "你这是想看货，还是想看风景？"
+        },
+        {
+          "speaker": "npc",
+          "text": "都看。又没人规定做买卖只能盯着货箱。"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.shop.inquiry": {
+      "topic": "shop",
+      "label": "帮我核对材料",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，宗门交给我一件查材料来路的差事。我想请你帮着核一核细节。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好呀。你先说手里有什么，哪些已经核实了？"
+        },
+        {
+          "speaker": "player",
+          "text": "我先把查到的记录给你看，拿不准的也分开说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那我们先把还要看的地方列出来。只有文字转述，我可不能当作亲眼看过了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "真要比细处，得看到实物，还得有可靠的对照。货账上能查到的，也要一起核。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，先分清能确认什么，还缺什么。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。顾师兄能帮着核我们经手的货和交接记录，可不是哪里来的账都能随便翻。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tianhe.material_inquiry_assigned"
+      ],
+      "retire_flags": [
+        "base.story.tianhe.inquiry_completed"
+      ],
+      "set_facts": [
+        "base.story.xieyunshu.knows_inquiry"
+      ]
+    },
+    "base.dialogue.xieyunshu.shop.compare": {
+      "topic": "shop",
+      "label": "有点不对的材料",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，这两份材料已经能拿出来对照了，帮我看看？"
+        },
+        {
+          "speaker": "npc",
+          "text": "好呀，拿来瞧瞧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这里有一处细节，两份不一样。你靠近些看。"
+        },
+        {
+          "speaker": "player",
+          "text": "你能认出它们的产地吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这个我可不敢乱说。材料从哪里来，还得看货账和其他凭据。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我只能说，眼前这处确实不同，还不能说是为什么。"
+        },
+        {
+          "speaker": "player",
+          "text": "我方才看了好几遍，都没发现。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那我还是有点本事的吧？🙂"
+        },
+        {
+          "speaker": "player",
+          "text": "是。要不是你指出来，我还真可能漏过去。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过先别急着下结论。来源、分装、制作、保存，都可能留下差别。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我把能看清的地方记下来，再找顾师兄一起核一遍。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，先把确定的记下。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯！查东西就得这样。猜测可以有，可不能拿猜测当凭据。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tianhe.material_inquiry_assigned",
+        "base.story.xieyunshu.knows_inquiry",
+        "base.story.xieyunshu.observable_comparison_ready"
+      ],
+      "retire_flags": [
+        "base.story.tianhe.inquiry_completed"
+      ],
+      "any_of": [
+        {
+          "requires_flags": [
+            "base.story.xieyunshu.two_samples_available"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.xieyunshu.sample_and_reference_available"
+          ]
+        }
+      ],
+      "set_facts": [
+        "base.story.xieyunshu.compared_materials"
+      ],
+      "variants": [
+        {
+          "id": "sample_and_reference",
+          "requires_flags": [
+            "base.story.xieyunshu.sample_and_reference_available"
+          ],
+          "excludes_flags": [
+            "base.story.xieyunshu.two_samples_available"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "云舒，这份材料和可靠的对照图样都在这里，帮我看看？"
+            },
+            {
+              "speaker": "npc",
+              "text": "好呀，拿来瞧瞧。"
+            },
+            {
+              "speaker": "npc",
+              "text": "这里有一处细节，和对照图样记的不一样。你靠近些看。"
+            },
+            {
+              "speaker": "player",
+              "text": "你能认出它的产地吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "这个我可不敢乱说。材料从哪里来，还得看货账和其他凭据。"
+            },
+            {
+              "speaker": "npc",
+              "text": "我只能说，眼前这处确实不同，还不能说是为什么。"
+            },
+            {
+              "speaker": "player",
+              "text": "我方才看了好几遍，都没发现。"
+            },
+            {
+              "speaker": "npc",
+              "text": "那我还是有点本事的吧？🙂"
+            },
+            {
+              "speaker": "player",
+              "text": "是。要不是你指出来，我还真可能漏过去。"
+            },
+            {
+              "speaker": "npc",
+              "text": "不过先别急着下结论。来源、分装、制作、保存，都可能留下差别。"
+            },
+            {
+              "speaker": "npc",
+              "text": "我把能看清的地方记下来，再找顾师兄一起核一遍。"
+            },
+            {
+              "speaker": "player",
+              "text": "好，先把确定的记下。"
+            },
+            {
+              "speaker": "npc",
+              "text": "嗯！查东西就得这样。猜测可以有，可不能拿猜测当凭据。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.shop.result": {
+      "topic": "shop",
+      "label": "这次看准了",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你先前指出的那处差异，后来确实派上用场了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "真的？查出来是什么原因了吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "嗯，和后面核到的情况对上了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那我得把原先记的添完整。只记“哪里不同”，下回还是不知道为什么不同。"
+        },
+        {
+          "speaker": "player",
+          "text": "你不先得意一会儿？"
+        },
+        {
+          "speaker": "npc",
+          "text": "已经得意了，刚才那一下就是。😄"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过这次认准了，下次也不能见着相似的，就认定还是同一回事。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来谢小掌柜越来越稳妥了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那当然。以后要走远路，这点本事总得学明白。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.xieyunshu.compared_materials",
+        "base.story.xieyunshu.difference_verified",
+        "base.story.xieyunshu.result_disclosed"
+      ],
+      "requires_done": [
+        "base.dialogue.xieyunshu.shop.compare"
+      ]
+    },
+    "base.dialogue.xieyunshu.cultivation.01": {
+      "topic": "cultivation",
+      "label": "宗门修行",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你当初怎么选了青岚宗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我从小就知道自己有修行的灵根，家离青岚宗又不算远，便来这里学了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为你会专门往远处找。"
+        },
+        {
+          "speaker": "npc",
+          "text": "想去远方，也得先有本事去呀。总不能什么都不会，就背着包袱到处跑。"
+        },
+        {
+          "speaker": "npc",
+          "text": "再说，离家近些也好。刚入门的时候，知道家还在不远的地方，心里会踏实一点。"
+        },
+        {
+          "speaker": "player",
+          "text": "现在呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "现在忙起来，倒常常顾不上想那么多。功法要练，宗门安排的事务也得做。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我现在来商铺帮忙，就是外门事务的一部分。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你不会耽误修炼吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "多少会占些工夫。不过日子得自己安排。这趟在镇上忙完，回去还得抓紧修炼。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着倒不怎么轻松。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是不轻松。不过能学到以前接触不到的东西，也挺有意思。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我刚入门那会儿，连灵力怎么稳稳地运转都练不好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "现在至少能自己把一套入门功法练下来了。"
+        },
+        {
+          "speaker": "player",
+          "text": "已经很厉害了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那是！🙂 不过比我修得好的同门也不少，我还差得远呢。"
+        }
+      ],
+      "retire_flags": [
+        "base.story.xieyunshu.beyond_qi_refining"
+      ]
+    },
+    "base.dialogue.xieyunshu.cultivation.02": {
+      "topic": "cultivation",
+      "label": "你为何修水？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你怎么选了水系来修？"
+        },
+        {
+          "speaker": "npc",
+          "text": "因为喜欢呀。我家在天河商域，四周都是水和海，从小看得最多的就是水。"
+        },
+        {
+          "speaker": "npc",
+          "text": "小时候去水边，我能待上半天。看船、看浪，哪怕只是看水从石头缝里流过去，也觉得有意思。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你水性一定很好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这个我可不谦虚，比认货还早学会呢。😄"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪你喜欢水系。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过会游水和会用水法，可不是一回事。刚开始修炼时，我还以为自己会容易些，结果照样得一点点练。"
+        },
+        {
+          "speaker": "player",
+          "text": "你现在练的水法，是帮着恢复灵力的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不只。水系里有能帮助恢复灵力、体力的法术，也有攻敌的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "水看着柔和，冲起来可不温柔。我想把攻敌的水法也练好，不能只会站在水边看热闹。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你以后是不是能御着海浪走？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那是以后才能想的事。我现在连一门入门水法，都还有用不稳的时候。"
+        },
+        {
+          "speaker": "player",
+          "text": "你也有不着急的时候？"
+        },
+        {
+          "speaker": "npc",
+          "text": "着急呀。可我再着急，海也不会先变小一点让我练。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以还是先把眼前这点本事练好。等真能去远海的时候，我可不想只会游水。"
+        }
+      ],
+      "retire_flags": [
+        "base.story.xieyunshu.beyond_qi_refining"
+      ]
+    },
+    "base.dialogue.xieyunshu.cultivation.life_review": {
+      "topic": "cultivation",
+      "label": "青岚宗的日子",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你当初怎么选了青岚宗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我从小就知道自己有修行的灵根，家离青岚宗又不算远，便来这里学了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为你会专门往远处找。"
+        },
+        {
+          "speaker": "npc",
+          "text": "想去远方，也得先有本事去呀。总不能什么都不会，就背着包袱到处跑。"
+        },
+        {
+          "speaker": "npc",
+          "text": "再说，离家近些也好。刚入门的时候，知道家还在不远的地方，心里会踏实一点。"
+        },
+        {
+          "speaker": "player",
+          "text": "现在呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "现在忙起来，倒常常顾不上想那么多。功法要练，宗门安排的事务也得做。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我现在来商铺帮忙，就是外门事务的一部分。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你不会耽误修炼吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "多少会占些工夫。不过日子得自己安排。这趟在镇上忙完，回去还得抓紧修炼。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着倒不怎么轻松。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是不轻松。不过能学到以前接触不到的东西，也挺有意思。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我刚入门那会儿，连灵力怎么稳稳地运转都练不好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那时能把一套入门功法练顺，就很高兴了。如今要学的东西也还有不少。"
+        },
+        {
+          "speaker": "player",
+          "text": "已经很厉害了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那是！🙂 不过比我修得好的同门也不少，我还差得远呢。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.xieyunshu.beyond_qi_refining"
+      ],
+      "excludes_done": [
+        "base.dialogue.xieyunshu.cultivation.01"
+      ]
+    },
+    "base.dialogue.xieyunshu.cultivation.water_review": {
+      "topic": "cultivation",
+      "label": "你为何修水？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你怎么选了水系来修？"
+        },
+        {
+          "speaker": "npc",
+          "text": "因为喜欢呀。我家在天河商域，四周都是水和海，从小看得最多的就是水。"
+        },
+        {
+          "speaker": "npc",
+          "text": "小时候去水边，我能待上半天。看船、看浪，哪怕只是看水从石头缝里流过去，也觉得有意思。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你水性一定很好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这个我可不谦虚，比认货还早学会呢。😄"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪你喜欢水系。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过会游水和会用水法，可不是一回事。刚开始修炼时，我还以为自己会容易些，结果照样得一点点练。"
+        },
+        {
+          "speaker": "player",
+          "text": "你现在练的水法，是帮着恢复灵力的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不只。水系里有能帮助恢复灵力、体力的法术，也有攻敌的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "水看着柔和，冲起来可不温柔。我想把攻敌的水法也练好，不能只会站在水边看热闹。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你以后是不是能御着海浪走？"
+        },
+        {
+          "speaker": "npc",
+          "text": "远海的水势可不是练熟一门水法就能应付的，还得慢慢积累本事。"
+        },
+        {
+          "speaker": "player",
+          "text": "你也有不着急的时候？"
+        },
+        {
+          "speaker": "npc",
+          "text": "着急呀。可我再着急，海也不会先变小一点让我练。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以还是先把眼前这点本事练好。等真能去远海的时候，我可不想只会游水。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.xieyunshu.beyond_qi_refining"
+      ],
+      "excludes_done": [
+        "base.dialogue.xieyunshu.cultivation.02"
+      ]
+    },
+    "base.dialogue.xieyunshu.cultivation.joined": {
+      "topic": "cultivation",
+      "label": "同门了！",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，我已经入了青岚宗。"
+        },
+        {
+          "speaker": "npc",
+          "text": "{player.surname}师弟！😄"
+        },
+        {
+          "speaker": "player",
+          "text": "……你这是叫我？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不然呢？我比你先进宗门，你如今入门了，不该叫我一声师姐吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "我们不是一样大吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那可不一样。论年纪，我们差不多。论入门先后，我可比你早。"
+        },
+        {
+          "speaker": "player",
+          "text": "谢师姐，这下满意了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "满意。你肯叫，我就先听着。😄"
+        },
+        {
+          "speaker": "npc",
+          "text": "说正事，刚入宗不清楚的地方可以问我。我知道的就告诉你，不知道的，咱们再去找人问。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，云舒。"
+        },
+        {
+          "speaker": "npc",
+          "text": "……改得倒快。算了，听着也习惯。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined"
+      ],
+      "set_facts": [
+        "base.story.xieyunshu.knows_joined"
+      ],
+      "variants": [
+        {
+          "id": "already_known",
+          "requires_flags": [
+            "base.story.xieyunshu.knows_joined"
+          ],
+          "lines": [
+            {
+              "speaker": "npc",
+              "text": "{player.surname}师弟！😄"
+            },
+            {
+              "speaker": "player",
+              "text": "……你这是叫我？"
+            },
+            {
+              "speaker": "npc",
+              "text": "不然呢？我比你先进宗门，你如今入门了，不该叫我一声师姐吗？"
+            },
+            {
+              "speaker": "player",
+              "text": "我们不是一样大吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "那可不一样。论年纪，我们差不多。论入门先后，我可比你早。"
+            },
+            {
+              "speaker": "player",
+              "text": "谢师姐，这下满意了？"
+            },
+            {
+              "speaker": "npc",
+              "text": "满意。你肯叫，我就先听着。😄"
+            },
+            {
+              "speaker": "npc",
+              "text": "说正事，刚入宗不清楚的地方可以问我。我知道的就告诉你，不知道的，咱们再去找人问。"
+            },
+            {
+              "speaker": "player",
+              "text": "好，云舒。"
+            },
+            {
+              "speaker": "npc",
+              "text": "……改得倒快。算了，听着也习惯。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.cultivation.practice": {
+      "topic": "cultivation",
+      "label": "修炼也有不顺的时候",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，我最近练一门水系法术，总有个地方不顺。"
+        },
+        {
+          "speaker": "player",
+          "text": "是灵力接不上，还是这一处还没练顺？"
+        },
+        {
+          "speaker": "npc",
+          "text": "灵力刚聚起来的时候还好，一到后面，就容易散。"
+        },
+        {
+          "speaker": "player",
+          "text": "顾师兄怎么说？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他说我前一段还没稳住，就想着赶紧往后练。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着像你会做的事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好，先不争。我试过以后，确实比先前稳些。"
+        },
+        {
+          "speaker": "player",
+          "text": "那不是挺好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "是呀。有时候想快一点，结果反而绕了远路。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你以后还急不急？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然急！不过急归急，练的时候还是得稳着来。"
+        },
+        {
+          "speaker": "player",
+          "text": "这倒像你的脾气。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你现在越来越会拿我说笑了。🙂"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined",
+        "base.story.xieyunshu.practice_story_ready"
+      ],
+      "any_of": [
+        {
+          "requires_done": [
+            "base.dialogue.xieyunshu.cultivation.02"
+          ]
+        },
+        {
+          "requires_done": [
+            "base.dialogue.xieyunshu.cultivation.water_review"
+          ]
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，宗门外有只小猫，尾巴尖是灰的。我路过的时候，它总躲在石头后面看。"
+        },
+        {
+          "speaker": "player",
+          "text": "你想带回宗门？"
+        },
+        {
+          "speaker": "npc",
+          "text": "想归想，宗门里不许养宠物。我不会偷偷带进去的。"
+        },
+        {
+          "speaker": "player",
+          "text": "那就路过时看看它？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。它愿意凑过来，我就陪它待一会儿；它要走，也不拦着。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为你一定要想办法抱到手。"
+        },
+        {
+          "speaker": "npc",
+          "text": "喜欢它，又不是非得把它抱住才算。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过它若肯让我摸一下，我还是会高兴的。🙂"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.chat.02": {
+      "topic": "chat",
+      "label": "说说你的理想",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你以后想自己开商铺吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然是真的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过我想的可不只是开一间小铺子。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你想做什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我想去苍澜界各地看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "见识不同地方的材料、器具，还有各种稀奇古怪的货物。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着像是想做一个走遍天下的商人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对！"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过也不能只想着做买卖。"
+        },
+        {
+          "speaker": "npc",
+          "text": "外面那么大，路上肯定有危险。我的修为若是不够，别说做生意了，连货都护不住。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你打算先好好修炼？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯！"
+        },
+        {
+          "speaker": "npc",
+          "text": "等学到足够的本事，再出去闯闯。"
+        },
+        {
+          "speaker": "player",
+          "text": "万一去了远方，做买卖赔了呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就弄清楚为什么赔，下次再做得好一点。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过最好还是别赔，灵石可难挣了！"
+        },
+        {
+          "speaker": "player",
+          "text": "哈哈，你倒挺实在。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那当然。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过第一趟，我可没打算一口气走遍苍澜界。"
+        },
+        {
+          "speaker": "player",
+          "text": "你不是连好多地方都想好了吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "想归想。先把一条路走明白，认几样真正懂的货，再慢慢往外走。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来你已经想到怎么开始了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不然就只剩嘴上热闹啦。大主意可以先有，眼前的本事也得学。"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.01": {
+      "topic": "chat",
+      "label": "天河的点心",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇！你吃过天河商域那边的桂花酥吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "没有。很好吃？"
+        },
+        {
+          "speaker": "npc",
+          "text": "好吃！"
+        },
+        {
+          "speaker": "npc",
+          "text": "外头酥酥的，里面还带一点桂花香。"
+        },
+        {
+          "speaker": "player",
+          "text": "你怎么突然想起这个？"
+        },
+        {
+          "speaker": "npc",
+          "text": "就是忽然想起家里的桂花香，连那股酥酥的味道也跟着想起来了。"
+        },
+        {
+          "speaker": "player",
+          "text": "想家了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有一点吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过我入宗以后，也不是没回过家。"
+        },
+        {
+          "speaker": "npc",
+          "text": "就是有时候想念家里的东西。你说奇不奇怪，明明吃的也不是什么灵丹妙药，偏偏记得最清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "下次你回去，可以多带点来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好呀！"
+        },
+        {
+          "speaker": "npc",
+          "text": "到时候分你一块尝尝。"
+        },
+        {
+          "speaker": "npc",
+          "text": "……只分一块啊，我自己还要留着吃呢。😄"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.02": {
+      "topic": "chat",
+      "label": "顾师兄的账本",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "顾师兄有句话，我起先听着嫌麻烦，后来倒觉得有用。"
+        },
+        {
+          "speaker": "player",
+          "text": "什么话？"
+        },
+        {
+          "speaker": "npc",
+          "text": "“你记得，不等于下一个接手的人也记得。”"
+        },
+        {
+          "speaker": "npc",
+          "text": "我核一批货，心里算清楚了，觉得记个总数就行。他偏要我把分开的几笔也写上。"
+        },
+        {
+          "speaker": "player",
+          "text": "交接的时候要看？"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。后来换了别人来问，我才发现，光说“我算过了”还真不够。"
+        },
+        {
+          "speaker": "player",
+          "text": "你把这话告诉顾师兄了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "说了。他也没得意，就把他那本账递给我，让我帮着核实物。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来他也会找你帮忙。"
+        },
+        {
+          "speaker": "npc",
+          "text": "会呀。有些货看着相似，我分得快些。他核单，我看货，做起来就顺当。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你还嫌他啰嗦吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "偶尔。可有用的那几句，我还是会记住的。🙂"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.03": {
+      "topic": "chat",
+      "label": "听水声",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，河湾那边，有没有离路近些、能安稳坐一会儿的临水地方？"
+        },
+        {
+          "speaker": "player",
+          "text": "你想找地方练功？"
+        },
+        {
+          "speaker": "npc",
+          "text": "也想练。不过有时候，我只是想听听水声。"
+        },
+        {
+          "speaker": "player",
+          "text": "听水声有什么特别的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不一样呀。海浪、河水，听着都不同。我在宗门待久了，偶尔会想起家那边的声音。"
+        },
+        {
+          "speaker": "player",
+          "text": "等我去河湾的时候，替你留意。合适了再告诉你。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。离路近些就行，不必为了好看，专门往险处找。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来你也有要求不高的时候。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这还不高？安稳、临水、能坐着看一会儿，已经挑了三样了。"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.04": {
+      "topic": "chat",
+      "label": "画不明白的货样",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，你看看，我画的这个能认出来吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "……一只系着带子的萝卜？"
+        },
+        {
+          "speaker": "npc",
+          "text": "是法器上的绳扣！这两笔是系绳，怎么成根须了？"
+        },
+        {
+          "speaker": "player",
+          "text": "你知道原物长什么样，我又不知道。这里是绳穿过去的孔？"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。"
+        },
+        {
+          "speaker": "player",
+          "text": "那把孔画清楚，绳从哪边穿也标一下，不就明白了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯……这样确实好多了。"
+        },
+        {
+          "speaker": "player",
+          "text": "看得准，画下来也未必让人看得准。"
+        },
+        {
+          "speaker": "npc",
+          "text": "行，这回算你帮了我。旁边再补两句说明，省得顾师兄也问我为什么画萝卜。😄"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.05": {
+      "topic": "chat",
+      "label": "宗门外的小猫",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，我跟你说，那只小猫又来了！"
+        },
+        {
+          "speaker": "player",
+          "text": "哪只？"
+        },
+        {
+          "speaker": "npc",
+          "text": "就是我之前说的那只，尾巴尖灰灰的。"
+        },
+        {
+          "speaker": "player",
+          "text": "它现在还在宗门外头？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，有时能看见。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过它好像一点也不怕生人，见谁都想凑过去闻闻。"
+        },
+        {
+          "speaker": "player",
+          "text": "那倒挺大胆。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我想摸摸它，它却总在最后一步跑开。"
+        },
+        {
+          "speaker": "player",
+          "text": "可能还不够熟悉你。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是呀。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以我打算慢慢来，等它自己愿意靠近。"
+        },
+        {
+          "speaker": "player",
+          "text": "你还挺有耐心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对小动物当然有耐心！"
+        },
+        {
+          "speaker": "npc",
+          "text": "……对某些总来笑话我的人，就不一定了。🙂"
+        }
+      ],
+      "requires_done": [
+        "base.dialogue.xieyunshu.chat.01"
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.06": {
+      "topic": "chat",
+      "label": "远行的地图",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，你怎么总喜欢看地图？"
+        },
+        {
+          "speaker": "npc",
+          "text": "因为想看看以后能去哪里呀。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你想先去什么地方？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我还没决定。"
+        },
+        {
+          "speaker": "npc",
+          "text": "天河那边熟悉些，可我也想去没见过的地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "你不怕迷路？"
+        },
+        {
+          "speaker": "npc",
+          "text": "怕呀。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以才要先看地图嘛。"
+        },
+        {
+          "speaker": "player",
+          "text": "地图也不一定画得准。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我知道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "商队走过的路、当地人的消息，都得一起听。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我以后还想自己做一份行商图，记下哪里有什么特产，走哪条路方便。"
+        },
+        {
+          "speaker": "player",
+          "text": "那恐怕得用不少纸。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就多准备几本！"
+        },
+        {
+          "speaker": "npc",
+          "text": "反正我要去的地方，可不止一处。"
+        }
+      ],
+      "variants": [
+        {
+          "id": "draft",
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "云舒，你怎么总喜欢看地图？"
+            },
+            {
+              "speaker": "npc",
+              "text": "因为想看看以后能去哪里呀。"
+            },
+            {
+              "speaker": "player",
+              "text": "那你想先去什么地方？"
+            },
+            {
+              "speaker": "npc",
+              "text": "我还没决定。"
+            },
+            {
+              "speaker": "npc",
+              "text": "天河那边熟悉些，可我也想去没见过的地方。"
+            },
+            {
+              "speaker": "player",
+              "text": "你不怕迷路？"
+            },
+            {
+              "speaker": "npc",
+              "text": "怕呀。"
+            },
+            {
+              "speaker": "npc",
+              "text": "所以才要先看地图嘛。"
+            },
+            {
+              "speaker": "player",
+              "text": "地图也不一定画得准。"
+            },
+            {
+              "speaker": "npc",
+              "text": "我知道。"
+            },
+            {
+              "speaker": "npc",
+              "text": "商队走过的路、当地人的消息，都得一起听。"
+            },
+            {
+              "speaker": "npc",
+              "text": "我现在只记了几处熟悉的地方，算是份草稿。以后还想慢慢补成行商图，记下哪里有什么特产，走哪条路方便。"
+            },
+            {
+              "speaker": "player",
+              "text": "那恐怕得用不少纸。"
+            },
+            {
+              "speaker": "npc",
+              "text": "那就多准备几本！"
+            },
+            {
+              "speaker": "npc",
+              "text": "反正我要去的地方，可不止一处。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.07": {
+      "topic": "chat",
+      "label": "小时候的小船",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "我小时候拿一小块木头当船，蹲在水边，看它能漂到哪里。"
+        },
+        {
+          "speaker": "player",
+          "text": "最后漂远了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "没有。来一个小浪，它就横过来了，再退回脚边。"
+        },
+        {
+          "speaker": "player",
+          "text": "倒挺知道回家。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我还认真给它改过模样呢。觉得一定是前头太宽，才走不远。"
+        },
+        {
+          "speaker": "player",
+          "text": "改完有用吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有。改得太小，差点找不着了。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来谢小掌柜也做过赔本买卖。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那不算买卖，是我那时候还不懂船。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过后来再看真正出海的船，就更觉得有意思。明明也是在水上，怎么能带着那么多人和货，走那么远。"
+        }
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.08": {
+      "topic": "chat",
+      "label": "有点舍不得",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "云舒，以后真要出远门，离开熟悉的地方那么久，你不会舍不得？"
+        },
+        {
+          "speaker": "npc",
+          "text": "会呀。想去远方，又不代表不喜欢这里。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你还这么盼着？"
+        },
+        {
+          "speaker": "npc",
+          "text": "盼着去，也盼着能回来讲讲见闻。又不是出去一趟，就把这里都丢下了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "顾师兄教了我不少东西。宗门里的同门也都熟悉了，出门久了，肯定会惦记。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以我现在才要认真修炼，也要把做买卖的本事学好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "等有一天真正能自己做主，就不用只坐在这里想了。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我等着看谢大掌柜的商号开起来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哎呀，这称呼倒不错。借你吉言啦！"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined"
+      ],
+      "requires_done": [
+        "base.dialogue.xieyunshu.cultivation.joined"
+      ]
+    },
+    "base.dialogue.xieyunshu.visit.09": {
+      "topic": "chat",
+      "label": "清禾姐看过的地图",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，清禾姐看过我记的那份行商图草稿。"
+        },
+        {
+          "speaker": "player",
+          "text": "她怎么说？"
+        },
+        {
+          "speaker": "npc",
+          "text": "她没先问我什么时候才能去，倒先问，空着的几处准备记什么。"
+        },
+        {
+          "speaker": "player",
+          "text": "你怎么答的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "还没见过的地方，当然只能先空着呀。她说那正好，以后可以慢慢添。"
+        },
+        {
+          "speaker": "player",
+          "text": "她也想去远方看看？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，她想看看各地的医馆和药材。我们想留意的东西不一样，记下来交换着看，倒比一个人埋头记更有意思。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你的图还够写吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不够就添纸。这可比把东西都装进储物袋容易多了。😄"
+        },
+        {
+          "speaker": "player",
+          "text": "看来你们已经商量上了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是先说说打算。不过有人愿意认真听，我就更想把它做好。"
+        }
+      ],
+      "variants": [
+        {
+          "id": "heard_from_qinghe",
+          "lines": [
+            {
+              "speaker": "npc",
+              "text": "辰宇，清禾姐看过我记的那份行商图草稿。"
+            },
+            {
+              "speaker": "player",
+              "text": "她也跟我提起过。她看了以后怎么说？"
+            },
+            {
+              "speaker": "npc",
+              "text": "她没先问我什么时候才能去，倒先问，空着的几处准备记什么。"
+            },
+            {
+              "speaker": "player",
+              "text": "你怎么答的？"
+            },
+            {
+              "speaker": "npc",
+              "text": "还没见过的地方，当然只能先空着呀。她说那正好，以后可以慢慢添。"
+            },
+            {
+              "speaker": "player",
+              "text": "她也想看看远方的医馆和药材。"
+            },
+            {
+              "speaker": "npc",
+              "text": "对。我们想留意的东西不一样，记下来交换着看，倒比一个人埋头记更有意思。"
+            },
+            {
+              "speaker": "player",
+              "text": "那你的图还够写吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "不够就添纸。这可比把东西都装进储物袋容易多了。😄"
+            },
+            {
+              "speaker": "player",
+              "text": "看来你们已经商量上了。"
+            },
+            {
+              "speaker": "npc",
+              "text": "只是先说说打算。不过有人愿意认真听，我就更想把它做好。"
+            }
+          ],
+          "requires_dialogues": [
+            {
+              "npc_id": "base.npc.suqinghe",
+              "segment_id": "base.dialogue.suqinghe.visit.10"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "greetings": {
+    "low_ratio": 0.5,
+    "close_interval": 0,
+    "ordinary": [
+      "base.dialogue.xieyunshu.greeting.daily.01",
+      "base.dialogue.xieyunshu.greeting.daily.02",
+      "base.dialogue.xieyunshu.greeting.daily.03",
+      "base.dialogue.xieyunshu.greeting.daily.04",
+      "base.dialogue.xieyunshu.greeting.daily.05"
+    ],
+    "close": [],
+    "phases": [],
+    "once": [
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.intro_joined",
+        "requires_flags": [
+          "base.story.qinglan.joined"
+        ],
+        "excludes_flags": [
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.return",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.qinglan.first_town_return",
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.joined",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.xieyunshu.name_known"
+        ],
+        "excludes_flags": [
+          "base.story.xieyunshu.knows_joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.departure",
+        "requires_flags": [
+          "base.story.qinglan.departure_ready",
+          "base.story.xieyunshu.name_known"
+        ],
+        "excludes_flags": [
+          "base.story.qinglan.joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.cultivation",
+        "requires_flags": [
+          "base.story.cultivation.started",
+          "base.story.xieyunshu.knows_cultivation",
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.inquiry",
+        "requires_flags": [
+          "base.story.tianhe.material_inquiry_assigned",
+          "base.story.xieyunshu.knows_inquiry"
+        ],
+        "excludes_flags": [
+          "base.story.xieyunshu.compared_materials",
+          "base.story.tianhe.inquiry_completed"
+        ]
+      },
+      {
+        "entry": "base.dialogue.xieyunshu.greeting.inquiry_followup",
+        "requires_flags": [
+          "base.story.xieyunshu.compared_materials"
+        ],
+        "excludes_flags": [
+          "base.story.xieyunshu.result_disclosed"
+        ]
+      }
+    ],
+    "entries": {
+      "base.dialogue.xieyunshu.greeting.daily.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，来了？今天看货，还是聊点别的？"
+          }
+        ],
+        "requires_flags": [
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.daily.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "想找什么就说。拿不准的，我陪你一起看看。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.daily.03": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "等我把这一笔记完……好了，你说。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.daily.04": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇！这回想听宗门里的事，还是天河那边的见闻？"
+          }
+        ],
+        "requires_flags": [
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.daily.05": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "又见面啦。你有什么新鲜事，也讲给我听听。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.xieyunshu.name_known"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.intro_joined": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "来看看宗里的低阶法器和丹药？"
+          },
+          {
+            "speaker": "npc",
+            "text": "我叫谢云舒，是青岚宗的外门弟子，跟顾师兄来镇上当值。你想找什么，先跟我说说。"
+          },
+          {
+            "speaker": "player",
+            "text": "我叫张辰宇，也入了青岚宗。先前在镇上的药材铺做学徒，今日来看看。"
+          },
+          {
+            "speaker": "npc",
+            "text": "原来是同门。那你认药应该比我熟，你看不明白的器具可以问我，我有拿不准的药材，也能问问你。"
+          },
+          {
+            "speaker": "npc",
+            "text": "不过先看你的，我可不能一见面就把同门拉来帮忙。😄"
+          }
+        ],
+        "archive_topic": "chat",
+        "set_facts": [
+          "base.story.xieyunshu.name_known",
+          "base.story.xieyunshu.knows_joined"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.return": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "云舒，我从宗里回镇了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "辰宇，回镇上啦？正好碰上我当值，进来坐会儿。"
+          }
+        ],
+        "archive_topic": "chat",
+        "set_facts": [
+          "base.story.xieyunshu.knows_joined"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.joined": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "云舒，我入青岚宗了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "{player.surname}师弟，欢迎入宗！😄"
+          }
+        ],
+        "archive_topic": "chat",
+        "set_facts": [
+          "base.story.xieyunshu.knows_joined"
+        ]
+      },
+      "base.dialogue.xieyunshu.greeting.departure": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "云舒，我准备去青岚宗了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "你要来青岚宗？真的？那以后说不定就成同门啦！"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.xieyunshu.greeting.cultivation": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，修炼起来，和先前想的有什么不一样？"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.xieyunshu.greeting.inquiry": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "要我帮着看看？你先说手里有什么。"
+          }
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.xieyunshu.greeting.inquiry_followup": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "那些材料，后来查得怎么样了？"
+          }
+        ],
+        "archive_topic": "chat"
+      }
+    }
+  }
+}

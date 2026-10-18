@@ -31,10 +31,13 @@ func record_achievement(library: CultivationLibrary, book_id: String, stage: int
 
 func choose(library: CultivationLibrary, book_id: String, stage: int, choice: String) -> bool:
 	error = ""
+	choice = library.branch_key(book_id, choice)
 	if not library.books.has(book_id) or stage > level(book_id) or stage < 1: return _reject("尚未达到该功法重数")
 	if choice not in library.books[book_id].branches.get(str(stage), []): return _reject("该重没有此分支")
+	var unavailable := library.branch_unavailable_reason(book_id, stage, choice)
+	if not unavailable.is_empty(): return _reject(unavailable)
 	var previous := branch(book_id, stage)
-	if not previous.is_empty() and previous != choice: return _reject("已选分支不能直接重选；重置丹药模块尚未开放")
+	if not previous.is_empty() and previous != choice: return _reject("已选分支不能直接重选；当前阶段不开放重选或重置")
 	learned[book_id].branches[str(stage)] = choice
 	return true
 
@@ -53,7 +56,13 @@ func restore(data: Dictionary, library: CultivationLibrary, realm: int) -> bool:
 		for stage in range(1, int(entry.level) + 1):
 			if not candidate.record_achievement(library, id, stage, realm): return _reject(candidate.error)
 		for stage: String in entry.branches:
-			if not stage.is_valid_int() or str(int(stage)) != stage or not entry.branches[stage] is String or not candidate.choose(library, id, int(stage), entry.branches[stage]): return _reject("学习分支存档无效")
+			if not stage.is_valid_int() or str(int(stage)) != stage or not entry.branches[stage] is String: return _reject("学习分支存档无效")
+			var choice: String = library.branch_key(id, entry.branches[stage])
+			if int(stage) < 1 or int(stage) > int(entry.level) or choice not in library.books[id].branches.get(stage, []): return _reject("学习分支存档无效")
+			# Previously selectable, inactive link branches become pending. Preserve
+			# achieved stages and all working choices; loading itself writes no file.
+			if not library.branch_unavailable_reason(id, int(stage), choice).is_empty(): continue
+			if not candidate.choose(library, id, int(stage), choice): return _reject("学习分支存档无效")
 	learned = candidate.learned
 	return true
 

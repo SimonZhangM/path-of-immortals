@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.earth_01",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《坤元地脉录》 技艺",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "寻脉",
+          "description": "：发现普通探索难察觉的隐藏矿点；已发现普通矿点的采集不以此为前提。"
+        },
+        {
+          "name": "辨矿",
+          "description": "：判断矿材种类、品质和潜在产量。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "丰采",
+          "description": "：提高矿材总收获。"
+        },
+        {
+          "name": "精采",
+          "description": "：提高优质矿材收获。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "寻珍",
+          "description": "：寻找稀有矿材与伴生矿。"
+        },
+        {
+          "name": "识性",
+          "description": "：识别带属性材料的特性。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "深采",
+          "description": "：偏重深层珍贵核心矿材。"
+        },
+        {
+          "name": "广纳",
+          "description": "：扩大伴生材料的采集收益。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "天成",
+          "description": "：提高高品质矿材获取上限。"
+        },
+        {
+          "name": "丰藏",
+          "description": "：提高高阶稀有材料获取数量。"
+        }
+      ]
+    }
+  ]
+}

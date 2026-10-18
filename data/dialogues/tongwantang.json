@@ -1,0 +1,1443 @@
+{
+  "id": "base.npc.tongwantang",
+  "name": "佟晚棠",
+  "age": 32,
+  "portrait": "res://assets/ui-portrait-tongwantang.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.tongwantang.welcome",
+  "topics": [
+    {
+      "id": "inn",
+      "label": "客栈近况",
+      "initial": [
+        "base.dialogue.tongwantang.inn.01",
+        "base.dialogue.tongwantang.inn.02"
+      ],
+      "revisits": [],
+      "story": []
+    },
+    {
+      "id": "news",
+      "label": "往来消息",
+      "initial": [
+        "base.dialogue.tongwantang.news.01",
+        "base.dialogue.tongwantang.news.02"
+      ],
+      "revisits": [
+        "base.dialogue.tongwantang.news.privacy"
+      ],
+      "story": [
+        "base.dialogue.tongwantang.story.qian",
+        "base.dialogue.tongwantang.story.road"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 1
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.tongwantang.chat.01",
+        "base.dialogue.tongwantang.chat.02"
+      ],
+      "revisits": [
+        "base.dialogue.tongwantang.visit.01",
+        "base.dialogue.tongwantang.visit.02",
+        "base.dialogue.tongwantang.visit.03",
+        "base.dialogue.tongwantang.visit.04",
+        "base.dialogue.tongwantang.visit.05",
+        "base.dialogue.tongwantang.visit.06",
+        "base.dialogue.tongwantang.visit.07",
+        "base.dialogue.tongwantang.visit.08"
+      ],
+      "story": [
+        "base.dialogue.tongwantang.story.return"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 2
+    }
+  ],
+  "clues": {},
+  "segments": {
+    "base.dialogue.tongwantang.welcome": {
+      "topic": "welcome",
+      "label": "初次欢迎",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，来啦。站门口做什么，里面有地方。"
+        },
+        {
+          "speaker": "npc",
+          "text": "今天想跟佟姐聊点什么？"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.inn.01": {
+      "topic": "inn",
+      "label": "客栈近况",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，住店的客人走了，有时留下的几句话，比夸一句“住得不错”还管用。"
+        },
+        {
+          "speaker": "player",
+          "text": "什么话？"
+        },
+        {
+          "speaker": "npc",
+          "text": "窗扇夜里会不会响，灯放得顺不顺手，水盆搁在那儿碍不碍脚。都是些小事。"
+        },
+        {
+          "speaker": "player",
+          "text": "这些您自己不也看得见？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我在店里走惯了，有些地方知道该绕。头一回来的人不知道，才容易看出哪里不方便。"
+        },
+        {
+          "speaker": "player",
+          "text": "客人一说，您就改？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先去看看。真是摆得不合适，挪一挪就是。有人喜欢靠街，有人喜欢清静，这种就得安排房间时问清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "怪不得您有时还亲自上楼瞧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "房间收拾过了，也得有人去看一眼。不能自己觉得差不多，就让客人将就着住。"
+        },
+        {
+          "speaker": "player",
+          "text": "这么多小事，都得一直留心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是啊。不过真把它们理顺了，后面也省事。阿顺不用来回跑，客人也不必夜里起来找人。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.inn.02": {
+      "topic": "inn",
+      "label": "住店有什么讲究？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟姐，我家就在镇上，倒真没怎么住过客栈。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你有家可回，自然回家住。清石客栈主要招待的是赶路的人，总得给人找个安稳落脚的地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "那以后去了别的城镇，我就得学着挑客栈了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "先问房间有没有空，价钱怎么算，再看看自己住得方不方便。别东西都搬进去了，才发现彼此没说清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "贵些的就一定好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "未必。有人图清静，有人图离办事的地方近。你要的是什么，先想明白。"
+        },
+        {
+          "speaker": "player",
+          "text": "若是赶路受了伤，住下来歇歇呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "能在这里安顿，当然可以。寻常伤势与疲乏可以歇养；反复发作、需要专门诊治的病症，还得请大夫看看。"
+        },
+        {
+          "speaker": "player",
+          "text": "一个是有地方休养，一个是替人诊治。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。我把住的地方安排好，医馆的事交给大夫，各做各擅长的。"
+        },
+        {
+          "speaker": "player",
+          "text": "听明白了。往后出门，不能只看招牌大不大。"
+        },
+        {
+          "speaker": "npc",
+          "text": "招牌大，隔着街好找；住得舒不舒服，还得进门再看。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.news.01": {
+      "topic": "news",
+      "label": "往来消息",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟姐，最近镇上有什么新鲜事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "青岚宗来商铺当值的两位弟子，在我这里用过饭。小姑娘叫谢云舒，同行的是她师兄顾承岳。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来他们也会来这里用饭。"
+        },
+        {
+          "speaker": "npc",
+          "text": "来往几次，便熟些了。阿顺原想听两句仙门故事，结果云舒倒先问起客人从哪里来、路上有什么没见过的货。"
+        },
+        {
+          "speaker": "player",
+          "text": "她对这些有兴趣？"
+        },
+        {
+          "speaker": "npc",
+          "text": "很有兴趣。别人讲到远处的货市，她听得比阿顺还认真。"
+        },
+        {
+          "speaker": "player",
+          "text": "宗门的事情，她也会讲吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "知道的会说，不知道的也不装懂。她自己就是外门弟子，许多事还在学。"
+        },
+        {
+          "speaker": "player",
+          "text": "那有些想弄明白的事情，我可以去宗门商铺问问。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可以，碰上她当值便问。你们年纪相近，没准还聊得来。"
+        }
+      ],
+      "variants": [
+        {
+          "id": "later_cultivation",
+          "requires_flags": [
+            "base.story.xieyunshu.beyond_qi_refining"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "佟姐，最近镇上有什么新鲜事？"
+            },
+            {
+              "speaker": "npc",
+              "text": "青岚宗来商铺当值的两位弟子，在我这里用过饭。小姑娘叫谢云舒，同行的是她师兄顾承岳。"
+            },
+            {
+              "speaker": "player",
+              "text": "原来他们也会来这里用饭。"
+            },
+            {
+              "speaker": "npc",
+              "text": "来往几次，便熟些了。阿顺原想听两句仙门故事，结果云舒倒先问起客人从哪里来、路上有什么没见过的货。"
+            },
+            {
+              "speaker": "player",
+              "text": "她对这些有兴趣？"
+            },
+            {
+              "speaker": "npc",
+              "text": "很有兴趣。别人讲到远处的货市，她听得比阿顺还认真。"
+            },
+            {
+              "speaker": "player",
+              "text": "宗门的事情，她也会讲吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "知道的会说，不知道的也不装懂。刚来当值那阵，她还常说宗门里有许多东西要慢慢学。"
+            },
+            {
+              "speaker": "player",
+              "text": "那有些想弄明白的事情，我可以去宗门商铺问问。"
+            },
+            {
+              "speaker": "npc",
+              "text": "有空碰上她，便聊聊。你们年纪相近，没准聊得来。"
+            }
+          ]
+        },
+        {
+          "id": "same_sect_known",
+          "requires_flags": [
+            "base.story.qinglan.joined",
+            "base.story.xieyunshu.name_known"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "佟姐，最近镇上有什么新鲜事？"
+            },
+            {
+              "speaker": "npc",
+              "text": "青岚宗来商铺当值的两位弟子，在我这里用过饭。小姑娘叫谢云舒，同行的是她师兄顾承岳。"
+            },
+            {
+              "speaker": "player",
+              "text": "我在宗门铺和她说过话。"
+            },
+            {
+              "speaker": "npc",
+              "text": "来往几次，便熟些了。阿顺原想听两句仙门故事，结果云舒倒先问起客人从哪里来、路上有什么没见过的货。"
+            },
+            {
+              "speaker": "player",
+              "text": "她对这些有兴趣？"
+            },
+            {
+              "speaker": "npc",
+              "text": "很有兴趣。别人讲到远处的货市，她听得比阿顺还认真。"
+            },
+            {
+              "speaker": "player",
+              "text": "宗门的事情，她也会讲吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "知道的会说，不知道的也不装懂。她自己就是外门弟子，许多事还在学。"
+            },
+            {
+              "speaker": "player",
+              "text": "如今同在青岚宗，有空倒可以多聊聊。"
+            },
+            {
+              "speaker": "npc",
+              "text": "那就更方便了。各自忙完了，再坐下说说话。"
+            }
+          ]
+        },
+        {
+          "id": "same_sect",
+          "requires_flags": [
+            "base.story.qinglan.joined"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "佟姐，最近镇上有什么新鲜事？"
+            },
+            {
+              "speaker": "npc",
+              "text": "青岚宗来商铺当值的两位弟子，在我这里用过饭。小姑娘叫谢云舒，同行的是她师兄顾承岳。"
+            },
+            {
+              "speaker": "player",
+              "text": "原来他们也会来这里用饭。"
+            },
+            {
+              "speaker": "npc",
+              "text": "来往几次，便熟些了。阿顺原想听两句仙门故事，结果云舒倒先问起客人从哪里来、路上有什么没见过的货。"
+            },
+            {
+              "speaker": "player",
+              "text": "她对这些有兴趣？"
+            },
+            {
+              "speaker": "npc",
+              "text": "很有兴趣。别人讲到远处的货市，她听得比阿顺还认真。"
+            },
+            {
+              "speaker": "player",
+              "text": "宗门的事情，她也会讲吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "知道的会说，不知道的也不装懂。她自己就是外门弟子，许多事还在学。"
+            },
+            {
+              "speaker": "player",
+              "text": "如今同在青岚宗，有空倒可以多聊聊。"
+            },
+            {
+              "speaker": "npc",
+              "text": "那就更方便了。各自忙完了，再坐下说说话。"
+            }
+          ]
+        },
+        {
+          "id": "met_xie",
+          "requires_flags": [
+            "base.story.xieyunshu.name_known"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "佟姐，最近镇上有什么新鲜事？"
+            },
+            {
+              "speaker": "npc",
+              "text": "青岚宗来商铺当值的两位弟子，在我这里用过饭。小姑娘叫谢云舒，同行的是她师兄顾承岳。"
+            },
+            {
+              "speaker": "player",
+              "text": "我在宗门铺和她说过话。"
+            },
+            {
+              "speaker": "npc",
+              "text": "来往几次，便熟些了。阿顺原想听两句仙门故事，结果云舒倒先问起客人从哪里来、路上有什么没见过的货。"
+            },
+            {
+              "speaker": "player",
+              "text": "她对这些有兴趣？"
+            },
+            {
+              "speaker": "npc",
+              "text": "很有兴趣。别人讲到远处的货市，她听得比阿顺还认真。"
+            },
+            {
+              "speaker": "player",
+              "text": "宗门的事情，她也会讲吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "知道的会说，不知道的也不装懂。她自己就是外门弟子，许多事还在学。"
+            },
+            {
+              "speaker": "player",
+              "text": "那有空我再去找她聊聊。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好呀。她来镇上当值的时候，你们得空便说说话。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.news.02": {
+      "topic": "news",
+      "label": "河湾路上的提醒",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "还有件进山的事。有位从河湾回来的客人说，在路旁看见野猪拱土，便远远绕开了。"
+        },
+        {
+          "speaker": "player",
+          "text": "没与它撞上？"
+        },
+        {
+          "speaker": "npc",
+          "text": "没有。人家说的是“看见”，阿顺听得兴起，差点讲成野猪把路堵了。"
+        },
+        {
+          "speaker": "player",
+          "text": "这可差远了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是呀。我把原话问明白了，给要进山的人提个醒，别只顾赶路，不看周围动静。"
+        },
+        {
+          "speaker": "player",
+          "text": "他有没有说清是哪一段？"
+        },
+        {
+          "speaker": "npc",
+          "text": "没说准具体地方，所以我也不能胡指一处。只知道是从河湾那边回来。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我下次进山时留意些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。有个提醒就好，不必为了听来的一句话，专门去找那头野猪。"
+        }
+      ],
+      "variants": [
+        {
+          "id": "earlier_reminder",
+          "requires_flags": [
+            "base.story.tongwantang.road_news_ready"
+          ],
+          "lines": [
+            {
+              "speaker": "npc",
+              "text": "说起河湾，先前还有位客人提过，他在路旁看见野猪拱土，远远绕开了。"
+            },
+            {
+              "speaker": "player",
+              "text": "只是看见，没有撞上？"
+            },
+            {
+              "speaker": "npc",
+              "text": "嗯。阿顺听得兴起，差点讲成野猪把路堵了。我又去问过，那客人说的只是看见。"
+            },
+            {
+              "speaker": "player",
+              "text": "当时有没有说准是哪一段路？"
+            },
+            {
+              "speaker": "npc",
+              "text": "没有，所以我没给人指具体地方。这件事早些时候就听说了，不能算作眼下新来的消息。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.news.privacy": {
+      "topic": "news",
+      "label": "替人留句话",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟姐，若有人来找住店的客人，您会替他们引见吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "可以先帮着留话，问问那位客人愿不愿意见。"
+        },
+        {
+          "speaker": "player",
+          "text": "不能直接告诉他住在哪间？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不能。来住店的人，总得放心把门关上歇着。"
+        },
+        {
+          "speaker": "npc",
+          "text": "人家带了什么、什么时候动身，也不是谁来问，我就能说。"
+        },
+        {
+          "speaker": "player",
+          "text": "要是真有急事呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "把来意讲清楚，我先帮着联系。真出了需要处理的事情，也不能只凭来人的一面之词，就把另一位的事全交代了。"
+        },
+        {
+          "speaker": "player",
+          "text": "明白。您可以帮忙传话，但由住客自己决定见不见。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。热情归热情，总得让住在这里的人安心。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟掌柜，这间客栈以前好像没这么大吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那当然。现在这两层楼，可不是一下子就有的。"
+        },
+        {
+          "speaker": "player",
+          "text": "我小时候只记得这里有个酒肆。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你倒记得清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "当年我跟老方接手的时候，地方不大，桌椅也旧。"
+        },
+        {
+          "speaker": "player",
+          "text": "那后来怎么想到开客栈了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "来往的客人多了，常有人吃完饭问能不能留宿。"
+        },
+        {
+          "speaker": "npc",
+          "text": "起初我们只是收拾出些地方，后来生意慢慢稳当，才想着把楼上也好好修一修。"
+        },
+        {
+          "speaker": "player",
+          "text": "那可得花不少钱。"
+        },
+        {
+          "speaker": "npc",
+          "text": "花钱，更花心思。"
+        },
+        {
+          "speaker": "npc",
+          "text": "桌椅坏了要修，屋顶漏水要补。好不容易把客房弄齐整了，后厨又嫌地方不够。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着倒像处处都要改。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可不是嘛。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过看着它一点点变成现在这样，心里也高兴。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪您这么熟悉做客栈的门道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我娘家原本就开过茶摊和小客店，从小帮着招呼人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "到了自己当掌柜，才知道会招呼客人是一回事，把整间店管好又是另一回事。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您如今算是得心应手了吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "大体还成。就是一天到晚仍有操不完的心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过客人进来有地方坐，饭能吃好，夜里也能安安稳稳睡上一觉，这份忙活就没白费。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.chat.02": {
+      "topic": "chat",
+      "label": "方师傅和阿顺",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟掌柜，您和方师傅平日怎么分工？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他管后厨，我管前堂。"
+        },
+        {
+          "speaker": "npc",
+          "text": "真忙起来，也没分得那么清楚。我要是见他忙不过来，会进去搭把手；他空下来，也会帮着搬东西。"
+        },
+        {
+          "speaker": "player",
+          "text": "我听说方师傅不大喜欢在前面招呼客人？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他话少些，喜欢守着锅灶。"
+        },
+        {
+          "speaker": "npc",
+          "text": "老方不爱挨桌招呼，可真有人喜欢他的菜，问到怎么做的，他也愿意多说两句。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来只是没聊到他喜欢的事情。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可不是。有些菜我听他说过好几回了，他还觉得能再改一改。"
+        },
+        {
+          "speaker": "player",
+          "text": "那阿顺呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那小子恰好反过来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "人还没走到跟前，招呼声就先到了。"
+        },
+        {
+          "speaker": "player",
+          "text": "他做事挺勤快的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是勤快，也肯学。就是有时候一心想着快点做完，反倒把事情弄乱了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您平日得操不少心吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "操心归操心，大家也都能替我分担。"
+        },
+        {
+          "speaker": "npc",
+          "text": "一间客栈，可不是我一个人站在柜台后头，就能开起来的。"
+        },
+        {
+          "speaker": "player",
+          "text": "听您这么说，倒像是一家人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "老方本来就是我家里人。阿顺跟着我们做事久了，也熟得很。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好啦，再聊下去，等会儿他听见我夸他，又该跑过来问我是不是真的了。😄"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.01": {
+      "topic": "chat",
+      "label": "老方的那锅汤",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，闻见后厨的香味没有？"
+        },
+        {
+          "speaker": "player",
+          "text": "闻见了。方师傅又炖什么好吃的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "山菌鸡汤。老方说这回火候正合适。"
+        },
+        {
+          "speaker": "player",
+          "text": "他每次都这么说吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，也不是。若是没做好，他自己比谁都先尝得出来。"
+        },
+        {
+          "speaker": "player",
+          "text": "您不是也会做饭吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "会做。不过他更爱琢磨这些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时候客人说哪道菜不错，我记在账旁边，他回头还要问我具体怎么说的。"
+        },
+        {
+          "speaker": "player",
+          "text": "怪不得客栈里总有熟客。"
+        },
+        {
+          "speaker": "npc",
+          "text": "饭菜好吃，人又吃得舒心，自然愿意回来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "老方爱琢磨这些，得空还会再试试别的做法。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.02": {
+      "topic": "chat",
+      "label": "靠窗的那张桌子",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟掌柜，您这儿靠窗的位置怎么总有人坐？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有人喜欢敞亮，有人想看看外头的街景。"
+        },
+        {
+          "speaker": "player",
+          "text": "那要是几个人都想坐呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先来后到呗。真要坐不下，再问愿不愿意拼桌。"
+        },
+        {
+          "speaker": "player",
+          "text": "我看有些熟客一进门，就往固定的地方走。"
+        },
+        {
+          "speaker": "npc",
+          "text": "习惯了嘛。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有人喜欢靠窗，有人专挑安静的角落。还有人每回来都说随便坐，等真让他随便坐了，又总要换一回。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您能记得住？"
+        },
+        {
+          "speaker": "npc",
+          "text": "常来的记得一些。不过人的习惯也会变，不能记住一次，就替人家次次做主。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来“随便坐”也不一定真是随便。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以我先问一句，省得端了茶、上了菜，还得再搬一回。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.03": {
+      "topic": "chat",
+      "label": "不抢着说马上了",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "阿顺近来做事，比先前稳多了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我也觉得他招呼客人挺利索。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不只是利索。客人问菜还要等多久，他现在先去后厨问清楚，再回来答，不抢着喊“马上”。"
+        },
+        {
+          "speaker": "player",
+          "text": "客人催得急，他也沉得住？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。能先端什么、还有什么得候着，他说得明白，客人也少追着问。"
+        },
+        {
+          "speaker": "player",
+          "text": "是您教他的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我提过，老方也教过。不过真用到前堂，还得他自己记着去做。"
+        },
+        {
+          "speaker": "player",
+          "text": "您夸他了没有？"
+        },
+        {
+          "speaker": "npc",
+          "text": "夸了。他听完挺高兴，转身又去忙了，倒没像从前那样追着问我是不是当真。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来是真长进了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是。往后还有得学，可已经能替我们分担不少事了。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.04": {
+      "topic": "chat",
+      "label": "方师傅的话不多",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟掌柜，您平日这么爱说话，方师傅却那么安静，倒挺有意思。"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么，我话很多吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "没有，没有。我是说您招呼客人很周到。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这还差不多。🙂"
+        },
+        {
+          "speaker": "player",
+          "text": "您和方师傅，平日也这样一个说、一个听？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时候吧。老方其实有不少想法，只是不爱把每件事都挂在嘴上。"
+        },
+        {
+          "speaker": "npc",
+          "text": "比如他想添一道菜，未必先跟我说。可能自己试上两回，觉得有把握了，才端来让我尝尝。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您尝完怎么说？"
+        },
+        {
+          "speaker": "npc",
+          "text": "好吃就夸，不合适就告诉他。"
+        },
+        {
+          "speaker": "player",
+          "text": "他不会生气？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他自己还要改呢。真觉得不好吃，难道因为是夫妻就非得夸？"
+        },
+        {
+          "speaker": "player",
+          "text": "也对。"
+        },
+        {
+          "speaker": "npc",
+          "text": "过日子嘛，各有各的脾气，能一起把事做好，比什么都强。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.05": {
+      "topic": "chat",
+      "label": "账本上的规矩",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟掌柜，您每天接待这么多客人，账目不好记吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不好记也得记。哪桌吃了什么，哪间房住了多久，都要对清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "那要是有人嫌贵呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "菜没点之前可以慢慢看价钱。真觉得不合适，换一道便是。"
+        },
+        {
+          "speaker": "player",
+          "text": "要是吃完才说贵呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那我就把账拿给他看，咱们一笔笔说清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "您不怕客人真闹起来？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然会担心。所以能把话说清，就先把话说清。真闹得厉害，要先顾着旁的客人，也得找人来处理。"
+        },
+        {
+          "speaker": "player",
+          "text": "您不自己跟他争到底？"
+        },
+        {
+          "speaker": "npc",
+          "text": "账可以慢慢核，人不能为了争一口气受伤。我也不会让阿顺硬顶上去。"
+        },
+        {
+          "speaker": "npc",
+          "text": "守规矩，不是非得靠自己一个人把所有事都扛下来。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.06": {
+      "topic": "chat",
+      "label": "下雨的时候",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟姐，开客栈遇上下雨天，是更忙还是更清闲？"
+        },
+        {
+          "speaker": "npc",
+          "text": "得看下多久。来避一阵雨的人多，前堂便忙；真下得路不好走，进镇的人也会少些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我小时候家里开茶摊，遇到下雨天，总得赶紧把外头的东西往里收。"
+        },
+        {
+          "speaker": "player",
+          "text": "您那时候也帮忙？"
+        },
+        {
+          "speaker": "npc",
+          "text": "帮呀。小的时候力气不够，就抱些轻的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "后来个子长高了，父亲便让我帮着撑棚子。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着挺忙。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那时候觉得忙，现在回头想想，倒也有趣。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是至今一看天色不好，还是会先抬头看看屋檐。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.07": {
+      "topic": "chat",
+      "label": "不声不响的照应",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "韩师傅有回来吃饭，刚坐下又往里挪了个位置。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来的地方不好坐？"
+        },
+        {
+          "speaker": "npc",
+          "text": "倒不是。阿顺端着汤经过，他看见那里转身不方便，就自己让开了些。"
+        },
+        {
+          "speaker": "player",
+          "text": "他有时候话少，这些倒都留意得到。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是呀。我还没开口，他已经把旁边的凳子也收好了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您连这种小事都记着？"
+        },
+        {
+          "speaker": "npc",
+          "text": "忙的时候，有人肯顺手搭一点方便，自己会知道。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您后来专门谢他了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "说了声，他点点头便吃饭去了。没再多讲什么。"
+        },
+        {
+          "speaker": "player",
+          "text": "这也像韩师傅。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。熟人来往，不一定每回都得聊得热闹。"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.visit.08": {
+      "topic": "chat",
+      "label": "为什么是清石？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "佟姐，镇名是青石，您招牌上怎么多了三点水？"
+        },
+        {
+          "speaker": "npc",
+          "text": "没看错，那三点水是特意添的。请人写招牌时，我还专门叮嘱过呢。"
+        },
+        {
+          "speaker": "player",
+          "text": "有什么来历？"
+        },
+        {
+          "speaker": "npc",
+          "text": "刚接下这间旧酒肆的时候，门前石阶积着灰，瞧着灰蒙蒙的。我和老方提了水，蹲在门口刷了好一阵。"
+        },
+        {
+          "speaker": "player",
+          "text": "名字就从那时候想出来的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。灰一洗掉，石头原本的颜色露出来，整个门口都清爽了。那时候屋里还没收拾齐整，我倒先觉得，这地方能好好做起来。"
+        },
+        {
+          "speaker": "player",
+          "text": "所以是清水洗过青石的意思？"
+        },
+        {
+          "speaker": "npc",
+          "text": "差不多。借着青石镇的名字，又添一点我们自己的意思。来住店的人，进门清清爽爽，歇得踏实，就很好。"
+        },
+        {
+          "speaker": "player",
+          "text": "方师傅也赞成？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他赞成。还说既然叫了这个名，往后门前的石阶可更得扫干净。"
+        },
+        {
+          "speaker": "player",
+          "text": "这是给自己添了件长久的活儿。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可不是。好在他也不是只会动嘴的，该收拾的时候，照样提桶出来。🙂"
+        }
+      ]
+    },
+    "base.dialogue.tongwantang.story.qian": {
+      "topic": "news",
+      "label": "钱掌柜说起的事",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "钱掌柜来坐过，说河湾遇上野猪，多亏你帮忙才脱了险。"
+        },
+        {
+          "speaker": "player",
+          "text": "他跟您说了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。讲得比平日慢些，看来是真后怕。"
+        },
+        {
+          "speaker": "player",
+          "text": "人平安回来就好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是这个理。往后有人问起河湾的路，我会提醒那边发生过野猪袭人的事。"
+        },
+        {
+          "speaker": "player",
+          "text": "佟姐，您可别把我讲得太厉害。"
+        },
+        {
+          "speaker": "npc",
+          "text": "放心。你做过什么，就是什么，我不替你添。"
+        },
+        {
+          "speaker": "npc",
+          "text": "更不会把你的事当成每桌客人都得听一遍的故事。"
+        },
+        {
+          "speaker": "player",
+          "text": "那就好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过你帮过人，这件事也不用往小了说。你自己记得当时怎么应对，往后用得上。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed",
+        "base.story.tongwantang.qian_told_rescue"
+      ]
+    },
+    "base.dialogue.tongwantang.story.road": {
+      "topic": "news",
+      "label": "山路上的说法变了",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "最近经过客栈的人，还会提河湾那边吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "会。这阵子有人吃完饭，不急着动身，先问有没有同路的人。"
+        },
+        {
+          "speaker": "player",
+          "text": "想结伴走？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。以前多问天黑前能走到哪儿，如今有些人宁肯多等一阵，也想找个伴。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来路上的事，确实让人更小心了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "至少这些客人是这样打算的。我就帮他们问问前堂，不替人担保哪条路一定平安。"
+        },
+        {
+          "speaker": "player",
+          "text": "也算让赶路的人心里有些底。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是呀。出门在外，有时知道谁也往那个方向走，就能少些慌张。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tongwantang.road_news_ready"
+      ]
+    },
+    "base.dialogue.tongwantang.story.return": {
+      "topic": "chat",
+      "label": "回来办事",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，回镇上啦？山上的日子过得怎么样？"
+        },
+        {
+          "speaker": "player",
+          "text": "要学的东西不少。这趟回来，也有些事情要办。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那先忙你的。得空再来坐，不用一回来就挨家报到。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还怕来得少了，您说我进了仙门就不认人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我哪有那么不讲理？你有自己的正事了，我看得出来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "愿意回来跟我们说两句，大家自然高兴，可不是要记你几时来了、几时没来。"
+        },
+        {
+          "speaker": "player",
+          "text": "好。忙完了，我再来坐坐。"
+        },
+        {
+          "speaker": "npc",
+          "text": "行。想说话就坐下，跟从前一样，不必拘束。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined",
+        "base.story.qinglan.first_town_return",
+        "base.story.tongwantang.knows_joined",
+        "base.story.tongwantang.town_business_ready"
+      ]
+    }
+  },
+  "greetings": {
+    "low_ratio": 0.5,
+    "close_interval": 0,
+    "ordinary": [
+      "base.dialogue.tongwantang.greeting.daily.01",
+      "base.dialogue.tongwantang.greeting.daily.02",
+      "base.dialogue.tongwantang.greeting.daily.03",
+      "base.dialogue.tongwantang.greeting.daily.04",
+      "base.dialogue.tongwantang.greeting.daily.05",
+      "base.dialogue.tongwantang.greeting.daily.06"
+    ],
+    "close": [],
+    "phases": [],
+    "once": [
+      {
+        "entry": "base.dialogue.tongwantang.greeting.return_unknown",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.qinglan.first_town_return"
+        ],
+        "excludes_flags": [
+          "base.story.tongwantang.knows_joined",
+          "base.story.tongwantang.return_greeted"
+        ]
+      },
+      {
+        "entry": "base.dialogue.tongwantang.greeting.return_known",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.qinglan.first_town_return",
+          "base.story.tongwantang.knows_joined"
+        ],
+        "excludes_flags": [
+          "base.story.tongwantang.return_greeted"
+        ]
+      },
+      {
+        "entry": "base.dialogue.tongwantang.greeting.departure",
+        "requires_flags": [
+          "base.story.qinglan.departure_ready"
+        ],
+        "excludes_flags": [
+          "base.story.qinglan.joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.tongwantang.greeting.qian",
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.tongwantang.qian_told_rescue"
+        ],
+        "excludes_seen": [
+          "base.dialogue.tongwantang.story.qian"
+        ]
+      },
+      {
+        "entry": "base.dialogue.tongwantang.greeting.river",
+        "requires_flags": [
+          "base.story.tongwantang.knows_river_danger"
+        ],
+        "any_of": [
+          {
+            "requires_flags": [
+              "base.story.qingshihewan.danger_experienced"
+            ]
+          },
+          {
+            "requires_flags": [
+              "base.story.qingshihewan.rescue_completed"
+            ]
+          }
+        ]
+      },
+      {
+        "entry": "base.dialogue.tongwantang.greeting.long_return",
+        "requires_flags": [
+          "base.story.tongwantang.long_return_known"
+        ]
+      }
+    ],
+    "entries": {
+      "base.dialogue.tongwantang.greeting.daily.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，来啦？坐着说，别站在门口。"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.daily.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "找我呀？等我把这几笔记好……行了，你说。"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.daily.03": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "今儿想聊镇上的事，还是听听外头的见闻？"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.daily.04": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "来，往里坐。门口要走人，咱们别挡着。"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.daily.05": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "新消息可不是日日都有。不过说说家常，佟姐总能陪你聊几句。"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.daily.06": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，你也别总听我说。这回有没有什么有意思的事，讲给我听听？"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.return_unknown": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "佟姐，我已经拜入青岚宗了，这趟回镇来看看。"
+          },
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，回来啦。快坐，跟佟姐说说山上的日子。"
+          }
+        ],
+        "set_facts": [
+          "base.story.tongwantang.knows_joined",
+          "base.story.tongwantang.return_greeted"
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.tongwantang.greeting.return_known": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，回来啦。快坐，跟佟姐说说山上的日子。"
+          }
+        ],
+        "set_facts": [
+          "base.story.tongwantang.return_greeted"
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.tongwantang.greeting.departure": {
+        "lines": [
+          {
+            "speaker": "player",
+            "text": "佟姐，我准备去青岚宗了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "好事呀。叶伯教出来的孩子，也该出去见见世面了。"
+          }
+        ],
+        "set_facts": [
+          "base.story.tongwantang.knows_departure"
+        ],
+        "archive_topic": "chat"
+      },
+      "base.dialogue.tongwantang.greeting.qian": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "钱掌柜来过，提了河湾的事。{player.familiar_name}，得空咱们说说。"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.river": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "河湾那边的事，我听你说了。回来了就好，往后走那条路，还是多留神些。"
+          }
+        ]
+      },
+      "base.dialogue.tongwantang.greeting.long_return": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，回来啦？怎么样，外面的路好走不好走？"
+          }
+        ]
+      }
+    }
+  }
+}

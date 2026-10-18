@@ -1,0 +1,693 @@
+{
+  "schema_version": 1,
+  "selected_on": "2026-10-16",
+  "scope": "book_illustrations",
+  "selection_status": "user_confirmed",
+  "runtime_binding_status": "not_bound_as_of_selection",
+  "path_base": "repository_root",
+  "catalog": "data/cultivation_library.json",
+  "summary": {
+    "selected_books": 35,
+    "selected_per_element": 5,
+    "user_supplied_final": 12,
+    "user_selected_variant": 23,
+    "variant_01": 7,
+    "variant_02": 16,
+    "source_pngs": 58,
+    "unselected_alternates_preserved": 23
+  },
+  "books": [
+    {
+      "book_id": "base.cultivation_book.metal_01",
+      "element": "metal",
+      "title": "玄金百炼录",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/metal/UI-metal-xuanjinbailianlu-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "447caa971c20fe175f0653e452fb5fde5051f6283a62862cbd1732865f1fcff8",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/metal/UI-metal-xuanjinbailianlu-book.png",
+        "sha256": "7929dc258616b400e9168a2f5ee63c04535e09a685cd1661ef6cfcf581c0e776",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/xuanjinbailianlu.json"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_02",
+      "element": "metal",
+      "title": "庚金真解",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/metal/UI-metal-gengjinzhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "93befa0e89ab67f9170fd7c370d953086cf48ce4e9fae3158fad0d2f62ebfa87",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/metal/UI-metal-gengjinzhenjie-book.png",
+        "sha256": "b64fb30d17af8f76f3df75df73a1e23a2589b4f37a3829449c90c57e0920816f",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/gengjinzhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_03",
+      "element": "metal",
+      "title": "金煞藏锋经",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/metal/UI-metal-jinshacangfengjing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "0fda47c2a3389a26d2f2393fb438cecd034b7b1064c7978583eee96fe282306e",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/metal/UI-metal-jinshacangfengjing-book.png",
+        "sha256": "a2eec4ddb449db86f523eb17fd1709130e8e022191b1cf4f85ae6248b67cec4e",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/jinshacangfengjing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_04",
+      "element": "metal",
+      "title": "玄庚剑诀",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/metal/UI-metal-xuangengjianjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "9e8feb5fed1feeb0d45c2ae9bbcb83aa987b3ce7c294ba99fe8c7ff52760de22",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/metal/UI-metal-xuangengjianjue-book.png",
+        "sha256": "364a5ddb64df08c5e5e528a29a454bcf6391e58412b8cfcd79f1b4e7710a3667",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/xuangengjianjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_05",
+      "element": "metal",
+      "title": "百兵御灵诀",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/metal/UI-metal-baibingyulingjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "d15e8830e963e130945780debc14966095f55e8f9d425f70e81feb44f812cc5b",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/metal/UI-metal-baibingyulingjue-book.png",
+        "sha256": "2bed2cbe2f2b9968ac540c1a6484d15ed8167e1f4c004c3de492fcdb9443f8f3",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/baibingyulingjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_01",
+      "element": "wood",
+      "title": "百兽驭灵录",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/wood/UI-wood-baishouyulinglu-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "ae08ca3321d76ba146b636294540b0d2482735227b3b973bf72b1577e3a8eee4",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wood/UI-wood-baishouyulinglu-book.png",
+        "sha256": "abc1a298684938856c6d4120ad389c689026ab1ae21b4be523473319fb5e1046",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/baishouyulinglu.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_02",
+      "element": "wood",
+      "title": "青木真解",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/wood/UI-wood-qingmuzhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "1447fb01bd14dca37dd30da8e882c87dce28c75e132045c22296a31046d5b334",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wood/UI-wood-qingmuzhenjie-book.png",
+        "sha256": "bd4bb2ff4adf4df092685a4f221d1f42b8090e947d9d19666d5547cf4e183793",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/qingmuzhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_03",
+      "element": "wood",
+      "title": "枯荣生灭经",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/wood/UI-wood-kurongshengmiejing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "81889a4b30c563acf30ba11ee30cf8331dda7e203357e3902ef123cefafb771f",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wood/UI-wood-kurongshengmiejing-book.png",
+        "sha256": "aceaf4fc9738703fc59882dfe622a7b5f00958a963149be9075cbd734c191cb7",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/kurongshengmiejing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_04",
+      "element": "wood",
+      "title": "万木生杀诀",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/wood/UI-wood-wanmushengshajue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "6e56a36f70b6b952b7be43cf9a1581605208eeb68954ef0af54a15d87d8a4196",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wood/UI-wood-wanmushengshajue-book.png",
+        "sha256": "ab09fa1c6ba54fd69f3e4686f1cafc794acb7378a38e242d15c414b77bbbc8b0",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/wanmushengshajue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_05",
+      "element": "wood",
+      "title": "青萝化生诀",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/wood/UI-wood-qingluohuashengjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "5734eb28e4264c126461894c5322568d28fc0be23ce0eb85f069b2c6097b946a",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wood/UI-wood-qingluohuashengjue-book.png",
+        "sha256": "62dda0900daf1a7052f6fce67c7a9d91d4f2c871ce90feddb62eb09df793cd4c",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/qingluohuashengjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.water_01",
+      "element": "water",
+      "title": "灵墨玄符录",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/water/UI-water-lingmoxuanfulu-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "4b3a49670ea20da8e5402de7c51ab902720bcc1073d5db482d839c4083923f79",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/water/UI-water-lingmoxuanfulu-book.png",
+        "sha256": "b2c7ff860e185767472598436d18aebfd7188dcd6f065893ad0a7189b5d34ebe",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/lingmoxuanfulu.json"
+    },
+    {
+      "book_id": "base.cultivation_book.water_02",
+      "element": "water",
+      "title": "玄水真解",
+      "variant": null,
+      "selection_basis": "user_supplied_final",
+      "source_path": "output/imagegen/water/UI-water-xuanshuizhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "92882f192c1ed75ea4f68eea806a6c58223f8300ec1a4097c2fdf815b3a1d79f",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/water/UI-water-xuanshuizhenjie-book.png",
+        "sha256": "c6b2ff85565599aeeb257f8bcdbb1b18d6b5488bfffd6080760692589df7a445",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/xuanshuizhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.water_03",
+      "element": "water",
+      "title": "寒脉流转经",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/water/UI-water-hanmailiuzhuanjing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "9221edc37754d64b67114179ba311988a678f091e8b191041314ac847e636a20",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/water/UI-water-hanmailiuzhuanjing-book.png",
+        "sha256": "1d419923458b84592a0cbad89714ace2d58aa139243765ec99408f4fa20dcc4c",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/hanmailiuzhuanjing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.water_04",
+      "element": "water",
+      "title": "寒月凝冰诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/water/UI-water-hanyueningbingjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "0bc06c253d39724c359216fecbc765a0fc27319fae31bd9b70ab1ee858e0fd09",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/water/UI-water-hanyueningbingjue-book.png",
+        "sha256": "38b04250916590f024aee0867f66e6d6b0277f08891fe28cc8a2ff1e951999d6",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/hanyueningbingjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.water_05",
+      "element": "water",
+      "title": "沧澜燃灵诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/water/UI-water-canglanranlingjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "53499eeae4fbda684adc25a4af33560f12cf8f4f008b6c73bf819515e90376e5",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/water/UI-water-canglanranlingjue-book.png",
+        "sha256": "3ec2f3814067c938f66ecf8c44f66db0bc52c38dc15a8a3ef5c09531fa3df009",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/canglanranlingjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_01",
+      "element": "fire",
+      "title": "赤炉丹经",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/fire/UI-fire-chiludanjing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "46a7c9e1ad3f79bfd36cade786208a2b536c9ba069e708467cf811f90c049fdf",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/fire/UI-fire-chiludanjing-book.png",
+        "sha256": "a99350f7b13e7609bc681ffa65921f774f9c9e903b2164960b19cae9f1dc2549",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/chiludanjing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_02",
+      "element": "fire",
+      "title": "离火真解",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/fire/UI-fire-lihuozhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "d6261a93615330e0b752f24b843e3922286c0a7f8f0281d1e490193c1b6892f4",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/fire/UI-fire-lihuozhenjie-book.png",
+        "sha256": "1ca4fbf3b8c95ba0a1965364627b23ba86d3f20777ec58ffb83c2a8780a97bd9",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/lihuozhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_03",
+      "element": "fire",
+      "title": "炎煞流火经",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/fire/UI-fire-yanshaliuhuojing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "9c889c9a0341d8f0c3477b2fcfd8787b6303330930310c64139bcdcfcac506d7",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/fire/UI-fire-yanshaliuhuojing-book.png",
+        "sha256": "4433e53b340357e58031ea35f62b7e29cb616a8b9a74b68417647a18beca1dc0",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/yanshaliuhuojing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_04",
+      "element": "fire",
+      "title": "赤阳真火诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/fire/UI-fire-chiyangzhenhuojue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "fa658b572d2092fa947b3c2da0cad1e3f8cc0ba1ee4eef3ba37bedfce54a6456",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/fire/UI-fire-chiyangzhenhuojue-book.png",
+        "sha256": "c45205dd15e45c8af2888c80fd43c480fee3f334d26f70671c47032485799db0",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/chiyangzhenhuojue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_05",
+      "element": "fire",
+      "title": "离火燎原诀",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/fire/UI-fire-lihuoliaoyuanjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "84ec1545a176fbb8a28c8d6f0e10a9afb0a46a6dcefbb80a6af570c21960a250",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/fire/UI-fire-lihuoliaoyuanjue-book.png",
+        "sha256": "a9675c244425affe5f617427edaf7bdbf75b8d1b566617a6e14f27a2f02b6d77",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/lihuoliaoyuanjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_01",
+      "element": "earth",
+      "title": "坤元地脉录",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/earth/UI-earth-kunyuandimailu-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "bea7621d6ec44eaf647b451a9035a54b442a723221c2a390ee857dd3f87ac8c2",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/earth/UI-earth-kunyuandimailu-book.png",
+        "sha256": "0399be81eb4034d92cdb94ecedafd0476b15ab17743077443d3a4191aef4700a",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/kunyuandimailu.json"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_02",
+      "element": "earth",
+      "title": "厚土真解",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/earth/UI-earth-houtuzhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "617dc38f98f7c647ed6f39dff8592865d65e4c2bf738c39ca3610406869c0ee2",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/earth/UI-earth-houtuzhenjie-book.png",
+        "sha256": "76ccfff2bea5ea18a9a37d125c617e24fc5986ae1163d19090393eca43d256ed",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/houtuzhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_03",
+      "element": "earth",
+      "title": "镇岳沉元经",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/earth/UI-earth-zhenyuechenyuanjing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "85d78dacef4595911526d7ddd0fcd5d1a9ada78ad9b8a5a77c11be7765551af5",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/earth/UI-earth-zhenyuechenyuanjing-book.png",
+        "sha256": "a54b2030693497e1e27cf3a8bcac2f2dda637875ab50b2100227473f5c4a8e03",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/zhenyuechenyuanjing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_04",
+      "element": "earth",
+      "title": "撼岳裂地诀",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/earth/UI-earth-hanyueliedijue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "ad38bda9971be934c2bb6e60c583d5159c0a48285a7015608518bf73422cd9fd",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/earth/UI-earth-hanyueliedijue-book.png",
+        "sha256": "de3d9e21237c5474bbe72d0305227fce00643843992fa1c24241ce46aaa860b3",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/hanyueliedijue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_05",
+      "element": "earth",
+      "title": "不动玄岳诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/earth/UI-earth-budongxuanyuejue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "1c8a8d45736ba77254a349da3179ca652ffa4d419896bc7f8dc45c91057baa7a",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/earth/UI-earth-budongxuanyuejue-book.png",
+        "sha256": "dcc2bf5a55bd03be81541a5c29a736a82ff4fadc2cf9766d504d6518dce979ac",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/budongxuanyuejue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_01",
+      "element": "wind",
+      "title": "听风寻迹录",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/wind/UI-wind-tingfengxunjilu-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "9c172b3cf9e0dc72364d1a932c47f6d53d64cbad3c15f4b7df7363c90de9370f",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wind/UI-wind-tingfengxunjilu-book.png",
+        "sha256": "747716fca1ba3b898c616667c818f94ce6cee67d547a1a292be1a15d59593abd",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/tingfengxunjilu.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_02",
+      "element": "wind",
+      "title": "御风真解",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/wind/UI-wind-yufengzhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "00155a26b575507d995a07f4d01574d5ce06117ee574989005d0d9edf280451d",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wind/UI-wind-yufengzhenjie-book.png",
+        "sha256": "ffdc5933bace8366692a709843c116a51eb9b7fefb6d073eb1680e48a3a68733",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/yufengzhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_03",
+      "element": "wind",
+      "title": "流风无相经",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/wind/UI-wind-liufengwuxiangjing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "87e86eacd06b4297ca92d46c7cc6d067b4ebfa182a87ee6e2a8145030a74bac9",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wind/UI-wind-liufengwuxiangjing-book.png",
+        "sha256": "2c52bca742488f0af9f7eff3e0e8c1e6ef8d9c7ab3e867497a480b2c3f6ae1b5",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/liufengwuxiangjing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_04",
+      "element": "wind",
+      "title": "青冥破空诀",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/wind/UI-wind-qingmingpokongjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "550eff8459be43bf27efc8620c4766387f0296b2d0f3df96ef581a22196113fd",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wind/UI-wind-qingmingpokongjue-book.png",
+        "sha256": "ae59267b3db14eea2fc2c2ad1a0da1feec5942745327d49ee1f1111b562a6323",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/qingmingpokongjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_05",
+      "element": "wind",
+      "title": "听风无影诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/wind/UI-wind-tingfengwuyingjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "7a0d6e673200a6b83ead49a81d42f73a7dea51ef98568acd1b45adcba05c4f76",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/wind/UI-wind-tingfengwuyingjue-book.png",
+        "sha256": "2c6b1419fc1da45fb38d53f18bc9be8bd02e7c6a53089af1271ec3fb7b17dd6a",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/tingfengwuyingjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_01",
+      "element": "thunder",
+      "title": "玄枢阵录",
+      "variant": "01",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/thunder/UI-thunder-xuanshuzhenlu-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "11c4ac199b60e8b94652e4588b608b45c7a4bfdcba835724b79bd883380f1c0d",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/thunder/UI-thunder-xuanshuzhenlu-book.png",
+        "sha256": "5f4d506e6843760b56ef08511c5e9178b74bfb44c2b97435d8d2578918e89316",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/xuanshuzhenlu.json"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_02",
+      "element": "thunder",
+      "title": "天雷真解",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/thunder/UI-thunder-tianleizhenjie-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "f77fbb85e96add0b355edb019c2c3d79f48092b82ca0676715d94e1ee73fa136",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/thunder/UI-thunder-tianleizhenjie-book.png",
+        "sha256": "00a10ef636df0dc8698581f606c497cc31c5eaacb209b060a33636fb27637d4a",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/tianleizhenjie.json"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_03",
+      "element": "thunder",
+      "title": "雷池引霆经",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/thunder/UI-thunder-leichiyintingjing-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "e1ea3ddd3498cd1b7cd327adff5f8f508ffca4c6855e5c7f22b0c5f49ec55492",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/thunder/UI-thunder-leichiyintingjing-book.png",
+        "sha256": "02007e4debc652909d6d5cdc9298812db922f2e5c3886d6d44203395827a2dfb",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/leichiyintingjing.json"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_04",
+      "element": "thunder",
+      "title": "九霄霆光诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/thunder/UI-thunder-jiuxiaotingguangjue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "141e338d2e88b905d8e6cbfab0fd3e6cb03ba3110a2b5333a30a6c9b54e754e8",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/thunder/UI-thunder-jiuxiaotingguangjue-book.png",
+        "sha256": "244a1d5f053b06fa9ee51158e36a37df620f914e093272a13daaac5468f0f8d9",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/jiuxiaotingguangjue.json"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_05",
+      "element": "thunder",
+      "title": "雷罡镇狱诀",
+      "variant": "02",
+      "selection_basis": "user_selected_variant",
+      "source_path": "output/imagegen/thunder/UI-thunder-leigangzhenyujue-book.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "d9417523d19266e9632859088eaded5bf5d79b8a503998f90681fe50cc0b93a6",
+      "original_selection_image": {
+        "path": "output/imagegen/backup/books-before-square-side-tassels-2026-10-17/thunder/UI-thunder-leigangzhenyujue-book.png",
+        "sha256": "a2c189a334a63b66047baf94dd2dc8dca654f3da25223562b7552564cec8cf1b",
+        "width": 1086,
+        "height": 1448
+      },
+      "revision": "square-left-side-tassel-2026-10-17",
+      "generation_record": "output/imagegen/_generation/book-square-side-tassels-2026-10-17/leigangzhenyujue.json"
+    }
+  ],
+  "art_revision": {
+    "id": "square-left-side-tassel-2026-10-17",
+    "revised_on": "2026-10-17",
+    "count": 35,
+    "original_user_variant_selection_preserved": true,
+    "runtime_assets_updated": false
+  }
+}

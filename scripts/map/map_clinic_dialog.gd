@@ -43,6 +43,9 @@ var _hei := SystemFont.new()
 var _topic_font := SystemFont.new()
 var _continue_pointer_down := false
 var _continue_press_position := Vector2.ZERO
+# Presentation only: reading the last greeting line does not reveal topic cards.
+var _greeting_id := ""
+var _topics_opened := false
 
 func _init() -> void:
 	name = "MapClinicDialog"
@@ -193,6 +196,8 @@ func _style_tab(button: Button, selected: bool) -> void:
 
 func present(event: Dictionary, loadout: MapLoadoutState = null, status: MapPlayerStatus = null) -> void:
 	_continue_pointer_down = false
+	_greeting_id = ""
+	_topics_opened = false
 	_loadout = loadout
 	_status = status
 	treatment_content.configure(event.get("treatment",{}),loadout,status)
@@ -208,6 +213,9 @@ func present(event: Dictionary, loadout: MapLoadoutState = null, status: MapPlay
 			dialogue_note.text = error
 			library = null
 	_presentation = event.presentation.duplicate(true)
+	if library!=null and _presentation.has("conversation_portrait"):
+		library.definition.portrait = _presentation.conversation_portrait
+		library.definition.erase("portrait_region")
 	if is_instance_valid(illustration): illustration.free()
 	if is_instance_valid(picture_frame): picture_frame.free()
 	var frame_texture := AtlasTexture.new()
@@ -250,6 +258,7 @@ func set_mode(value: String) -> void:
 		atlas.atlas = load(path)
 		atlas.region = FRAME
 		backing.texture = atlas
+	if mode=="conversation" and visible: dialogue_requested.emit("after_treatment","")
 
 func _topic_style(selected: bool, left_margin: float = 72.5) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -266,6 +275,11 @@ func refresh_dialogue(error := "") -> void:
 	var journal_error := ""
 	if _loadout.narrative.npcs.has(library.definition.id): journal_error = library.journal_error(_loadout.narrative.npcs[library.definition.id])
 	_view = DialogueJournal.view(_loadout.narrative,library,_loadout.map_visited) if journal_error.is_empty() else {"rows":[],"topics":[],"can_continue":false,"selected":"welcome"}
+	var greeting_id := ""
+	if _view.selected in ["welcome","greeting"] and not _view.rows.is_empty():
+		greeting_id = _view.rows[0].segment_id
+	if greeting_id!=_greeting_id or _view.can_continue: _topics_opened = false
+	_greeting_id = greeting_id
 	for child: Node in dialogue_rows.get_children(): child.free()
 	for row: Dictionary in _view.rows:
 		var lines := DialogueBubble.wrap(row.text)
@@ -275,7 +289,7 @@ func refresh_dialogue(error := "") -> void:
 			dialogue_rows.add_child(bubble)
 	for index: int in topic_buttons:
 		var button: Button = topic_buttons[index]
-		button.visible = index<_view.topics.size()
+		button.visible = index<_view.topics.size() and not _waiting_to_open_topics()
 		if not button.visible: continue
 		var topic: Dictionary = _view.topics[index]
 		button.text = topic.label
@@ -303,8 +317,12 @@ func refresh_dialogue(error := "") -> void:
 		badge.visible = topic.new
 	_refresh_continue_hint()
 	dialogue_note.text = ""
-	if _view.selected=="medical" and _loadout.narrative.clues.has("base.clue.qingshihewan.herb_anomaly"):
-		dialogue_note.text = "已记下线索：青石河湾药材异常"
+	var npc: Dictionary = _loadout.narrative.npcs.get(library.definition.id,{})
+	for id: String in npc.get("done",[]):
+		var segment: Dictionary = library.segments.get(id,{})
+		if segment.get("topic","")!=_view.selected: continue
+		for clue: String in segment.get("clues",[]):
+			if _loadout.narrative.clues.has(clue): dialogue_note.text = "已记下线索："+_loadout.narrative.clues[clue]
 	if not error.is_empty(): dialogue_note.text = error
 	if not journal_error.is_empty(): dialogue_note.text = journal_error
 	_render_version += 1
@@ -316,12 +334,17 @@ func _scroll_to_latest(version: int) -> void:
 
 func _refresh_continue_hint() -> void:
 	var reading: bool = _view.get("can_continue",false)
-	continue_button.visible = mode=="conversation" and reading
+	var opening := _waiting_to_open_topics()
+	continue_button.text = "点击开启话题" if opening else "点击继续 ▸"
+	continue_button.visible = mode=="conversation" and (reading or opening)
 	var pending_topic := false
 	for topic: Dictionary in _view.get("topics",[]):
 		if topic.id==_view.get("selected","") and not topic.get("history",true):
 			pending_topic = true
-	topic_continue_hint.visible = mode=="conversation" and not reading and pending_topic
+	topic_continue_hint.visible = mode=="conversation" and not reading and not opening and pending_topic
+
+func _waiting_to_open_topics() -> bool:
+	return not _greeting_id.is_empty() and not _topics_opened and not _view.get("can_continue",false) and not _view.get("topics",[]).is_empty()
 
 func _layout() -> void:
 	var factor := minf(size.x/1920.0,size.y/1080.0)*0.9
@@ -333,7 +356,11 @@ func _gui_input(_event: InputEvent) -> void:
 	accept_event()
 
 func request_continue() -> void:
-	if is_visible_in_tree() and mode=="conversation" and _view.get("can_continue",false):
+	if not is_visible_in_tree() or mode!="conversation": return
+	if _waiting_to_open_topics():
+		_topics_opened = true
+		refresh_dialogue()
+	elif _view.get("can_continue",false):
 		dialogue_requested.emit("advance","")
 
 # Called by the modal controller before GUI delivery, so even the scroll area
@@ -348,7 +375,7 @@ func handle_continue_input(event: InputEvent) -> bool:
 	if not event is InputEventMouseButton or event.button_index!=MOUSE_BUTTON_LEFT: return false
 	var eligible := canvas.get_global_rect().has_point(event.position) and not _over_button(canvas,event.position)
 	if event.pressed:
-		_continue_pointer_down = eligible and _view.get("can_continue",false)
+		_continue_pointer_down = eligible and (_view.get("can_continue",false) or _waiting_to_open_topics())
 		_continue_press_position = event.position
 		return _continue_pointer_down
 	var was_down := _continue_pointer_down

@@ -6,6 +6,7 @@
 /artifacts/
 /builds/
 /tmp/
+/output/
 *.log
 *.tmp
 /.playwright-cli/

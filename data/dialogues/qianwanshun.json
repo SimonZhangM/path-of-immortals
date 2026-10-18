@@ -1,0 +1,1288 @@
+{
+  "id": "base.npc.qianwanshun",
+  "name": "钱万顺",
+  "portrait": "res://assets/tanchuang-jiaoyi-qingshizhen-shangpu-boss.webp",
+  "portrait_region": [
+    305,
+    294,
+    215,
+    215
+  ],
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.qianwanshun.welcome",
+  "address_rules": [
+    {
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed",
+        "base.story.qianwanshun.knows_name"
+      ],
+      "text": "{player.familiar_name}兄弟"
+    },
+    {
+      "text": "小兄弟"
+    }
+  ],
+  "topics": [
+    {
+      "id": "shop",
+      "label": "铺中买卖",
+      "initial": [
+        "base.dialogue.qianwanshun.shop.01",
+        "base.dialogue.qianwanshun.shop.02"
+      ],
+      "story": [
+        "base.dialogue.qianwanshun.shop.03"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "tianhe",
+      "label": "天河见闻",
+      "initial": [
+        "base.dialogue.qianwanshun.tianhe.01",
+        "base.dialogue.qianwanshun.tianhe.02"
+      ],
+      "story": [
+        "base.dialogue.qianwanshun.tianhe.04",
+        "base.dialogue.qianwanshun.tianhe.05",
+        "base.dialogue.qianwanshun.tianhe.03"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.qianwanshun.chat.01",
+        "base.dialogue.qianwanshun.chat.02"
+      ],
+      "story": [
+        "base.dialogue.qianwanshun.chat.return_complete",
+        "base.dialogue.qianwanshun.chat.return_mid"
+      ],
+      "revisits": [
+        "base.dialogue.qianwanshun.visit.01",
+        "base.dialogue.qianwanshun.visit.02",
+        "base.dialogue.qianwanshun.visit.03",
+        "base.dialogue.qianwanshun.visit.04",
+        "base.dialogue.qianwanshun.visit.05",
+        "base.dialogue.qianwanshun.visit.06"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 2
+    }
+  ],
+  "clues": {
+    "base.clue.tianhe.zhou_contact": "钱万顺与万宝商盟周管事有旧交"
+  },
+  "segments": {
+    "base.dialogue.qianwanshun.welcome": {
+      "topic": "welcome",
+      "label": "初次见面",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "哟，来客人了！"
+        },
+        {
+          "speaker": "npc",
+          "text": "小兄弟，随便看看。刀剑、护具这类东西，店里都备着些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我这铺子虽不大，东西可都是仔细挑过的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "买不买都不要紧，先瞧瞧嘛。😄"
+        }
+      ],
+      "retire_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ]
+    },
+    "base.dialogue.qianwanshun.shop.01": {
+      "topic": "shop",
+      "label": "铺中买卖",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{npc.address}，来我这儿挑东西，先说打算拿来做什么，我也好帮你找。"
+        },
+        {
+          "speaker": "player",
+          "text": "随便看看。钱掌柜，您这儿的东西，都是从外地进的吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那倒不是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "青石镇周边也有不少好东西。只是有些货得从外头运来，来回一趟，车马、人工，处处都要花钱。"
+        },
+        {
+          "speaker": "npc",
+          "text": "就说这剑吧，价高的不见得就适合你，便宜的也未必不好使。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做买卖嘛，我总得把话说明白。卖出去是一次生意，往后还肯来，才算没白做。😄"
+        },
+        {
+          "speaker": "player",
+          "text": "钱掌柜倒是想得长远。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，做小本生意的，不敢不想远些。"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.shop.02": {
+      "topic": "shop",
+      "label": "最近生意如何？",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "说起来，近来的生意倒还过得去，就是有几批货送得慢了。"
+        },
+        {
+          "speaker": "player",
+          "text": "商队出了什么事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "听过路的车夫说，河湾一带的山道最近不大安生，野兽露面的次数多了些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "倒还没听说出了什么大乱子，可赶车的人都变得小心了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您平日也走那条商道？"
+        },
+        {
+          "speaker": "npc",
+          "text": "走啊，怎么不走？"
+        },
+        {
+          "speaker": "npc",
+          "text": "过些日子还得去接一趟货。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您可得当心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "放心，我钱万顺跑了这么多年商路，知道什么叫小心驶得万年船。"
+        },
+        {
+          "speaker": "npc",
+          "text": "……"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过话说回来，路上的事谁能算得准呢？能结伴就结伴，天色不好就早些落脚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "货晚几天送到，顶多赔几句好话。要是人回不来了，挣再多也没处花。"
+        }
+      ],
+      "retire_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ]
+    },
+    "base.dialogue.qianwanshun.shop.03": {
+      "topic": "shop",
+      "label": "河湾那场惊险",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "跑商这些年，我防过坏天气，防过货物受潮，没想到这回栽在一头野猪身上。"
+        },
+        {
+          "speaker": "player",
+          "text": "那头野猪冲得凶。您以后走那边，还是多找几个伴。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是这个理。往后接货，宁肯多等一趟同行的人，也不图那点方便了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您还打算自己去接货？"
+        },
+        {
+          "speaker": "npc",
+          "text": "生意总还要做。不过人怎么去、走哪条路、几时回来，都得重新盘算盘算。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我以前也把“小心”挂在嘴边，这回才知道，嘴上说得熟，不等于事事都安排妥当。"
+        },
+        {
+          "speaker": "player",
+          "text": "能平安回来，再慢慢安排就是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。该花的车马钱不能省，该等的人也得等。"
+        },
+        {
+          "speaker": "npc",
+          "text": "账本上少挣一点，总比账本没人翻了强。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ],
+      "variants": [
+        {
+          "id": "missed_before_rescue",
+          "excludes_done": [
+            "base.dialogue.qianwanshun.shop.02"
+          ],
+          "lines": [
+            {
+              "speaker": "npc",
+              "text": "跑商这些年，我防过坏天气，防过货物受潮，没想到这回栽在一头野猪身上。"
+            },
+            {
+              "speaker": "player",
+              "text": "那头野猪冲得凶。您以后走那边，还是多找几个伴。"
+            },
+            {
+              "speaker": "npc",
+              "text": "是这个理。往后接货，宁肯多等一趟同行的人，也不图那点方便了。"
+            },
+            {
+              "speaker": "player",
+              "text": "您还打算自己去接货？"
+            },
+            {
+              "speaker": "npc",
+              "text": "生意总还要做。不过人怎么去、走哪条路、几时回来，都得重新盘算盘算。"
+            },
+            {
+              "speaker": "npc",
+              "text": "我以前也把“小心”挂在嘴边，这回才知道，嘴上说得熟，不等于事事都安排妥当。"
+            },
+            {
+              "speaker": "player",
+              "text": "能平安回来，再慢慢安排就是。"
+            },
+            {
+              "speaker": "npc",
+              "text": "对。该花的车马钱不能省，该等的人也得等。"
+            },
+            {
+              "speaker": "npc",
+              "text": "账本上少挣一点，总比账本没人翻了强。"
+            },
+            {
+              "speaker": "player",
+              "text": "钱掌柜，您平日接货也走河湾那边？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有时走。生意一多，总免不了来回奔波。这次吃了亏，往后就得把同行的人和路程安排得更稳妥些。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.tianhe.01": {
+      "topic": "tianhe",
+      "label": "天河见闻",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "钱掌柜，听您的口音，似乎不是青石镇本地人？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哟，{npc.address}耳朵倒挺灵。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不错，我老家在天河商域。"
+        },
+        {
+          "speaker": "player",
+          "text": "天河商域？我听说那里商贾云集，什么东西都能买到。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，哪有那么夸张！"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过那边确实热闹，城镇之间商路相通，货船车队来来往往，做什么买卖的都有。"
+        },
+        {
+          "speaker": "npc",
+          "text": "在天河商域，别的东西不敢说，商铺、货栈和各家的招牌，你沿街走上一整日，都未必看得完。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您怎么跑到青石镇来了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "地方大，生意大，竞争也大呀。"
+        },
+        {
+          "speaker": "npc",
+          "text": "青石镇虽小，南来北往的行人不少，附近又有青岚宗。生意不算特别红火，但日子踏实。"
+        },
+        {
+          "speaker": "npc",
+          "text": "再说了，走过那么多地方，总得找个能安安稳稳睡觉的地方，不是？"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.tianhe.02": {
+      "topic": "tianhe",
+      "label": "天河的商路",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{npc.address}，既然对天河的商路有兴趣，我给你讲件有意思的事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你知道吗？一块矿石，从矿场出来到买家手里，有时能转过好几家商号。"
+        },
+        {
+          "speaker": "player",
+          "text": "转这么多手，价钱岂不是涨了不少？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那可不一定。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有人负责开采，有人负责收货，有人负责运送，还有人专门替大商号验货。"
+        },
+        {
+          "speaker": "npc",
+          "text": "每过一道手，就多一道账。"
+        },
+        {
+          "speaker": "player",
+          "text": "那要想知道一件东西最早从哪里来，岂不是很麻烦？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嘿，这就问到门道上了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "若是正经买卖，收货有货单，转运有交接记录，有些还留着商号的货签。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可若中途换了包装、混了货，甚至转过几次私人买卖，再想追到最初来处，就没那么容易了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您连这些都熟悉？"
+        },
+        {
+          "speaker": "npc",
+          "text": "熟悉是熟悉，却也不敢说样样都查得清。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我年轻时在商盟里跑过几年货，最怕的就是账面上一切对得上，到了地方却发现货不对板。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做生意最怕什么？"
+        },
+        {
+          "speaker": "player",
+          "text": "亏钱？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，亏钱当然怕！"
+        },
+        {
+          "speaker": "npc",
+          "text": "可若连一件货从哪儿来、经谁的手都弄不清，那才是真正叫人睡不安稳的买卖。"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.tianhe.03": {
+      "topic": "tianhe",
+      "label": "万宝商盟的旧交",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "说到天河那边的商号，我早年在万宝商盟做过几年事。"
+        },
+        {
+          "speaker": "player",
+          "text": "万宝商盟？听着来头不小。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那可不是只有一两家铺子。苍澜界几座大城里，都有他们的商号，往来的货物也多。"
+        },
+        {
+          "speaker": "player",
+          "text": "您当时在商盟里管什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我？可谈不上管什么。是在天河的一处商号里做事，跟着商队跑，收货、交接、对账，哪边缺人就去哪边。"
+        },
+        {
+          "speaker": "npc",
+          "text": "如今出来自己开铺子，那时认识的人，倒还有些来往。"
+        },
+        {
+          "speaker": "player",
+          "text": "都还在天河商域吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有的去了别处，有的还在。老周就在那边，如今是分号的管事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "他不爱说漂亮话，可货从哪来、经谁的手，账上该记什么，他心里有数。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来是位仔细的人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "仔细，也认死理。我跟他熟归熟，少一张凭据，他照样不肯给我含糊过去。"
+        },
+        {
+          "speaker": "player",
+          "text": "您不嫌他麻烦？"
+        },
+        {
+          "speaker": "npc",
+          "text": "做生意的时候嫌，真有事要查的时候，就知道这种人可靠了。😄"
+        },
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，你以后若去天河，有商路货账上的事要问，我可以替你引见。不过他管的是自家分号，不是整个商盟，这个可得分清。"
+        },
+        {
+          "speaker": "player",
+          "text": "能找到一个问得明白的人，已经很有用了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "正是。有门路，不是处处都能通融，是知道该敲哪一扇门。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ],
+      "retire_flags": [
+        "base.story.qianwanshun.referral_ready"
+      ],
+      "set_facts": [
+        "base.story.qianwanshun.zhou_introduced"
+      ],
+      "clues": [
+        "base.clue.tianhe.zhou_contact"
+      ]
+    },
+    "base.dialogue.qianwanshun.tianhe.04": {
+      "topic": "tianhe",
+      "label": "调查材料的来路",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "钱掌柜，我要去一趟天河商域，想向您请教进货方面的事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "去挑货，还是要查一批货的来路？"
+        },
+        {
+          "speaker": "player",
+          "text": "宗门交了件差事，要核清几种材料是从哪里来的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "原来如此。那就不能只问价钱了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你手里已经查实的线索有哪些？先从确定的说起，拿不准的，咱们另放一边。"
+        },
+        {
+          "speaker": "player",
+          "text": "找到卖出材料的商号，就能知道材料的产地了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先能问到他从谁手里收的。至于最初产在哪里，还得往前接着查。"
+        },
+        {
+          "speaker": "player",
+          "text": "那货签上记着的地方呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "也得看清记的是什么。货从那里的货栈发出来，不见得就是在那里采的。"
+        },
+        {
+          "speaker": "player",
+          "text": "若是账和货对不上，是不是有人做了手脚？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先别急着这么想。分装漏记、交接抄错，也不是没有。"
+        },
+        {
+          "speaker": "npc",
+          "text": "先问清楚是谁经手，哪里对不上。真有人说假话，也得拿得出证据才好追问。"
+        },
+        {
+          "speaker": "player",
+          "text": "我明白，会先查清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，这才稳当。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tianhe.material_inquiry_assigned"
+      ],
+      "set_facts": [
+        "base.story.qianwanshun.knows_inquiry"
+      ]
+    },
+    "base.dialogue.qianwanshun.tianhe.05": {
+      "topic": "tianhe",
+      "label": "商盟中有谁能帮忙？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "这种事，到了天河商域，该先找谁打听？"
+        },
+        {
+          "speaker": "npc",
+          "text": "万宝商盟在那边的一处分号，有位周管事，跟我是旧识。他熟悉本号经手的货账，也知道各样货该找谁问。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我可以写封信，替你说明来意。"
+        },
+        {
+          "speaker": "player",
+          "text": "能请他帮着查账？"
+        },
+        {
+          "speaker": "npc",
+          "text": "本号经手过没有，可以请他先核一核。至于哪些账能给外人看，还得按商号的规矩办。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我写信，是让他知道你是认真来办事、也是我信得过的人，可不是叫他替你破例。"
+        },
+        {
+          "speaker": "player",
+          "text": "明白。先找到该核对的人，总比挨家乱问强。"
+        },
+        {
+          "speaker": "npc",
+          "text": "正是。线索接到哪一家，再往哪一家查。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tianhe.material_inquiry_assigned"
+      ],
+      "requires_done": [
+        "base.dialogue.qianwanshun.tianhe.04"
+      ],
+      "set_facts": [
+        "base.story.qianwanshun.zhou_introduced",
+        "base.story.qianwanshun.referral_ready"
+      ],
+      "clues": [
+        "base.clue.tianhe.zhou_contact"
+      ],
+      "variants": [
+        {
+          "id": "zhou_known",
+          "requires_done": [
+            "base.dialogue.qianwanshun.tianhe.03"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "要查这批材料的来路，您说的那位周管事，能否帮着指条路？"
+            },
+            {
+              "speaker": "npc",
+              "text": "我可以写封信，替你说明来意。"
+            },
+            {
+              "speaker": "player",
+              "text": "能请他帮着查账？"
+            },
+            {
+              "speaker": "npc",
+              "text": "本号经手过没有，可以请他先核一核。至于哪些账能给外人看，还得按商号的规矩办。"
+            },
+            {
+              "speaker": "npc",
+              "text": "我写信，是让他知道你是认真来办事、也是我信得过的人，可不是叫他替你破例。"
+            },
+            {
+              "speaker": "player",
+              "text": "明白。先找到该核对的人，总比挨家乱问强。"
+            },
+            {
+              "speaker": "npc",
+              "text": "正是。线索接到哪一家，再往哪一家查。"
+            }
+          ],
+          "set_facts": [
+            "base.story.qianwanshun.zhou_introduced",
+            "base.story.qianwanshun.referral_ready"
+          ]
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{npc.address}，你瞧我这名字，钱万顺。"
+        },
+        {
+          "speaker": "npc",
+          "text": "听着是不是挺吉利？"
+        },
+        {
+          "speaker": "player",
+          "text": "是挺吉利。那您做生意岂不是一路都顺顺当当？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，那可差远了！"
+        },
+        {
+          "speaker": "npc",
+          "text": "我爹当年给我起这个名字，就是盼着我平平安安、万事顺遂。"
+        },
+        {
+          "speaker": "npc",
+          "text": "结果呢？做买卖这些年，该赔的钱一文没少赔，该吃的苦也一样没落下。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着这么吉利，原来也免不了有不顺的时候。"
+        },
+        {
+          "speaker": "npc",
+          "text": "名字是家里盼个好，买卖还是得自己一点点做嘛。"
+        },
+        {
+          "speaker": "npc",
+          "text": "人呐，有时候得学会知足。😄"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.chat.02": {
+      "topic": "chat",
+      "label": "开铺子的门道",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{npc.address}，东西找不着，直接问我就行。这铺子看着不大，搁东西的地方可不少。"
+        },
+        {
+          "speaker": "player",
+          "text": "您都记得在哪儿？"
+        },
+        {
+          "speaker": "npc",
+          "text": "自己搬进去的，多半记得。最怕刚挪完地方，转头又照着旧处去找。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来掌柜也有找不着货的时候。"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么没有？所以客人一问，我先说句“稍等”。"
+        },
+        {
+          "speaker": "player",
+          "text": "然后呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "找着了，显得我熟门熟路；没找着，也给自己多留点想的工夫。😄"
+        },
+        {
+          "speaker": "player",
+          "text": "原来这句“稍等”还有这层用处。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做买卖嘛，总得会应个话。不过真没有的货，我会直说，不叫你白等。"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.visit.01": {
+      "topic": "chat",
+      "label": "算盘与账本",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{npc.address}，你瞧这算盘，拨起来倒是轻巧，可账算错了，麻烦就大了。"
+        },
+        {
+          "speaker": "player",
+          "text": "您也会算错账？"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么不会？"
+        },
+        {
+          "speaker": "npc",
+          "text": "以前有回赶着出货，少记了一笔运费。等回过神来，白忙活了半个月。"
+        },
+        {
+          "speaker": "player",
+          "text": "后来怎么办？"
+        },
+        {
+          "speaker": "npc",
+          "text": "还能怎么办？自己认了呗。"
+        },
+        {
+          "speaker": "npc",
+          "text": "从那以后，每回算完账，我都要再核一遍。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做买卖最怕的不是算得慢，而是错了还不知道。"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.visit.02": {
+      "topic": "chat",
+      "label": "那坛酒",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "钱掌柜，您怎么总爱抱着坛酒？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你说这个？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，摆出来卖的货！可不是我整天抱着喝。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为您特别喜欢喝酒。"
+        },
+        {
+          "speaker": "npc",
+          "text": "喜欢倒也喜欢，但喝酒得挑时候。"
+        },
+        {
+          "speaker": "npc",
+          "text": "生意没谈妥之前，我可不敢多喝。"
+        },
+        {
+          "speaker": "player",
+          "text": "为什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "怕酒一上头，把自家的价钱都给说低了！🍶"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.visit.03": {
+      "topic": "chat",
+      "label": "天河的雨",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "说起天河，我记得最清楚的，倒是雨天的码头。"
+        },
+        {
+          "speaker": "player",
+          "text": "那边也常下雨？"
+        },
+        {
+          "speaker": "npc",
+          "text": "靠水路的地方，一下起雨来，河面雾蒙蒙的。远远望去，货船上的灯一盏接着一盏。"
+        },
+        {
+          "speaker": "npc",
+          "text": "年轻时候我最喜欢坐在码头边上，看那些商船进进出出。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着倒挺有意思。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是啊。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过要是轮到自己押货，最怕的也是下雨。路滑、货潮，哪一样都够人头疼。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这世上的好风景呀，站在旁边看是一回事，真走进去，又是另一回事。"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.visit.04": {
+      "topic": "chat",
+      "label": "赔本的买卖",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "钱掌柜，您做过最亏的一笔买卖是什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "最亏的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那可得想想。"
+        },
+        {
+          "speaker": "npc",
+          "text": "年轻时我收过一批山货，卖家说得天花乱坠，我一时心急，没仔细验货就付了钱。"
+        },
+        {
+          "speaker": "npc",
+          "text": "结果回去一瞧，里面好些都受了潮。"
+        },
+        {
+          "speaker": "player",
+          "text": "那后来呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "后来呀，该赔的赔，该认的认。"
+        },
+        {
+          "speaker": "npc",
+          "text": "说来好笑，那回本想捡个便宜，最后倒花钱买了个教训。"
+        },
+        {
+          "speaker": "player",
+          "text": "看来钱掌柜也不是一直这么精明。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈！谁不是一路吃亏一路学？"
+        }
+      ]
+    },
+    "base.dialogue.qianwanshun.visit.05": {
+      "topic": "chat",
+      "label": "不用为了人情买东西",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}兄弟，你来我这儿，想说话就说话，不用每回都惦记着挑件东西。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为掌柜最喜欢客人多买些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "喜欢啊！开铺子的，哪有不喜欢做生意的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过需要什么就买什么，别为了照顾我这张脸，买些用不着的回去。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我以后空着手来，空着手走，您可别嫌我。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不嫌。只要别把我店里的凳子顺走就成。😄"
+        },
+        {
+          "speaker": "player",
+          "text": "您这凳子也算在货账里？"
+        },
+        {
+          "speaker": "npc",
+          "text": "凳子不算。可你搬走了，下回来坐哪儿？"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ]
+    },
+    "base.dialogue.qianwanshun.visit.06": {
+      "topic": "chat",
+      "label": "商人的朋友",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "钱掌柜，您走过那么多地方，认识的人一定不少吧？"
+        },
+        {
+          "speaker": "npc",
+          "text": "是不少。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可你要问有多少真朋友，那还真不敢说多。"
+        },
+        {
+          "speaker": "player",
+          "text": "为什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "生意场上，今天一桌酒，明天一笔账。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些人见面热热闹闹，转头就忘了；有些人平日不常来往，真碰上事了，倒肯伸手帮一把。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这人心呐，平时看不出来，遇上难处才知道。"
+        },
+        {
+          "speaker": "player",
+          "text": "听起来，真正靠得住的人不必认识很多。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是这么回事。能把话说实在，把答应的事办妥，就已经难得了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对了，你方才想问什么？光听我说了，倒把正事岔过去了。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ]
+    },
+    "base.dialogue.qianwanshun.chat.return_mid": {
+      "topic": "chat",
+      "label": "途中回镇",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{npc.address}，回来了？这一趟走得还顺当？"
+        },
+        {
+          "speaker": "player",
+          "text": "差事还没办完，先回来一趟。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就先歇歇脚。有什么用得着我的，再说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "宗门的事不方便讲，你就不必讲。我只是见你回来，问声平安。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tianhe.material_inquiry_assigned",
+        "base.story.qianwanshun.knows_inquiry",
+        "base.story.tianhe.midway_town_return"
+      ],
+      "retire_flags": [
+        "base.story.tianhe.inquiry_completed"
+      ]
+    },
+    "base.dialogue.qianwanshun.chat.return_complete": {
+      "topic": "chat",
+      "label": "天河归来",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}兄弟！你可算回来了！"
+        },
+        {
+          "speaker": "npc",
+          "text": "快坐，快坐！"
+        },
+        {
+          "speaker": "npc",
+          "text": "这一趟天河商域走得如何？见着周管事了没有？"
+        },
+        {
+          "speaker": "player",
+          "text": "见到了。他帮了我不少忙。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就好！我就说嘛，老周这人虽不爱说漂亮话，办事却靠得住。"
+        },
+        {
+          "speaker": "player",
+          "text": "这回多亏您引荐，不然光是找对人，就得费不少工夫。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，我不过替你搭了座桥，路还得你自己走。"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么样？天河商域如今还热闹吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "热闹得很，商铺货栈一间挨着一间，来往的商队也多。"
+        },
+        {
+          "speaker": "npc",
+          "text": "听你这么说，我都有些想回去看看了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（给{player.familiar_name}添了茶。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "来，把这趟见闻好好说说。你不急着走的话，咱们慢慢聊。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qianwanshun.referral_ready",
+        "base.story.qingshihewan.rescue_completed",
+        "base.story.tianhe.inquiry_completed",
+        "base.story.tianhe.completed_town_return",
+        "base.story.tianhe.met_zhou",
+        "base.story.tianhe.zhou_helped"
+      ]
+    }
+  },
+  "greetings": {
+    "low_ratio": 0.5,
+    "close_interval": 0,
+    "ordinary": [
+      "base.dialogue.qianwanshun.greeting.before.01",
+      "base.dialogue.qianwanshun.greeting.before.02",
+      "base.dialogue.qianwanshun.greeting.after.01",
+      "base.dialogue.qianwanshun.greeting.after.02",
+      "base.dialogue.qianwanshun.greeting.after.03",
+      "base.dialogue.qianwanshun.greeting.after.04",
+      "base.dialogue.qianwanshun.greeting.after.05",
+      "base.dialogue.qianwanshun.greeting.after.06"
+    ],
+    "close": [],
+    "once": [
+      {
+        "entry": "base.dialogue.qianwanshun.greeting.name",
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed"
+        ],
+        "excludes_flags": [
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      {
+        "entry": "base.dialogue.qianwanshun.greeting.rescued",
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      }
+    ],
+    "phases": [],
+    "entries": {
+      "base.dialogue.qianwanshun.greeting.before.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "小兄弟，来了？想找什么尽管说，先看看也成。"
+          }
+        ],
+        "excludes_flags": [
+          "base.story.qingshihewan.rescue_completed"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.before.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "来，随便瞧。买东西要紧的是合用，拿不准的，我给你说道说道。"
+          }
+        ],
+        "excludes_flags": [
+          "base.story.qingshihewan.rescue_completed"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.after.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}兄弟，来了！今日瞧货，还是找我说说话？"
+          }
+        ],
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.after.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "哟，{player.familiar_name}！里边有凳子，坐着说，不用跟我客气。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.after.03": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "来来，{player.familiar_name}兄弟。铺里这会儿不忙，正好陪你聊几句。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.after.04": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，想找什么？货架上没有的也可以问问，我替你留意着。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.after.05": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}兄弟，来了！这回有什么见闻？也让我这个守铺子的开开眼。"
+          }
+        ],
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.after.06": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "进来坐，{player.familiar_name}。想听商路上的事，还是天河那边的见闻？别的未必懂，这些我还能说上几句。😄"
+          }
+        ],
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.qianwanshun.knows_name"
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.name": {
+        "archive_topic": "chat",
+        "followup": "base.dialogue.qianwanshun.greeting.rescued",
+        "set_facts": [
+          "base.story.qianwanshun.knows_name"
+        ],
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "对了，还没请教，小兄弟怎么称呼？"
+          },
+          {
+            "speaker": "player",
+            "text": "{player.full_name}，在镇上的药材铺帮工。您叫我{player.familiar_name}就成。"
+          },
+          {
+            "speaker": "npc",
+            "text": "原来是在叶掌柜那里。好，{player.familiar_name}，我记下了。"
+          }
+        ]
+      },
+      "base.dialogue.qianwanshun.greeting.rescued": {
+        "archive_topic": "chat",
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "哎哟，{player.familiar_name}小兄弟！快进来，快进来！"
+          },
+          {
+            "speaker": "npc",
+            "text": "河湾那头野猪冲过来的时候，我这脑子都空了。要不是你出手，我可没法好端端站在这里招呼客人。"
+          },
+          {
+            "speaker": "player",
+            "text": "钱掌柜，您没伤着就好。"
+          },
+          {
+            "speaker": "npc",
+            "text": "人是回来了，心到现在还没全放下来呢。"
+          },
+          {
+            "speaker": "npc",
+            "text": "当时顾不上把话说清楚。今日见着你，这声谢，我得认真说。"
+          },
+          {
+            "speaker": "player",
+            "text": "碰上了，总不能不管。"
+          },
+          {
+            "speaker": "npc",
+            "text": "对你来说是碰巧，对我来说，可不是小事。"
+          },
+          {
+            "speaker": "npc",
+            "text": "往后有需要帮忙的地方，只管来找我。能办的，我给你办；办不了的，也绝不拿空话糊弄你。"
+          },
+          {
+            "speaker": "player",
+            "text": "好，那我就不跟您客气了。"
+          },
+          {
+            "speaker": "npc",
+            "text": "这才对嘛。来，坐下说。🙂"
+          }
+        ]
+      }
+    }
+  }
+}

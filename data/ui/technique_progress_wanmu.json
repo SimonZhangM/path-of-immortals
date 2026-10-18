@@ -1,0 +1,39 @@
+{
+  "book_id": "base.cultivation_book.wood_04",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《万木生杀诀》 战斗",
+  "stages": [
+    {
+      "level": 1,
+      "spell": {"name": "青木刺", "effect": "直接木伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-01-qingmuci.webp"},
+      "choices": [
+        {"name": "锐刺", "effect": "本体增伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-02-ruici.webp"},
+        {"name": "毒芽", "effect": "命中施毒", "icon": "res://assets/UI-wood-wanmushengshajue-effect-03-duya.webp"}
+      ]
+    },
+    {
+      "level": 3,
+      "spell": {"name": "青藤刃", "effect": "直接木伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-04-qingtengren.webp"},
+      "choices": [
+        {"name": "连刃", "effect": "减耗提速", "icon": "res://assets/UI-wood-wanmushengshajue-effect-05-lianren.webp"},
+        {"name": "缚刃", "effect": "命中加缠", "icon": "res://assets/UI-wood-wanmushengshajue-effect-06-furen.webp"}
+      ]
+    },
+    {
+      "level": 5,
+      "spell": {"name": "森罗灵矢", "effect": "精准木伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-07-senluolingshi.webp"},
+      "choices": [
+        {"name": "穿林", "effect": "本体增伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-08-chuanlin.webp"},
+        {"name": "毒翎", "effect": "伤血施毒", "icon": "res://assets/UI-wood-wanmushengshajue-effect-09-duling.webp"}
+      ]
+    },
+    {
+      "level": 7,
+      "spell": {"name": "万木森罗", "effect": "高威木伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-10-wanmusenluo.webp"},
+      "choices": [
+        {"name": "森罗尽发", "effect": "本体增伤", "icon": "res://assets/UI-wood-wanmushengshajue-effect-11-senluojinfa.webp"},
+        {"name": "枯荣夺生", "effect": "伤血生机", "icon": "res://assets/UI-wood-wanmushengshajue-effect-12-kurongduosheng.webp"}
+      ]
+    }
+  ]
+}

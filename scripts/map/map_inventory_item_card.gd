@@ -404,7 +404,7 @@ func _layout() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board"]:
+	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board", "food"]:
 		return
 	var artwork := artwork_rect()
 	var factor := artwork.size.x / DESIGN_WIDTH

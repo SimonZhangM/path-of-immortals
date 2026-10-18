@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.fire_01",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《赤炉丹经》 技艺",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "守炉",
+          "description": "：提高成丹稳定性与品质。"
+        },
+        {
+          "name": "惜药",
+          "description": "：减少药材损耗。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "萃精",
+          "description": "：提高药性提取与成丹品质潜力。"
+        },
+        {
+          "name": "调和",
+          "description": "：处理药性冲突及复杂材料。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "凝华",
+          "description": "：偏重单枚丹药品质。"
+        },
+        {
+          "name": "分丹",
+          "description": "：提高单炉成丹数量。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "温养",
+          "description": "：擅长长效、复杂强化类丹药。"
+        },
+        {
+          "name": "疾炼",
+          "description": "：缩短炼制时间。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "丹极",
+          "description": "：提高高阶丹药品质上限。"
+        },
+        {
+          "name": "丰丹",
+          "description": "：提高高阶丹药产量与材料效率。"
+        }
+      ]
+    }
+  ]
+}

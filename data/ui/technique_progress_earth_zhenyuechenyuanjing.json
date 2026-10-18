@@ -1,0 +1,93 @@
+{
+  "book_id": "base.cultivation_book.earth_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《镇岳沉元经》 状态专精（习得生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "余韧",
+          "description": "：坚韧成功抗暴后，耗层改为现有层数的三分之一向下取整，至少1层。"
+        },
+        {
+          "name": "留疲",
+          "description": "：疲惫配合普通暴击的耗层改为三分之一向下取整，至少1层；不含保证暴击。"
+        },
+        {
+          "name": "催伤",
+          "description": "：重伤首次生效等待由2秒缩至1秒。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "固岳",
+          "description": "：坚韧每层抗暴率额外＋0.4个百分点。"
+        },
+        {
+          "name": "困乏",
+          "description": "：疲惫每层提高被暴击率的效果额外＋0.4个百分点。"
+        },
+        {
+          "name": "沉伤",
+          "description": "：重伤的灵力增耗、体力增耗、回血削减效果各＋20%。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "反镇",
+          "description": "：坚韧实际成功抗暴，给攻击者1层疲惫；守岳式不算。"
+        },
+        {
+          "name": "疲生伤",
+          "description": "：对已有疲惫目标打出普通暴击，施加1层重伤；破岳式不算。"
+        },
+        {
+          "name": "养韧",
+          "description": "：每4次重伤实际增耗或削减治疗，自身获得1层坚韧。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "岳体",
+          "description": "：坚韧每层抗暴率再＋0.6个百分点。"
+        },
+        {
+          "name": "疲极",
+          "description": "：疲惫每层提高被暴击率的效果再＋0.6个百分点。"
+        },
+        {
+          "name": "伤元",
+          "description": "：重伤三项效果再＋30%，与沉伤同修合计＋50%。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "不倾",
+          "description": "：坚韧成功抗暴后，本次攻击的直接伤害包在盾甲前再减伤20%。"
+        },
+        {
+          "name": "疲裂",
+          "description": "：疲惫配合普通暴击，每实际消耗1层追加2点基础土伤。"
+        },
+        {
+          "name": "反噬",
+          "description": "：重伤实际阻止的治疗量，其50%转为对被治疗者的土属性派生伤害。"
+        }
+      ]
+    }
+  ],
+  "reserve_status_space": true
+}

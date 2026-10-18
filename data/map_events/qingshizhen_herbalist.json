@@ -8,6 +8,8 @@
     "title_center_y": 133.5,
     "background": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu.webp",
     "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu-boss.webp",
-    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
-  }
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp",
+    "conversation_background": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu-2.webp"
+  },
+  "dialogue": "res://data/dialogues/yesongnian.json"
 }

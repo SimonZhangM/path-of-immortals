@@ -1,0 +1,1693 @@
+{
+  "id": "base.npc.luhuaizhen",
+  "name": "陆怀真",
+  "portrait": "res://assets/ui-portrait-luhuaizhen.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.luhuaizhen.welcome",
+  "topics": [
+    {
+      "id": "alchemy",
+      "label": "丹道与灵材",
+      "initial": [
+        "base.dialogue.luhuaizhen.alchemy.01",
+        "base.dialogue.luhuaizhen.alchemy.02"
+      ],
+      "story": [
+        "base.dialogue.luhuaizhen.alchemy.inquiry",
+        "base.dialogue.luhuaizhen.alchemy.anomaly"
+      ],
+      "revisits": [
+        "base.dialogue.luhuaizhen.alchemy.03"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 1
+    },
+    {
+      "id": "cultivation",
+      "label": "修行见闻",
+      "initial": [
+        "base.dialogue.luhuaizhen.cultivation.01",
+        "base.dialogue.luhuaizhen.cultivation.02"
+      ],
+      "story": [
+        "base.dialogue.luhuaizhen.cultivation.review",
+        "base.dialogue.luhuaizhen.cultivation.03",
+        "base.dialogue.luhuaizhen.cultivation.04"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.luhuaizhen.chat.01",
+        "base.dialogue.luhuaizhen.chat.02"
+      ],
+      "story": [
+        "base.dialogue.luhuaizhen.story.return",
+        "base.dialogue.luhuaizhen.story.departure"
+      ],
+      "revisits": [
+        "base.dialogue.luhuaizhen.visit.01",
+        "base.dialogue.luhuaizhen.visit.02",
+        "base.dialogue.luhuaizhen.visit.03",
+        "base.dialogue.luhuaizhen.visit.04",
+        "base.dialogue.luhuaizhen.visit.05",
+        "base.dialogue.luhuaizhen.visit.06"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 2
+    }
+  ],
+  "clues": {},
+  "segments": {
+    "base.dialogue.luhuaizhen.welcome": {
+      "topic": "welcome",
+      "label": "初次欢迎",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，进来坐。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不送药的时候，也能来找我说话，不必每回都带着差事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "今日想问丹道，还是修行上的事？你说，我听着。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.alchemy.01": {
+      "topic": "alchemy",
+      "label": "丹道与灵材",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，来，帮我看看桌上这几味草药。"
+        },
+        {
+          "speaker": "player",
+          "text": "这不是青藤根和苦艾叶吗？叶伯铺子里也常有。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不错。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这些草药单独使用，都有各自的药性。可若想炼成丹药，就不能只知道它们各自有什么用处。"
+        },
+        {
+          "speaker": "player",
+          "text": "还要看怎么配在一起？"
+        },
+        {
+          "speaker": "npc",
+          "text": "正是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "丹方写明了用什么材料，却不意味着照着放进炉里就能成丹。"
+        },
+        {
+          "speaker": "npc",
+          "text": "药材的状态、投入次序、炉火变化，每一样都可能影响最后的结果。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪炼丹房里的药材那么多，有些明明认识，炼制起来却还是不容易。"
+        },
+        {
+          "speaker": "npc",
+          "text": "呵，认得材料，是入门的本事。能让材料在炉中各得其用，才是真正的炼丹功夫。"
+        },
+        {
+          "speaker": "player",
+          "text": "那陆丹师，您炼丹这么多年，也会失败吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "自然会。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（看了看炉火）丹师若说自己从不失手，你倒该留个心眼。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为您早就练得炉火纯青了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "手熟能少犯些错，却不代表以后便不会出错。"
+        },
+        {
+          "speaker": "npc",
+          "text": "一炉炼坏了，总要弄明白坏在哪里。下次才能炼得更好。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.alchemy.02": {
+      "topic": "alchemy",
+      "label": "灵材有何不同？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，修士说的灵材，是不是就是那些带着灵气的药草？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不只药草。炼丹、制器用到的兽类材料、矿石，还有一些特殊之物，也在其中。"
+        },
+        {
+          "speaker": "player",
+          "text": "连石头也能拿来炼丹？"
+        },
+        {
+          "speaker": "npc",
+          "text": "要看具体是什么材料、用于哪种丹方，不能见着一块奇石便往炉里放。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些灵材只是常用之物，有些才极为难寻。并不是叫作灵材，就一定珍贵，也不一定适合你眼前要做的事。"
+        },
+        {
+          "speaker": "player",
+          "text": "那是不是灵材越珍贵，炼出的丹药就越好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "倒也未必。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你若只想熬一剂寻常汤药，却把珍贵的灵材一股脑丢进去，未必比原来的方子好。"
+        },
+        {
+          "speaker": "player",
+          "text": "这么说，贵的不一定有用？"
+        },
+        {
+          "speaker": "npc",
+          "text": "要看用在何处。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有的材料适合温养，有的适合凝聚灵力，有的性质猛烈，稍有不慎便会坏了整炉药性。"
+        },
+        {
+          "speaker": "npc",
+          "text": "越是罕见的东西，越要先弄清它能做什么，不能做什么。"
+        },
+        {
+          "speaker": "player",
+          "text": "那些高级丹药，岂不是需要许多罕见灵材？"
+        },
+        {
+          "speaker": "npc",
+          "text": "确实有不少高阶丹药，需要寻常山林难以找到的材料。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些要在特殊环境中生长多年，有些产自极远的地方，还有些根本不能只靠采药取得。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您平时从哪里找来这些材料？"
+        },
+        {
+          "speaker": "npc",
+          "text": "一部分自己留意，一部分托人寻找。"
+        },
+        {
+          "speaker": "npc",
+          "text": "比如钱掌柜，别看他在青石镇经营的是一家普通商铺，跑商的门路却比你想的多。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些外地来的材料，便是托他向熟识的商号打听的。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来您和钱掌柜还做这样的买卖。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做了不少年了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过找到材料是一回事，确认真假、辨清品质，又是另一回事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有机会，我再给你讲讲那些稀罕材料的故事。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.alchemy.03": {
+      "topic": "alchemy",
+      "label": "不起眼的那一层",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，我见过一回收材料的人，把真正要找的东西当作杂质剥掉了。"
+        },
+        {
+          "speaker": "player",
+          "text": "剥掉了？那还怎么用？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那是一块矿材，外头附着一层很薄的晶质，看起来灰扑扑的。他嫌不干净，收货后便叫人清掉了。"
+        },
+        {
+          "speaker": "player",
+          "text": "要找的就是那一层？"
+        },
+        {
+          "speaker": "npc",
+          "text": "正是。那位丹师要的是外层晶质，里面的矿心反倒不能用进那张丹方。"
+        },
+        {
+          "speaker": "player",
+          "text": "那不是越收拾，越坏事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以珍材最怕只听过名字，没弄清究竟取它哪一部分。"
+        },
+        {
+          "speaker": "player",
+          "text": "那种东西，您看一眼就认得？"
+        },
+        {
+          "speaker": "npc",
+          "text": "见过相似的，也得辨。隔着一层灰，谁都不能保证眼睛不出错。"
+        },
+        {
+          "speaker": "player",
+          "text": "后来还能找回来吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "清下来的东西尚未丢弃，总算留下了一些。不然就只能重新去寻了。"
+        },
+        {
+          "speaker": "player",
+          "text": "往后碰上认不出的材料，我还是先别乱动。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，尤其别急着洗、剥、磨。先问清它原本是什么样。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.alchemy.anomaly": {
+      "topic": "alchemy",
+      "label": "药性似乎变了",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我在河湾记下了一些变化，想请您帮着想想。"
+        },
+        {
+          "speaker": "player",
+          "text": "河水比以前浅了，原先在水下的几块石头露了出来，岸边也多了不少脚印。"
+        },
+        {
+          "speaker": "npc",
+          "text": "水势和岸边的变化先记下。不过仅凭这些，还不能断定药材的药性变了；要从炼制这边核对，还得知道具体是哪一批药。"
+        },
+        {
+          "speaker": "player",
+          "text": "药材看起来差不多，入炉以后也会不同？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有可能。形貌是一回事，炼制时的变化又是一回事。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您能不能看出，是不是河湾的水土出了问题？"
+        },
+        {
+          "speaker": "npc",
+          "text": "只凭一份材料，不能断定一片地方的水土。"
+        },
+        {
+          "speaker": "npc",
+          "text": "叶掌柜那边留着来处和采收记录，清禾那里记着病人的情况。我能补的是材料和炼制这一面，几边要对得上，才好继续查。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我先把已经知道的事情说清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。没查明白的地方，先空着，不必勉强补一个解释。"
+        }
+      ],
+      "any_of": [
+        {
+          "requires_clues": [
+            "base.clue.qingshihewan.herb_changes"
+          ]
+        },
+        {
+          "requires_clues": [
+            "base.clue.qingshihewan.herb_anomaly"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.qingshihewan.water_observed"
+          ]
+        }
+      ],
+      "set_facts": [
+        "base.story.luhuaizhen.knows_anomaly"
+      ],
+      "variants": [
+        {
+          "id": "both",
+          "requires_clues": [
+            "base.clue.qingshihewan.herb_changes",
+            "base.clue.qingshihewan.herb_anomaly"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "陆丹师，叶伯在对照几批与往年不太一样的药材，清禾姐也在核对病人恢复较慢时用过的药。这两件事还没查明，我想请您帮着想想。"
+            },
+            {
+              "speaker": "npc",
+              "text": "这事可以从炼制这边帮着看一看。不过得分清是哪一批药，不能只凭“与往常不同”几个字。"
+            },
+            {
+              "speaker": "player",
+              "text": "药材看起来差不多，入炉以后也会不同？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有可能。形貌是一回事，炼制时的变化又是一回事。"
+            },
+            {
+              "speaker": "player",
+              "text": "那您能不能看出，是不是河湾的水土出了问题？"
+            },
+            {
+              "speaker": "npc",
+              "text": "只凭一份材料，不能断定一片地方的水土。"
+            },
+            {
+              "speaker": "npc",
+              "text": "叶掌柜那边留着来处和采收记录，清禾那里记着病人的情况。我能补的是材料和炼制这一面，几边要对得上，才好继续查。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我先把已经知道的事情说清楚。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。没查明白的地方，先空着，不必勉强补一个解释。"
+            }
+          ]
+        },
+        {
+          "id": "ye",
+          "requires_clues": [
+            "base.clue.qingshihewan.herb_changes"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "陆丹师，叶伯最近在对照几批药材，说有些与往年不太一样。我想问问您，这种变化会不会影响炼丹？"
+            },
+            {
+              "speaker": "npc",
+              "text": "这事可以从炼制这边帮着看一看。不过得分清是哪一批药，不能只凭“与往常不同”几个字。"
+            },
+            {
+              "speaker": "player",
+              "text": "药材看起来差不多，入炉以后也会不同？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有可能。形貌是一回事，炼制时的变化又是一回事。"
+            },
+            {
+              "speaker": "player",
+              "text": "那您能不能看出，是不是河湾的水土出了问题？"
+            },
+            {
+              "speaker": "npc",
+              "text": "只凭一份材料，不能断定一片地方的水土。"
+            },
+            {
+              "speaker": "npc",
+              "text": "叶掌柜那边留着来处和采收记录，清禾那里记着病人的情况。我能补的是材料和炼制这一面，几边要对得上，才好继续查。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我先把已经知道的事情说清楚。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。没查明白的地方，先空着，不必勉强补一个解释。"
+            }
+          ]
+        },
+        {
+          "id": "su",
+          "requires_clues": [
+            "base.clue.qingshihewan.herb_anomaly"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "陆丹师，清禾姐说有些病人恢复得比往常慢，她正在核对用过的药。我想问问，这与药材有没有可能有关？"
+            },
+            {
+              "speaker": "npc",
+              "text": "这事可以从炼制这边帮着看一看。不过得分清是哪一批药，不能只凭“与往常不同”几个字。"
+            },
+            {
+              "speaker": "player",
+              "text": "药材看起来差不多，入炉以后也会不同？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有可能。形貌是一回事，炼制时的变化又是一回事。"
+            },
+            {
+              "speaker": "player",
+              "text": "那您能不能看出，是不是河湾的水土出了问题？"
+            },
+            {
+              "speaker": "npc",
+              "text": "只凭一份材料，不能断定一片地方的水土。"
+            },
+            {
+              "speaker": "npc",
+              "text": "叶掌柜那边留着来处和采收记录，清禾那里记着病人的情况。我能补的是材料和炼制这一面，几边要对得上，才好继续查。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我先把已经知道的事情说清楚。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。没查明白的地方，先空着，不必勉强补一个解释。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.alchemy.inquiry": {
+      "topic": "alchemy",
+      "label": "材料究竟从哪里来？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，宗门让我查几种材料的来路。只看材料本身，能认出产自哪里吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时能缩小范围，未必能认准一处地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "比如知道它适合在什么环境里生长？"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。可相似的环境不只一处，材料离开产地后，还可能经过处理。"
+        },
+        {
+          "speaker": "player",
+          "text": "所以就算性质对得上，也不能直接认定来源？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不能。辨材与查商路，是两条线，最后还得相互核对。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我把宗门允许交代的材料特征，先说给您听。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。方便提供实物时，再看实物。只有描述，我便先按描述判断，不会把猜测说成已经认准。"
+        },
+        {
+          "speaker": "npc",
+          "text": "货物怎样流转，钱掌柜更熟。你可以再去问问他。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.tianhe.material_inquiry_assigned"
+      ],
+      "retire_flags": [
+        "base.story.tianhe.inquiry_completed"
+      ],
+      "set_facts": [
+        "base.story.luhuaizhen.knows_inquiry"
+      ],
+      "variants": [
+        {
+          "id": "qian_consulted",
+          "requires_flags": [
+            "base.story.qianwanshun.knows_inquiry"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "陆丹师，宗门让我查几种材料的来路。只看材料本身，能认出产自哪里吗？"
+            },
+            {
+              "speaker": "npc",
+              "text": "有时能缩小范围，未必能认准一处地方。"
+            },
+            {
+              "speaker": "player",
+              "text": "比如知道它适合在什么环境里生长？"
+            },
+            {
+              "speaker": "npc",
+              "text": "对。可相似的环境不只一处，材料离开产地后，还可能经过处理。"
+            },
+            {
+              "speaker": "player",
+              "text": "所以就算性质对得上，也不能直接认定来源？"
+            },
+            {
+              "speaker": "npc",
+              "text": "不能。辨材与查商路，是两条线，最后还得相互核对。"
+            },
+            {
+              "speaker": "player",
+              "text": "那我把宗门允许交代的材料特征，先说给您听。"
+            },
+            {
+              "speaker": "npc",
+              "text": "好。方便提供实物时，再看实物。只有描述，我便先按描述判断，不会把猜测说成已经认准。"
+            },
+            {
+              "speaker": "npc",
+              "text": "你把商路那边查实的情况，与材料的判断分开记着。等两边有了对应，再往下追。"
+            }
+          ]
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.cultivation.01": {
+      "topic": "cultivation",
+      "label": "修行见闻",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，您平日讲过不少修行的事，可真要自己开始，我还是有些摸不着头绪。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是不知道该学什么，还是不知道从哪一步练起？"
+        },
+        {
+          "speaker": "player",
+          "text": "都有。我见过法器，也听说过不少功法，可不知道哪些适合自己。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就先看功法的入门要求。灵根是否合适，需要什么根基，这些比名字听着厉不厉害更要紧。"
+        },
+        {
+          "speaker": "player",
+          "text": "不是得先学一门法术吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先有修行的方法，才好知道灵力如何调运、法术如何施展。只记住一个施法的样子，未必用得出来。"
+        },
+        {
+          "speaker": "player",
+          "text": "我看您照看丹炉，有时只伸一下手，火就稳了。还以为那一手不难学。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你看见的是火稳了。我得先知道炉里的药到了哪一步，才知道这时候该收，还是该放。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来那一下，也不是想做就能做的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可以学，只是不必急着照我的样子。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你认药时已经懂得先辨性质。挑功法也是一样，先读明白它让你练什么，再动手。"
+        },
+        {
+          "speaker": "player",
+          "text": "那以后碰上看不懂的功法，我能来问您吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "可以。把拿不准的那一段指出来，咱们一道看。"
+        }
+      ],
+      "retire_flags": [
+        "base.story.cultivation.started",
+        "base.story.qinglan.joined"
+      ]
+    },
+    "base.dialogue.luhuaizhen.cultivation.review": {
+      "topic": "cultivation",
+      "label": "再谈修行根基",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我已经开始接触修行了，挑功法时仍有些拿不准的地方。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是拿不准入门要求，还是不知道哪一门适合自己？"
+        },
+        {
+          "speaker": "player",
+          "text": "是后一个。功法不少，我想再把基础弄明白。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就先看功法的入门要求。灵根是否合适，需要什么根基，这些比名字听着厉不厉害更要紧。"
+        },
+        {
+          "speaker": "player",
+          "text": "那修行的方法与法术，又该怎样联系起来看？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先有修行的方法，才好知道灵力如何调运、法术如何施展。只记住一个施法的样子，未必用得出来。"
+        },
+        {
+          "speaker": "player",
+          "text": "我看您照看丹炉，有时只伸一下手，火就稳了。还以为那一手不难学。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你看见的是火稳了。我得先知道炉里的药到了哪一步，才知道这时候该收，还是该放。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来那一下，也不是想做就能做的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可以学，只是不必急着照我的样子。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你认药时已经懂得先辨性质。挑功法也是一样，先读明白它让你练什么，再动手。"
+        },
+        {
+          "speaker": "player",
+          "text": "那以后碰上看不懂的功法，我能来问您吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "可以。把拿不准的那一段指出来，咱们一道看。"
+        }
+      ],
+      "any_of": [
+        {
+          "requires_flags": [
+            "base.story.cultivation.started"
+          ]
+        },
+        {
+          "requires_flags": [
+            "base.story.qinglan.joined"
+          ]
+        }
+      ],
+      "excludes_done": [
+        "base.dialogue.luhuaizhen.cultivation.01"
+      ]
+    },
+    "base.dialogue.luhuaizhen.cultivation.02": {
+      "topic": "cultivation",
+      "label": "功法与法术",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，你平日练过拳脚，也见过修士施展法术。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可知道功法与法术是什么关系？"
+        },
+        {
+          "speaker": "player",
+          "text": "我原以为差不多。后来才听说，修习某些功法，还能从中领悟法术。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不错。"
+        },
+        {
+          "speaker": "npc",
+          "text": "功法更像一套修行的方法。修炼的过程，既能影响修为的积累，也可能让人逐渐掌握其中的具体法术。"
+        },
+        {
+          "speaker": "player",
+          "text": "从功法里学会的法术，往后使用时，还得把那部功法也放在阵盘里吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不必为了施展已经习得的法术，一直把功法本体放进去。法术可以单独安排；有些功法本身也能上阵，要看你是否需要它的作用。"
+        },
+        {
+          "speaker": "player",
+          "text": "那功法继续修，法术也得另练一套进度？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不必把它们当成两部功法来修。法术既已习得，就多琢磨怎样运用，与哪些器具相配，灵力又是否供得上。"
+        },
+        {
+          "speaker": "player",
+          "text": "所以学会是一回事，用得合适又是一回事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。同样的本事，安排不同，结果也会不同。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你以后还会见到许多器具、阵盘和功法之间的配合。有些东西单独看并不起眼，放在一起却能发挥不小的作用。"
+        },
+        {
+          "speaker": "player",
+          "text": "就像药材的配伍？"
+        },
+        {
+          "speaker": "npc",
+          "text": "🙂 倒是个不错的比方。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你跟叶掌柜学了这么多年识药，至少明白一件事：东西合不合用，不能只看它本身有多珍贵。"
+        },
+        {
+          "speaker": "player",
+          "text": "这么说，修炼也得慢慢琢磨。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。肯练，也肯想，才能把路走得稳一些。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.cultivation.03": {
+      "topic": "cultivation",
+      "label": "修炼不能只求快",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我试着修炼了一阵，才发现阵盘转得快，消耗也跟着快。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这是修炼中很值得留意的事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你既然开始用阵盘安排功法与器具，就不能只顾着看修为增长得快不快。"
+        },
+        {
+          "speaker": "player",
+          "text": "还要看消耗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不错。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有的修炼方式来势很猛，短时间内消耗不少，却未必适合长久运转。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有的看起来平缓一些，能坚持的时间反倒更长。"
+        },
+        {
+          "speaker": "player",
+          "text": "那是不是消耗越少越好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "也不是。消耗太少，却没有多少修炼成果，一样未必划算。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你要看的是，自己付出了多少，最终又真正积累了多少。"
+        },
+        {
+          "speaker": "player",
+          "text": "说到底，还是得自己试过才明白。"
+        },
+        {
+          "speaker": "npc",
+          "text": "正是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过，先弄清楚功法的特点，再动手尝试，总比一味乱试强。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.cultivation.started"
+      ],
+      "set_facts": [
+        "base.story.luhuaizhen.knows_cultivation"
+      ]
+    },
+    "base.dialogue.luhuaizhen.cultivation.04": {
+      "topic": "cultivation",
+      "label": "仙门之外的修行人",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我以前总觉得，修仙的人大多都在宗门里。"
+        },
+        {
+          "speaker": "player",
+          "text": "如今接触得多了，才发现似乎不是这样。"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然不是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "宗门有传承、有师长、有同门，许多修士愿意投身其中。"
+        },
+        {
+          "speaker": "npc",
+          "text": "但修仙界也有散修，有依托家族修行的人，还有些人在各地行走，靠自己积累见闻和资源。"
+        },
+        {
+          "speaker": "player",
+          "text": "那散修没有宗门支持，修炼岂不是困难许多？"
+        },
+        {
+          "speaker": "npc",
+          "text": "很多时候确实如此。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是各有各的处境。宗门能提供许多便利，也有宗门的规矩与责任。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您以前也是在宗门里修行的吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "跟人学过，也独自走过一些地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "是哪一位前辈教您炼丹的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "辰宇，过去那些事，我不大愿意多谈。你别见怪。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我不追问了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。不过修行和丹道上的疑问，你还是照常问，不必因此拘束。"
+        },
+        {
+          "speaker": "player",
+          "text": "好。那咱们还是说散修的事吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "宗门有宗门的规矩与责任，散修也有各自的处境。走哪一条路，都得弄清眼前需要什么。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined"
+      ]
+    },
+    "base.dialogue.luhuaizhen.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我看您平日炼的丹药不少，都是自己用的吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "自然不是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些丹药留着自用，有些留在炼丹房出售，还有些是镇上的人托我炼的。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来炼丹房也做买卖。"
+        },
+        {
+          "speaker": "npc",
+          "text": "若只顾着炼丹，不管药材从何处来、日常开销从何处出，这炉火也烧不了多久。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为修仙的人都不怎么在意钱财。"
+        },
+        {
+          "speaker": "npc",
+          "text": "呵，修士也得吃饭，也得买材料。"
+        },
+        {
+          "speaker": "npc",
+          "text": "更何况，你若想炼一炉丹，先得有药材吧？"
+        },
+        {
+          "speaker": "player",
+          "text": "这倒是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "镇上常用的那些基础丹药，我有时会多炼些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "附近的人若需要，能在镇上买到，也省得专门跑去更远的地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪镇上的人都说您是个好丹师。"
+        },
+        {
+          "speaker": "npc",
+          "text": "谈不上什么好不好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做得来，又恰好有人用得上，就做些罢了。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.chat.02": {
+      "topic": "chat",
+      "label": "为何留在青石镇？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我一直有件事好奇。"
+        },
+        {
+          "speaker": "player",
+          "text": "您懂得这么多，怎么会选择留在青石镇？"
+        },
+        {
+          "speaker": "npc",
+          "text": "青石镇有什么不好？"
+        },
+        {
+          "speaker": "player",
+          "text": "倒也不是不好。只是地方不大，比起那些仙门大城，总归清静许多。"
+        },
+        {
+          "speaker": "npc",
+          "text": "清静些，正合我意。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这里背山临水，采药方便，镇上的人也熟悉。需要的常用材料，大多能找得到。"
+        },
+        {
+          "speaker": "player",
+          "text": "可要是遇上镇里没有的珍稀灵材呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就托钱掌柜去打听。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我不急着要，慢慢等便是。实在寻不到，也可以先研究别的丹方。"
+        },
+        {
+          "speaker": "player",
+          "text": "您倒是看得开。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些东西，想得太急也急不来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（他看了看窗外。）再说了，住久了总会有些熟人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "叶掌柜隔些日子便送药材来，清禾偶尔来问方子，钱掌柜一进门总能带来一箩筐新消息。"
+        },
+        {
+          "speaker": "npc",
+          "text": "日子倒也不闷。"
+        },
+        {
+          "speaker": "player",
+          "text": "这么说，您还真舍不得离开青石镇了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "至少眼下，我觉得这里挺好。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.visit.01": {
+      "topic": "chat",
+      "label": "一炉没炼成的丹",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，您今日怎么一直在看那本药册？"
+        },
+        {
+          "speaker": "npc",
+          "text": "方才试炼了一炉丹，没成。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我正在看哪里出了差错。"
+        },
+        {
+          "speaker": "player",
+          "text": "这一炉是您平日常炼的，还是新试的方子？"
+        },
+        {
+          "speaker": "npc",
+          "text": "是平日常炼的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "所以才得仔细查查。"
+        },
+        {
+          "speaker": "player",
+          "text": "会不会是火候不对？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我把自己记下的火候和投料次序核过一遍了，还没找到原因。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您准备再炼一炉？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先不急。"
+        },
+        {
+          "speaker": "npc",
+          "text": "要是还没查明原因，就把同样的材料再扔进去一遍，那可不是炼丹，是烧灵石。🙂"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.visit.02": {
+      "topic": "chat",
+      "label": "一张没写明白的采买单",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "有一回我托钱掌柜寻材料，给他写了张采买单，第二日就被他送回来了。"
+        },
+        {
+          "speaker": "player",
+          "text": "是找不到吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我写了个自己用惯的旧称。他说，光凭这几个字，沿路问来十种东西，我恐怕一种也用不上。"
+        },
+        {
+          "speaker": "player",
+          "text": "那后来怎么办？"
+        },
+        {
+          "speaker": "npc",
+          "text": "补写性状、用途，还有收货时要辨的地方。写着写着，又添了半张纸。"
+        },
+        {
+          "speaker": "player",
+          "text": "钱掌柜看明白了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "他看完说：“陆丹师，您这是请我买东西，还是叫我跟着学认药？”😄"
+        },
+        {
+          "speaker": "player",
+          "text": "倒像他会说的话。"
+        },
+        {
+          "speaker": "npc",
+          "text": "说归说，事办得仔细。他先托人捎了一点样品，等我辨清能用，才谈后面的采买。"
+        },
+        {
+          "speaker": "player",
+          "text": "怪不得您总愿意托他找东西。"
+        },
+        {
+          "speaker": "npc",
+          "text": "肯把不明白的问清楚，比什么都答应更可靠。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.visit.03": {
+      "topic": "chat",
+      "label": "清禾的医案",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "清禾姐平日来找您，都是问药理吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时问丹药的性质，有时是把用药后的情况说给我听。"
+        },
+        {
+          "speaker": "player",
+          "text": "您炼出来的丹药，还需要听她怎么说？"
+        },
+        {
+          "speaker": "npc",
+          "text": "丹药出炉时是什么样，我清楚。用在不同的人身上，之后如何，她日日诊看，比我知道得细。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为都是她向您请教。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我也会问她。不能因为丹药是自己炼的，就把后面的事都当成理所当然。"
+        },
+        {
+          "speaker": "player",
+          "text": "她记医案很认真，问起来总能翻得出来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是。她不只记见效的，也记拿不准的地方。这些记录，对我也有用。"
+        },
+        {
+          "speaker": "player",
+          "text": "她听您这么夸，一定很高兴。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那你下回见着她，可以告诉她。"
+        },
+        {
+          "speaker": "player",
+          "text": "您自己怎么不说？"
+        },
+        {
+          "speaker": "npc",
+          "text": "说过了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "她只顾着记我后面讲的药理，大概没听进去。😄"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.visit.04": {
+      "topic": "chat",
+      "label": "老旧的丹炉",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，您这丹炉看着用了不少年了，怎么不换一座新的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你也开始嫌它旧了？"
+        },
+        {
+          "speaker": "player",
+          "text": "没有。我只是听说，好的丹炉对炼丹很重要。"
+        },
+        {
+          "speaker": "npc",
+          "text": "确实重要。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是炉子合不合用，还得看炼什么丹、用什么火、如何控制。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这座炉子跟了我不少时候，脾气我熟悉。"
+        },
+        {
+          "speaker": "player",
+          "text": "丹炉也有脾气？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有啊。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有的升温快，有的火势稳。有些看着漂亮，真用起来却未必顺手。"
+        },
+        {
+          "speaker": "player",
+          "text": "听着倒像手艺人挑趁手的工具。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，做手艺的人，大概都有些相通的地方。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.visit.05": {
+      "topic": "chat",
+      "label": "最难找的东西",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，您见过那么多珍材异宝，最难找的是什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这可不好答。"
+        },
+        {
+          "speaker": "player",
+          "text": "连您也想不出来？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不是想不出来，而是不同的人，缺的东西也不一样。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些人寻了一辈子的灵材，别人可能偶然便得到了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "还有些东西就在眼前，只是当时不知它有什么用处。"
+        },
+        {
+          "speaker": "player",
+          "text": "您有遇到过这样的事吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有过。"
+        },
+        {
+          "speaker": "player",
+          "text": "后来找到了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "找到过一些，也错过过一些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（他把手中的药材放回盒中。）辰宇，世间东西太多，不可能什么都留在自己手里。"
+        },
+        {
+          "speaker": "npc",
+          "text": "能分清什么值得找，什么可以放下，也是一门学问。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.visit.06": {
+      "topic": "chat",
+      "label": "镇上人眼中的陆丹师",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，镇上的人都说您待人好，有时遇上急事，也肯帮忙。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是吗？那倒叫我有些不好意思。"
+        },
+        {
+          "speaker": "player",
+          "text": "我看大家说得挺真心的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这里许多人住了大半辈子，谁家有什么难处，街坊邻里大多知道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有人来求一味急用的丹药，若我手边有，能帮自然帮一把。"
+        },
+        {
+          "speaker": "player",
+          "text": "您就不怕有人占便宜？"
+        },
+        {
+          "speaker": "npc",
+          "text": "做买卖还是得讲规矩。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是有时候，人遇着难处，未必能事事都安排妥当。"
+        },
+        {
+          "speaker": "npc",
+          "text": "能通融的地方通融一些，也不是什么大不了的事。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪叶伯和钱掌柜都愿意同您来往。"
+        },
+        {
+          "speaker": "npc",
+          "text": "大概是我这儿有茶喝吧。 🙂"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过下回你去钱掌柜那儿，可别说我拿茶招待人比他周到。他又该与我争个高低了。"
+        }
+      ]
+    },
+    "base.dialogue.luhuaizhen.story.departure": {
+      "topic": "chat",
+      "label": "准备前往青岚宗",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "陆丹师，我准备去青岚宗试试。您觉得我能行吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "能不能行，得你自己去走上一遭才知道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你肯认真学，又愿意去试，这便是个好的开始。"
+        },
+        {
+          "speaker": "player",
+          "text": "以前总听人说仙门如何厉害，如今真有机会去了，反倒有些紧张。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这很寻常。"
+        },
+        {
+          "speaker": "npc",
+          "text": "修仙界比青石镇大得多，里面既有值得你学习的东西，也有需要自己判断的事情。"
+        },
+        {
+          "speaker": "player",
+          "text": "到了宗门以后，我还可以继续研究炼丹吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "自然可以。"
+        },
+        {
+          "speaker": "npc",
+          "text": "宗门有传承，也有许多擅长丹道的修士。若能遇上合适的师长，好好学便是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过我倒有句话想送给你。"
+        },
+        {
+          "speaker": "player",
+          "text": "您说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "往后见识多了，别忘了自己是从哪里开始学的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "叶掌柜教你的识药本事，看着平常，却是实实在在的根基。"
+        },
+        {
+          "speaker": "player",
+          "text": "我记住了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。那便去吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "往后若得了什么有意思的材料，回来时不妨带来让我瞧瞧。"
+        },
+        {
+          "speaker": "player",
+          "text": "一言为定！"
+        },
+        {
+          "speaker": "npc",
+          "text": "🙂 我倒要看看，你以后能带回些什么新鲜东西。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.departure_ready"
+      ],
+      "retire_flags": [
+        "base.story.qinglan.joined"
+      ],
+      "set_facts": [
+        "base.story.luhuaizhen.knows_departure"
+      ]
+    },
+    "base.dialogue.luhuaizhen.story.return": {
+      "topic": "chat",
+      "label": "入宗后回镇",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "辰宇，回来了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "来，坐下说。"
+        },
+        {
+          "speaker": "player",
+          "text": "陆丹师，我回来了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "青岚宗的日子，可还习惯？"
+        },
+        {
+          "speaker": "player",
+          "text": "宗门里要学的东西不少，我也在慢慢熟悉。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有疑问便说，不必拘束。"
+        },
+        {
+          "speaker": "player",
+          "text": "修行上的事，越琢磨，越觉得还有许多不明白的地方。"
+        },
+        {
+          "speaker": "npc",
+          "text": "懂得越多，才越容易发现自己还有哪些不明白的地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "我这趟回来，其实还有些问题想请教您。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（将手中的药册放到一旁。）那今日便不急着说别的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你先讲讲，眼下最想弄明白什么？"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined",
+        "base.story.qinglan.first_town_return"
+      ],
+      "set_facts": [
+        "base.story.luhuaizhen.knows_joined"
+      ]
+    }
+  },
+  "greetings": {
+    "low_ratio": 0.5,
+    "close_interval": 0,
+    "ordinary": [
+      "base.dialogue.luhuaizhen.greeting.daily.01",
+      "base.dialogue.luhuaizhen.greeting.daily.02",
+      "base.dialogue.luhuaizhen.greeting.daily.03",
+      "base.dialogue.luhuaizhen.greeting.daily.04",
+      "base.dialogue.luhuaizhen.greeting.daily.05"
+    ],
+    "close": [],
+    "phases": [],
+    "once": [
+      {
+        "entry": "base.dialogue.luhuaizhen.greeting.return",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.qinglan.first_town_return"
+        ],
+        "excludes_done": [
+          "base.dialogue.luhuaizhen.story.return"
+        ]
+      },
+      {
+        "entry": "base.dialogue.luhuaizhen.greeting.inquiry",
+        "requires_flags": [
+          "base.story.tianhe.material_inquiry_assigned",
+          "base.story.luhuaizhen.knows_inquiry"
+        ],
+        "excludes_flags": [
+          "base.story.tianhe.inquiry_completed"
+        ]
+      },
+      {
+        "entry": "base.dialogue.luhuaizhen.greeting.departure",
+        "requires_flags": [
+          "base.story.qinglan.departure_ready",
+          "base.story.luhuaizhen.knows_departure"
+        ],
+        "excludes_flags": [
+          "base.story.qinglan.joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.luhuaizhen.greeting.cultivation",
+        "requires_flags": [
+          "base.story.cultivation.started",
+          "base.story.luhuaizhen.knows_cultivation"
+        ],
+        "excludes_flags": [
+          "base.story.qinglan.joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.luhuaizhen.greeting.rescue",
+        "requires_flags": [
+          "base.story.qingshihewan.cultivator_rescued",
+          "base.story.luhuaizhen.knows_cultivator_rescue"
+        ]
+      }
+    ],
+    "entries": {
+      "base.dialogue.luhuaizhen.greeting.daily.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，来了？我正好歇一会儿炉火，有话不妨坐下说。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.daily.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，进来坐。想问什么？我这儿不急。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.daily.03": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，最近在忙些什么？进来坐坐，别总站在门口。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.daily.04": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "来得正好。这一炉还未到时候，倒有空与你聊几句。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.daily.05": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇？你来得巧，茶刚沏好。是问丹道，还是问修行？"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.return": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，回来了？来，坐下说。山上的日子，可还习惯？"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.inquiry": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "你说的材料来路，我记着。若有新确认的特征，方便的话再说给我听，或许能帮你辨一辨。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.departure": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "要进青岚宗了？很好。到了山上，会见到许多青石镇里见不到的东西。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.cultivation": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "辰宇，你说已经开始尝试修炼了。可还有什么不明白的？初学时有些疑惑，倒也寻常。"
+          }
+        ]
+      },
+      "base.dialogue.luhuaizhen.greeting.rescue": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "听说你在河湾救了位受伤修士？既肯出手，也知道用学过的药理应急，这份心思不错。"
+          }
+        ]
+      }
+    }
+  }
+}

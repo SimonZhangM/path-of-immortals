@@ -8,21 +8,26 @@
   "leave_label": "离开医馆",
   "dialogue": "res://data/dialogues/suqinghe.json",
   "treatment": {
-    "fee": 5,
+    "consultation_hp_per_stone": 20,
+    "supplies_fee": 5,
+    "waive_consultation": true,
+    "care_label": "熟识照顾",
+    "care_tooltip": "与清禾自幼相识，\n诊治时免收问诊费，\n只需支付实际所需的\n药材及耗材费用。",
     "resource": "hp",
     "recovery_percent": 100,
     "duration_days": 0,
     "tagline": "一剂汤药，涤尽疲惫，重整行装。",
-    "payment_note": "支付诊金后，医馆将为你调理伤势，",
+    "payment_note": "支付诊金后，",
     "recovery_note": "恢复全部气血值。",
-    "description": "青石医馆可为行旅者疗伤，恢复全部气血。\n但不处理长期积疾、奇毒顽症等复杂病症，此类需另寻高人医治。",
-    "motto": "“医者，仁心也。”\n—— 青石医馆"
+    "description": "常见伤势可在此诊治，恢复全部气血。\n需专门调养或特定丹药时，清禾会与陆丹师商议用药。",
+    "motto": "“医者，仁心也。”\n—— 青石医馆",
+    "dialogue_unlock_flag": "base.story.suqinghe.treatment_used"
   },
   "presentation": {
     "title_center_y": 134.5,
     "background": "res://assets/tanchuang-qingshizhen-yiguan.webp",
     "treatment_background": "res://assets/tanchuang-qingshizhen-yiguan-2.webp",
-    "illustration": "res://assets/tanchuang-qingshizhen-yiguan-boss.webp",
+    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-yiguan-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   }
 }

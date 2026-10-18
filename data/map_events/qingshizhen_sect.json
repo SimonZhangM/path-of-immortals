@@ -4,9 +4,12 @@
   "point_id": "base.map.qingshizhen.point.n01",
   "trigger": "click",
   "catalog": "res://data/shops/qingshizhen_sect.json",
+  "dialogue": "res://data/dialogues/xieyunshu.json",
   "presentation": {
     "title_center_y": 132.5,
-    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-zongmenshangpu.webp",
+    "background": "res://assets/tanchuang-qingshizhen-zongmenpu.webp",
+    "conversation_background": "res://assets/tanchuang-qingshizhen-zongmenpu2.webp",
+    "conversation_portrait": "res://assets/ui-portrait-xieyunshu.webp",
     "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-zongmenshangpu-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   }

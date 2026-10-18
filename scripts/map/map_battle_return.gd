@@ -42,6 +42,7 @@ func _record_result() -> void:
 				manager.loot_summary = reward_error + " 点击确定重试。"
 				return
 			if not _progression_recorded and player_status != null:
+				player_status.cultivation_bonus_percent = manager._durable_loadout.cultivation_bonus_percent()
 				player_status.award_progression(manager.enemies[0].definition.get("progression_rewards", {}))
 				_progression_recorded = true
 		_recorded = events.resolve_encounter(event_id, manager.simulation.state.result)
@@ -65,6 +66,8 @@ func _award_victory() -> String:
 	if not error.is_empty(): return error
 	var prepared := BattleLoot.candidate(state, enemy, _battle_id, _loot_rolls)
 	if not prepared.error.is_empty(): return prepared.error
+	# Victory loot may overflow the bag; map travel then disables running.
+	# Never block the result screen or discard earned drops because the bag is full.
 	error = state.restore(prepared.snapshot)
 	var respawn_days := int(events.registry.events[event_id].get("respawn_days",0))
 	if error.is_empty() and respawn_days>0:
@@ -83,6 +86,7 @@ func _award_victory() -> String:
 	var names: PackedStringArray = []
 	for item_id: String in prepared.drops: names.append(manager.registry.get_item(item_id).display_name + " ×1")
 	manager.loot_summary = "获得材料：\n" + "\n".join(names) if not names.is_empty() else "本次未掉落材料。"
+	if state.storage_over_capacity(): manager.loot_summary += "\n储物袋已超容量，地图上暂时只能行走。"
 	return ""
 
 func return_to_map() -> String:

@@ -123,6 +123,9 @@ func complete(point_id: String, animate: bool) -> void:
 		return
 	var entry: Dictionary = signs[point_id]
 	if entry.finished:
+		# Restoring authority must hide immediately even if a fade already started.
+		if not animate:
+			_hide_finished(entry)
 		return
 	entry.finished = true
 	if not animate or suspended or not _on_screen(entry.sign):

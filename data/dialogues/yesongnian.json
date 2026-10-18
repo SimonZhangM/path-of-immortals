@@ -1,0 +1,1287 @@
+{
+  "id": "base.npc.yesongnian",
+  "name": "叶松年",
+  "portrait": "res://assets/ui-portrait-yesongnian.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.yesongnian.welcome",
+  "clues": {
+    "base.clue.qingshihewan.herb_changes": "河湾药材变化"
+  },
+  "topics": [
+    {
+      "id": "shop",
+      "label": "药铺近况",
+      "initial": [
+        "base.dialogue.yesongnian.shop.01",
+        "base.dialogue.yesongnian.shop.02",
+        "base.dialogue.yesongnian.shop.03"
+      ],
+      "revisits": [],
+      "story": [
+        "base.dialogue.yesongnian.shop.water",
+        "base.dialogue.yesongnian.shop.merge"
+      ]
+    },
+    {
+      "id": "medicine",
+      "label": "请教药理",
+      "initial": [
+        "base.dialogue.yesongnian.medicine.01",
+        "base.dialogue.yesongnian.medicine.02",
+        "base.dialogue.yesongnian.medicine.03"
+      ],
+      "revisits": [],
+      "story": [
+        "base.dialogue.yesongnian.medicine.report"
+      ]
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "initial": [
+        "base.dialogue.yesongnian.chat.01",
+        "base.dialogue.yesongnian.chat.02"
+      ],
+      "revisits": [
+        "base.dialogue.yesongnian.revisit.01",
+        "base.dialogue.yesongnian.revisit.02",
+        "base.dialogue.yesongnian.revisit.03",
+        "base.dialogue.yesongnian.revisit.04",
+        "base.dialogue.yesongnian.revisit.05",
+        "base.dialogue.yesongnian.revisit.06"
+      ],
+      "story": [
+        "base.dialogue.yesongnian.story.departure",
+        "base.dialogue.yesongnian.story.return",
+        "base.dialogue.yesongnian.chat.apprentice_price"
+      ],
+      "revisit_interval_days": 90,
+      "revisit_batch_size": 2
+    }
+  ],
+  "segments": {
+    "base.dialogue.yesongnian.welcome": {
+      "topic": "welcome",
+      "label": "初次见面",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，来得正好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "案上新收了几包草药，我正想叫你帮忙核一核。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（看了看他）……先不急。桌上还有温水，喝两口再说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "药柜跑不了，你小子也用不着事事赶着做完。🙂"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.shop.01": {
+      "topic": "shop",
+      "label": "药铺近况",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，把柜台边上那两包草药拿来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "来，你自己看看，能瞧出什么不同？"
+        },
+        {
+          "speaker": "player",
+          "text": "嗯……都是同一种草药。"
+        },
+        {
+          "speaker": "player",
+          "text": "不过这一包的叶片薄些，颜色也浅一点。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不错，眼力倒是长进了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（将两包草药摊开放好）这两批药收自同一个地方，采收的时令也差不多。我原以为是晾晒出了差错，可细问下来，炮制的法子并没有变。"
+        },
+        {
+          "speaker": "player",
+          "text": "会不会是采药的人摘得太早了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有可能。所以我才要查。"
+        },
+        {
+          "speaker": "npc",
+          "text": "做咱们这行的，最忌讳凭一点迹象就下定论。"
+        },
+        {
+          "speaker": "npc",
+          "text": "药材不对，先查来处，再查采收、晾晒的过程。一处一处弄明白，心里才有底。"
+        },
+        {
+          "speaker": "player",
+          "text": "那把往年的账拿出来对一对？我也帮您找找。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。柜里那本包青布的就是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "坐过来，咱们一道看。别只顾着看价钱，来处和采收的日子也得对上。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.shop.02": {
+      "topic": "shop",
+      "label": "对照旧账",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "看这几笔，都是河湾临溪那几处送来的药。往年同一时节的账，我放在旁边了。"
+        },
+        {
+          "speaker": "player",
+          "text": "今年送来的少了些……是那边的药草长得不好了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先别急。账上记的是咱们铺里收了多少，可不是山里长了多少。"
+        },
+        {
+          "speaker": "player",
+          "text": "也可能是采药的人少了，或者卖去了别处？"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。这些都得问清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "那账簿只能告诉咱们，哪些地方值得去看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。至于那几包药为何与往常不同，还得把采收、晾晒的经过一并核清。"
+        },
+        {
+          "speaker": "player",
+          "text": "我把这几处记下来，省得去了又记混。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这就像样了。旁边多留些空，往后看见什么，再添上去。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.shop.03": {
+      "topic": "shop",
+      "label": "河湾药材",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，最近是不是还打算去青石河湾？"
+        },
+        {
+          "speaker": "player",
+          "text": "嗯，正准备再去看看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那倒正好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你若路过临溪的采药地，顺便看看水势，还有那些常见草药的长势。"
+        },
+        {
+          "speaker": "player",
+          "text": "要不要采几株回来比对？"
+        },
+        {
+          "speaker": "npc",
+          "text": "若是顺手，可以带些回来。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过记住，采自哪处、何时采的，都要记清楚。光拿回来一把草，连出处都不知道，可查不出什么来。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，我记住了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "还有一件事。"
+        },
+        {
+          "speaker": "player",
+          "text": "什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（放下手中的账簿，看了他一眼）山里最近不大太平。你小子可别为了几株药，往那些险路上钻。"
+        },
+        {
+          "speaker": "player",
+          "text": "放心吧，叶伯，我有分寸。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哼，你这话，我听了多少年了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "去吧。若真遇上棘手的事，回来再商量。别总想着一个人逞能。"
+        }
+      ],
+      "clues": [
+        "base.clue.qingshihewan.herb_changes"
+      ]
+    },
+    "base.dialogue.yesongnian.shop.water": {
+      "topic": "shop",
+      "label": "河湾观察结果",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，我这次去河湾，发现有些地方的溪水似乎比以前浅了。"
+        },
+        {
+          "speaker": "player",
+          "text": "岸边露出来的石头也多了些。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我记得前些年，那几处水势还算丰沛。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过溪水涨落本是寻常事。你只看过这一回，暂时还说不准。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我以后多留意几次？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。日子、地点都记下来，往后再作比较。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有些变化，不是看一眼就能明白的。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.water_observed"
+      ],
+      "requires_dialogues": [
+        {
+          "npc_id": "base.npc.yesongnian",
+          "segment_id": "base.dialogue.yesongnian.shop.03"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.shop.merge": {
+      "topic": "shop",
+      "label": "清禾也在查",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，清禾姐也在查最近几批药。她说有些病人照旧方调养，恢复得却比往常慢。"
+        },
+        {
+          "speaker": "npc",
+          "text": "她可记下用了哪一批药？"
+        },
+        {
+          "speaker": "player",
+          "text": "她正在对照医案，还没弄清楚。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就先别催她下结论。她看病人的变化，我查药材的来处，得把日子和批次对上，才好往一处想。"
+        },
+        {
+          "speaker": "player",
+          "text": "我路过医馆时，跟她说一声。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。告诉她，有哪笔收药记录要查，只管来找我。"
+        }
+      ],
+      "requires_dialogues": [
+        {
+          "npc_id": "base.npc.yesongnian",
+          "segment_id": "base.dialogue.yesongnian.shop.03"
+        },
+        {
+          "npc_id": "base.npc.suqinghe",
+          "segment_id": "base.dialogue.suqinghe.medical.02"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.medicine.01": {
+      "topic": "medicine",
+      "label": "请教药理",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "来，考你个简单的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "若是两株药草长得相似，你会怎么辨？"
+        },
+        {
+          "speaker": "player",
+          "text": "先看叶形、颜色，再闻闻气味。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，还有呢？"
+        },
+        {
+          "speaker": "player",
+          "text": "看看根茎和断面？若是晒干的，还得留意有没有受潮。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不错。总算没白教。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过你要记住，药材的模样、气味、产地和采收时令，都得合在一起判断。"
+        },
+        {
+          "speaker": "npc",
+          "text": "碰见不认识的草药，可别往嘴里尝。有些东西，认错一次，就够你吃苦头了。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯，这些您都叮嘱过好多遍了，我记着呢。"
+        },
+        {
+          "speaker": "npc",
+          "text": "常见的那些药，你已经能独自料理了，这个我知道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我叮嘱的，是那些你没见过的。别因为认熟了几味，就觉得旁的也差不多。"
+        },
+        {
+          "speaker": "player",
+          "text": "认不准的，我先来问您。"
+        },
+        {
+          "speaker": "npc",
+          "text": "对。别怕问，问明白了再动手。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.medicine.02": {
+      "topic": "medicine",
+      "label": "采来的药怎么处理？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，山里采来的草药，是不是越新鲜越好？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那可不一定。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有的药宜鲜用，有的须晒干，有的还得去掉根皮或杂质，才能妥当入药。"
+        },
+        {
+          "speaker": "npc",
+          "text": "同一味药，处理得好不好，有时候比多放半钱还要紧。"
+        },
+        {
+          "speaker": "player",
+          "text": "那若是在山里遇见有人受伤，来不及带回铺子呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你跟我学过的那些简易药粉，还记得怎么调吧？"
+        },
+        {
+          "speaker": "player",
+          "text": "记得。先辨清药材，再按以前学过的法子研磨调配。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。寻常的小伤，若手边有合用的药材，倒能先应急。"
+        },
+        {
+          "speaker": "npc",
+          "text": "可碰上重伤，不能只凭一包药粉就以为万事大吉。该送医馆时，还得赶紧送。"
+        },
+        {
+          "speaker": "player",
+          "text": "知道了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "记住，识药是本事，知道什么时候不能乱用药，也是本事。"
+        }
+      ],
+      "variants": [
+        {
+          "id": "after_rescue",
+          "requires_flags": [
+            "base.story.qingshihewan.rescue_completed"
+          ],
+          "lines": [
+            {
+              "speaker": "player",
+              "text": "叶伯，山里采来的草药，是不是越新鲜越好？"
+            },
+            {
+              "speaker": "npc",
+              "text": "那可不一定。"
+            },
+            {
+              "speaker": "npc",
+              "text": "有的药宜鲜用，有的须晒干，有的还得去掉根皮或杂质，才能妥当入药。"
+            },
+            {
+              "speaker": "npc",
+              "text": "同一味药，处理得好不好，有时候比多放半钱还要紧。"
+            },
+            {
+              "speaker": "player",
+              "text": "叶伯，上回在河湾救人，用上您教我的应急药粉了。"
+            },
+            {
+              "speaker": "npc",
+              "text": "你先说说，当时怎么处置的。"
+            },
+            {
+              "speaker": "player",
+              "text": "用的都是平日认得的草药，照着您教的法子，在旁边研磨调配了些。没敢临时乱加别的。"
+            },
+            {
+              "speaker": "npc",
+              "text": "嗯，肯用学过的本事帮人，是好事。"
+            },
+            {
+              "speaker": "npc",
+              "text": "不过，应急是先缓住伤势，可别当成已经治好了。"
+            },
+            {
+              "speaker": "player",
+              "text": "我记着，没敢给他打包票。"
+            },
+            {
+              "speaker": "npc",
+              "text": "那就好。帮上了人，自己也平安回来，这才叫办得妥当。"
+            }
+          ],
+          "set_flags": [
+            "base.story.yesongnian.knows_rescue"
+          ]
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.medicine.03": {
+      "topic": "medicine",
+      "label": "药材与丹药有何不同？",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，既然草药能治病，为什么修士还要花工夫炼丹？"
+        },
+        {
+          "speaker": "npc",
+          "text": "因为草药和丹药虽有联系，门道却不尽相同。"
+        },
+        {
+          "speaker": "npc",
+          "text": "寻常药散，看重辨药和调配。丹药还要讲究丹方、火候、药性如何相合。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你看着人家一炉丹药炼成，觉得神奇。可背后废了多少材料、费了多少心思，外人哪知道。"
+        },
+        {
+          "speaker": "player",
+          "text": "听您这么说，炼丹倒比识药还难。"
+        },
+        {
+          "speaker": "npc",
+          "text": "各有各的难处。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不识药性，炼丹便容易出错；只懂药材，却不明白丹火变化，也成不了丹师。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我以后是不是也该学学炼丹？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有机会自然可以学。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过，别见着新本事就想一下子全学会。先把眼前的事做好，往后走得才稳当。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯，我怎么觉得您是在说我？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你听得出来，就说明还不算太笨。😄"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.medicine.report": {
+      "topic": "medicine",
+      "label": "说起河湾救人",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，上回在河湾救人，用上您教我的应急药粉了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你先说说，当时怎么处置的。"
+        },
+        {
+          "speaker": "player",
+          "text": "用的都是平日认得的草药，照着您教的法子，在旁边研磨调配了些。没敢临时乱加别的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，肯用学过的本事帮人，是好事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过，应急是先缓住伤势，可别当成已经治好了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我记着，没敢给他打包票。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就好。帮上了人，自己也平安回来，这才叫办得妥当。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qingshihewan.rescue_completed"
+      ],
+      "excludes_flags": [
+        "base.story.yesongnian.knows_rescue"
+      ],
+      "requires_dialogues": [
+        {
+          "npc_id": "base.npc.yesongnian",
+          "segment_id": "base.dialogue.yesongnian.medicine.02"
+        }
+      ],
+      "set_flags": [
+        "base.story.yesongnian.knows_rescue"
+      ]
+    },
+    "base.dialogue.yesongnian.chat.01": {
+      "topic": "chat",
+      "label": "闲聊",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，你还记不记得，小时候我第一次让你抄药名？"
+        },
+        {
+          "speaker": "player",
+          "text": "怎么不记得？抄了一下午，手都酸了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那时你写的字啊，歪歪扭扭，十个里有三个我认不出来。"
+        },
+        {
+          "speaker": "player",
+          "text": "我记得您那时候还夸过我。"
+        },
+        {
+          "speaker": "npc",
+          "text": "夸你？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哦，想起来了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "我说的是“这孩子脑子倒灵光，就是手比脑子还着急”。"
+        },
+        {
+          "speaker": "player",
+          "text": "……原来那也算夸奖啊。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，如今总算写得像样了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "时间过得真快。一晃眼，你都长这么大了。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.chat.02": {
+      "topic": "chat",
+      "label": "说起清禾",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "说起来，清禾那丫头最近又在医馆忙得忘了时辰。"
+        },
+        {
+          "speaker": "player",
+          "text": "她总是这样，劝别人休息，轮到自己就什么都顾不上。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你倒是了解她。"
+        },
+        {
+          "speaker": "player",
+          "text": "从小认识，哪能不知道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "也是。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你们两个小时候，一个闲不住，一个总爱跟着操心，如今倒也没怎么变。"
+        },
+        {
+          "speaker": "player",
+          "text": "清禾姐现在可是正经大夫了，我还在药铺里打杂呢。"
+        },
+        {
+          "speaker": "npc",
+          "text": "分药、记账、核验来处，这些都让你做了，还叫打杂？"
+        },
+        {
+          "speaker": "player",
+          "text": "听您这么一说，我好像还真学了不少。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哪天做错了，我照样说你。可已经学会的本事，也别自己不当回事。🙂"
+        },
+        {
+          "speaker": "npc",
+          "text": "清禾有她要钻研的事，你也有你的。把手头的本事学扎实，不必急着赶谁。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过你若路过医馆，替我提醒她一句，忙归忙，饭总得按时吃。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，我记着。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.revisit.01": {
+      "topic": "chat",
+      "label": "多留的一碗热粥",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，吃过饭没有？"
+        },
+        {
+          "speaker": "player",
+          "text": "还没呢，打算忙完再吃。"
+        },
+        {
+          "speaker": "npc",
+          "text": "就知道你会这么说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "灶上还有粥，自己去盛一碗。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯，您这是特意给我留的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "特意什么？不过是早上煮多了。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您怎么知道我还没吃？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（继续整理药材）你小子一忙起来就忘了饭点，我还不知道？"
+        },
+        {
+          "speaker": "npc",
+          "text": "快去，凉了可不好吃。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.revisit.02": {
+      "topic": "chat",
+      "label": "那杆旧药秤",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，这杆秤用了多少年了？怎么还不换新的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么，嫌它旧了？"
+        },
+        {
+          "speaker": "player",
+          "text": "倒也不是。就是瞧着磨损得厉害。"
+        },
+        {
+          "speaker": "npc",
+          "text": "这杆秤啊，比你年纪还大。"
+        },
+        {
+          "speaker": "npc",
+          "text": "以前铺子生意冷清，买不起什么好家什。后来有了新秤，我也舍不得把它扔了。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来您也会舍不得旧东西。"
+        },
+        {
+          "speaker": "npc",
+          "text": "人用惯了的东西，总有些念想。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过如今它量得不如从前准，我也只拿来放着看看，不用来称药了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "留个念想可以，可不能误了正事。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.revisit.03": {
+      "topic": "chat",
+      "label": "镇上的熟人",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "方才镇西的老周又来买药了。"
+        },
+        {
+          "speaker": "player",
+          "text": "他不是前几日才来过吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "药倒是没用完。"
+        },
+        {
+          "speaker": "npc",
+          "text": "说是路过铺子，进来坐坐，顺便打听镇上有什么新鲜事。"
+        },
+        {
+          "speaker": "player",
+          "text": "原来药铺还能当茶馆使。"
+        },
+        {
+          "speaker": "npc",
+          "text": "🙂 这小镇啊，住久了，街坊邻里都是熟人。"
+        },
+        {
+          "speaker": "npc",
+          "text": "有时候人家来一趟，不光是为了买东西，也就是想找个人说说话。"
+        },
+        {
+          "speaker": "player",
+          "text": "那您岂不是每天都要陪人闲聊？"
+        },
+        {
+          "speaker": "npc",
+          "text": "也好。能有人来坐坐，说明这日子还算安稳。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.revisit.04": {
+      "topic": "chat",
+      "label": "药铺的灯",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，您每天都这么早开门，晚上又关得晚，不累吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "年轻时候不觉得，如今确实有些力不从心了。"
+        },
+        {
+          "speaker": "player",
+          "text": "那往后我多帮您照看铺子。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你有这份心就好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过啊，开药铺这么多年，每到傍晚，看见街上人家一盏盏亮起灯来，心里总觉得踏实。"
+        },
+        {
+          "speaker": "player",
+          "text": "这有什么特别的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "等你以后走过的地方多了，就明白了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "人有地方可回，有熟人在等，便是件好事。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.revisit.05": {
+      "topic": "chat",
+      "label": "年轻时的叶伯",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，您年轻时候，也总待在青石镇吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "那倒没有。"
+        },
+        {
+          "speaker": "npc",
+          "text": "年轻时，我也跟着商队走过不少地方。"
+        },
+        {
+          "speaker": "player",
+          "text": "真的？您怎么从来没怎么说过？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有什么好说的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那时候初出远门，见什么都觉得新鲜，吃过的亏也不少。"
+        },
+        {
+          "speaker": "player",
+          "text": "您还吃过亏？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你以为呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我年轻时可不比你稳重多少。"
+        },
+        {
+          "speaker": "npc",
+          "text": "只是后来走得多了，才知道世上的事不是光凭一股劲就能办成的。"
+        },
+        {
+          "speaker": "player",
+          "text": "那有机会，您再给我讲讲外面的事。"
+        },
+        {
+          "speaker": "npc",
+          "text": "行。等哪日得闲，给你说说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "但你小子听故事归听故事，千万别以为外面的路都像故事里那么好走。"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.revisit.06": {
+      "topic": "chat",
+      "label": "长大了",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，过来。"
+        },
+        {
+          "speaker": "player",
+          "text": "怎么了，叶伯？"
+        },
+        {
+          "speaker": "npc",
+          "text": "站直些，让我瞧瞧。"
+        },
+        {
+          "speaker": "player",
+          "text": "……您这是做什么？"
+        },
+        {
+          "speaker": "npc",
+          "text": "呵，好像又长高了点。"
+        },
+        {
+          "speaker": "player",
+          "text": "您上个月也是这么说的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "是吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "人上了年纪，日子一天天过得快，倒常常忘了年轻人长得有多快。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（拍了拍他的肩膀）往后你有自己的打算，不必事事都来问我。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过遇到拿不准的事，也别忘了回来商量。"
+        },
+        {
+          "speaker": "player",
+          "text": "知道了，叶伯。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。这回听着倒像是真的记住了。🙂"
+        }
+      ]
+    },
+    "base.dialogue.yesongnian.story.departure": {
+      "topic": "chat",
+      "label": "前往青岚宗",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}，仙门那边的事，我听说了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "想好了？"
+        },
+        {
+          "speaker": "player",
+          "text": "嗯，叶伯，我想去试试。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就去。"
+        },
+        {
+          "speaker": "player",
+          "text": "可是药铺这边……"
+        },
+        {
+          "speaker": "npc",
+          "text": "药铺还有我呢。你操的哪门子心？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当初教你识药，是盼着你有一门安身的本事，可不是要把你一辈子拴在这几排药柜旁边。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯……"
+        },
+        {
+          "speaker": "npc",
+          "text": "到了仙门，规矩自然和镇上不同。"
+        },
+        {
+          "speaker": "npc",
+          "text": "凡事多看、多学，莫要逞一时意气。"
+        },
+        {
+          "speaker": "npc",
+          "text": "记着，修为高低是一回事，怎么做人是另一回事。学了本事，也别把从前学过的道理丢了。"
+        },
+        {
+          "speaker": "player",
+          "text": "我记下了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "行了，去准备吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "……得空的时候，回来看看。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.departure_ready"
+      ],
+      "excludes_flags": [
+        "base.story.qinglan.joined"
+      ],
+      "retire_flags": [
+        "base.story.qinglan.joined"
+      ]
+    },
+    "base.dialogue.yesongnian.story.return": {
+      "topic": "chat",
+      "label": "回镇看望叶伯",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "{player.familiar_name}？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哟，咱们的小修士回来了。"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯，您就别拿我说笑了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "哈哈，出去了一趟，倒学会谦虚了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么样？山上吃住可还习惯？"
+        },
+        {
+          "speaker": "player",
+          "text": "还好，就是每日修炼的事情比以前多了不少。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "修行之事我不算懂，可既然进了宗门，就得认真学。"
+        },
+        {
+          "speaker": "player",
+          "text": "您身体还好吧？药铺最近忙不忙？"
+        },
+        {
+          "speaker": "npc",
+          "text": "身子还好。铺里忙起来的时候，倒真有些想你。"
+        },
+        {
+          "speaker": "npc",
+          "text": "以前喊一声，就有人应。如今有时喊出口了，才想起你在山上呢。"
+        },
+        {
+          "speaker": "player",
+          "text": "那今天有什么要帮的，您尽管叫我。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好，有事自然叫你。"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过这会儿先坐下。药柜天天都在，你山上的事，我还没听够呢。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.qinglan.joined",
+        "base.story.qinglan.first_town_return"
+      ]
+    },
+    "base.dialogue.yesongnian.chat.apprentice_price": {
+      "topic": "chat",
+      "label": "关于学徒买药",
+      "requires_flags": [
+        "base.story.yesongnian.apprentice_discount_seen"
+      ],
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "叶伯，我要是从铺子里拿些药材自己用，也得按价付灵石？"
+        },
+        {
+          "speaker": "npc",
+          "text": "当然得记账。这一柜子药材，又不是自己从地里长出来的。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为跟着您做学徒，多少有点方便呢。"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么，没有？"
+        },
+        {
+          "speaker": "npc",
+          "text": "你跟了我这么多年，寻常药材和常用丹药，我自然按自己人的价钱算。"
+        },
+        {
+          "speaker": "player",
+          "text": "那要是替铺子办事呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "替铺子办事，用铺子的药，哪有让你自己掏钱的道理？"
+        },
+        {
+          "speaker": "npc",
+          "text": "不过公是公，私是私。你自己买的、替铺子领的、从山里采来卖的，账上都得分清楚。"
+        },
+        {
+          "speaker": "player",
+          "text": "明白了。您这是怕我把账弄乱了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你能把账弄明白，我就少操一份心。🙂"
+        }
+      ]
+    }
+  },
+  "greetings": {
+    "low_ratio": 0.5,
+    "close_interval": 0,
+    "ordinary": [
+      "base.dialogue.yesongnian.greeting.daily.01",
+      "base.dialogue.yesongnian.greeting.daily.02",
+      "base.dialogue.yesongnian.greeting.daily.03",
+      "base.dialogue.yesongnian.greeting.daily.04",
+      "base.dialogue.yesongnian.greeting.daily.05"
+    ],
+    "close": [],
+    "injured": "base.dialogue.yesongnian.greeting.injured",
+    "once": [
+      {
+        "entry": "base.dialogue.yesongnian.greeting.return",
+        "requires_flags": [
+          "base.story.qinglan.joined",
+          "base.story.qinglan.first_town_return"
+        ],
+        "excludes_flags": []
+      },
+      {
+        "entry": "base.dialogue.yesongnian.greeting.departure",
+        "requires_flags": [
+          "base.story.qinglan.departure_ready"
+        ],
+        "excludes_flags": [
+          "base.story.qinglan.joined"
+        ]
+      },
+      {
+        "entry": "base.dialogue.yesongnian.greeting.rescue",
+        "requires_flags": [
+          "base.story.qingshihewan.rescue_completed",
+          "base.story.yesongnian.knows_rescue"
+        ],
+        "excludes_flags": []
+      }
+    ],
+    "phases": [],
+    "entries": {
+      "base.dialogue.yesongnian.greeting.daily.01": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，来了？药柜我刚盘过，今日倒不用你帮忙。歇会儿吧。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.daily.02": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，来了？手上的事不急，咱们说会儿话。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.daily.03": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}？我正收拾药柜呢。你说你的，我听着。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.daily.04": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "你来得巧，水刚烧开。倒一杯喝了再忙。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.daily.05": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}，最近认药的本事长进不少。就是做事还欠几分耐心。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.injured": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "怎么弄得这般狼狈？先坐下。哪儿伤着了？别急着说没事。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.return": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "{player.familiar_name}？回来了！先让我瞧瞧……嗯，精神倒不错。山上的日子还过得惯吗？"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.departure": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "听说仙门那边有消息了？来，坐下。你这回怕是有不少话想说。"
+          }
+        ]
+      },
+      "base.dialogue.yesongnian.greeting.rescue": {
+        "lines": [
+          {
+            "speaker": "npc",
+            "text": "听说你在河湾救了个受伤的修士？做得不错。可下次遇上危险，先掂量掂量自己。"
+          }
+        ]
+      }
+    }
+  }
+}

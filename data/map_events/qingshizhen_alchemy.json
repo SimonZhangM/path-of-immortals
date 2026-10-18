@@ -6,8 +6,11 @@
   "catalog": "res://data/shops/qingshizhen_alchemy.json",
   "presentation": {
     "title_center_y": 133.0,
-    "background": "res://assets/tanchuang-jiaoyi-qingshizhen-liandanfang.webp",
+    "background": "res://assets/tanchuang-qingshizhen-liandanfang.webp",
+    "conversation_background": "res://assets/tanchuang-qingshizhen-liandanfang2.webp",
+    "crafting_background": "res://assets/tanchuang-qingshizhen-liandanfang2.webp",
     "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-liandanfang-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
-  }
+  },
+  "dialogue": "res://data/dialogues/luhuaizhen.json"
 }

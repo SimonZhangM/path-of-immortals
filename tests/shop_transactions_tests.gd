@@ -25,9 +25,10 @@ func verify_prices(state: MapLoadoutState, shop: MapShop) -> void:
 	check(shop.pricing.buy_unit_price("base.map_item.hemostatic_pill")==14 and shop.pricing.sell_unit_price("base.map_item.hemostatic_pill")==4,"odd price rounding")
 	for key in ["weapon","armor"]:
 		var rows := shop.products(key)
-		check(rows.size()==8,"eight stock entries "+key)
+		var expected := 9 if key=="weapon" else 10
+		check(rows.size()==expected,"state-source stock entries "+key)
 		check(rows.filter(func(r): return state.records[r.item_id].quality=="下品").size()==6,"six lower-grade "+key)
-		check(rows.filter(func(r): return state.records[r.item_id].quality=="凡品").size()==2,"two ordinary-grade "+key)
+		check(rows.filter(func(r): return state.records[r.item_id].quality=="凡品").size()==expected-6,"ordinary-grade stock including state sources "+key)
 	for row: Dictionary in shop.products(): check(shop.buy_unit_price(row.item_id)>0 and not row.has("preview_buy_price"),"all stock uses approved prices")
 	for name in ["qingshizhen_herbalist","qingshizhen_sect","qingshizhen_blacksmith","qingshizhen_alchemy"]:
 		var other := MapShop.new()

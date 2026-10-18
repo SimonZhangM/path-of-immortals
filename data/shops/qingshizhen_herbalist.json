@@ -3,11 +3,35 @@
   "profile": "base.shop_profile.herbalist",
   "title": "药材铺",
   "leave_label": "离开药材铺",
-  "description": "药材与特制诱饵交易。",
+  "description": "药香盈柜，百草常备。叶伯在此收售药材、丹药、丹方与特制诱饵。",
+  "purchase_discount": {
+    "label": "学徒待遇",
+    "tooltip": "正在叶伯铺中帮忙学药，\n购入常规药材与常用丹药时，\n可享八折学徒优惠。",
+    "factor_bps": 8000,
+    "item_ids": [
+      "base.material.zhixuecao",
+      "base.material.qingtenggen",
+      "base.material.kuaiye",
+      "base.material.xilutai"
+    ],
+    "dialogue_unlock_flag": "base.story.yesongnian.apprentice_discount_seen"
+  },
   "products": [
-    {"item_id":"base.material.zhixuecao","category":"herb"},
-    {"item_id":"base.material.qingtenggen","category":"herb"},
-    {"item_id":"base.material.kuaiye","category":"herb"},
-    {"item_id":"base.material.xilutai","category":"herb"}
+    {
+      "item_id": "base.material.zhixuecao",
+      "category": "herb"
+    },
+    {
+      "item_id": "base.material.qingtenggen",
+      "category": "herb"
+    },
+    {
+      "item_id": "base.material.kuaiye",
+      "category": "herb"
+    },
+    {
+      "item_id": "base.material.xilutai",
+      "category": "herb"
+    }
   ]
 }

@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.metal_02",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《庚金真解》 属性总纲（上阵生效）",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "庚金凝锋",
+          "description": "：主动金属性攻击的本体金伤＋10%。"
+        },
+        {
+          "name": "百兵通心",
+          "description": "：武器本体的纯物理伤害＋10%。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "乘克增威",
+          "description": "：本系攻击原有相克增伤额外＋10个百分点。"
+        },
+        {
+          "name": "逆克护身",
+          "description": "：穿本系属性身甲受克时，最多抵消10个百分点克制增伤，不反转为额外减伤。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "反锋内鸣",
+          "description": "：自身反锋每有效层的共鸣贡献由1%提高至1.5%。"
+        },
+        {
+          "name": "痕血外鸣",
+          "description": "：目标锋痕、流血各自每有效层贡献由1%提高至1.25%。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "庚金启式",
+          "description": "：金法术作为某一段合法连携的起手，该段追加比例＋10个百分点。"
+        },
+        {
+          "name": "庚金承式",
+          "description": "：金法术作为合法连携的后续节点，该段追加比例＋10个百分点。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "纯金贯式",
+          "description": "：合法连携相邻两节点均为金属性，本段追加比例＋10个百分点。"
+        },
+        {
+          "name": "兵法合流",
+          "description": "：同条合法连携含金法术及武器或法器，从满足条件的段起追加比例＋10个百分点。"
+        }
+      ]
+    }
+  ]
+}

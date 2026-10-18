@@ -1,0 +1,197 @@
+{
+  "book_id": "base.cultivation_book.wood_03",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《枯荣生灭经》 状态",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "早春",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-01-zaochun.webp",
+          "status_icons": [
+            {
+              "name": "生机",
+              "icon": "res://assets/buff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "潜毒",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-02-qiandu.webp",
+          "status_icons": [
+            {
+              "name": "毒蚀",
+              "icon": "res://assets/debuff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "盘根",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-03-pangen.webp",
+          "status_icons": [
+            {
+              "name": "缠绕",
+              "icon": "res://assets/debuff-mu-2.webp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "养生",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-04-yangsheng.webp",
+          "status_icons": [
+            {
+              "name": "生机",
+              "icon": "res://assets/buff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "蚀骨",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-05-shigu.webp",
+          "status_icons": [
+            {
+              "name": "毒蚀",
+              "icon": "res://assets/debuff-mu.webp",
+              "screen_offset_x": -1
+            }
+          ]
+        },
+        {
+          "name": "紧缚",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-06-jinfu.webp",
+          "status_icons": [
+            {
+              "name": "缠绕",
+              "icon": "res://assets/debuff-mu-2.webp",
+              "screen_offset_x": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "毒养",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-07-yiduyangsheng.webp",
+          "status_icons": [
+            {
+              "name": "毒蚀",
+              "icon": "res://assets/debuff-mu.webp"
+            },
+            {
+              "name": "生机",
+              "icon": "res://assets/buff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "缚毒",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-08-fuduxiangsheng.webp",
+          "status_icons": [
+            {
+              "name": "缠绕",
+              "icon": "res://assets/debuff-mu-2.webp"
+            },
+            {
+              "name": "毒蚀",
+              "icon": "res://assets/debuff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "缠生",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-09-chanshenghuixi.webp",
+          "status_icons": [
+            {
+              "name": "缠绕",
+              "icon": "res://assets/debuff-mu-2.webp"
+            },
+            {
+              "name": "生机",
+              "icon": "res://assets/buff-mu.webp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "滋荣",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-10-shengximianchang.webp",
+          "status_icons": [
+            {
+              "name": "生机",
+              "icon": "res://assets/buff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "蚀髓",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-11-shigujianshen.webp",
+          "status_icons": [
+            {
+              "name": "毒蚀",
+              "icon": "res://assets/debuff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "固根",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-12-pangenyugu.webp",
+          "status_icons": [
+            {
+              "name": "缠绕",
+              "icon": "res://assets/debuff-mu-2.webp",
+              "screen_offset_x": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "生机障",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-13-shengshengbuxi.webp",
+          "status_icons": [
+            {
+              "name": "生机",
+              "icon": "res://assets/buff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "留毒",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-14-shigunanxiao.webp",
+          "status_icons": [
+            {
+              "name": "毒蚀",
+              "icon": "res://assets/debuff-mu.webp"
+            }
+          ]
+        },
+        {
+          "name": "续缠",
+          "icon": "res://assets/UI-wood-kurongshengmiejing-effect-15-pangenbujue.webp",
+          "status_icons": [
+            {
+              "name": "缠绕",
+              "icon": "res://assets/debuff-mu-2.webp"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.wood_02",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《青木真解》 总纲",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "青木凝锋",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-01-mufeng.webp"
+        },
+        {
+          "name": "青木护生",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-02-muxi.webp"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "乘克增威",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-03-chengke.webp"
+        },
+        {
+          "name": "逆克护身",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-04-nike.webp"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "生机内鸣",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-05-neiming.webp"
+        },
+        {
+          "name": "毒缠外鸣",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-06-waiming.webp"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "青木启式",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-07-qishi.webp"
+        },
+        {
+          "name": "青木承式",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-08-chengshi.webp"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "万木同息",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-09-wanmutongxi.webp"
+        },
+        {
+          "name": "生杀并济",
+          "icon": "res://assets/UI-wood-qingmuzhenjie-effect-10-shengshabingji.webp"
+        }
+      ]
+    }
+  ]
+}

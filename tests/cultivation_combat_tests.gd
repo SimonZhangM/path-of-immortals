@@ -46,6 +46,7 @@ func run() -> void:
 	check(catalog.error.is_empty(),"assets loaded")
 	if not catalog.error.is_empty(): finish(); return
 	test_knowledge()
+	test_review_revisions()
 	test_all_spells()
 	test_modes_controls()
 	test_special()
@@ -80,6 +81,8 @@ func test_all_spells() -> void:
 		var definition: Dictionary = registry.library.spells[id]
 		var choices: Array = [""]+definition.branches.keys()
 		for choice: String in choices:
+			if not choice.is_empty() and not registry.library.branch_unavailable_reason(definition.book_id,int(definition.learned_at_book_level)+1,choice).is_empty():
+				continue # Unavailable link choices are covered by rejection tests.
 			var sim := battle(id,choice)
 			var p: PartyMemberState = sim.state.teams[0][0]
 			var e: PartyMemberState = sim.state.teams[1][0]
@@ -102,6 +105,63 @@ func test_all_spells() -> void:
 				if spell.opcode=="enchant": check(not p.weapon_enchantment.is_empty(),"enchant pending")
 				if spell.opcode=="weapon_barrier": check(p.barrier>0,"weapon shield present")
 			check(registry.get_item(id).icon_path.is_empty(),"empty icon "+id)
+
+func test_review_revisions() -> void:
+	# Measure the actual timer and resource debit, not just the branch dictionary.
+	var fast := battle("base.spell.wind_01","疾羽")
+	var caster: PartyMemberState = fast.state.teams[0][0]
+	check(fast.timeline.full_cd("spell")==3_000_000,"疾羽 retains three-second CD")
+	fast.advance(3)
+	var spirit := caster.spirit
+	fast.t01.forced_rolls.assign([0.0])
+	check(fast.timeline.request("spell") and is_equal_approx(spirit-caster.spirit,4.0),"疾羽 actually pays four spirit")
+	var normal := battle("base.spell.wind_01","透风")
+	check(normal.timeline.full_cd("spell")==4_000_000,"透风 keeps four-second CD")
+	for choice: String in ["风锋","灵行"]:
+		var sim := battle("base.spell.wind_02")
+		var p: PartyMemberState = sim.state.teams[0][0]
+		var e: PartyMemberState = sim.state.teams[1][0]
+		learn(p,"base.cultivation_book.wind_02",1,choice)
+		check(p.inventory.add_item("wind_general","base.cultivation_book.wind_02",Vector2i(3,0)),"equip wind general")
+		sim.attach(p,0,"wind_general",true)
+		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.wind",0),.7),"inserting general grants no accuracy")
+		sim.advance(3)
+		var chance := .8 if choice=="风锋" else .7
+		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.wind",3_000_000),chance),"only 风锋 increases active wind accuracy")
+		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.fire",3_000_000),.7),"wind accuracy excludes other elements")
+		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.wind",3_000_000,false),.7),"wind accuracy excludes counter and followup")
+		check(is_equal_approx(sim.cultivation.hit_chance(p,e,1.1,"base.element.wind",3_000_000),1.0),"wind accuracy still capped at100")
+		check(is_equal_approx(sim.cultivation.hit_chance(e,p,.9,"base.element.fire",3_000_000),.8 if choice=="灵行" else .9),"灵行 keeps ten-point evasion")
+		sim.t01.apply_status(e,"失衡",4,p,3_000_000)
+		var hp := e.hp
+		sim.t01.forced_rolls.assign([.30,0.0])
+		sim.cultivation.followup(p,e,registry.get_item("base.map_item.qingshi_short_sword"),20,3_000_000)
+		check((e.hp<hp)==(choice=="灵行"),"灵行 still triggers pursuit at30percent roll, 风锋 does not")
+	var k := CultivationKnowledge.new()
+	var book := "base.cultivation_book.wood_02"
+	for stage in range(1,6): check(k.record_achievement(registry.library,book,stage,5),"pending choice never blocks later level")
+	var before := k.snapshot()
+	check(not k.choose(registry.library,book,4,"启式") and k.snapshot()==before,"link choice rejection leaves progress unchanged")
+	check(not k.choose(registry.library,book,5,"万木同息") and k.branch(book,5).is_empty(),"mixed level allows leaving choice empty")
+	check(k.choose(registry.library,book,5,"生杀并济"),"implemented alternative can be chosen later")
+	var legacy := k.snapshot()
+	legacy.learned[book].branches["4"]="启式"
+	var restored := CultivationKnowledge.new()
+	check(restored.restore(legacy,registry.library,5) and restored.level(book)==5 and restored.branch(book,4).is_empty() and restored.branch(book,5)=="生杀并济","legacy inactive choice becomes pending, valid progress preserved")
+	legacy.learned[book].branches["4"]="unknown"
+	var preserved := restored.snapshot()
+	check(not restored.restore(legacy,registry.library,5) and restored.snapshot()==preserved,"unknown legacy choice still rejected atomically")
+	var tianluo := CultivationKnowledge.new()
+	for stage in range(1,9): tianluo.record_achievement(registry.library,"base.cultivation_book.wood_05",stage,5)
+	check(not tianluo.choose(registry.library,"base.cultivation_book.wood_05",8,"引火召雷"),"spell-specific link choice also unavailable")
+	check(tianluo.choose(registry.library,"base.cultivation_book.wood_05",8,"天罗固缚"),"rejected choice does not consume selection opportunity")
+	check(not tianluo.choose(registry.library,"base.cultivation_book.wood_05",8,"引火召雷"),"no link selection after active choice")
+	for id: String in registry.library.books:
+		var text := ItemTooltip.effect_text(registry.get_item(id))
+		check(text.contains("【上阵参悟】") and text.contains("赢得战斗"),"book tooltip identifies battle experience requirement")
+	check(ItemTooltip.effect_text(registry.get_item("base.cultivation_book.wood_02")).contains("连携系统开放后可用"),"deferred options visible as preview only")
+	check(ItemTooltip.effect_text(registry.get_item("base.cultivation_book.wood_03")).contains("【学成常驻】"),"specialization persistent label")
+	check(ItemTooltip.effect_text(registry.get_item("base.cultivation_book.wood_04")).contains("【上阵生效】"),"combat book explains independent spells")
 
 func test_modes_controls() -> void:
 	var sim := battle("base.spell.metal_01")

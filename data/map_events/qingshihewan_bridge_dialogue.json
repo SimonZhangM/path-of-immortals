@@ -39,5 +39,8 @@
     "岸边怎么这么多脚印。",
     "难道最近山里的野兽确实都往外面来了？",
     "不好！有血……"
+  ],
+  "story_flags_on_complete": [
+    "base.story.qingshihewan.water_observed"
   ]
 }

@@ -23,13 +23,16 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图事件字段不完整。"
 		if not raw.id is String or not raw.id.begins_with("base.map_event.") or loaded.has(raw.id):
 			return "地图事件ID无效或重复。"
-		if raw.type not in ["dialogue", "encounter", "chest", "gathering", "rest", "shop", "clinic"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
+		if raw.type not in ["dialogue", "encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
 			return "地图事件类型、节点或节点绑定无效。"
 		if raw.get("trigger", "click") not in ["arrival", "click"]:
 			return "地图事件触发方式无效。"
 		if not raw.get("enabled", true) is bool:
 			return "地图事件启用开关必须为布尔值。"
-		if raw.type == "clinic":
+		if not raw.get("story_flags_on_complete",[]) is Array: return "剧情完成标记无效。"
+		for flag: Variant in raw.get("story_flags_on_complete",[]):
+			if raw.type!="dialogue" or not flag is String or not flag.begins_with("base.story."): return "剧情完成标记引用无效。"
+		if raw.type in ["clinic","inn"]:
 			if raw.has("treatment"):
 				var treatment_error := MapClinicTreatment.configuration_error(raw.treatment)
 				if not treatment_error.is_empty(): return treatment_error
@@ -39,6 +42,7 @@ func configure(definitions: Array, point_ids: Array) -> String:
 				var dialogue_error := library.load_file(raw.dialogue)
 				if not dialogue_error.is_empty(): return dialogue_error
 			for key in ["title","description","leave_label"]:
+				if raw.type=="inn" and key=="description" and raw.get(key) is String: continue
 				if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "医馆文案缺失："+key
 			if not raw.presentation is Dictionary: return "医馆展示配置无效。"
 			var title_center: Variant = raw.presentation.get("title_center_y",133.0)
@@ -46,12 +50,28 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			for key in ["background","illustration","frame"]:
 				if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "医馆素材不存在："+key
 			if raw.presentation.has("treatment_background") and (not raw.presentation.treatment_background is String or not ResourceLoader.exists(raw.presentation.treatment_background,"Texture2D")): return "医馆诊治底图不存在。"
+			if raw.type=="inn":
+				if raw.has("food_catalog") and (not raw.food_catalog is String or not FileAccess.file_exists(raw.food_catalog)): return "客栈菜品目录不存在。"
+				if raw.has("treatment"): return "客栈不可配置医馆诊治。"
+				if raw.has("lodging"):
+					var lodging_error := MapInnLodging.configuration_error(raw.lodging)
+					if not lodging_error.is_empty(): return lodging_error
+				for key in ["food_background","lodging_background","conversation_portrait"]:
+					if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "客栈素材不存在："+key
 			loaded[raw.id] = raw.duplicate(true)
 			point_index[raw.point_id] = raw.id
 			continue
 		if raw.type == "shop":
-			if not raw.get("catalog") is String or not FileAccess.file_exists(raw.catalog): return "商铺目录不存在。"
 			if not raw.presentation is Dictionary: return "商铺展示配置无效。"
+			if raw.presentation.has("conversation_background") and (not raw.presentation.conversation_background is String or not ResourceLoader.exists(raw.presentation.conversation_background,"Texture2D")): return "商铺交谈底图无效。"
+			if raw.presentation.has("crafting_background") and (not raw.presentation.crafting_background is String or not ResourceLoader.exists(raw.presentation.crafting_background,"Texture2D")): return "商铺生产分页底图无效。"
+			if raw.presentation.has("conversation_portrait") and (not raw.presentation.conversation_portrait is String or not ResourceLoader.exists(raw.presentation.conversation_portrait,"Texture2D")): return "商铺交谈头像无效。"
+			if raw.has("dialogue"):
+				if not raw.dialogue is String or not raw.presentation.get("conversation_background") is String or not ResourceLoader.exists(raw.presentation.conversation_background,"Texture2D"): return "商铺对话素材无效。"
+				var library := NpcDialogueLibrary.new()
+				var error := library.load_file(raw.dialogue)
+				if not error.is_empty(): return error
+			if not raw.get("catalog") is String or not FileAccess.file_exists(raw.catalog): return "商铺目录不存在。"
 			var title_center: Variant = raw.presentation.get("title_center_y",133.0)
 			if (not title_center is float and not title_center is int) or not is_finite(float(title_center)) or float(title_center)<100 or float(title_center)>165: return "商铺标题中心位置无效。"
 			for key in ["background","illustration","frame"]:
@@ -59,7 +79,14 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			loaded[raw.id] = raw.duplicate(true)
 			point_index[raw.point_id] = raw.id
 			continue
+		if raw.type == "cultivation":
+			var error := _validate_cultivation(raw)
+			if not error.is_empty(): return error
+			loaded[raw.id]=raw.duplicate(true)
+			point_index[raw.point_id]=raw.id
+			continue
 		if raw.type == "rest":
+			if not raw.get("allow_food",false) is bool: return "休息进食开关无效。"
 			if raw.get("rest_kind") not in ["indoor","outdoor"]: return "休息地点类型无效。"
 			for key in ["title","description","note","action_label"]:
 				if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "休息文案缺失："+key
@@ -192,6 +219,41 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图事件前置条件存在循环。"
 	events = loaded
 	by_point = point_index
+	return ""
+
+func _validate_cultivation(raw: Dictionary) -> String:
+	for key in ["title","description","leave_label"]:
+		if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "修炼地点文案无效："+key
+	if not raw.presentation is Dictionary: return "修炼地点美术无效。"
+	for key in ["background","illustration"]:
+		if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "修炼地点素材缺失："+key
+	if not raw.get("modes") is Array or raw.modes.size()!=3: return "修炼方式需要三种。"
+	var ids: Array[String]=[]
+	for mode: Variant in raw.modes:
+		if not mode is Dictionary: return "修炼方式无效。"
+		for key in ["id","name","description","image","selected_image"]:
+			if not mode.get(key) is String or mode[key].strip_edges().is_empty(): return "修炼方式字段无效："+key
+		if ids.has(mode.id): return "修炼方式ID重复。"
+		ids.append(mode.id)
+		for key in ["image","selected_image"]:
+			if not ResourceLoader.exists(mode[key],"Texture2D"): return "修炼方式图片不存在。"
+	if not raw.get("default_mode") is String or raw.default_mode not in ids: return "默认修炼方式无效。"
+	if not raw.get("durations") is Array or raw.durations.size()!=3: return "修炼时间需要三档。"
+	var days: Array[int]=[]
+	for value: Variant in raw.durations:
+		if not ContentRegistry._positive_integer(value) or days.has(int(value)): return "修炼时间无效或重复。"
+		days.append(int(value))
+	if not ContentRegistry._positive_integer(raw.get("default_days")) or int(raw.default_days) not in days: return "默认修炼时间无效。"
+	var stage: Variant=raw.get("stage_two")
+	if not stage is Dictionary: return "修炼第二阶段配置缺失。"
+	for key in ["background","illustration"]:
+		if not stage.get(key) is String or not ResourceLoader.exists(stage[key],"Texture2D"): return "修炼第二阶段素材缺失："+key
+	if not stage.get("description") is String or stage.description.strip_edges().is_empty(): return "修炼状态描述缺失。"
+	if not ContentRegistry._positive_integer(stage.get("status_interval_days")): return "修炼状态轮换天数无效。"
+	for key in ["cultivation_statuses","technique_statuses"]:
+		if not stage.get(key) is Array or stage[key].is_empty(): return "修炼状态文案库缺失："+key
+		for line in stage[key]:
+			if not line is String or line.strip_edges().is_empty(): return "修炼状态文案无效："+key
 	return ""
 
 func _validate_encounter(raw: Dictionary) -> String:

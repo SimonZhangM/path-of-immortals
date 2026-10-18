@@ -1,0 +1,70 @@
+{
+  "texture": "res://assets/UI-wood-middown-52b.webp",
+  "source_size": [
+    1605,
+    567
+  ],
+  "display_crop": [
+    14,
+    79,
+    1576,
+    456
+  ],
+  "placement_crop": [
+    54,
+    138,
+    1554,
+    414
+  ],
+  "layout_kind": "five_choices",
+  "choices_per_column": 2,
+  "column_offsets": [
+    [
+      0,
+      0
+    ],
+    [
+      300,
+      0
+    ],
+    [
+      600,
+      0
+    ],
+    [
+      903,
+      0
+    ],
+    [
+      1203,
+      0
+    ]
+  ],
+  "first_column_icon_rects": [
+    [
+      96,
+      265,
+      98,
+      97
+    ],
+    [
+      210,
+      265,
+      98,
+      97
+    ]
+  ],
+  "baseline_date": "2026-10-18",
+  "baseline_sha256": "6583246db86d67210211afd588bed6384239aa4ab7ea50b8bac4d2ce5b305f9e",
+  "baseline_snapshot": "artifacts/qingluohuashengjue-middown-52b-baseline-20261018-6583246d.webp",
+  "note": "52a (Baishou), 52b (Qingmu), and updated 53 (Kurong) share the existing fixed crop, scale, and lower-panel center. All recorded icon rectangles and column offsets are unchanged.",
+  "center_in_lower_panel": true,
+  "overlay_offset_screen_y": 5,
+  "first_rank_rect": [
+    169,
+    99,
+    66,
+    66
+  ],
+  "rank_font_size": 36
+}

@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "batch_started_on": "2026-10-16",
+  "completed_on": "2026-10-17",
+  "scope": "simplified_sidebar_book_illustrations",
+  "status": "generated_for_review",
+  "layout": "spine_left_title_left_motif_right",
+  "tool": "built-in image_gen",
+  "runtime_binding_status": "bound_sidebar",
+  "source_selection_manifest": "docs/technique-book-art-selection.json",
+  "summary": {
+    "total": 35,
+    "per_element": 5,
+    "regenerated_metal": 5,
+    "other_elements": 30
+  },
+  "validation": {
+    "visual": "逐张核对左侧书名、右侧主题纹样与完整书册",
+    "image_format": "35张均1086×1448、32位ARGB",
+    "alpha": "34张四角alpha均为0；雷池引霆经左上角alpha为1，其余三角为0。保留工具原生alpha，未作像素后处理。"
+  },
+  "books": [
+    {
+      "book_id": "base.cultivation_book.metal_01",
+      "element": "metal",
+      "title": "玄金百炼录",
+      "source_path": "output/imagegen/metal/UI-metal-xuanjinbailianlu-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/metal/UI-metal-xuanjinbailianlu-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "be6a329df34f45510db89fccc437ce88aed4b5eff10f06c09d1855e39a495389"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_02",
+      "element": "metal",
+      "title": "庚金真解",
+      "source_path": "output/imagegen/metal/UI-metal-gengjinzhenjie-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/metal/UI-metal-gengjinzhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "fcceafa2a9b70bdc6224889097506761edcf016d9459af945e655c7d95b5f00e"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_03",
+      "element": "metal",
+      "title": "金煞藏锋经",
+      "source_path": "output/imagegen/metal/UI-metal-jinshacangfengjing-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/metal/UI-metal-jinshacangfengjing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "d672cf3c37849a2fb3443cf57507be2c5948ccb4def9cfbaaff9e25dfd8f30cd"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_04",
+      "element": "metal",
+      "title": "玄庚剑诀",
+      "source_path": "output/imagegen/metal/UI-metal-xuangengjianjue-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/metal/UI-metal-xuangengjianjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "7e40fd6cd4e78e22992d68b346f70b48de0e44a697fffb343f49246e4e99f2d7"
+    },
+    {
+      "book_id": "base.cultivation_book.metal_05",
+      "element": "metal",
+      "title": "百兵御灵诀",
+      "source_path": "output/imagegen/metal/UI-metal-baibingyulingjue-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/metal/UI-metal-baibingyulingjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "06e37528c7b8a92d2ffadc74381d7647f28f6abf41acee8beed5eaf2b93e9c27"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_01",
+      "element": "wood",
+      "title": "百兽驭灵录",
+      "source_path": "output/imagegen/wood/UI-wood-baishouyulinglu-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/wood/UI-wood-baishouyulinglu-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "b373fdef1f0d9cc3a768493db060954ea7f7305b587d0685d30e516aa2e5ce6b"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_02",
+      "element": "wood",
+      "title": "青木真解",
+      "source_path": "output/imagegen/wood/UI-wood-qingmuzhenjie-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/wood/UI-wood-qingmuzhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "6f6f3e41e4e068f43de6f3f5b5d34788dd1a96daeff40d71791ae5e985af1db4"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_03",
+      "element": "wood",
+      "title": "枯荣生灭经",
+      "source_path": "output/imagegen/wood/UI-wood-kurongshengmiejing-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/wood/UI-wood-kurongshengmiejing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "3a3566f6733a84491fa118ade9fcb007ebc4f0cd8e93d3321f613aa145a4201a"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_04",
+      "element": "wood",
+      "title": "万木生杀诀",
+      "source_path": "output/imagegen/wood/UI-wood-wanmushengshajue-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/wood/UI-wood-wanmushengshajue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "d09aa78d87210c4929ee506872bdb27d8accd52720c918ce8b4183b3c9a9305c"
+    },
+    {
+      "book_id": "base.cultivation_book.wood_05",
+      "element": "wood",
+      "title": "青萝化生诀",
+      "source_path": "output/imagegen/wood/UI-wood-qingluohuashengjue-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/wood/UI-wood-qingluohuashengjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "7990e0551b59be2c816a6b76c1460b98c7cd68d0e28fd95ba5a7d7ad3c349329"
+    },
+    {
+      "book_id": "base.cultivation_book.water_01",
+      "element": "water",
+      "title": "灵墨玄符录",
+      "source_path": "output/imagegen/water/UI-water-lingmoxuanfulu-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/water/UI-water-lingmoxuanfulu-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "295b6c44387e879d918230ab833a8de38e5c0a4bd79354e17709c0d1aff4e9db"
+    },
+    {
+      "book_id": "base.cultivation_book.water_02",
+      "element": "water",
+      "title": "玄水真解",
+      "source_path": "output/imagegen/water/UI-water-xuanshuizhenjie-book.png",
+      "selected_variant": null,
+      "simple_path": "output/imagegen/water/UI-water-xuanshuizhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "aaaa106ec302f457a4d920610a171b8bc32d5363b50e5a5edb56e1958737337e"
+    },
+    {
+      "book_id": "base.cultivation_book.water_03",
+      "element": "water",
+      "title": "寒脉流转经",
+      "source_path": "output/imagegen/water/UI-water-hanmailiuzhuanjing-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/water/UI-water-hanmailiuzhuanjing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "5ec2b013f100c446a1ad0bb9501c629c369905d3478999db49ee63eb651eaf44"
+    },
+    {
+      "book_id": "base.cultivation_book.water_04",
+      "element": "water",
+      "title": "寒月凝冰诀",
+      "source_path": "output/imagegen/water/UI-water-hanyueningbingjue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/water/UI-water-hanyueningbingjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "f3ac48e9c428065a682b8907f3e2ef69e87e10fa7c33752760c20b7698ce3062"
+    },
+    {
+      "book_id": "base.cultivation_book.water_05",
+      "element": "water",
+      "title": "沧澜燃灵诀",
+      "source_path": "output/imagegen/water/UI-water-canglanranlingjue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/water/UI-water-canglanranlingjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "0da90f4f6d1386be97848cd20a87fd576786197208146b9420ece50348c2f93e"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_01",
+      "element": "fire",
+      "title": "赤炉丹经",
+      "source_path": "output/imagegen/fire/UI-fire-chiludanjing-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/fire/UI-fire-chiludanjing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "a90be8f97d5dda073ba5035fd4fae48f325b907e5a9a738137bfe2dcfcbdd739"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_02",
+      "element": "fire",
+      "title": "离火真解",
+      "source_path": "output/imagegen/fire/UI-fire-lihuozhenjie-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/fire/UI-fire-lihuozhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "fffa9681a96648e7139aaf7b296e20a7b58d05874a3d5739b1f47f0da8a5d0fe"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_03",
+      "element": "fire",
+      "title": "炎煞流火经",
+      "source_path": "output/imagegen/fire/UI-fire-yanshaliuhuojing-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/fire/UI-fire-yanshaliuhuojing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "33556cab80975a1b0bb1f600de5524aa5e9c132ab1373069274cbed6aa20fad2"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_04",
+      "element": "fire",
+      "title": "赤阳真火诀",
+      "source_path": "output/imagegen/fire/UI-fire-chiyangzhenhuojue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/fire/UI-fire-chiyangzhenhuojue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "e8dfde8cf6e260a43d41e7defcecf4d38badda63ab7f1465a04e5fa77f799ec6"
+    },
+    {
+      "book_id": "base.cultivation_book.fire_05",
+      "element": "fire",
+      "title": "离火燎原诀",
+      "source_path": "output/imagegen/fire/UI-fire-lihuoliaoyuanjue-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/fire/UI-fire-lihuoliaoyuanjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "0e0fb11daf969fdd8816cf8d45c1cd6235577eb9bf6d5b005ba4c0bde981cb61"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_01",
+      "element": "earth",
+      "title": "坤元地脉录",
+      "source_path": "output/imagegen/earth/UI-earth-kunyuandimailu-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/earth/UI-earth-kunyuandimailu-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "12781975fb52ced69233f5cbf0b069700e370061e79d6c706ce093660b95d358"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_02",
+      "element": "earth",
+      "title": "厚土真解",
+      "source_path": "output/imagegen/earth/UI-earth-houtuzhenjie-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/earth/UI-earth-houtuzhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "606146cfe3f9d056b5379a5a3a103a98738d7ee6f294f56ccdb6f026b02c6ca6"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_03",
+      "element": "earth",
+      "title": "镇岳沉元经",
+      "source_path": "output/imagegen/earth/UI-earth-zhenyuechenyuanjing-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/earth/UI-earth-zhenyuechenyuanjing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "9d322a2c4320026ceb8cf4e40948e2ecdb3447e515cf5407356a126274c93692"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_04",
+      "element": "earth",
+      "title": "撼岳裂地诀",
+      "source_path": "output/imagegen/earth/UI-earth-hanyueliedijue-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/earth/UI-earth-hanyueliedijue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "606baf5dc307c2b2aae55001c8fc1bc8bdb4b44f09e208dff938773d364600e3"
+    },
+    {
+      "book_id": "base.cultivation_book.earth_05",
+      "element": "earth",
+      "title": "不动玄岳诀",
+      "source_path": "output/imagegen/earth/UI-earth-budongxuanyuejue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/earth/UI-earth-budongxuanyuejue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "bacbdd04cd13453f15ee2dfc3f85cf98abb9dcda4fcb3a2fde98bb7514f88125"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_01",
+      "element": "wind",
+      "title": "听风寻迹录",
+      "source_path": "output/imagegen/wind/UI-wind-tingfengxunjilu-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/wind/UI-wind-tingfengxunjilu-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "d0bc75f91185c3cb4693bf768f28def72eacab8a09ac0e5aef59c7494e244231"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_02",
+      "element": "wind",
+      "title": "御风真解",
+      "source_path": "output/imagegen/wind/UI-wind-yufengzhenjie-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/wind/UI-wind-yufengzhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "4a03895619d55d97401192f5a0bec09337a4f04670816812b496af30402968a6"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_03",
+      "element": "wind",
+      "title": "流风无相经",
+      "source_path": "output/imagegen/wind/UI-wind-liufengwuxiangjing-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/wind/UI-wind-liufengwuxiangjing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "91d3fc596eed017ba30959492c09f0a500ccb89a514fe0b4df8c83bdc6a2d064"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_04",
+      "element": "wind",
+      "title": "青冥破空诀",
+      "source_path": "output/imagegen/wind/UI-wind-qingmingpokongjue-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/wind/UI-wind-qingmingpokongjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "51c1a7bc90fb36fba3b32849e2841a546227d6406d8e7d0d3141688012ed3d41"
+    },
+    {
+      "book_id": "base.cultivation_book.wind_05",
+      "element": "wind",
+      "title": "听风无影诀",
+      "source_path": "output/imagegen/wind/UI-wind-tingfengwuyingjue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/wind/UI-wind-tingfengwuyingjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "d7e577d1a73c252d75948f7d42d96b20d5d32d1649fe4fc1a2f7002642fa2b6d"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_01",
+      "element": "thunder",
+      "title": "玄枢阵录",
+      "source_path": "output/imagegen/thunder/UI-thunder-xuanshuzhenlu-book.png",
+      "selected_variant": "01",
+      "simple_path": "output/imagegen/thunder/UI-thunder-xuanshuzhenlu-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "0737b562a3560b629a0193b4dcfcf7cb3ade8d5659b0c9f5688516ca55ef7683"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_02",
+      "element": "thunder",
+      "title": "天雷真解",
+      "source_path": "output/imagegen/thunder/UI-thunder-tianleizhenjie-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/thunder/UI-thunder-tianleizhenjie-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "cf7e8fcf06d547564da4e2fd3469ac8c7fe4cb0eccf7e37c480a8a4c55326ec5"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_03",
+      "element": "thunder",
+      "title": "雷池引霆经",
+      "source_path": "output/imagegen/thunder/UI-thunder-leichiyintingjing-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/thunder/UI-thunder-leichiyintingjing-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "sha256": "c43c427783caa61d1112fc39cb6fc4e58d11718f9c7307992c51b807586c2bba"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_04",
+      "element": "thunder",
+      "title": "九霄霆光诀",
+      "source_path": "output/imagegen/thunder/UI-thunder-jiuxiaotingguangjue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/thunder/UI-thunder-jiuxiaotingguangjue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "4d99e12fe5ed362607d7c05ac199efe6378f5defedfa313d8842cd8769abdd77"
+    },
+    {
+      "book_id": "base.cultivation_book.thunder_05",
+      "element": "thunder",
+      "title": "雷罡镇狱诀",
+      "source_path": "output/imagegen/thunder/UI-thunder-leigangzhenyujue-book.png",
+      "selected_variant": "02",
+      "simple_path": "output/imagegen/thunder/UI-thunder-leigangzhenyujue-booksimple.png",
+      "title_position": "left",
+      "width": 1086,
+      "height": 1448,
+      "pixel_format": "Format32bppArgb",
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "1af26a934e80def4632fc69e1b7e8ce5b0ac893acdb183cc7e7f0a6705db82a0"
+    }
+  ],
+  "runtime_booksimple_mapping": "data/ui/technique_book_art.json"
+}

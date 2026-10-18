@@ -18,6 +18,7 @@ var mode := "idle"
 var journey_node_count := 0
 var walk_speed := 100.0
 var run_speed := 180.0
+var running_allowed := true
 var _path: Array[Dictionary] = []
 var _edge_index := 0
 var _edge_distance := 0.0
@@ -63,6 +64,7 @@ func configure(points: Dictionary, edges: Array[Dictionary], start_id: String, w
 	pending_destination_id = ""
 	mode = "idle"
 	paused = false
+	running_allowed = true
 	_path.clear()
 	journey_node_count = 0
 	return ""
@@ -131,8 +133,13 @@ func _plan(target_id: String) -> bool:
 	_edge_distance = 0.0
 	destination_id = target_id
 	journey_node_count = _path.size()
-	mode = "idle" if _path.is_empty() else ("walk" if journey_node_count <= 2 else "run")
+	mode = "idle" if _path.is_empty() else ("run" if running_allowed and journey_node_count > 1 else "walk")
 	return true
+
+func set_running_allowed(value: bool) -> void:
+	running_allowed = value
+	if mode != "idle":
+		mode = "run" if running_allowed and journey_node_count > 1 else "walk"
 
 func advance(delta: float) -> void:
 	var remaining := maxf(delta, 0.0)

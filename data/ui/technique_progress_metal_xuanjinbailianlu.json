@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.metal_01",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《玄金百炼录》 技艺",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "兵炼",
+          "description": "：提高武器炼制的基础性能。"
+        },
+        {
+          "name": "甲炼",
+          "description": "：提高防具炼制的防护、承载表现。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "器炼",
+          "description": "：偏重法器与固有机制的炼制。"
+        },
+        {
+          "name": "节材",
+          "description": "：减少普通、珍贵材料损耗。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "合炼",
+          "description": "：擅长复合材料、双属性和复杂器具。"
+        },
+        {
+          "name": "素炼",
+          "description": "：强化无属性器具的炼制表现。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "精工",
+          "description": "：强化器方自带特殊机制的制作表现。"
+        },
+        {
+          "name": "返炉",
+          "description": "：提高拆解、回炉的材料回收。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "天工",
+          "description": "：提高高阶器具的炼制上限。"
+        },
+        {
+          "name": "简炼",
+          "description": "：降低复杂炼制的辅助成本，提高效率。"
+        }
+      ]
+    }
+  ]
+}

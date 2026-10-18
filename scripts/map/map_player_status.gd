@@ -16,7 +16,9 @@ var character_definition: Dictionary = {}
 var companion_ids: Array[String] = []
 var maxima: Dictionary = {}
 var _active_board_bonuses: Dictionary = {}
-var cultivation_progress := 0
+var cultivation_progress := 0.0
+var cultivation_bonus_percent := 0
+var food_modifiers: Dictionary = {}
 var cultivation_required := 100
 var rest_days_spent := 0
 var last_rest: Dictionary = {}
@@ -69,7 +71,9 @@ func configure(registry: ContentRegistry, config: Dictionary) -> String:
 	for resource in ["hp", "stamina", "spirit"]:
 		maxima[resource] = int(character["max_" + resource]) + (board.resource_bonus(resource) if board != null else 0)
 		resources[resource] = maxima[resource]
-	cultivation_progress = int(config.cultivation_progress)
+	cultivation_progress = float(config.cultivation_progress)
+	cultivation_bonus_percent = 0
+	food_modifiers = {}
 	cultivation_required = int(config.cultivation_required)
 	changed.emit()
 	return ""
@@ -141,12 +145,16 @@ func apply_battle_resources(member: PartyMemberState, defeated := false) -> void
 
 func award_progression(rewards: Dictionary) -> void:
 	# Progress is retained across maps in this session; breakthrough rules are separate.
-	cultivation_progress += int(rewards.get("cultivation", 0))
+	cultivation_progress = snappedf(cultivation_progress + cultivation_gain(float(rewards.get("cultivation",0))),0.1)
 	experience += int(rewards.get("experience", 0))
 	changed.emit()
+
+func cultivation_gain(base_value: float) -> float:
+	return snappedf(base_value*(1.0+cultivation_bonus_percent/100.0),0.1)
 
 func battle_snapshot() -> Dictionary:
 	var current := character_definition.duplicate(true)
 	current.name = display_name
 	current.cultivation_rank = cultivation_rank_id
+	current.food_modifiers = food_modifiers.duplicate()
 	return {"character": current, "resources": resources.duplicate(), "companion_ids": companion_ids.duplicate()}

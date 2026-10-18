@@ -1,0 +1,72 @@
+{
+  "book_id": "base.cultivation_book.water_01",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《灵墨玄符录》 技艺",
+  "stages": [
+    {
+      "level": 1,
+      "choices": [
+        {
+          "name": "调墨",
+          "description": "：提高灵墨与符材契合度、成符稳定性。"
+        },
+        {
+          "name": "惜材",
+          "description": "：减少制符材料损耗。"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "choices": [
+        {
+          "name": "精篆",
+          "description": "：提高单张符箓的品质与效力。"
+        },
+        {
+          "name": "疾书",
+          "description": "：提高批量制符效率。"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "choices": [
+        {
+          "name": "纳灵",
+          "description": "：更充分发挥特殊核心材料的性质。"
+        },
+        {
+          "name": "合墨",
+          "description": "：处理复合灵墨与复杂配方。"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "choices": [
+        {
+          "name": "攻篆",
+          "description": "：偏重攻击、召唤类符箓。"
+        },
+        {
+          "name": "策篆",
+          "description": "：偏重控制、干扰、增益类符箓。"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "choices": [
+        {
+          "name": "神篆",
+          "description": "：提高高阶单符的制作上限。"
+        },
+        {
+          "name": "百符",
+          "description": "：提高产量、材料利用率与备符能力。"
+        }
+      ]
+    }
+  ]
+}

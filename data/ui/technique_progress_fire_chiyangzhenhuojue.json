@@ -1,0 +1,83 @@
+{
+  "book_id": "base.cultivation_book.fire_04",
+  "source_document": "output/imagegen/七系功法简明介绍.md",
+  "source_section": "《赤阳真火诀》 战斗功法",
+  "stages": [
+    {
+      "level": 1,
+      "spell": {
+        "name": "赤焰刃",
+        "description": "：直接火属性攻击。 基础伤害12；冷却4秒；本术消耗4灵力。"
+      },
+      "choices": [
+        {
+          "name": "烈锋",
+          "description": "（盾后增伤）：本体伤害＋25%，盾后余伤再＋10%，可继续扣甲和气血。",
+          "effect": "盾后增伤"
+        },
+        {
+          "name": "蓄焰",
+          "description": "（命中蓄炎）：命中后自身获得3层附炎。",
+          "effect": "命中蓄炎"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "spell": {
+        "name": "炎龙枪",
+        "description": "：直接火属性攻击。 基础伤害26；冷却6秒；本术消耗8灵力。"
+      },
+      "choices": [
+        {
+          "name": "贯阳",
+          "description": "（本体增伤）：本体伤害＋30%。",
+          "effect": "本体增伤"
+        },
+        {
+          "name": "熔锋",
+          "description": "（施加破甲）：实际扣除护甲时，施加3层破甲。",
+          "effect": "施加破甲"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "spell": {
+        "name": "烈阳印",
+        "description": "：命中时按目标预存灼烧产生爆燃：每层追加1点基础火伤。 基础伤害40；冷却8秒；本术消耗12灵力。"
+      },
+      "choices": [
+        {
+          "name": "阳爆",
+          "description": "（本体增伤）：本体直接伤害＋30%。",
+          "effect": "本体增伤"
+        },
+        {
+          "name": "焚印",
+          "description": "（爆燃增强）：本术爆燃追加伤害＋50%，本体不变。",
+          "effect": "爆燃增强"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "spell": {
+        "name": "赤阳天火",
+        "description": "：高威力火属性攻击。 基础伤害60；冷却10秒；本术消耗20灵力。"
+      },
+      "choices": [
+        {
+          "name": "焚灭",
+          "description": "（本体增伤）：本体伤害＋40%。",
+          "effect": "本体增伤"
+        },
+        {
+          "name": "天火余烬",
+          "description": "（灼烧破甲）：本体伤害－20%，命中施加6层灼烧，实际扣甲再施加4层破甲。",
+          "effect": "灼烧破甲"
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
 {
-  "starting_capacity": 25,
-  "test_capacity_override": 99
+  "starting_capacity": 100,
+  "test_capacity_override": 0
 }

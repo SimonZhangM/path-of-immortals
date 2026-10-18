@@ -180,7 +180,7 @@ static func classification_caption(value: String) -> String:
 	return "护"+value.trim_prefix("护具·") if value.begins_with("护具·") else value
 
 static func classification_tags(item: ItemData, vertical_book := false) -> Array:
-	var tags := [{"book":"功法书","spell":"法术","plant":"草木","beast":"兽材","mineral":"矿石","board":"阵盘"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
+	var tags := [{"book":"功法书","spell":"法术","plant":"草木","beast":"兽材","mineral":"矿石","board":"阵盘","food":"食物"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
 	if item.category == "board": tags = []
 	if item.category == "item" and "器官" in item.tags: tags[0] = "器官"
 	for tag: String in item.tags:
@@ -194,17 +194,16 @@ static func classification_tags(item: ItemData, vertical_book := false) -> Array
 	if not item.armor_type.is_empty():
 		tags.append(item.armor_type)
 	var footprint := Vector2i(1,2) if vertical_book else item.grid_size
-	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board"]:
+	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board", "food"]:
 		tags.append("占格 %d×%d" % [footprint.x, footprint.y])
 	return tags.map(func(tag): return classification_caption(str(tag)))
 
 static func effect_text(item: ItemData) -> String:
-	if item.category in ["plant", "mineral"]: return item.combat.get("description", "")
+	if item.category in ["plant", "mineral", "food"]: return item.combat.get("description", "")
 	if item.category == "board": return item.combat.get("description", "")
 	if item.category == "beast": return item.combat.get("description", "兽材，仅作材料，不能放入战斗阵盘。")
 	if item.category == "book":
-		var pending := "连携相关分支本轮暂缓。" if item.combat.has("deferred_branches") else ""
-		return "%s，共%d重。%s%s" % [item.combat.role,int(item.combat.max_level),item.combat.get("deferred","分支按已学重数生效；修炼进度另行接入。"),pending]
+		return CultivationDescription.book(item.combat)
 	if item.category == "spell": return CultivationDescription.spell(item.combat)
 	var lines: PackedStringArray = []
 	if item.armor_capacity > 0:
