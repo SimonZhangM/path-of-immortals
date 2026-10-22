@@ -42,6 +42,9 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 	error = catalog.replace_entries(boards)
 	if not error.is_empty(): return {"state": null, "error": error}
 	definitions.append_array(catalog.visible_entries())
+	error = catalog.replace_entries(registry.library.inventory_records())
+	if not error.is_empty(): return {"state": null, "error": error}
+	definitions.append_array(catalog.visible_entries())
 	error = state.configure(registry, board, definitions)
 	if error.is_empty():
 		for enemy: Dictionary in registry._enemies.values():
@@ -51,6 +54,9 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 	return {"state": state, "error": error}
 
 static func load_into(state: MapLoadoutState, path: String) -> String:
+	return _load_inventory(state, path)
+
+static func _load_inventory(state: MapLoadoutState, path: String) -> String:
 	if path.is_empty():
 		return ""
 	var target_path := path
@@ -67,8 +73,17 @@ static func load_into(state: MapLoadoutState, path: String) -> String:
 	file.close() # Windows cannot rename the v1 file while our read handle is open.
 	if parser.parse(saved_text) != OK:
 		return "行囊存档内容不完整，原文件已保留。"
+	# Embedded learning is authoritative. Only unmigrated files use the sidecar.
+	if parser.data is Dictionary and not parser.data.has("learning"):
+		var legacy_error := CultivationStore.load_into(state.knowledge,state.registry.library,int(state.registry.get_cultivation(state.cultivation_rank_id).order),target_path+".cultivation.json")
+		if not legacy_error.is_empty(): return legacy_error
 	var error := state.restore(parser.data)
-	if error.is_empty() and (path != target_path or not parser.data.has("calendar") or not parser.data.has("bag_capacity") or parser.data.get("respawn_rules_version",0)!=MapLoadoutState.RESPAWN_RULES.VERSION or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants):
+	if not error.is_empty(): return error
+	var removed_book := false
+	for placement: Dictionary in parser.data.get("placements", []):
+		var item := state.registry.get_item(str(placement.get("item_id", "")))
+		if item != null and item.category == "book": removed_book = true
+	if removed_book or parser.data.get("formations", []) != state.formations or path != target_path or not parser.data.has("calendar") or not parser.data.has("bag_capacity") or parser.data.get("respawn_rules_version",0)!=MapLoadoutState.RESPAWN_RULES.VERSION or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants:
 		error = save(state, target_path)
 	return error
 
@@ -80,6 +95,7 @@ static func candidate(state: MapLoadoutState) -> Dictionary:
 	copy._seed_owned = state._seed_owned
 	copy.cultivation_rank_id = state.cultivation_rank_id
 	copy.formation_icons = state.formation_icons
+	copy.knowledge.restore(state.knowledge.snapshot(), state.registry.library, int(state.registry.get_cultivation(state.cultivation_rank_id).order))
 	return {"state":copy,"error":copy.restore(state.snapshot())}
 
 static func save(state: MapLoadoutState, path: String) -> String:

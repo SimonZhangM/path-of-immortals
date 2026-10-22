@@ -1610,7 +1610,11 @@
             }
           ]
         }
-      }
+      },
+      "size": [
+        1,
+        2
+      ]
     },
     {
       "id": "base.spell.metal_05",
@@ -1746,7 +1750,11 @@
         }
       },
       "main_ratio": 1,
-      "other_ratio": 0.5
+      "other_ratio": 0.5,
+      "size": [
+        2,
+        1
+      ]
     },
     {
       "id": "base.spell.wood_01",
@@ -1890,7 +1898,11 @@
         "枯荣夺生": {
           "life_per_hp": 0.1
         }
-      }
+      },
+      "size": [
+        2,
+        1
+      ]
     },
     {
       "id": "base.spell.wood_05",
@@ -2075,6 +2087,10 @@
           "gate": "hit",
           "target": "enemy"
         }
+      ],
+      "size": [
+        2,
+        1
       ]
     },
     {
@@ -2218,7 +2234,11 @@
             }
           ]
         }
-      }
+      },
+      "size": [
+        1,
+        2
+      ]
     },
     {
       "id": "base.spell.water_05",
@@ -2359,7 +2379,11 @@
           "return_resources": true
         }
       },
-      "missing_scale": 1
+      "missing_scale": 1,
+      "size": [
+        2,
+        1
+      ]
     },
     {
       "id": "base.spell.fire_01",
@@ -2511,7 +2535,11 @@
             }
           ]
         }
-      }
+      },
+      "size": [
+        1,
+        2
+      ]
     },
     {
       "id": "base.spell.fire_05",
@@ -2706,7 +2734,11 @@
         "破甲"
       ],
       "layer_ratio": 0.01,
-      "layer_cap": 1
+      "layer_cap": 1,
+      "size": [
+        1,
+        2
+      ]
     },
     {
       "id": "base.spell.earth_01",
@@ -2849,7 +2881,11 @@
         }
       },
       "burst_status": "重伤",
-      "burst_ratio": 2
+      "burst_ratio": 2,
+      "size": [
+        2,
+        1
+      ]
     },
     {
       "id": "base.spell.earth_05",
@@ -3006,7 +3042,11 @@
           ]
         }
       },
-      "ratio": 0.5
+      "ratio": 0.5,
+      "size": [
+        2,
+        1
+      ]
     },
     {
       "id": "base.spell.wind_01",
@@ -3166,7 +3206,11 @@
             }
           ]
         }
-      }
+      },
+      "size": [
+        1,
+        2
+      ]
     },
     {
       "id": "base.spell.wind_05",
@@ -3329,6 +3373,10 @@
           "gate": "hit",
           "target": "enemy"
         }
+      ],
+      "size": [
+        2,
+        1
       ]
     },
     {
@@ -3486,7 +3534,11 @@
         "引劫": {
           "strike_bonus": 0.5
         }
-      }
+      },
+      "size": [
+        1,
+        2
+      ]
     },
     {
       "id": "base.spell.thunder_05",
@@ -3674,6 +3726,10 @@
           "gate": "hit",
           "target": "enemy"
         }
+      ],
+      "size": [
+        2,
+        1
       ]
     }
   ]

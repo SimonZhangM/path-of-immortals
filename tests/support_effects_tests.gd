@@ -61,7 +61,7 @@ func _run() -> void:
 	_check(f.hero.apply_toxin(5, 0), "toxin may be applied before immunity")
 	f.battle.start()
 	f.battle.advance(5.499)
-	_check(f.hero.toxin_stacks == 1 and f.hero.hp == 41 and not f.hero.inventory.get_instance("support").is_empty(), "toxin ticks5/4/3/2 while detox waits its full5.5-second cooldown")
+	_check(f.hero.toxin_stacks == 0 and f.hero.hp == 40 and not f.hero.inventory.get_instance("support").is_empty(), "toxin ticks5/4/3/2/1 while detox waits its full5.5-second cooldown")
 	f.battle.advance(0.001)
 	_check(f.hero.toxin_stacks == 0 and f.hero.inventory.get_instance("support").is_empty(), "detox clears toxin and consumes one bottle")
 	_check(f.hero.toxin_immune_until_usec == 20_500_000 and not f.hero.apply_toxin(8, f.battle.state.time_usec), "detox grants fifteen seconds immunity after activation")

@@ -45,17 +45,17 @@ func screenshot(path: String) -> void:
 func visual_contract(map: Node) -> void:
 	var dialog: MapRestDialog = map.rest_dialog
 	check(dialog.heading.text=="自己家" and dialog.description.text=="这是你在青石镇的家。虽简朴，却温暖安宁。\n这里可供你休息恢复，也可存放各类物品。","home copy")
-	check(dialog.backing.texture.atlas.resource_path.ends_with("tanchuang-huifu-shineizijia.webp"),"home background")
-	check(dialog.illustration.texture.resource_path.ends_with("tanchuang-huifu-zijia.webp"),"home illustration")
+	check(dialog.backing.texture.atlas.resource_path.ends_with("tanchuang-qingshizhen-shineizijia1.webp"),"home background")
+	check(dialog.illustration.texture.resource_path.ends_with("tanchuang-qingshizhen-shineizijia2.webp"),"home illustration")
 	check(dialog.percentage.text=="100%" and dialog.days.text=="1","100 percent and one day")
 	check(dialog.warehouse_label.text=="进入仓储" and dialog.start_label.text=="开始休息","two action captions")
 	check(dialog.warehouse_label.get_theme_font("font")==dialog.start_label.get_theme_font("font") and dialog.warehouse_label.get_theme_font_size("font_size")==dialog.start_label.get_theme_font_size("font_size"),"action typography shared")
 	check(not dialog.warehouse_button.get_global_rect().intersects(dialog.start_button.get_global_rect()),"actions do not overlap")
 	for label: Label in [dialog.description,dialog.note,dialog.warning,dialog.percentage]:
 		check(label.get_visible_line_count()==label.get_line_count(),"text fits: "+label.text)
-	for asset in ["shineizijia","zijia","cangku1","cangku2"]:
+	for asset in ["tanchuang-qingshizhen-shineizijia1","tanchuang-qingshizhen-shineizijia2","tanchuang-huifu-cangku1","tanchuang-huifu-cangku2"]:
 		var settings := ConfigFile.new()
-		settings.load("res://assets/tanchuang-huifu-%s.webp.import" % asset)
+		settings.load("res://assets/%s.webp.import" % asset)
 		check(settings.get_value("params","mipmaps/generate",false),"mipmaps: "+asset)
 	check(not map.calendar_readout.visible,"existing hidden date remains hidden")
 

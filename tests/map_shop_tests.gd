@@ -177,7 +177,7 @@ func run() -> void:
 	check(dialog.title_label.text=="青石商铺" and dialog.description_label.text.contains("云游四方"),"reference title and copy")
 	check(dialog.picture_frame.get_global_rect().get_center().is_equal_approx(dialog.illustration.get_global_rect().get_center()),"scene and frame concentric")
 	print("SCENE FRAME ",dialog.picture_frame.position," / ",dialog.picture_frame.size)
-	for file in ["tanchuang-jiaoyi-coin","tanchuang-jiaoyi-jianshao","tanchuang-jiaoyi-qingshizhen-shangpu-boss","tanchuang-jiaoyi-qingshizhen-shangpu","tanchuang-jiaoyi-shangpinbiankuang","tanchuang-jiaoyi-zengjia","tanchuang-tongyong-chuangjingbiankuang"]:
+	for file in ["tanchuang-jiaoyi-coin","tanchuang-jiaoyi-jianshao","tanchuang-qingshizhen-shangpu-boss","tanchuang-qingshizhen-shangpu","tanchuang-jiaoyi-shangpinbiankuang","tanchuang-jiaoyi-zengjia","tanchuang-tongyong-chuangjingbiankuang"]:
 		var settings := ConfigFile.new()
 		settings.load("res://assets/%s.webp.import" % file)
 		check(settings.get_value("params","mipmaps/generate",false),"mipmap "+file)

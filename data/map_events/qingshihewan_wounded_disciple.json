@@ -7,6 +7,7 @@
     "base.map_event.qingshihewan.bridge_traces"
   ],
   "speaker_id": "base.npc.qinglan.outer_disciple",
+  "speaker_name": "青岚宗弟子",
   "reward": {
     "id": "base.map_reward.qingshihewan.warm_jade",
     "item_id": "base.map_item.warm_jade",
@@ -17,6 +18,7 @@
   },
   "speakers": {
     "base.npc.qinglan.outer_disciple": {
+      "name": "青岚宗弟子",
       "portrait": "res://assets/npc-qlzdz-1.webp",
       "portrait_region": [
         27,
@@ -36,12 +38,12 @@
     }
   },
   "presentation": {
-    "background": "res://assets/map-dialogue.webp",
+    "background": "res://assets/map-event-chatframe.webp",
     "background_region": [
-      10,
-      33,
-      1807,
-      409
+      27,
+      126,
+      2113,
+      437
     ],
     "portrait": "res://assets/npc-qlzdz-1.webp",
     "portrait_region": [
@@ -51,26 +53,32 @@
       664
     ],
     "portrait_slot": [
-      62,
-      20.5,
-      368,
-      368
+      68,
+      20,
+      374,
+      397
     ],
-    "portrait_max_size": 368,
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [474, 54, 330, 80],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [1970, 207, 52, 70],
+    "offset_y": 20,
     "text_rect": [
-      475,
-      95,
-      1250,
-      220
+      512,
+      145,
+      1410,
+      205
     ],
     "illustration": {
-      "frame": "res://assets/map-event-frame.webp",
+      "frame": "res://assets/map-event-picframe.webp",
+      "frame_region": [101, 17, 1471, 907],
       "image": "res://assets/map-event-1-1.webp",
       "image_slot": [
-        86,
-        120,
-        1276,
-        672
+        62,
+        91,
+        1349,
+        758
       ]
     }
   },

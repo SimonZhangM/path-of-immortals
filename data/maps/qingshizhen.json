@@ -1,20 +1,38 @@
 {
   "id": "base.map.qingshizhen",
   "name": "青石镇",
-  "music": ["res://assets/bgm-qingshizhen-1.mp3", "res://assets/bgm-qingshizhen-2.mp3"],
+  "music": [
+    "res://assets/bgm-qingshizhen-1.mp3",
+    "res://assets/bgm-qingshizhen-2.mp3"
+  ],
   "background": "res://assets/map-qingshizhen.webp",
   "marker": "res://assets/mapdot.webp",
-  "source_size": [3317, 1865],
+  "source_size": [
+    3317,
+    1865
+  ],
   "layout_scene": "res://scenes/maps/qingshizhen_layout.tscn",
   "sign_motion": "res://data/ui/map_sign_motion.json",
   "start_point": "base.map.qingshizhen.point.n25",
   "show_map_title": true,
   "title_image": "res://assets/map-title-qingshizhen.webp",
-  "exits": [{
-    "point_id": "base.map.qingshizhen.point.n25",
-    "title": "前往 青石河湾",
-    "scene": "res://scenes/maps/qingshihewan.tscn",
-    "target_point": "base.map.qingshihewan.point.east_exit"
-  }],
-  "event_files": ["res://data/map_events/qingshizhen_home_rest.json", "res://data/map_events/qingshizhen_shop.json", "res://data/map_events/qingshizhen_blacksmith.json", "res://data/map_events/qingshizhen_herbalist.json", "res://data/map_events/qingshizhen_sect.json", "res://data/map_events/qingshizhen_alchemy.json", "res://data/map_events/qingshizhen_clinic.json", "res://data/map_events/qingshizhen_inn.json"]
+  "exits": [
+    {
+      "point_id": "base.map.qingshizhen.point.n25",
+      "title": "前往 青石河湾",
+      "scene": "res://scenes/maps/qingshihewan.tscn",
+      "target_point": "base.map.qingshihewan.point.east_exit"
+    }
+  ],
+  "event_files": [
+    "res://data/map_events/qingshizhen_home_rest.json",
+    "res://data/map_events/qingshizhen_shop.json",
+    "res://data/map_events/qingshizhen_blacksmith.json",
+    "res://data/map_events/qingshizhen_herbalist.json",
+    "res://data/map_events/qingshizhen_sect.json",
+    "res://data/map_events/qingshizhen_alchemy.json",
+    "res://data/map_events/qingshizhen_clinic.json",
+    "res://data/map_events/qingshizhen_inn.json",
+    "res://data/map_events/qingshizhen_cultivation.json"
+  ]
 }

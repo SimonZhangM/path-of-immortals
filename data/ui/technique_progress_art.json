@@ -1,5 +1,9 @@
 {
   "texture": "res://assets/UI-wood-middown-8.webp",
+  "selection_frames": {
+    "spell_card": [55, 244, 132, 219],
+    "choice_card": [200, 243, 224, 210]
+  },
   "source_size": [
     1605,
     567
@@ -51,16 +55,16 @@
       0
     ],
     [
-      4,
-      1
+      3,
+      2
     ],
     [
       -3,
       1
     ],
     [
-      0,
-      0
+      -1,
+      2
     ],
     [
       -4,
@@ -68,15 +72,15 @@
     ],
     [
       0,
-      0
+      2
     ],
     [
       -7,
       0
     ],
     [
-      0,
-      0
+      -1,
+      2
     ]
   ],
   "icon_templates": {
@@ -119,11 +123,11 @@
       80
     ]
   },
-  "baseline_date": "2026-10-18",
-  "aligned_texture_sha256": "9f9ee197255e5ae37da3921b97a7c11e167497befa40efcd0edb53157c45f574",
-  "baseline_sha256": "9f9ee197255e5ae37da3921b97a7c11e167497befa40efcd0edb53157c45f574",
-  "baseline_snapshot": "artifacts/wood-middown-8-centered-baseline-20261018-9f9ee197.webp",
-  "note": "The updated 1605x567 source shares display_crop, placement scale and lower-panel center with 52a/52b/53. Keep the original icon/caption templates and per-column/rank offsets; source_origin_offset translates ALL original template coordinates by (-27,-51) into this source. Ring template matching confirms unchanged column/rank offsets. Icon dimensions, text styles and source artwork bytes are preserved.",
+  "baseline_date": "2026-10-19",
+  "aligned_texture_sha256": "88f85c7f6c25eecd48a8f20c0b8260e5d9fc74637eb282d209da1a539ed8d73c",
+  "baseline_sha256": "88f85c7f6c25eecd48a8f20c0b8260e5d9fc74637eb282d209da1a539ed8d73c",
+  "baseline_snapshot": "artifacts/wood-middown-8-rings-baseline-20261019.webp",
+  "note": "Updated even-column gold rings only: rank offsets relative to 2026-10-18 are (-1,+1), (-1,+2), (0,+2), (-1,+2) source pixels for ranks 2,4,6,8. Source origin, crop, placement, icon templates and other captions remain unchanged.",
   "placement_crop": [
     54,
     138,

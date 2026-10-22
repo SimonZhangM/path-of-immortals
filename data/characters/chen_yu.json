@@ -5,6 +5,6 @@
   "max_hp": 50,
   "max_stamina": 50,
   "max_spirit": 50,
-  "portrait": "res://assets/pt-a-1.webp",
+  "portrait": "res://assets/player-male1-6.webp",
   "board_layout": "base.board.bag"
 }

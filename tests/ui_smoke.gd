@@ -378,23 +378,25 @@ func _test_activation_feedback() -> void:
 		board.set_process(false)
 	manager.start_battle()
 	manager._process(3)
-	_check(bag._pulses.has(GameManager.SWORD_INSTANCE) and bag._pulses.has(pill_id), "weapon and medicine activations trigger visual feedback")
-	_check(ui.enemy_panel.bags[0]._pulses.has(GameManager.CLAW_INSTANCE), "enemy activation uses same feedback")
+	_check(bag._weapon_feedback.has(GameManager.SWORD_INSTANCE) and bag._pulses.has(pill_id), "weapon ghost and medicine pulse trigger visual feedback")
+	_check(ui.enemy_panel.bags[0]._weapon_feedback.has(GameManager.CLAW_INSTANCE), "enemy weapon activation uses same feedback")
 	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
 		board._process(InventoryView.PULSE_DURATION * 0.35)
 	await _capture("v07_activation_peak")
 	await _layout()
-	var overlay: TextureRect = bag._pulses[GameManager.SWORD_INSTANCE]["overlay"]
-	var peak_width := overlay.size.x
-	_check(overlay.modulate.a > 0 and overlay.modulate.a < 0.3, "faint white overlay visible during pulse")
+	var overlay: TextureRect = bag._weapon_feedback[GameManager.SWORD_INSTANCE].ghost
+	var peak_width := overlay.size.x * overlay.scale.x
+	_check(overlay.modulate.a > 0 and overlay.modulate.a < 0.5, "weapon afterimage fades from half alpha")
 	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
 		board._process(InventoryView.PULSE_DURATION * 0.4)
 	await _capture("v07_activation_recoil")
 	await _layout()
-	_check(overlay.size.x < peak_width and overlay.modulate.a > 0, "image contracts while white flash remains synchronized")
+	_check(overlay.size.x * overlay.scale.x > peak_width and overlay.modulate.a > 0, "weapon ghost expands independently of old medicine pulse")
 	for board in ui.ally_panel.bags + ui.enemy_panel.bags:
 		board._process(InventoryView.PULSE_DURATION * 0.26)
 	_check(bag._pulses.is_empty() and manager.simulation.state.time_usec == 3_000_000, "pulse ends without advancing simulation")
+	bag._process(0.8)
+	_check(bag._weapon_feedback.is_empty(), "weapon ghost ends after 0.8 presentation seconds")
 	manager._process(3)
 	_check(manager.party[0].inventory.get_instance(pill_id).is_empty() and bag._pulses.has(pill_id), "last bottle keeps transient feedback after authoritative consumption")
 	manager.party[0].definition["max_spirit"] = original_spirit_cap

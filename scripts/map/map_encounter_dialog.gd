@@ -12,6 +12,7 @@ const LOOT_OFFSET_Y := -3.0
 const ACTION_OFFSET_Y := 3.0
 const CARD_RECTS := [Rect2(627,655,256,134), Rect2(895,655,257,134), Rect2(1165,655,255,134)]
 const INK := Color("fbf4bf")
+const ENEMY_FRAMES = preload("res://scripts/presentation/enemy_portrait_frames.gd")
 var options := MapEncounterOptions.new()
 var canvas: Control
 var backing: TextureRect
@@ -20,6 +21,7 @@ var location_frame: TextureRect
 var heading: Label
 var description: Label
 var portrait: TextureRect
+var portrait_frame: TextureRect
 var enemy_name: Label
 var rank_label: Label
 var category_label: Label
@@ -86,6 +88,7 @@ func _init() -> void:
 	description = _label("", Rect2(947,88,470,88), 22)
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	portrait = _image(Rect2(697,251,183,183))
+	portrait_frame = ENEMY_FRAMES.create_overlay(portrait)
 	enemy_name = _label("", Rect2(910,244,441,48), 36, true)
 	rank_label = _tag()
 	category_label = _tag()
@@ -242,6 +245,7 @@ func present(event: Dictionary, enemy: PartyMemberState) -> void:
 	heading.text = event.title
 	description.text = event.description
 	portrait.texture = load(enemy.definition.portrait)
+	ENEMY_FRAMES.show_definition(portrait_frame, enemy.definition)
 	enemy_name.text = enemy.definition.name
 	var art: Dictionary = enemy.definition.get("presentation", {})
 	rank_label.text = art.get("rank_label", "")

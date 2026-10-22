@@ -63,7 +63,7 @@ func gallery(registry: ContentRegistry) -> void:
 		var profile: Dictionary = profiles[i]
 		check(registry.get_enemy_art(profile.id)==profile,"profile loaded into registry")
 		var enemy := registry.get_enemy(profile.id)
-		if not enemy.is_empty(): check(enemy.portrait==profile.portrait and enemy.board_layout==profile.board_layout and enemy.portrait_includes_frame,"existing enemy resolves shared profile")
+		if not enemy.is_empty(): check(enemy.portrait==profile.portrait and enemy.board_layout==profile.board_layout and enemy.portrait_includes_frame==profile.portrait_includes_frame and enemy.get("portrait_frame", "")==profile.get("portrait_frame", ""),"existing enemy resolves shared profile")
 		var board := registry.get_board(profile.board_layout)
 		var texture: Texture2D = load(board.texture_path)
 		check(board.source_size==texture.get_size() and board.grid_size==Vector2i(3,3),profile.name+" independent3x3 calibration")

@@ -1,6 +1,6 @@
 {
   "base.cultivation_book.wood_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wood-baishouyulinglu-title.webp",
     "label": "res://assets/UI-wood-baishouyulinglu-label.webp",
     "book": "res://assets/UI-wood-baishouyulinglu-book.webp",
@@ -10,7 +10,7 @@
     "origin_width_sample": "此录原出古代御兽传承，后经御兽大修栖"
   },
   "base.cultivation_book.wood_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wood-qingmuzhenjie-title.webp",
     "label": "res://assets/UI-wood-qingmuzhenjie-label.webp",
     "book": "res://assets/UI-wood-qingmuzhenjie-book.webp",
@@ -20,7 +20,7 @@
     "origin_width_sample": "由古代木道宗门历代高修参订，原为弟子"
   },
   "base.cultivation_book.wood_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wood-kurongshengmiejing-title.webp",
     "label": "res://assets/UI-wood-kurongshengmiejing-label.webp",
     "book": "res://assets/UI-wood-kurongshengmiejing-book.webp",
@@ -30,7 +30,7 @@
     "origin_width_sample": "古修枯荣散人所述，后经木道高修续注。"
   },
   "base.cultivation_book.wood_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wood-wanmushengshajue-title.webp",
     "label": "res://assets/UI-wood-wanmushengshajue-label.webp",
     "book": "res://assets/UI-wood-wanmushengshajue-book.webp",
@@ -40,17 +40,17 @@
     "origin_width_sample": "本为古代木修护持灵林的攻伐秘传，后由"
   },
   "base.cultivation_book.wood_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wood-qingluohuashengjue-title.webp",
     "label": "res://assets/UI-wood-qingluohuashengjue-label.webp",
     "book": "res://assets/UI-wood-qingluohuashengjue-book.webp",
-    "calligraphy": "res://assets/UI-wood-qingluohuashengjue-calligraphy.png",
+    "calligraphy": "res://assets/UI-wood-qingluohuashengjue-calligraphy.webp",
     "poem": "生生不息，藤缠八荒。\n以柔济刚，化生万物。",
     "origin": "上古青萝仙子所留，详述藤木之道。以木灵为引，融催生、缚敌、蚀脉、疗伤于一诀；以生机为根，以缠绕为势，攻守兼备。",
     "origin_width_sample": "上古青萝仙子所留，详述藤木之道。以木"
   },
   "base.cultivation_book.metal_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-metal-xuanjinbailianlu-title.webp",
     "label": "res://assets/UI-metal-xuanjinbailianlu-label.webp",
     "book": "res://assets/UI-metal-xuanjinbailianlu-book.webp",
@@ -60,7 +60,7 @@
     "origin_width_sample": "上古炼器大修九炼真君重订之录。真君于百炼"
   },
   "base.cultivation_book.metal_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-metal-gengjinzhenjie-title.webp",
     "label": "res://assets/UI-metal-gengjinzhenjie-label.webp",
     "book": "res://assets/UI-metal-gengjinzhenjie-book.webp",
@@ -70,7 +70,7 @@
     "origin_width_sample": "古代金道诸宗论法时合编，经历代高修增订而"
   },
   "base.cultivation_book.metal_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-metal-jinshacangfengjing-title.webp",
     "label": "res://assets/UI-metal-jinshacangfengjing-label.webp",
     "book": "res://assets/UI-metal-jinshacangfengjing-book.webp",
@@ -80,7 +80,7 @@
     "origin_width_sample": "源出一支失传的金修兵道，原经刻在护身甲片"
   },
   "base.cultivation_book.metal_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-metal-xuangengjianjue-title.webp",
     "label": "res://assets/UI-metal-xuangengjianjue-label.webp",
     "book": "res://assets/UI-metal-xuangengjianjue-book.webp",
@@ -90,7 +90,7 @@
     "origin_width_sample": "传自古代剑修遗留的试剑石刻，后由门人将庚"
   },
   "base.cultivation_book.metal_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-metal-baibingyulingjue-title.webp",
     "label": "res://assets/UI-metal-baibingyulingjue-label.webp",
     "book": "res://assets/UI-metal-baibingyulingjue-book.webp",
@@ -100,7 +100,7 @@
     "origin_width_sample": "原法相传出于古代御兵一脉，九炼真君曾为其"
   },
   "base.cultivation_book.water_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-water-lingmoxuanfulu-title.webp",
     "label": "res://assets/UI-water-lingmoxuanfulu-label.webp",
     "book": "res://assets/UI-water-lingmoxuanfulu-book.webp",
@@ -110,7 +110,7 @@
     "origin_width_sample": "出自古代符道宗门的授法传本，以水灵调墨，"
   },
   "base.cultivation_book.water_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-water-xuanshuizhenjie-title.webp",
     "label": "res://assets/UI-water-xuanshuizhenjie-label.webp",
     "book": "res://assets/UI-water-xuanshuizhenjie-book.webp",
@@ -120,7 +120,7 @@
     "origin_width_sample": "源自古代水修临江论道之典，经后世高修汇注"
   },
   "base.cultivation_book.water_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-water-hanmailiuzhuanjing-title.webp",
     "label": "res://assets/UI-water-hanmailiuzhuanjing-label.webp",
     "book": "res://assets/UI-water-hanmailiuzhuanjing-book.webp",
@@ -130,7 +130,7 @@
     "origin_width_sample": "古代水道秘传，由数代高修以灵脉盈枯之理参"
   },
   "base.cultivation_book.water_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-water-hanyueningbingjue-title.webp",
     "label": "res://assets/UI-water-hanyueningbingjue-label.webp",
     "book": "res://assets/UI-water-hanyueningbingjue-book.webp",
@@ -140,7 +140,7 @@
     "origin_width_sample": "相传为古修澹月真君于照月台悟成。真君观寒"
   },
   "base.cultivation_book.water_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-water-canglanranlingjue-title.webp",
     "label": "res://assets/UI-water-canglanranlingjue-label.webp",
     "book": "res://assets/UI-water-canglanranlingjue-book.webp",
@@ -150,7 +150,7 @@
     "origin_width_sample": "出自古代水修对阵强敌时的秘传，后由同门据"
   },
   "base.cultivation_book.fire_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-fire-chiludanjing-title.webp",
     "label": "res://assets/UI-fire-chiludanjing-label.webp",
     "book": "res://assets/UI-fire-chiludanjing-book.webp",
@@ -160,7 +160,7 @@
     "origin_width_sample": "古代丹道名宿赤霞丹君重订之经。丹君曾于落"
   },
   "base.cultivation_book.fire_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-fire-lihuozhenjie-title.webp",
     "label": "res://assets/UI-fire-lihuozhenjie-label.webp",
     "book": "res://assets/UI-fire-lihuozhenjie-book.webp",
@@ -170,7 +170,7 @@
     "origin_width_sample": "源出古代火道诸脉的论法集，经后世大修删繁"
   },
   "base.cultivation_book.fire_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-fire-yanshaliuhuojing-title.webp",
     "label": "res://assets/UI-fire-yanshaliuhuojing-label.webp",
     "book": "res://assets/UI-fire-yanshaliuhuojing-book.webp",
@@ -180,7 +180,7 @@
     "origin_width_sample": "源出古代火修的三卷秘传，最初分刻于耐火灵"
   },
   "base.cultivation_book.fire_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-fire-chiyangzhenhuojue-title.webp",
     "label": "res://assets/UI-fire-chiyangzhenhuojue-label.webp",
     "book": "res://assets/UI-fire-chiyangzhenhuojue-book.webp",
@@ -190,7 +190,7 @@
     "origin_width_sample": "古代火道大修于绝壁演法所留，后由弟子依壁"
   },
   "base.cultivation_book.fire_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-fire-lihuoliaoyuanjue-title.webp",
     "label": "res://assets/UI-fire-lihuoliaoyuanjue-label.webp",
     "book": "res://assets/UI-fire-lihuoliaoyuanjue-book.webp",
@@ -200,7 +200,7 @@
     "origin_width_sample": "来自古代火修的护山传承，由历代持法修士增"
   },
   "base.cultivation_book.earth_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-earth-kunyuandimailu-title.webp",
     "label": "res://assets/UI-earth-kunyuandimailu-label.webp",
     "book": "res://assets/UI-earth-kunyuandimailu-book.webp",
@@ -210,7 +210,7 @@
     "origin_width_sample": "本为古代地师一脉的勘脉秘典，经历代土修高"
   },
   "base.cultivation_book.earth_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-earth-houtuzhenjie-title.webp",
     "label": "res://assets/UI-earth-houtuzhenjie-label.webp",
     "book": "res://assets/UI-earth-houtuzhenjie-book.webp",
@@ -220,7 +220,7 @@
     "origin_width_sample": "古代土道宗门的根本法义，后随传人散布诸域"
   },
   "base.cultivation_book.earth_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-earth-zhenyuechenyuanjing-title.webp",
     "label": "res://assets/UI-earth-zhenyuechenyuanjing-label.webp",
     "book": "res://assets/UI-earth-zhenyuechenyuanjing-book.webp",
@@ -230,7 +230,7 @@
     "origin_width_sample": "原为古代守关土修代代参订的沉元秘经。经中"
   },
   "base.cultivation_book.earth_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-earth-hanyueliedijue-title.webp",
     "label": "res://assets/UI-earth-hanyueliedijue-label.webp",
     "book": "res://assets/UI-earth-hanyueliedijue-book.webp",
@@ -240,7 +240,7 @@
     "origin_width_sample": "古代土修从山岳移势、地脉震荡中参得的攻伐"
   },
   "base.cultivation_book.earth_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-earth-budongxuanyuejue-title.webp",
     "label": "res://assets/UI-earth-budongxuanyuejue-label.webp",
     "book": "res://assets/UI-earth-budongxuanyuejue-book.webp",
@@ -250,7 +250,7 @@
     "origin_width_sample": "相传由土修大能负岳老人传下。老人以厚土蓄"
   },
   "base.cultivation_book.wind_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wind-tingfengxunjilu-title.webp",
     "label": "res://assets/UI-wind-tingfengxunjilu-label.webp",
     "book": "res://assets/UI-wind-tingfengxunjilu-book.webp",
@@ -260,7 +260,7 @@
     "origin_width_sample": "游方大修渡尘客所传，以气灵听风辨息，以神"
   },
   "base.cultivation_book.wind_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wind-yufengzhenjie-title.webp",
     "label": "res://assets/UI-wind-yufengzhenjie-label.webp",
     "book": "res://assets/UI-wind-yufengzhenjie-book.webp",
@@ -270,7 +270,7 @@
     "origin_width_sample": "源出古代气修诸脉的传法经义，经历代高修汇"
   },
   "base.cultivation_book.wind_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wind-liufengwuxiangjing-title.webp",
     "label": "res://assets/UI-wind-liufengwuxiangjing-label.webp",
     "book": "res://assets/UI-wind-liufengwuxiangjing-book.webp",
@@ -280,7 +280,7 @@
     "origin_width_sample": "由古代气修一脉的身法秘经演成，后世高修将"
   },
   "base.cultivation_book.wind_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wind-qingmingpokongjue-title.webp",
     "label": "res://assets/UI-wind-qingmingpokongjue-label.webp",
     "book": "res://assets/UI-wind-qingmingpokongjue-book.webp",
@@ -290,7 +290,7 @@
     "origin_width_sample": "相传为古代气修在高天罡风中演成，以灵力凝"
   },
   "base.cultivation_book.wind_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-wind-tingfengwuyingjue-title.webp",
     "label": "res://assets/UI-wind-tingfengwuyingjue-label.webp",
     "book": "res://assets/UI-wind-tingfengwuyingjue-book.webp",
@@ -300,7 +300,7 @@
     "origin_width_sample": "本为古代游斗修士的秘传，渡尘客行经诸域时"
   },
   "base.cultivation_book.thunder_01": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-thunder-xuanshuzhenlu-title.webp",
     "label": "res://assets/UI-thunder-xuanshuzhenlu-label.webp",
     "book": "res://assets/UI-thunder-xuanshuzhenlu-book.webp",
@@ -310,7 +310,7 @@
     "origin_width_sample": "天机古域阵道大修藏机真君所留，相传成书于"
   },
   "base.cultivation_book.thunder_02": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-thunder-tianleizhenjie-title.webp",
     "label": "res://assets/UI-thunder-tianleizhenjie-label.webp",
     "book": "res://assets/UI-thunder-tianleizhenjie-book.webp",
@@ -320,7 +320,7 @@
     "origin_width_sample": "古代雷道宗门传出的根本经义，经多代高修校"
   },
   "base.cultivation_book.thunder_03": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-thunder-leichiyintingjing-title.webp",
     "label": "res://assets/UI-thunder-leichiyintingjing-label.webp",
     "book": "res://assets/UI-thunder-leichiyintingjing-book.webp",
@@ -330,7 +330,7 @@
     "origin_width_sample": "古代雷修于雷池旁参法所成，经后世高修续订"
   },
   "base.cultivation_book.thunder_04": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-thunder-jiuxiaotingguangjue-title.webp",
     "label": "res://assets/UI-thunder-jiuxiaotingguangjue-label.webp",
     "book": "res://assets/UI-thunder-jiuxiaotingguangjue-book.webp",
@@ -340,7 +340,7 @@
     "origin_width_sample": "出自古代雷修登峰引霆的攻伐传承，由弟子将"
   },
   "base.cultivation_book.thunder_05": {
-    "source_document": "output/imagegen/七系功法_35本四栏文案_20261016.md",
+    "source_document": "output/imagegen/七系功法_35本四栏文案.md",
     "title": "res://assets/UI-thunder-leigangzhenyujue-title.webp",
     "label": "res://assets/UI-thunder-leigangzhenyujue-label.webp",
     "book": "res://assets/UI-thunder-leigangzhenyujue-book.webp",

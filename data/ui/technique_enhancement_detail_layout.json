@@ -1,0 +1,19 @@
+{
+  "texture": "res://assets/UI-gongfa-right-bg-fashu1in2.webp",
+  "three_choice_texture": "res://assets/UI-gongfa-right-bg-fashu1in3.webp",
+  "source_size": [504, 1218],
+  "options_scroll_rect": [12, 594, 480, 488],
+  "standalone_options_scroll_rect": [12, 439, 480, 643],
+  "condition_label_rect": [152, 1180, 326, 36],
+  "condition_font_size": 23,
+  "card_gap": 18,
+  "card_padding": 16,
+  "point_gap": 12,
+  "card_icon_size": 120,
+  "selection_size": 40,
+  "title_font_size": 38,
+  "category_font_size": 19,
+  "poem_font_size": 23,
+  "body_font_size": 25,
+  "note": "Shared progress and button coordinates follow technique_spell_detail_layout.json. Combat pages retain the prerequisite summary; five-rank pages omit it. Two or three full enhancement cards scroll; selection is a local preview."
+}

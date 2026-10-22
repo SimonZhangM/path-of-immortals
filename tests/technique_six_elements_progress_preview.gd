@@ -23,6 +23,7 @@ func run() -> void:
 	screen.category_buttons[["metal","wood","water","fire","earth","wind","thunder"].find(element)].button_pressed = true
 	check(screen.progress_art.books.size() == 35, "all 35 books registered")
 	for index in range(1,6):
+		if OS.get_environment("TECHNIQUE_PROGRESS_STATUS_ONLY") == "1" and index != 3: continue
 		var book_id := "base.cultivation_book.%s_%02d" % [element,index]
 		for card in screen.book_cards:
 			if card.book_id == book_id: card.button_pressed = true
@@ -53,7 +54,7 @@ func run() -> void:
 			check(panel.encloses(art.get_global_rect()), "whole frame inside middle panel")
 			check(is_equal_approx(art.size.x/1576.0,art.size.y/456.0), "frame keeps aspect ratio")
 			check(art.icons.size() == expected_count, "all skill and upgrade pictures shown")
-			check(art.status_icons.is_empty() and art.status_backplates.is_empty(), "status symbols remain reserved")
+			check_status_art(art, records, index == 3)
 			for icon_index in art.icons.size():
 				var icon: TextureRect = art.icons[icon_index]
 				check(icon.texture.resource_path == records[icon_index].icon, "picture matches ordered effect record")
@@ -104,3 +105,40 @@ func run() -> void:
 	await settle()
 	print("%s PROGRESS: %d checks, %d failures" % [element.to_upper(),checks,failures])
 	quit(1 if failures else 0)
+
+func check_status_art(art, records: Array, has_statuses: bool) -> void:
+	check(art.status_icons.size() == (18 if has_statuses else 0), "status book has eighteen symbols; other books have none")
+	check(art.status_backplates.size() == (15 if has_statuses else 0), "one backing per status group; no leakage to other books")
+	if not has_statuses: return
+	var expected: Array = []
+	for record in records: expected.append_array(record.status_icons)
+	for i in expected.size():
+		var symbol: TextureRect = art.status_icons[i]
+		check(symbol.get_meta("status_name") == expected[i].name and symbol.texture.atlas.resource_path == expected[i].icon, "correct buff/debuff symbol and order")
+		check(symbol.texture.atlas.get_image().has_mipmaps(), "state symbol mipmaps enabled")
+		check(art.get_global_rect().encloses(symbol.get_global_rect()), "state symbol inside frame")
+		for label in art.captions:
+			check(not symbol.get_global_rect().intersects(label.get_global_rect()), "state symbol does not cover a caption")
+		for icon in art.icons:
+			check(not symbol.get_global_rect().intersects(icon.get_global_rect()), "state symbol stays below skill artwork")
+	for plate in art.status_backplates:
+		var paired: bool = plate.get_meta("column") == 2
+		check(plate.texture.resource_path == "res://assets/UI-wood-middown-53-button.webp" and plate.texture.get_image().has_mipmaps(), "shared wood backing texture")
+		var source_rect: Rect2 = plate.get_meta("source_rect")
+		check(source_rect.size.is_equal_approx(Vector2(100 if paired else 70,69)), "wood single/paired backing dimensions")
+		var center := source_rect.position + Vector2(50 if paired else 35,34)
+		var matching: Array[Rect2] = []
+		for symbol in art.status_icons:
+			var rect: Rect2 = symbol.get_meta("source_rect")
+			if absf(rect.get_center().y-center.y) < 0.01 and absf(rect.get_center().x-center.x) < (30 if paired else 0.01):
+				matching.append(rect)
+				check(plate.get_index() < symbol.get_index(), "background draws behind symbol")
+				check(rect.size.is_equal_approx(Vector2.ONE * (28.8 if paired else 32)), "wood symbol size and paired ten-percent reduction")
+		check(matching.size() == (2 if paired else 1), "symbols aligned to backing circle center")
+		if paired and matching.size() == 2:
+			check(absf(matching[1].position.x-matching[0].end.x) < 0.01, "paired symbols use zero gap")
+			check(((matching[0].get_center()+matching[1].get_center())*0.5).is_equal_approx(center), "pair centered as a whole")
+		var crop: Array = art.reference.display_crop
+		var factor: Vector2 = art.size / Vector2(crop[2],crop[3])
+		var original: Vector2 = art.get_global_transform_with_canvas() * ((source_rect.position-Vector2(crop[0],crop[1]))*factor)
+		check((plate.get_global_rect().position-original).is_equal_approx(Vector2(0,-2)), "backing retains wood two-screen-pixel upward offset")

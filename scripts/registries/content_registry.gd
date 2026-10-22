@@ -153,6 +153,10 @@ func _load_enemy_art() -> void:
 		if not profile.get("portrait_includes_frame", false) is bool or not profile.get("board_layout") is String or not _boards.has(profile.board_layout):
 			errors.append("Enemy art requires a valid frame flag and board: " + profile.id)
 			continue
+		if profile.has("portrait_frame"):
+			if not profile.portrait_frame is String or not ResourceLoader.exists(profile.portrait_frame, "Texture2D") or profile.get("portrait_includes_frame", false):
+				errors.append("Enemy art requires a separate valid frame and borderless portrait: " + profile.id)
+				continue
 		_enemy_art[profile.id] = profile.duplicate(true)
 
 func get_character(id: String) -> Dictionary:
@@ -233,7 +237,7 @@ func register_item(raw: Dictionary) -> bool:
 		error = "effects must be an array"
 	if error.is_empty():
 		var cooldown: Variant = raw.get("cooldown")
-		var rotates := false
+		var rotates: bool = raw.get("training",false) == true
 		for effect in raw["effects"]:
 			if effect is Dictionary and effect.get("trigger") == "on_activate":
 				rotates = true
@@ -294,11 +298,12 @@ func register_enemy(raw: Dictionary) -> bool:
 	if raw.has("art_profile"):
 		if not raw.art_profile is String or not _enemy_art.has(raw.art_profile):
 			return _reject(raw, "unknown enemy art profile")
-		if raw.has("portrait") or raw.has("portrait_includes_frame") or raw.has("board_layout"):
+		if raw.has("portrait") or raw.has("portrait_includes_frame") or raw.has("portrait_frame") or raw.has("board_layout"):
 			return _reject(raw, "enemy art fields must live in the referenced profile")
 		raw = raw.duplicate(true)
 		var art: Dictionary = _enemy_art[raw.art_profile]
 		for field in ["portrait", "portrait_includes_frame", "board_layout"]: raw[field] = art[field]
+		if art.has("portrait_frame"): raw["portrait_frame"] = art.portrait_frame
 		# Runtime definitions remain self-contained and can be reused as fixtures.
 		raw.erase("art_profile")
 	var error := _validate_identity(raw)

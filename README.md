@@ -1,6 +1,44 @@
 # 修仙之路 · Path of Immortals
 
-七系下部展示（2026-10-19最新）：金水火土风雷30本已按技艺52a／总纲52b／状态53／战斗8接入各系底图、名称、重数及354张技能强化图，沿木系位置、金边圆角；七系共413张图齐全。31张旧技能名游戏素材已改名并同步引用，六系状态小图仍待后续。F8后F5重启，G选择对应系／书目查看。静态预览：`$env:TECHNIQUE_PROGRESS_ELEMENT = 'metal'`后运行`./tests/run_t01.ps1 -Script res://tests/technique_six_elements_progress_preview.gd -Render`，元素可换water／fire／earth／wind／thunder；结束可`Remove-Item Env:TECHNIQUE_PROGRESS_ELEMENT`。本轮仍为展示，不代表学习流程已接。
+战斗展示更新（2026-10-22）：F8后F5重启，主角圆形头像与敌人等大、圆心齐平，主角名字后不再显示境界。战利品弹窗沿温玉佩领取框的简洁底图和高度，保留复盘／确定，单件奖励卡大小一致；新sfx-magic已重新导入并核对缓存。静态预览入口`tests/battle_portrait_reward_preview.gd`；头像几何见[主角头像说明](docs/player-portrait-fit.md)。
+
+怪物头像分层（2026-10-22）：F8后F5重启，青石河湾四怪的遭遇弹窗和战斗头像均为新无框头像＋独立凡人框。头像大小与位置保持，四怪使用统一框尺寸和中心，内沿压边且本体不超外圈。[配置与几何](docs/enemy-portrait-fit.md)；静态检查入口`tests/enemy_portrait_layers_preview.gd`，本轮截图`artifacts/enemy-portrait-layers-gallery.png`。
+
+战斗武器反馈（2026-10-22）：重启游戏后，穿刺／暗器／钝击／法术命中分别使用sfx-chuanci／sfx-anqi／sfx-dunji／sfx-magic，斩击沿原音效。武器成功发动出现0.8秒由1倍到2倍、Alpha0.5到0的虚影；失去本轮发动时左右抖动＋半透明红色占格边缘光晕，未命中不当作发动失败。专项`res://tests/weapon_feedback_tests.gd`验证实际事件与静态效果，不操作鼠标或存档；[规则与边界](docs/map-inventory-design.md#战斗武器发动反馈与命中音效2026-10-22)。
+
+八重功法右栏与主角头像（2026-10-21最新）：F8后F5重启，按G选任意系的两本战斗功法，第1／3／5／7重现均有完整法术详情，第2／4／6／8重沿强化二选一，共56术＋56页强化。图标、分类、配词、描述、要点、真实进度与各术学习条件已接齐；长正文可滚动，进度和条件固定。风系八重底图已更新。六阶段头像共用同一裁切和显示几何，化神黑边已修复，切境界位置一致。见[法术说明](docs/technique-spell-detail-layout.md)与[头像基准](docs/player-portrait-fit.md)；学习／强化按钮仍为预览。
+
+七系强化右栏（2026-10-21最新）：F8停止后F5重启，按G→选择任意系／功法→点击对应重数。35本全部357项、161页已齐套：技艺／总纲每重二选一，状态每重三选一，战斗篇偶数重二选一并显示本书前置法术简栏；包含图标、分类、配词、描述、全部要点。五重书按各自真实进度显示勾叉和禁用按钮，强化卡按元素主题选中、完整内容可滚动；选择仍仅预览。定位与验证见[右栏说明](docs/technique-enhancement-detail-layout.md)。原水系8术完整详情保持；其他六系奇数重完整法术详情留后续指定。覆盖下方“强化仅接水系”的旧状态。
+
+五重强化条件（2026-10-21）：G→水→灵墨玄符录／玄水真解／寒脉流转经，按钮下方显示当前所看重数的修炼进度条件；未达标为红叉、“无法强化”且无悬浮反馈，达标为绿勾、“确认强化”。读取已有每书学习账本，不写预览为正式学习。直接检查`res://tests/technique_enhancement_conditions_preview.gd`；[记录与定位](docs/technique-enhancement-detail-layout.md#五重书学习条件与记录)。
+
+状态首次生效（2026-10-21最新）：六种持续状态和驱散基础首次1秒，重伤1秒生效／第2秒减层；六项提前强化首次立即生效已接入。规则与21种状态生命周期见[核心01第1.77节](docs/01_核心定案_七系功法与战斗规则.md#status-onset-and-decay)。直接专项：`./tests/run_t01.ps1 -Script res://tests/status_onset_tests.gd`；本轮验证及旧测试／环境限制见PROJECT_PROGRESS顶部。
+
+功法右栏（2026-10-21最新）：重启后G→水，五本全部强化已接入[二选一／三选一右栏](docs/technique-enhancement-detail-layout.md)，共23页／51项，含最新描述与核心要点。灵墨玄符录／玄水真解每重二选一，寒脉流转经每重三选一，均不显示前置法术；寒月凝冰诀／沧澜燃灵诀第2／4／6／8重保留前置法术简栏。完整强化卡可滚动，点卡或圆圈互斥勾选、按书／重数记忆预览；顶部进度和底部按钮固定，暂不提交强化或扣费。两本战斗功法奇数重仍显示原8术详情。水系强化直接检查为`res://tests/technique_water_enhancements_preview.gd`，纯视觉复查设`TECHNIQUE_ENHANCEMENT_VISUAL_ONLY=1`跳过输入；原法术静态专项`./tests/run_t01.ps1 -Script res://tests/technique_water_spell_details_preview.gd -Render`。覆盖下方旧接入范围。
+
+右栏当前进度（2026-10-20最新）：寒月凝冰诀8个栏位顶部统一读取本书学习进度，不随查看重数改变；第3重额外显示玄冰枪详情。用户暂定的2重完成／第3重0/3600仅在该书未开始时作为预览，已有真实进度优先、不会改存档。该口径覆盖下方旧“按所看阶段”说明。纯布局验证设置`TECHNIQUE_DETAIL_VISUAL_ONLY=1`运行technique_spell_detail_preview，跳过鼠标检查。
+
+玄冰枪右栏更新（2026-10-20）：G→水→寒月凝冰诀→第3重；按所看阶段显示2/8、第3重及修炼度3600，实际条件以绿勾／红叉显示。按钮默认黑底白字、悬浮金底黑字、按下缩小3%，当前仅反馈，不执行扣费学习。标签和诗句沿物品悬浮样式，覆盖下条旧黄色按钮说明。
+
+玄冰枪右栏（2026-10-20最新）：F8停止后F5重启，G→水→寒月凝冰诀→点击第3重，查看新法术右栏。修炼度与重数读取实际状态；法术文案含26点水伤、6秒冷却、8灵力及筑基／200灵石／第3重完成条件。其他书、其他重数仍为空栏，黄色按钮暂为展示。定位记录见[右栏说明](docs/technique-spell-detail-layout.md)；直接预览`./tests/run_t01.ps1 -Script res://tests/technique_spell_detail_preview.gd -Render`。本条覆盖下方旧“G右栏全部清空”描述。
+
+功法重数选中效果（2026-10-19）：F8停止后F5重启，按G打开功法页，点击中栏任意重数圆环或下方栏框，选中项会按所属元素主题发光，标题两端装饰完整高亮、连接线粗细保持。支持五重及八重布局、键盘焦点激活；查看未领悟重数不会学习技能或确认强化。右栏现已按用户要求清空，旧确认强化入口撤下。直接专项：`./tests/run_t01.ps1 -Script res://tests/technique_rank_selection_tests.gd -Render`，设置`TECHNIQUE_RANK_VISUAL_ONLY=1`仅检查静态渲染。
+
+修炼成长（2026-10-19最新）：F8停止后F5重启，到青石镇修炼所或河湾瀑下静台，选模式与5／10／15天。进入进度页均等待点击“开始修炼”；功法／兼修须先选书，选书和调整阵盘不自动开始。首次进入赠导引石，请通过“阵盘调整”自行上阵。默认1倍、60模拟秒完成一日，暂停／结束保留不足一天的进度。倍速／灵石辅助／突破控制行和底部资源提示已移除；灵石辅助加成、扣费停用，旧辅助日不会继续扣费。修炼累计增量保留两位、显示一位，当前修为仅显示当前值；G右栏已清空待新设计，奇数重法术仍自动入袋。详见[运行接入](docs/cultivation-runtime-2026-10-19.md)。专项：`./tests/run_t01.ps1 -Script res://tests/cultivation_runtime_tests.gd`，`-Render`生成预览。
+
+七系法术正式接入（2026-10-19最新）：**F8停止后F5重启，按I→功法→法术**查看56术并放入阵盘测试；书籍和法术同属功法，第二排可按类型或七系筛选。当前存档已补全部56术各1，功法仍0重、分支及修炼度保持。**法术不占储物袋容量，当前仍96/999**；分类数量正常显示，阵盘仍按1／2格占位。源WebP与透明框分层绘制，第7重14术使用新矩形图，背景按1／3／5／7重对应下／凡／上／灵；选择本术强化后悬浮效果立即刷新。专项：`./tests/run_t01.ps1 -Script res://tests/spell_inventory_integration_tests.gd -Render`。
+
+同日展示修订：法术移除重复重数、上阵与操作提示，首句为《书名》第X重；入阵图框铺满对应绿色占格区域，四角3px圆角。书籍标签顺序功法／书籍／X系／定位，法术为功法／法术／X系／占格。必要静态预览：`./tests/run_t01.ps1 -Script res://tests/spell_presentation_preview.gd -Render`，不运行鼠标或战斗模拟。
+
+图框定位由[data/ui/spell_presentations.json](data/ui/spell_presentations.json)维护，同步工具[tools/sync_spell_presentations.py](tools/sync_spell_presentations.py)读取已认可的美术清单和简明介绍，不改图片像素。独立框及历史套图预览见[56术预览](output/imagegen/seven-elements-spell-frames-handpaint-2026-10-19.html)。测试补发工具[tools/grant_test_combat_spells.gd](tools/grant_test_combat_spells.gd)默认只读，`--apply`才备份并写入，当前实档已有凭证，无需再次执行。
+
+两格法术固定方向（2026-10-19）：data/cultivation_library.json中的14个第四术显式记录size，6个1×2、8个2×1；另外42术仍1×1。方向不可旋转、分支不改占格，表见核心01第1.73。直接检查：`./tests/run_t01.ps1 -Script res://tests/spell_board_footprint_tests.gd`，配合cultivation_combat_tests.gd；构建器tools/build_cultivation_library.py同步该表。新增14张手绘矩形底图见[统一预览](output/imagegen/spell-board-rectangles-2026-10-19.html)，原正方形技能图保留；装饰框及阵盘纹理已绑定，见上条。
+
+功法修习状态（2026-10-19最新）：所有原书不可进入阵盘，已学总纲／被动强化直接按各自条件生效；法术仍独立上阵。I中0重书无背景，重数背景按`data/ui/technique_mastery_backgrounds.json`切换；G左栏显示真实未领悟／重数。指定场所候选书及修炼度读写接口已接，正式收益／升级阈值和八重书玄品切换仍待定。全部页第二排草木／兽材／矿材／异材合为灵材。专项：`./tests/run_t01.ps1 -Script res://tests/book_mastery_rules_tests.gd`，加`-Render`可生成各重背景对照；规则以核心01第1.72为准。
+
+功法物品与储物袋（2026-10-19）：F8后F5重启，按I→“器物”后的“功法”→“书籍”，展示35本；功法分类也可按金木水火土风雷筛选。悬浮袋内物品查看简洁封面、书名、功法／书籍／元素／定位标签、实际修习进度、诗句与简介；G页左侧书卡悬浮已按补充要求取消。当前真实存档已补各1本，袋内96/999，999为data/maps/storage_capacity.json中的临时上限。文案核对：`python tools/sync_technique_item_copy.py --check`；专项：`./tests/run_t01.ps1 -Script res://tests/inventory_cultivation_books_tests.gd`（加`-Render`静态预览）、tests/technique_item_tooltip_tests.gd。维护工具tools/grant_test_cultivation_books.gd默认只读，勿重复手工发放；已补凭证防重，不会在启动时自动补书。
+
+七系下部展示（2026-10-19最新）：金水火土风雷30本已按技艺52a／总纲52b／状态53／战斗8接入各系底图、名称、重数及354张技能强化图，沿木系位置、金边圆角；七系共413张图齐全。31张旧技能名游戏素材已改名并同步引用，六系状态小图和小背景框也已按木系方式补齐。F8后F5重启，G选择对应系／书目查看。静态预览：`$env:TECHNIQUE_PROGRESS_ELEMENT = 'metal'`后运行`./tests/run_t01.ps1 -Script res://tests/technique_six_elements_progress_preview.gd -Render`，元素可换water／fire／earth／wind／thunder；结束可`Remove-Item Env:TECHNIQUE_PROGRESS_ELEMENT`。本轮仍为展示，不代表学习流程已接。
 
 七系融合手绘素材齐套（2026-10-18最新）：最后雷系五本59张技能及强化源图完成，见[雷系统一预览／80px查看](output/imagegen/thunder-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，六系计划354／354完成，含木系共413张。雷系待审阅，本轮未接游戏；覆盖下方旧批次接续进度。
 
@@ -104,7 +142,7 @@
 
 **仓储操作侧栏（2026-10-12）：**选中一张物品卡，左侧显示名称／大类／品级与来源侧当前拥有数量；加减或输入转移数量（默认1），再按上方存入／取出。右键／拖拽仍整叠，全部按钮不受筛选影响。固定仓库／储物袋图标及方向／空间提示按真实数据更新，测试期容量不足也可转移。最近两条成功记录可分别撤销；物品已消耗、再次转走、上阵或正在使用时对应撤销暂不可用。退出仓储清空操作记录，但库存转移照常保存。本次专项：`./tests/run_t01.ps1 -Script res://tests/warehouse_sidebar_tests.gd`；加`-Render`只做静态预览`artifacts/warehouse-sidebar.png`。覆盖下方旧“上方单类按钮整叠”说明。
 
-**本地 Spine 特效预览（2026-10-12）：**双击根目录[启动特效预览.cmd](启动特效预览.cmd)，浏览器打开 <http://127.0.0.1:8765>。递归读取外部素材目录，每页九宫格同时播放、底部翻页，可搜索／切动画／暂停调速／放大／复制路径。关闭后台服务用[关闭特效预览.cmd](关闭特效预览.cmd)。独立配套工具，不改变游戏与素材；配置和操作见[工具说明](tools/spine-preview/README.md)。
+**本地 Spine 特效预览（2026-10-22）：**双击根目录[启动特效预览.cmd](启动特效预览.cmd)，浏览器打开 <http://127.0.0.1:8765>。左侧切换原始库809个／141套高级库141个，再按文件夹浏览（包含子目录）；九宫格、搜索和底部分页限定当前范围。支持JSON及新增库的3.8.75 SKEL，可切动画／暂停调速／放大／复制路径。仅递归读取配置中的两个目录，不扫描整个素材父目录。关闭后台服务用[关闭特效预览.cmd](关闭特效预览.cmd)。独立配套工具，不改变游戏与素材；配置和操作见[工具说明](tools/spine-preview/README.md)。
 
 **自家仓库正式存取（2026-10-11最新）：**进入仓储后中栏为独立仓库、右栏为随身储物袋，两栏同布局、仓库独立底图。右键物品或拖到另一侧整叠转移；也可单击选中后按上方取出／存入，全部按钮忽略筛选处理该侧所有可转移物品，一次保存。当前使用的阵盘和已上阵物品不会被全部存入。仓库初始空，测试99种且允许超额，容量按实际种类统计，家中物品不随身。此条覆盖下方“中间留空／存取留后续”。配置data/maps/warehouses.json；基础检查`./tests/run_t01.ps1 -Script res://tests/warehouse_inventory_tests.gd`，本次按钮专项`./tests/run_t01.ps1 -Script res://tests/warehouse_actions_tests.gd`（隔离状态），`-Render`仅静态预览artifacts/warehouse-actions.png。
 

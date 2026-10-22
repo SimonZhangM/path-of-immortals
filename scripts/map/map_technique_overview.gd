@@ -1,6 +1,7 @@
 extends Control
 
 const Metrics := preload("res://scripts/map/map_texture_metrics.gd")
+const BOOK_OFFSET_SCREEN_X := 10.0
 var records: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/technique_overviews.json"))
 var selected_book_id := ""
 var book_center_y := 0.0
@@ -48,7 +49,7 @@ func _init() -> void:
 	hide()
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_TRANSFORM_CHANGED and is_inside_tree(): _layout_copy()
+	if what == NOTIFICATION_TRANSFORM_CHANGED and is_inside_tree(): _layout()
 
 func _copy(node_name: String, color: Color) -> Label:
 	var label := Label.new()
@@ -99,12 +100,13 @@ func _fit_book(box: Rect2) -> void:
 	var metrics := Metrics.inspect(atlas.atlas)
 	var original := Rect2(metrics.used_rect)
 	var visible := Rect2(metrics.visible_rect)
-	# Keep the previous physical scale and horizontal position of the book.
+	# Keep the previous physical scale; apply the shared offset in screen pixels.
 	# Only exclude near-transparent export specks from its centering bounds.
 	var factor := minf(box.size.x / original.size.x, box.size.y / original.size.y)
 	atlas.region = visible
 	art.size = visible.size * factor
 	art.position.x = box.position.x + (box.size.x - original.size.x * factor) * 0.5 + (visible.position.x - original.position.x) * factor
+	art.position.x += BOOK_OFFSET_SCREEN_X / maxf(get_global_transform_with_canvas().get_scale().x, 0.001)
 	art.position.y = book_center_y - art.size.y * 0.5
 
 func _fit_art(key: String, box: Rect2) -> void:

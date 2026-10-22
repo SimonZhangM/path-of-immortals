@@ -144,6 +144,10 @@ func _init() -> void:
 	board_button.pressed.connect(func(): board_requested.emit())
 	pause_button.pressed.connect(func(): pause_requested.emit())
 	end_button.pressed.connect(func(): ended.emit())
+	var book_view:=_button(Rect2(1050,587,284,26))
+	book_view.pressed.connect(func():
+		if session!=null: session.view_next_book()
+	)
 	technique_choice=MapTechniqueChoiceDialog.new()
 	add_child(technique_choice)
 	technique_choice.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
@@ -217,24 +221,27 @@ func present(value: MapCultivationSession) -> void:
 func refresh() -> void:
 	if session==null: return
 	var complete:=session.elapsed_days>=session.duration_days
-	heading.text="修炼已满" if complete else ("修炼暂停" if session.paused else "修炼中")
+	heading.text="修炼已满" if complete else ("准备修炼" if not session.started else ("修炼暂停" if session.paused else "修炼中"))
 	day_label.text="%d/%d天" % [session.elapsed_days,session.duration_days]
+	if session.loadout!=null: day_label.text="%s/%d天" % [CultivationGrowth.display(session.elapsed_days+int(session.loadout.growth.day_usec)/60000000.0),session.duration_days]
 	day_bar.ratio=float(session.elapsed_days)/maxi(1,session.duration_days)
+	if session.loadout!=null and not complete: day_bar.ratio+=(int(session.loadout.growth.day_usec)/60000000.0)/maxi(1,session.duration_days)
 	cultivation_caption.text=session.cultivation_progress.get("caption","")
 	cultivation_bar.ratio=session.cultivation_progress.get("ratio",0.0)
-	cultivation_percent.text=_percentage(session.cultivation_progress)
+	cultivation_percent.text="＋"+CultivationGrowth.display(session.cultivation_gain/100.0)
 	var technique:=session.selected_technique()
 	technique_caption.text=technique.get("name","未选择功法")
 	technique_bar.ratio=session.technique_progress().get("ratio",0.0)
-	technique_percent.text=_percentage(session.technique_progress())
+	technique_percent.text="—" if technique.is_empty() else "＋"+CultivationGrowth.display(session.displayed_gain())
 	cultivation_status.text=session.status("cultivation")
 	technique_status.text=session.status("technique")
-	pause_caption.text="继续修炼" if session.paused else "暂停修炼"
-	pause_note.text="接续当前修行" if session.paused else "暂歇片刻"
+	pause_caption.text="开始修炼" if not session.started else ("继续修炼" if session.paused else "暂停修炼")
+	pause_note.text="开始本次修行" if not session.started else ("接续当前修行" if session.paused else "暂歇片刻")
 	pause_button.disabled=complete
 	technique_slot_plus.visible=technique.is_empty()
 	technique_slot_image.visible=not technique.is_empty()
 	if not technique.is_empty(): technique_slot_image.texture=load(technique.icon)
+	technique_caption.tooltip_text="点击书名切换查看本次并修的功法"
 
 func _percentage(progress: Dictionary) -> String:
 	if progress.is_empty(): return "—"

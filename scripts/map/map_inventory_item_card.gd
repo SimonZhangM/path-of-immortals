@@ -55,6 +55,7 @@ func set_selected(value: bool) -> void:
 
 func _storage_drag_data() -> Dictionary:
 	if transfer_drag_provider.is_valid(): return transfer_drag_provider.call(entry.id)
+	if entry.category == "book": return {}
 	return loadout.drag_data("storage", entry.get("storage_id", ""), selected_quantity()) if loadout != null and equipment_actions_enabled else {}
 
 func _input(event: InputEvent) -> void:
@@ -103,6 +104,7 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if loadout == null or not equipment_actions_enabled or not event is InputEventMouseButton or not event.pressed:
 		return
+	if entry.category == "book": return
 	# Let wheel events reach the enclosing storage ScrollContainer.
 	if event.button_index not in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
 		return
@@ -124,7 +126,7 @@ func build_item_tooltip(_for_text: String) -> Object:
 	if loadout == null:
 		return null
 	var tooltip := ItemTooltip.new()
-	tooltip.configure(loadout.registry.get_item(entry.id), {}, -1, 0, loadout.can_use_item(entry.id))
+	tooltip.configure(loadout.registry.get_item(entry.id), CultivationDescription.tooltip_context(loadout.knowledge, entry.id, loadout.registry.get_item(entry.id)), -1, 0, loadout.can_use_item(entry.id))
 	return tooltip
 
 func _begin_drag(data: Dictionary) -> void:
@@ -140,7 +142,7 @@ func _begin_drag(data: Dictionary) -> void:
 		force_drag(data,preview)
 		modulate.a = 0.4
 		return
-	if not equipment_actions_enabled or not is_visible_in_tree() or not loadout.valid_drag(data) or not loadout.can_use_item(entry.id) or get_viewport().gui_is_dragging():
+	if entry.category == "book" or not equipment_actions_enabled or not is_visible_in_tree() or not loadout.valid_drag(data) or not loadout.can_use_item(entry.id) or get_viewport().gui_is_dragging():
 		return
 	_drag_active = true
 	ItemTooltipHost.for_control(self).dismiss()
@@ -159,7 +161,8 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 	square_layout = square
 	entry = record.duplicate(true)
 	name = "Item_" + String(entry.id).get_file()
-	frame = load(MapItemQuality.background_path(entry.quality))
+	var frame_path := str(entry.get("card_frame", "")) if entry.category == "book" else MapItemQuality.background_path(entry.quality)
+	frame = load(frame_path) if not frame_path.is_empty() else null
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	custom_minimum_size = Vector2(DESIGN_WIDTH, DESIGN_WIDTH * (STORAGE_ASPECT if square_layout else CARD_ASPECT))
 	# The quality badge intentionally straddles the lower border.
@@ -167,6 +170,14 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 	background = TextureRect.new()
 	background.name = "QualityBackground"
 	background.texture = frame
+	if frame == null:
+		# Unlearned books use the tooltip's solid fill, with no rarity artwork.
+		var fill := GradientTexture2D.new()
+		fill.width = 2
+		fill.height = 2
+		fill.gradient = Gradient.new()
+		fill.gradient.colors = PackedColorArray([ItemTooltip.SUMMARY_BACKGROUND, ItemTooltip.SUMMARY_BACKGROUND])
+		background.texture = fill
 	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -214,6 +225,7 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 		categories.append(subcategory)
 	if entry.category == "weapon" and entry.has("damage_type"):
 		categories.append(entry.damage_type)
+	if entry.category == "book": categories.assign(entry.get("tags", []))
 	if entry.has("armor_type"):
 		categories.append(entry.armor_type)
 	var seen_tags := {}
@@ -395,7 +407,7 @@ func _layout() -> void:
 	if background != null and size.x > 0 and size.y > 0:
 		var region := background_region()
 		background.material.set_shader_parameter("panel_size", size)
-		background.material.set_shader_parameter("source_region", Vector4(region.position.x / frame.get_width(), region.position.y / frame.get_height(), region.size.x / frame.get_width(), region.size.y / frame.get_height()))
+		background.material.set_shader_parameter("source_region", Vector4(region.position.x / frame.get_width(), region.position.y / frame.get_height(), region.size.x / frame.get_width(), region.size.y / frame.get_height()) if frame != null else Vector4(0, 0, 1, 1))
 	if quality_badge != null and size.x > 0:
 		var badge_width := size.x * QUALITY_BADGE_DESIGN_WIDTH / DESIGN_WIDTH
 		var badge_height := badge_width * quality_badge.texture.get_height() / quality_badge.texture.get_width()
@@ -404,7 +416,7 @@ func _layout() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board", "food"]:
+	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board", "food", "book"]:
 		return
 	var artwork := artwork_rect()
 	var factor := artwork.size.x / DESIGN_WIDTH

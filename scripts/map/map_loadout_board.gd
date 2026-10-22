@@ -102,10 +102,10 @@ func make_preview(data: Dictionary) -> Control:
 	var art := MapItemArtwork.new()
 	art.configure(state.records[entry.item_id])
 	var dimensions := state.registry.get_item(entry.item_id).grid_size
-	art.size = ItemDragPreview.artwork_rect(layout.footprint_rect(Vector2i.ZERO, dimensions, size)).size * get_global_transform().get_scale().abs()
-	art.position = -art.size * 0.5
 	holder.add_child(art)
-	art.center_visible_at(Vector2.ZERO)
+	var footprint_size := layout.footprint_rect(Vector2i.ZERO, dimensions, size).size
+	art.place_on_board(Rect2(-footprint_size * 0.5, footprint_size))
+	holder.scale = get_global_transform().get_scale().abs()
 	return holder
 
 func _ready() -> void:
@@ -124,6 +124,7 @@ func build_item_tooltip(for_text: String) -> Object:
 	if entry.is_empty():
 		return null
 	var tooltip := ItemTooltip.new()
+	entry.merge(CultivationDescription.tooltip_context(state.knowledge, entry.item_id, state.registry.get_item(entry.item_id)), true)
 	tooltip.configure(state.registry.get_item(entry.item_id), entry, -1, 0, state.can_use_item(entry.item_id))
 	return tooltip
 

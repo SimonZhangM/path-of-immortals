@@ -1,0 +1,1484 @@
+{
+  "base.spell.earth_01": {
+    "book_id": "base.cultivation_book.earth_04",
+    "rank": 1,
+    "name": "岩罡锤",
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-01-yangangchui.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "33｜岩罡锤",
+    "categories": [
+      "主动",
+      "土属性"
+    ],
+    "poem": "岩罡凝铁，落势如山。",
+    "description": "聚厚重土灵为岩锤，携山石沉坠之势轰向敌人。锤影质朴无华，内里却藏着坚凝罡力，落下时自有沉沉岳意。",
+    "core_points": [
+      "造成12点土属性伤害。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《撼岳裂地诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.earth_02": {
+    "book_id": "base.cultivation_book.earth_04",
+    "rank": 3,
+    "name": "坠岳印",
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-04-zhuiyueyin.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "34｜坠岳印",
+    "categories": [
+      "主动",
+      "土属性",
+      "疲惫"
+    ],
+    "poem": "岳影当头，疲骨惊尘。",
+    "description": "凝山岳之象为印，向敌人镇落。若其身已受疲惫所困，印下沉力便借这份衰乏激起震溃，疲意越深，随印而来的土灵冲击越重。",
+    "core_points": [
+      "造成24点土属性伤害。",
+      "命中后读取攻击前目标已有的疲惫，每层追加2点震溃土伤；不施加或消耗疲惫。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《撼岳裂地诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.earth_03": {
+    "book_id": "base.cultivation_book.earth_04",
+    "rank": 5,
+    "name": "地脉震",
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-07-dimaizhen.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "35｜地脉震",
+    "categories": [
+      "主动",
+      "土属性",
+      "武器定身"
+    ],
+    "poem": "地脉惊龙，群兵暂寂。",
+    "description": "引地脉震势击敌，命中后以沉重岳力困住敌方阵盘中的武器，使其轮转与出击暂时停下。地声未歇，兵锋已为之凝滞。",
+    "core_points": [
+      "造成30点土属性伤害。",
+      "命中后使敌方武器定身1秒，暂停其入阵、轮转与出击，期间不能被御兵调用。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《撼岳裂地诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.earth_04": {
+    "book_id": "base.cultivation_book.earth_04",
+    "rank": 7,
+    "name": "山河崩",
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-10-shanhebeng.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "36｜山河崩",
+    "categories": [
+      "主动",
+      "土属性",
+      "重伤"
+    ],
+    "poem": "山倾河断，崩声入骨。",
+    "description": "汇山河沉力向敌人压落，并借其已有重伤激起崩体之威。伤势越深，随本击而来的冲击便越重，如旧裂受压，山骨轰然回应。",
+    "core_points": [
+      "造成60点土属性伤害。",
+      "命中后读取攻击前目标已有的重伤，每层追加2点崩体土伤；不施加或消耗重伤。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《撼岳裂地诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.earth_05": {
+    "book_id": "base.cultivation_book.earth_05",
+    "rank": 1,
+    "name": "守岳式",
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-01-shouyueshi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "37｜守岳式",
+    "categories": [
+      "被动",
+      "土属性",
+      "预备式",
+      "抗暴护身"
+    ],
+    "poem": "任他锋起，我自如岳。",
+    "description": "预先敛定岳意，待下一次本将暴击的武器攻势袭来，化去其中暴烈之势，将其压回普通一击，并减轻这次直接伤害。身前虽无高山，心中已有重岳。",
+    "core_points": [
+      "将下一次来袭武器暴击压回普通命中，并使本次各项直接伤害降低20%。",
+      "独立抵抗暴击，不判定或消耗坚韧。",
+      "上阵并开启后，冷却8秒进入待发；触发时消耗6灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《不动玄岳诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.earth_06": {
+    "book_id": "base.cultivation_book.earth_05",
+    "rank": 3,
+    "name": "破岳式",
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-04-poyueshi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "38｜破岳式",
+    "categories": [
+      "被动",
+      "土属性",
+      "预备式",
+      "武器必暴"
+    ],
+    "poem": "千钧在握，一击开山。",
+    "description": "将破岳之意藏入待发一式，留待下一次合格武器攻击。此击命中便成暴击；若由钝击武器承接，厚重土意更能助长兵器本身的威力。",
+    "core_points": [
+      "下一次合格主动武器攻击命中必暴，基础暴击倍率为1.5倍。",
+      "若承接的是钝击武器，其本体伤害额外＋20%。",
+      "上阵并开启后，冷却10秒进入待发；触发时消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《不动玄岳诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.earth_07": {
+    "book_id": "base.cultivation_book.earth_05",
+    "rank": 5,
+    "name": "镇脉诀",
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-07-zhenmaijue.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "39｜镇脉诀",
+    "categories": [
+      "被动",
+      "土属性",
+      "预备式",
+      "重伤",
+      "发动增耗"
+    ],
+    "poem": "岳压灵泉，气行如负山。",
+    "description": "静候敌人下一次需耗体灵的发动，以岳意压住其运气之机，令这次消耗加重，并留下重伤。若体灵不足以支撑，攻势便就此中断，重伤仍留其身。",
+    "core_points": [
+      "令敌方下一次需耗体灵的发动，非零基础费用各增加50%，并施加3层重伤。",
+      "若敌方资源不足以支付加重后的费用，取消该次发动并重开冷却；重伤仍会施加。",
+      "上阵并开启后，冷却10秒进入待发；触发时消耗10灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《不动玄岳诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.earth_08": {
+    "book_id": "base.cultivation_book.earth_05",
+    "rank": 7,
+    "name": "玄岳反震",
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-10-xuanyuefanzhen.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "40｜玄岳反震",
+    "categories": [
+      "被动",
+      "土属性",
+      "预备式",
+      "损甲反击"
+    ],
+    "poem": "来力入岳，回响震川。",
+    "description": "将反震之意伏于甲中。待敌袭确实损及护甲，且自身承过此击仍然存活，便借损甲之力化出土灵反击；甲上承受越重，回震之势越强。",
+    "core_points": [
+      "受击实际损失护甲、且整次攻击结束后仍存活时，向攻击者反击。",
+      "基础土属性反击伤害＝本次实际损失护甲的50%。",
+      "上阵并开启后，冷却10秒进入待发；触发时消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《不动玄岳诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.fire_01": {
+    "book_id": "base.cultivation_book.fire_04",
+    "rank": 1,
+    "name": "赤焰刃",
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-01-chiyanren.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "25｜赤焰刃",
+    "categories": [
+      "主动",
+      "火属性"
+    ],
+    "poem": "赤练裁霞，锋头见日。",
+    "description": "敛赤火为刃，将灼烈火灵凝在明亮锋缘，向敌人挥斩。焰光曳开如霞绡裂帛，刃势所至，烈意随之扑面而来。",
+    "core_points": [
+      "造成12点火属性伤害。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《赤阳真火诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.fire_02": {
+    "book_id": "base.cultivation_book.fire_04",
+    "rank": 3,
+    "name": "炎龙枪",
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-04-yanlongqiang.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "26｜炎龙枪",
+    "categories": [
+      "主动",
+      "火属性"
+    ],
+    "poem": "炎龙出岫，赤贯长天。",
+    "description": "聚火灵成长枪，令焰势沿枪身盘旋，如赤龙昂首而出。枪尖挟炽热灵力直扑敌人，明焰翻卷处，尽是奋然而进的攻伐之意。",
+    "core_points": [
+      "造成26点火属性伤害。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《赤阳真火诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.fire_03": {
+    "book_id": "base.cultivation_book.fire_04",
+    "rank": 5,
+    "name": "烈阳印",
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-07-lieyangyin.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "27｜烈阳印",
+    "categories": [
+      "主动",
+      "火属性",
+      "灼烧"
+    ],
+    "poem": "一印悬日，千烬重燃。",
+    "description": "凝烈阳之象为印，挟灼光击敌。若敌身早有灼烧，印中火力便引动余焰，迸出更猛烈的爆燃；旧火越盛，这一击的余威越重。",
+    "core_points": [
+      "造成40点火属性伤害。",
+      "命中后读取攻击前目标已有的灼烧，每层追加1点爆燃火伤；本术不施加灼烧。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《赤阳真火诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.fire_04": {
+    "book_id": "base.cultivation_book.fire_04",
+    "rank": 7,
+    "name": "赤阳天火",
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-10-chiyangtianhuo.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "28｜赤阳天火",
+    "categories": [
+      "主动",
+      "火属性"
+    ],
+    "poem": "赤阳临世，天火垂旌。",
+    "description": "汇聚炽盛火灵，化作自高处倾落的赤阳天火，向敌人灌注烈焰之威。煌煌火光如长旌垂空，照得交锋之处满目赤金。",
+    "core_points": [
+      "造成60点火属性伤害。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《赤阳真火诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.fire_05": {
+    "book_id": "base.cultivation_book.fire_05",
+    "rank": 1,
+    "name": "引焰诀",
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-01-yinyanjue.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "29｜引焰诀",
+    "categories": [
+      "主动",
+      "火属性",
+      "附炎"
+    ],
+    "poem": "掌中一点，待起燎原。",
+    "description": "引一缕离火归于自身，积作附炎。火种敛而未发，留待下一次主动攻击时化为追加火伤，随原有攻势一同扑向敌人。",
+    "core_points": [
+      "自身获得6层附炎；下一次主动攻击消耗全部附炎，每层追加1点火伤。",
+      "冷却6秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《离火燎原诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.fire_06": {
+    "book_id": "base.cultivation_book.fire_05",
+    "rank": 3,
+    "name": "熔甲炎",
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-04-rongjiayan.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "30｜熔甲炎",
+    "categories": [
+      "主动",
+      "火属性",
+      "破甲"
+    ],
+    "poem": "炎入铁衣，赤隙生光。",
+    "description": "以炽炎击敌，命中后留下破甲，为后续火伤打开越甲伤身的裂隙。若敌人早有破甲，且本击火力抵达护甲，旧隙便迸出熔爆，额外蚀损甲胄，余焰止于铁衣。",
+    "core_points": [
+      "造成18点火属性伤害，命中施加4层破甲。",
+      "本体实际入甲时，按攻击前每层破甲追加0.5点熔爆火伤；这份追加伤害只扣护甲，过量不转扣气血。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《离火燎原诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.fire_07": {
+    "book_id": "base.cultivation_book.fire_05",
+    "rank": 5,
+    "name": "燎原火",
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-07-liaoyuanhuo.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "31｜燎原火",
+    "categories": [
+      "主动",
+      "火属性",
+      "灼烧"
+    ],
+    "poem": "星火附衣，余烬不眠。",
+    "description": "将离火之势送向敌人，命中后留下灼烧。火光初歇，附着其身的余焰仍持续侵蚀气血，如旱野暗藏的火线，未肯随风散去。",
+    "core_points": [
+      "造成30点火属性伤害；命中施加6层灼烧，持续灼损气血。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《离火燎原诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.fire_08": {
+    "book_id": "base.cultivation_book.fire_05",
+    "rank": 7,
+    "name": "离火真炎",
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-10-lihuozhenyan.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "32｜离火真炎",
+    "categories": [
+      "主动",
+      "火属性",
+      "灼烧",
+      "破甲"
+    ],
+    "poem": "万烬归炉，真炎照夜。",
+    "description": "祭出凝练真炎，借敌身已有的灼烧与破甲壮大火势。旧焰与甲隙皆成攻势所凭，积得越深，真炎越烈，仿佛此前埋下的火线终于一并明亮。",
+    "core_points": [
+      "造成60点基础火属性伤害。",
+      "读取攻击前目标已有的灼烧、破甲，每层使本体伤害＋1%，最高＋100%；本术不施加这两种状态。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《离火燎原诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.metal_01": {
+    "book_id": "base.cultivation_book.metal_04",
+    "rank": 1,
+    "name": "庚锋剑",
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-01-gengfengjian.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "01｜庚锋剑",
+    "categories": [
+      "主动",
+      "金属性"
+    ],
+    "poem": "一线庚光，裁开暮色。",
+    "description": "敛金气于指端，凝作一线剑锋直取敌身。剑形虽薄，锋意不折，出手只见寒光掠过，宛如长夜初开的一道天隙。",
+    "core_points": [
+      "造成12点金属性伤害。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《玄庚剑诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.metal_02": {
+    "book_id": "base.cultivation_book.metal_04",
+    "rank": 3,
+    "name": "分光剑雨",
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-04-fenguangjianyu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "02｜分光剑雨",
+    "categories": [
+      "主动",
+      "金属性"
+    ],
+    "poem": "千锋映雪，剑雨横秋。",
+    "description": "将剑光散作纷纷银雨，再以神意合拢，向眼前之敌倾落。万点寒芒同赴一处，合成一记凌厉的金灵攻势。",
+    "core_points": [
+      "造成24点金属性伤害。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《玄庚剑诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.metal_03": {
+    "book_id": "base.cultivation_book.metal_04",
+    "rank": 5,
+    "name": "回锋剑幕",
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-07-huifengjianmu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "03｜回锋剑幕",
+    "categories": [
+      "主动",
+      "金属性",
+      "剑幕"
+    ],
+    "poem": "收尽长空剑，回锋护此身。",
+    "description": "唤回游走的剑光，交织成护身剑幕，为自身分担来袭伤害。锋芒此刻向内收敛，如秋水环身，守住方寸清明。",
+    "core_points": [
+      "生成30点剑幕，吸收40%的来袭伤害。",
+      "替换已有特殊护盾；普通灵盾保留。",
+      "冷却8秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《玄庚剑诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.metal_04": {
+    "book_id": "base.cultivation_book.metal_04",
+    "rank": 7,
+    "name": "玄庚归一剑",
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-10-xuangengguiyijian.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "04｜玄庚归一剑",
+    "categories": [
+      "主动",
+      "金属性"
+    ],
+    "poem": "万锋归寂，一剑天开。",
+    "description": "将散逸金气尽数敛入剑中，诸般锋意归于一处，再向敌人斩落。满空剑影在这一刻沉寂，只余一道凝练至极的庚金寒光。",
+    "core_points": [
+      "造成60点金属性伤害。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《玄庚剑诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.metal_05": {
+    "book_id": "base.cultivation_book.metal_05",
+    "rank": 1,
+    "name": "附灵术",
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-01-fulingshu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "05｜附灵术",
+    "categories": [
+      "主动",
+      "金属性",
+      "附灵"
+    ],
+    "poem": "灵犀入铁，寸刃生辉。",
+    "description": "将金灵寄于兵锋，留待下一次武器发动时随之迸发，添上一道金属性伤害。兵刃本身越强，随锋而出的灵光也越盛。",
+    "core_points": [
+      "下一次武器发动时，附加其基础攻击与强化之和50%的金属性伤害。",
+      "附灵只保留1份，重复施放不叠加。",
+      "冷却6秒，消耗3灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《百兵御灵诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.metal_06": {
+    "book_id": "base.cultivation_book.metal_05",
+    "rank": 3,
+    "name": "御兵术",
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-04-yubingshu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "06｜御兵术",
+    "categories": [
+      "主动",
+      "金属性",
+      "御使实兵"
+    ],
+    "poem": "心念一动，匣底龙吟。",
+    "description": "以神识牵动阵中已就位的可用武器，使其循念额外出击。兵器各循本性，锋刃听召而起，原有的轮转节奏仍自流行。",
+    "core_points": [
+      "驱使1件已完成入阵的可用武器额外攻击，不改变其原有冷却。",
+      "另支付该武器正常的体力、灵力费用。",
+      "冷却8秒，消耗6灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《百兵御灵诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.metal_07": {
+    "book_id": "base.cultivation_book.metal_05",
+    "rank": 5,
+    "name": "兵甲化元",
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-07-bingjiahuayuan.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "07｜兵甲化元",
+    "categories": [
+      "主动",
+      "金属性",
+      "灵盾"
+    ],
+    "poem": "锋藏于壁，兵息成垣。",
+    "description": "借阵中最强武器的锋锐之力，凝成护身灵盾。兵锋越盛，所化盾力越厚；攻伐之意暂敛于身前，转作抵御来袭的屏障。",
+    "core_points": [
+      "取阵中最强武器的基础攻击与强化之和，按100%转为灵盾。",
+      "灵盾吸收30%的来袭伤害，生成量受当前灵盾容量限制。",
+      "冷却8秒，消耗6灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《百兵御灵诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.metal_08": {
+    "book_id": "base.cultivation_book.metal_05",
+    "rank": 7,
+    "name": "百兵归元",
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-10-baibingguiyuan.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "08｜百兵归元",
+    "categories": [
+      "主动",
+      "金属性",
+      "多兵合击"
+    ],
+    "poem": "诸锋听令，百兵同鸣。",
+    "description": "以阵中最强武器领锋，召集其余可用实兵共同攻敌。刀剑锤枪各展本性，主锋与群兵之势相汇，如百川归流，合成一道雄浑攻势。",
+    "core_points": [
+      "驱使可用武器合击：最强武器按基础攻击与强化之和的100%计，其余各按50%计。",
+      "各武器保留自身伤害类型与属性，支付正常费用的50%；原有冷却不变。",
+      "冷却6秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《百兵御灵诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.thunder_01": {
+    "book_id": "base.cultivation_book.thunder_04",
+    "rank": 1,
+    "name": "雷光指",
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-01-leiguangzhi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "49｜雷光指",
+    "categories": [
+      "主动",
+      "雷属性"
+    ],
+    "poem": "指间藏电，点破沉云。",
+    "description": "将躁烈雷灵敛入指尖，朝敌人点出一道电光。光起如夜云乍裂，雷意沿这一指奔涌而去，以明快锐烈的霆光伤敌。",
+    "core_points": [
+      "造成10点雷属性伤害。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《九霄霆光诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.thunder_02": {
+    "book_id": "base.cultivation_book.thunder_04",
+    "rank": 3,
+    "name": "玄霆枪",
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-04-xuantingqiang.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "50｜玄霆枪",
+    "categories": [
+      "主动",
+      "雷属性",
+      "雷印"
+    ],
+    "poem": "紫霆为骨，电芒为锋。",
+    "description": "聚雷霆成长枪，挟电光直击敌人，命中后烙下雷印。枪影散去，印中雷意仍伏于敌身，待积聚足够，再为后续雷攻引来落雷。",
+    "core_points": [
+      "造成26点雷属性伤害，命中施加2层雷印；新印留待后续雷攻引雷。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《九霄霆光诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.thunder_03": {
+    "book_id": "base.cultivation_book.thunder_04",
+    "rank": 5,
+    "name": "连霆术",
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-07-liantingshu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "51｜连霆术",
+    "categories": [
+      "主动",
+      "雷属性",
+      "雷印",
+      "连环"
+    ],
+    "poem": "霆声未尽，电火相催。",
+    "description": "雷光击敌，借其已有的雷印与连环接续电势。若雷印足以引雷，仍可借连环续上一道闪电；未能引雷时，则可让已有连环接连发作，使前电未息、后霆又至。",
+    "core_points": [
+      "造成30点雷属性伤害；本术不施加雷印或连环。",
+      "本体实际造成伤害后，若引发雷印雷击，可再触发1次连环；未引雷时最多触发2次。",
+      "每次消耗目标1层已有连环，按消耗前层数×2造成连环雷伤。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《九霄霆光诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.thunder_04": {
+    "book_id": "base.cultivation_book.thunder_04",
+    "rank": 7,
+    "name": "九霄雷落",
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-10-jiuxiaoleiluo.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "52｜九霄雷落",
+    "categories": [
+      "主动",
+      "雷属性"
+    ],
+    "poem": "九霄开阙，天怒垂光。",
+    "description": "汇雷灵于高处，化作九霄霆光向敌人轰落。雷声似自层云深处滚来，电芒照开昏暗，挟煌然之威将强盛雷力尽数倾下。",
+    "core_points": [
+      "造成60点雷属性伤害。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《九霄霆光诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.thunder_05": {
+    "book_id": "base.cultivation_book.thunder_05",
+    "rank": 1,
+    "name": "雷罡护体",
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-01-leiganghuti.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "53｜雷罡护体",
+    "categories": [
+      "主动",
+      "雷属性",
+      "雷蕴",
+      "雷盾",
+      "麻痹"
+    ],
+    "poem": "雷藏周身，静候云开。",
+    "description": "引雷气归于自身，积作雷蕴；待蕴力充盈，便可凝成雷盾分担伤害。盾层若被敌击碎，散出的雷光便令来犯者麻痹，将护身之势化为震慑。",
+    "core_points": [
+      "自身获得6层雷蕴；累计10层且有盾层空位时，转成1层雷盾。",
+      "雷盾吸收60%的来袭伤害，被攻击击破时使攻击者麻痹1秒。",
+      "炼气基础雷盾每层20点，最多同时存在1层；随境界提升。",
+      "冷却6秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《雷罡镇狱诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.thunder_06": {
+    "book_id": "base.cultivation_book.thunder_05",
+    "rank": 3,
+    "name": "引雷印",
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-04-yinleiyin.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "54｜引雷印",
+    "categories": [
+      "主动",
+      "雷属性",
+      "雷印"
+    ],
+    "poem": "印落云根，天雷有引。",
+    "description": "以雷印之术击敌，命中后在其身上积下雷印。余电伏藏如云中雷种，为后续雷攻备下引雷之机；印积既足，雷声方有所应。",
+    "core_points": [
+      "造成18点雷属性伤害，命中施加6层雷印；新印留待后续雷攻引雷。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《雷罡镇狱诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.thunder_07": {
+    "book_id": "base.cultivation_book.thunder_05",
+    "rank": 5,
+    "name": "雷返式",
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-07-leifanshi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "55｜雷返式",
+    "categories": [
+      "被动",
+      "雷属性",
+      "预备式",
+      "雷盾",
+      "麻痹"
+    ],
+    "poem": "盾碎霆回，来锋自受。",
+    "description": "预伏返雷之机，雷盾被攻击击破、并以破盾雷光成功麻痹来犯者时，便向其还以雷属性反击。盾光散处，电芒重新聚起，循来路返向敌身。",
+    "core_points": [
+      "自身存活时，任一层雷盾被攻击击破并成功麻痹攻击者，立即向其反击24点雷属性伤害。",
+      "每次来袭攻击最多触发1次，反击另判命中。",
+      "上阵并开启后，冷却10秒进入待发；触发时消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《雷罡镇狱诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.thunder_08": {
+    "book_id": "base.cultivation_book.thunder_05",
+    "rank": 7,
+    "name": "雷狱锁",
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-10-leiyusuo.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "56｜雷狱锁",
+    "categories": [
+      "主动",
+      "雷属性",
+      "雷印",
+      "麻痹"
+    ],
+    "poem": "电锁垂空，雷狱留人。",
+    "description": "凝雷为锁击向敌人，命中后留下雷印。若敌人此前已陷麻痹，锁中雷力便续住这份迟滞，延后其恢复行动的时刻，如雷狱将合，余电犹不肯散。",
+    "core_points": [
+      "造成40点雷属性伤害，命中施加4层雷印。",
+      "目标命中前已麻痹时，剩余麻痹延长1秒；不直接施加新的麻痹。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《雷罡镇狱诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.water_01": {
+    "book_id": "base.cultivation_book.water_04",
+    "rank": 1,
+    "name": "寒月刃",
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-01-hanyueren.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "17｜寒月刃",
+    "categories": [
+      "主动",
+      "水属性"
+    ],
+    "poem": "月沉寒水，掬影成锋。",
+    "description": "将清寒水灵凝作月弧般的冰刃，挥出一道凛冽寒光。刃影掠向敌身，如从静水中裁下半轮冷月，澄澈之中自有锋芒。",
+    "core_points": [
+      "造成12点水属性伤害。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《寒月凝冰诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.water_02": {
+    "book_id": "base.cultivation_book.water_04",
+    "rank": 3,
+    "name": "玄冰枪",
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-04-xuanbingqiang.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "18｜玄冰枪",
+    "categories": [
+      "主动",
+      "水属性"
+    ],
+    "poem": "冰锋贯月，寒芒破空。",
+    "description": "凝水为枪，聚寒成锋，将凛冽水灵尽收于枪尖，直取敌身。长枪出手如冷月穿云，一线冰光照彻沉夜，锋意清寒而不折。",
+    "core_points": [
+      "造成26点水属性伤害。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《寒月凝冰诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.water_03": {
+    "book_id": "base.cultivation_book.water_04",
+    "rank": 5,
+    "name": "沧澜寒潮",
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-07-canglanhanchao.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "19｜沧澜寒潮",
+    "categories": [
+      "主动",
+      "水属性"
+    ],
+    "poem": "沧澜卷雪，寒潮拍天。",
+    "description": "驭水灵化作奔涌寒潮，聚浪势向敌人压去。潮头翻起如千堆冷雪，深处却藏着沉沉水力，将江海之威送入这一击中。",
+    "core_points": [
+      "造成40点水属性伤害。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《寒月凝冰诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.water_04": {
+    "book_id": "base.cultivation_book.water_04",
+    "rank": 7,
+    "name": "寒月天河",
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-10-hanyuetianhe.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "20｜寒月天河",
+    "categories": [
+      "主动",
+      "水属性"
+    ],
+    "poem": "长河倒泻，满袖霜天。",
+    "description": "汇水灵成天河之象，挟寒月清辉倾注于敌。冰光与潮势融作一体，仿佛长空忽然垂下寒江，将澄明而雄浑的水灵之力一并压落。",
+    "core_points": [
+      "造成60点水属性伤害。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《寒月凝冰诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.water_05": {
+    "book_id": "base.cultivation_book.water_05",
+    "rank": 1,
+    "name": "燃灵指",
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-01-ranlingzhi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "21｜燃灵指",
+    "categories": [
+      "主动",
+      "水属性",
+      "削减灵力"
+    ],
+    "poem": "指落无焰，灵泉暗涸。",
+    "description": "将水灵凝于指尖，点中敌人时伤其身、削其灵力。所谓燃灵，未见烈火，只有一缕寒意掠过，令敌人赖以施术的灵泉渐薄。",
+    "core_points": [
+      "造成10点水属性伤害；命中削减目标6点灵力，最多扣至0，不转扣体力。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《沧澜燃灵诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.water_06": {
+    "book_id": "base.cultivation_book.water_05",
+    "rank": 3,
+    "name": "断脉印",
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-04-duanmaiyin.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "22｜断脉印",
+    "categories": [
+      "主动",
+      "水属性",
+      "枯脉"
+    ],
+    "poem": "印沉寒渊，脉若枯川。",
+    "description": "以幽寒水印击敌，命中后种下枯脉。枯意沿经脉渗行，持续蚕食灵力与体力，使原本流转自如的元气，如河道入冬，渐露干涸之相。",
+    "core_points": [
+      "造成18点水属性伤害；命中施加4层枯脉，持续消耗目标体力与灵力。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《沧澜燃灵诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.water_07": {
+    "book_id": "base.cultivation_book.water_05",
+    "rank": 5,
+    "name": "寒潮锁阵",
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-07-hanchaosuozhen.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "23｜寒潮锁阵",
+    "categories": [
+      "主动",
+      "水属性",
+      "寒霜",
+      "冻结"
+    ],
+    "poem": "潮封阵隙，霜锁流光。",
+    "description": "寒潮拍向敌人，命中后覆上寒霜，并循水法引出冻结，使敌方全阵盘的运转与发动暂歇。余霜仍留，待后续水势再至，续起清寒锁意。",
+    "core_points": [
+      "造成16点水属性伤害，命中施加6层寒霜。",
+      "本次通常消耗1层寒霜，使敌方全阵盘冻结0.5秒；余层留待后续水攻触发。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《沧澜燃灵诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.water_08": {
+    "book_id": "base.cultivation_book.water_05",
+    "rank": 7,
+    "name": "归墟断流",
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-10-guixuduanliu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "24｜归墟断流",
+    "categories": [
+      "主动",
+      "水属性",
+      "枯竭增伤"
+    ],
+    "poem": "百川归寂，一水断流。",
+    "description": "引深沉水势直压敌身，循其元气空乏之处扩大杀伤。敌人的灵力与体力越接近枯竭，这道归墟之潮便越显沉重，直如江河失源，去水难回。",
+    "core_points": [
+      "造成60点基础水属性伤害。",
+      "按目标灵力、体力的平均缺失比例增伤，最高＋100%。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《沧澜燃灵诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.wind_01": {
+    "book_id": "base.cultivation_book.wind_04",
+    "rank": 1,
+    "name": "风羽矢",
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-01-fengyushi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "41｜风羽矢",
+    "categories": [
+      "主动",
+      "风属性",
+      "命中见长"
+    ],
+    "poem": "羽逐天隙，风认归途。",
+    "description": "将轻风束作羽矢，以细微风息辨取敌人身形，送出迅疾而精准的风灵一击。矢影轻如飞羽，落处却比寻常攻势更有把握。",
+    "core_points": [
+      "造成10点风属性伤害。",
+      "本术命中率额外＋15个百分点。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《青冥破空诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.wind_02": {
+    "book_id": "base.cultivation_book.wind_04",
+    "rank": 3,
+    "name": "穿云枪",
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-04-chuanyunqiang.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "42｜穿云枪",
+    "categories": [
+      "主动",
+      "风属性"
+    ],
+    "poem": "一枪穿云，千嶂闻风。",
+    "description": "凝劲风为长枪，将流散风力收束于前端，直取敌人。枪出时云气仿佛被牵作长线，清劲之势一往向前，尽显风法锋锐。",
+    "core_points": [
+      "造成26点风属性伤害。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《青冥破空诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.wind_03": {
+    "book_id": "base.cultivation_book.wind_04",
+    "rank": 5,
+    "name": "裂空罡风",
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-07-liekonggangfeng.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "43｜裂空罡风",
+    "categories": [
+      "主动",
+      "风属性",
+      "失衡"
+    ],
+    "poem": "罡风裂帛，步乱长空。",
+    "description": "驭凌厉罡风冲击敌人，命中后使其陷入失衡。身势一乱，破绽便露，后续攻势也更易寻得落处，如风过疏林，隙隙皆可入。",
+    "core_points": [
+      "造成40点风属性伤害；命中施加4层失衡，使目标更易被后续攻击命中。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《青冥破空诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.wind_04": {
+    "book_id": "base.cultivation_book.wind_04",
+    "rank": 7,
+    "name": "青冥贯日",
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-10-qingmingguanri.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "44｜青冥贯日",
+    "categories": [
+      "主动",
+      "风属性"
+    ],
+    "poem": "青冥一线，直上扶桑。",
+    "description": "将浩荡风灵敛为一道长芒，挟凌云贯日之势攻向敌人。四散风声尽收于这一线锋芒，出手时仿佛云天开缝，清光直抵苍穹。",
+    "core_points": [
+      "造成60点风属性伤害。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《青冥破空诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.wind_05": {
+    "book_id": "base.cultivation_book.wind_05",
+    "rank": 1,
+    "name": "听风步",
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-01-tingfengbu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "45｜听风步",
+    "categories": [
+      "被动",
+      "风属性",
+      "预备式",
+      "保证闪避"
+    ],
+    "poem": "风先入耳，人已无踪。",
+    "description": "收心听风，预留一线退身之路。待下一次可闪避的攻击袭来，便循风错步，必能避开这一击，如叶离枝，身影已在锋芒之外。",
+    "core_points": [
+      "保证闪避下一次可闪避攻击，成功后本次待发效果用尽。",
+      "上阵并开启后，冷却8秒进入待发；触发时消耗6灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《听风无影诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.wind_06": {
+    "book_id": "base.cultivation_book.wind_05",
+    "rank": 3,
+    "name": "追风式",
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-04-zhuifengshi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "46｜追风式",
+    "categories": [
+      "被动",
+      "风属性",
+      "预备式",
+      "武器追击"
+    ],
+    "poem": "前锋未歇，后影随风。",
+    "description": "将追风之意藏于兵锋，待下一次武器原始攻击命中，便循首击余势再发追击。后锋借前锋之力而起，仍须寻准敌身，方能再添伤害。",
+    "core_points": [
+      "下一次武器原始攻击命中后，必定发动1次追击。",
+      "追击基础伤害取首击过盾甲前武器本体伤害的50%，另判命中，不复制独立附伤。",
+      "上阵并开启后，冷却10秒进入待发；触发时消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《听风无影诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.wind_07": {
+    "book_id": "base.cultivation_book.wind_05",
+    "rank": 5,
+    "name": "回风引",
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-07-huifengyin.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "47｜回风引",
+    "categories": [
+      "主动",
+      "风属性",
+      "推进冷却"
+    ],
+    "poem": "回风过隙，迟锋先鸣。",
+    "description": "牵回一缕流风，催动己方阵盘中一件仍在冷却、可受此术助益的器具或法术。风息掠过，等待随之缩短，原本稍迟的锋芒便能更早候发。",
+    "core_points": [
+      "使己方1件合格器具或法术的当前剩余冷却缩短2秒。",
+      "不能选择自身、已就绪目标，或其他带减冷却能力的目标。",
+      "冷却8秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《听风无影诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.wind_08": {
+    "book_id": "base.cultivation_book.wind_05",
+    "rank": 7,
+    "name": "清风涤尘",
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-10-qingfengdichen.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "48｜清风涤尘",
+    "categories": [
+      "主动",
+      "风属性",
+      "驱散"
+    ],
+    "poem": "清风拂袖，浮华尽落。",
+    "description": "以清风击敌，命中后留下驱散之力，循其增益逐层拂除。风来似无锋，却能剥落对手倚仗的护持，如尘去镜明，渐露本来面目。",
+    "core_points": [
+      "造成16点风属性伤害；命中施加8层驱散，按驱散规则拆除敌方增益。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《听风无影诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.wood_01": {
+    "book_id": "base.cultivation_book.wood_04",
+    "rank": 1,
+    "name": "青木刺",
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-01-qingmuci.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "09｜青木刺",
+    "categories": [
+      "主动",
+      "木属性"
+    ],
+    "poem": "新枝破土，寸碧藏锋。",
+    "description": "催木灵凝成长刺，携新芽破土之势刺向敌人。看似柔嫩的一抹青色，尽将生长之力收于尖端，显出草木亦有的锐意。",
+    "core_points": [
+      "造成10点木属性伤害。",
+      "冷却4秒，消耗4灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《万木生杀诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.wood_02": {
+    "book_id": "base.cultivation_book.wood_04",
+    "rank": 3,
+    "name": "青藤刃",
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-04-qingtengren.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "10｜青藤刃",
+    "categories": [
+      "主动",
+      "木属性"
+    ],
+    "poem": "碧藤裁月，叶底飞寒。",
+    "description": "凝青藤为刃，借藤身舒展之势挥出木灵锋芒。翠影翻折如叶背流光，柔韧之中藏着凌厉，向敌人斩去。",
+    "core_points": [
+      "造成22点木属性伤害。",
+      "冷却6秒，消耗7灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《万木生杀诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.wood_03": {
+    "book_id": "base.cultivation_book.wood_04",
+    "rank": 5,
+    "name": "森罗灵矢",
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-07-senluolingshi.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "11｜森罗灵矢",
+    "categories": [
+      "主动",
+      "木属性",
+      "命中见长"
+    ],
+    "poem": "林深不见路，一矢识归处。",
+    "description": "将森罗木气聚作灵矢，以神意引锋直指敌身。矢光穿行如枝叶间的一缕天光，较寻常攻势更善于捕捉敌人的身形。",
+    "core_points": [
+      "造成36点木属性伤害。",
+      "本术命中率额外＋15个百分点。",
+      "冷却8秒，消耗12灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《万木生杀诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.wood_04": {
+    "book_id": "base.cultivation_book.wood_04",
+    "rank": 7,
+    "name": "万木森罗",
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-10-wanmusenluo.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "12｜万木森罗",
+    "categories": [
+      "主动",
+      "木属性"
+    ],
+    "poem": "万木擎天，森罗一怒。",
+    "description": "催动木灵，幻出万木并起之势，将葱郁生意尽数化为攻伐之力。枝干如山，碧影如海，浩荡木气朝眼前之敌压落。",
+    "core_points": [
+      "造成60点木属性伤害。",
+      "冷却10秒，消耗20灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《万木生杀诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  },
+  "base.spell.wood_05": {
+    "book_id": "base.cultivation_book.wood_05",
+    "rank": 1,
+    "name": "缚灵藤",
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-01-fulingteng.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "13｜缚灵藤",
+    "categories": [
+      "主动",
+      "木属性",
+      "缠绕"
+    ],
+    "poem": "青丝无声，藤意暗结。",
+    "description": "驭青藤击敌，命中后留下缠绕。藤息盘结成引火导雷的脉络，使后续火、雷攻势更易伤敌；柔青之下，暗藏借势生杀的伏笔。",
+    "core_points": [
+      "造成8点木属性伤害；命中施加3层缠绕，增强后续火、雷伤害。",
+      "冷却5秒，消耗5灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到炼气期。",
+      "消耗灵石（灵石图标）100。",
+      "《青萝化生诀》第1重修炼完成。"
+    ],
+    "required_realm": 1,
+    "learning_cost": 100
+  },
+  "base.spell.wood_06": {
+    "book_id": "base.cultivation_book.wood_05",
+    "rank": 3,
+    "name": "蚀脉荆",
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-04-shimaijing.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "14｜蚀脉荆",
+    "categories": [
+      "主动",
+      "木属性",
+      "毒蚀"
+    ],
+    "poem": "荆花含露，碧色藏鸩。",
+    "description": "将木灵炼作荆棘，刺中敌人时留下毒蚀。荆影散后，毒性仍潜伏其身，缓缓侵蚀气血，似春阴浸石，不闻声息而日渐深入。",
+    "core_points": [
+      "造成18点木属性伤害；命中施加4层毒蚀，持续侵蚀气血。",
+      "冷却6秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到筑基期。",
+      "消耗灵石（灵石图标）200。",
+      "《青萝化生诀》第3重修炼完成。"
+    ],
+    "required_realm": 2,
+    "learning_cost": 200
+  },
+  "base.spell.wood_07": {
+    "book_id": "base.cultivation_book.wood_05",
+    "rank": 5,
+    "name": "回春术",
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-07-huichunshu.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "15｜回春术",
+    "categories": [
+      "主动",
+      "木属性",
+      "生机"
+    ],
+    "poem": "枯枝听雨，一息回春。",
+    "description": "引温润木灵流过自身伤处，恢复气血，并将生机留在经脉之间。眼前的创痛得以抚平，余下春意仍绵绵滋养，续起未尽的生命之火。",
+    "core_points": [
+      "恢复自身15点气血，并获得4层生机，继续恢复气血。",
+      "冷却8秒，消耗8灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到结丹期。",
+      "消耗灵石（灵石图标）400。",
+      "《青萝化生诀》第5重修炼完成。"
+    ],
+    "required_realm": 3,
+    "learning_cost": 400
+  },
+  "base.spell.wood_08": {
+    "book_id": "base.cultivation_book.wood_05",
+    "rank": 7,
+    "name": "青萝天罗",
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-10-qingluotianluo.webp",
+    "source_document": "output/imagegen/七系功法_56项法术文案.md",
+    "source_section": "16｜青萝天罗",
+    "categories": [
+      "主动",
+      "木属性",
+      "缠绕",
+      "武器定身"
+    ],
+    "poem": "青萝织夜，天网垂星。",
+    "description": "青萝交织成罗，击中敌人后留下缠绕，为后续火雷添威；藤网同时困住敌方阵盘中的武器，使其运转与出击暂歇。碧影笼处，兵锋一时难展。",
+    "core_points": [
+      "造成30点木属性伤害，命中施加8层缠绕。",
+      "命中后使敌方武器定身1秒，暂停其入阵、轮转与出击，期间不能被御兵调用。",
+      "冷却10秒，消耗16灵力。"
+    ],
+    "learning_conditions": [
+      "修为达到元婴期。",
+      "消耗灵石（灵石图标）800。",
+      "《青萝化生诀》第7重修炼完成。"
+    ],
+    "required_realm": 4,
+    "learning_cost": 800
+  }
+}

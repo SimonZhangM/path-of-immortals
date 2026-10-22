@@ -1,5 +1,6 @@
 class_name ItemTooltipHost
 extends CanvasLayer
+signal technique_requested(book_id: String)
 ## One interactive item tooltip per viewport; presentation only.
 const SOURCE_META := &"item_tooltip_source"
 const HOVER_DELAY := 0.45
@@ -64,6 +65,7 @@ func _input(event: InputEvent) -> void:
 	if not is_instance_valid(tooltip): return
 	if event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
 		if not _awaiting_layout and tooltip.get_global_rect().has_point(event.position):
+			if event.button_index == MOUSE_BUTTON_LEFT and is_instance_valid(tooltip.details_button) and tooltip.details_button.get_global_rect().has_point(event.position): return
 			# Prevent the battle/map outside-right-click handler closing its panel.
 			get_viewport().set_input_as_handled()
 		elif event.pressed:
@@ -120,6 +122,9 @@ func _show(control: Control, key: String) -> void:
 	# a click inside this overlay as an outside click on its storage panel.
 	get_parent().move_child(self, get_parent().get_child_count() - 1)
 	tooltip = built
+	tooltip.technique_requested.connect(func(book_id: String):
+		dismiss()
+		technique_requested.emit(book_id))
 	source = control
 	source_key = key
 	pinned = selected_card == control and control.get("selected") == true

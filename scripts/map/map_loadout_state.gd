@@ -2,6 +2,7 @@ class_name MapLoadoutState
 extends RefCounted
 
 const RESPAWN_RULES = preload("res://scripts/map/map_respawn_rules.gd")
+const TEST_SPELL_GRANT := "test.combat_spells.20261019"
 
 signal changed
 signal interaction(kind: String)
@@ -12,6 +13,8 @@ var cultivation_rank_id := "base.cultivation.mortal"
 var board: BoardLayout
 var inventory: InventoryState
 var storage := SharedStorage.new()
+var knowledge := CultivationKnowledge.new()
+var growth: Dictionary = {}
 var records: Dictionary = {}
 var revision := 0
 var formations: Array[Dictionary] = []
@@ -85,6 +88,12 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 		formation_icons.append(option.icon)
 	_rng.randomize()
 	for record: Dictionary in definitions:
+		if record.category in ["book", "spell"]:
+			var book: ItemData = registry.get_item(record.id)
+			if book == null or book.display_name != record.name:
+				return "功法物品未注册：" + String(record.id)
+			records[record.id] = record.duplicate(true)
+			continue
 		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(record.get("buff_bonuses", {})):
 			return "物品常驻增益加成无效。"
 		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable", "plant", "beast", "mineral", "board", "food"]:
@@ -95,7 +104,7 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 			"id": record.id, "name": record.name, "type": record.category, "category": record.category,
 			"quality": record.quality, "tags": [record.get("subcategory", "")],
 			"size": [record.footprint_columns, record.footprint_rows], "icon": record.icon,
-			"cooldown": record.cooldown, "stamina_cost": record.get("base_stamina_cost", 0),
+			"cooldown": record.cooldown, "stamina_cost": record.get("base_stamina_cost", 0), "spirit_cost":record.get("spirit_cost",0), "training":record.get("training",false),
 			"effects": []
 		}
 		if record.get("rule_version", 0) == 1:
@@ -114,6 +123,8 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 		if record.category == "food":
 			if not MapFood.valid_definition(record.get("food")): return "食品效果无效。"
 			raw.combat = {"description": MapFood.effect_text(record), "flavor_description": record.get("description", "")}
+		if record.get("training",false):
+			raw.combat={"description":record.get("description",""),"flavor_description":record.get("flavor_description","")}
 		if record.category == "board":
 			if registry.get_board(record.get("board_layout", "")) == null or registry.get_cultivation(record.get("required_cultivation", "")).is_empty():
 				return "阵盘引用或境界无效。"
@@ -168,6 +179,7 @@ func reward_candidate(reward: Dictionary) -> Dictionary:
 	candidate.records = records.duplicate(true)
 	candidate._seed_owned = _seed_owned.duplicate()
 	candidate.formation_icons = formation_icons.duplicate()
+	candidate.knowledge.restore(knowledge.snapshot(), registry.library, int(registry.get_cultivation(cultivation_rank_id).order))
 	var error := candidate.restore(snapshot())
 	if error.is_empty():
 		error = candidate.add_reward(reward)
@@ -211,9 +223,21 @@ func storage_records() -> Array:
 		record.quantity = entry.units.size()
 		record.storage_id = entry.instance_id
 		record.identified = can_use_item(entry.item_id)
+		apply_book_presentation(record)
 		if record.category == "board": record.active_board = record.board_layout == board.id
 		result.append(record)
 	return result
+
+func apply_book_presentation(record: Dictionary) -> void:
+	if record.category != "book": return
+	var stage := knowledge.level(record.id)
+	var quality := MapItemQuality.book_background_quality(int(registry.library.books[record.id].max_level), stage)
+	record.book_level = stage
+	record.mastery_caption = CultivationDescription.mastery_caption(stage)
+	record.card_frame = "" if quality.is_empty() else MapItemQuality.background_path(quality)
+	record.card_border_color = "777f8a" if quality.is_empty() else MapItemQuality.color(quality).to_html()
+	record.progress_current = knowledge.practice_value(record.id)
+	record.progress_target = CultivationGrowth.book_target(registry.library,knowledge,record.id)/100.0
 
 func storage_capacity_limit() -> int:
 	var test_limit := int(storage_capacity_rules.get("test_capacity_override", 0))
@@ -232,6 +256,7 @@ func warehouse_records(id: String) -> Array:
 		record.quantity = entry.units.size()
 		record.storage_id = entry.instance_id
 		record.identified = can_use_item(entry.item_id)
+		apply_book_presentation(record)
 		result.append(record)
 	return result
 
@@ -279,22 +304,25 @@ func transfer_warehouse(id: String, item_id: String, withdraw: bool, all_items: 
 	return restore(next, true)
 
 func storage_used_slots() -> int:
+	return bag_used_slots(storage, registry)
+
+static func bag_used_slots(contents: SharedStorage, content_registry: ContentRegistry) -> int:
 	var kinds := {}
-	for entry: Dictionary in storage.entries():
+	for entry: Dictionary in contents.entries():
+		var item := content_registry.get_item(entry.item_id)
+		if item != null and item.category == "spell": continue
 		kinds[entry.item_id] = true
 	return kinds.size()
 
 # Legacy overfull bags may be organized without deleting items. Each successful
 # operation may keep/reduce their kind count, never increase it beyond capacity.
 func storage_capacity_error(projected: SharedStorage) -> String:
-	return capacity_error(storage, projected, storage_capacity_limit())
+	return capacity_error(storage, projected, storage_capacity_limit(), registry)
 
-static func capacity_error(current: SharedStorage, projected: SharedStorage, limit: int) -> String:
-	var before := {}
-	var after := {}
-	for entry: Dictionary in current.entries(): before[entry.item_id] = true
-	for entry: Dictionary in projected.entries(): after[entry.item_id] = true
-	return "储物袋容量不足（上限%d种），请先将物品存入仓库。" % limit if after.size() > maxi(limit, before.size()) else ""
+static func capacity_error(current: SharedStorage, projected: SharedStorage, limit: int, content_registry: ContentRegistry) -> String:
+	var before := bag_used_slots(current, content_registry)
+	var after := bag_used_slots(projected, content_registry)
+	return "储物袋容量不足（上限%d种），请先将物品存入仓库。" % limit if after > maxi(limit, before) else ""
 
 static func projected_storage(current: SharedStorage, additions: Array, remove_id: String = "", remove_count: int = 0) -> SharedStorage:
 	var projected := SharedStorage.new()
@@ -315,6 +343,9 @@ func set_bag_capacity(value: int) -> String:
 
 func can_use_item(item_id: String) -> bool:
 	var item := registry.get_item(item_id)
+	if item != null and item.category == "book": return true
+	if item != null and item.category == "spell":
+		return content_grants.get(TEST_SPELL_GRANT, false) or knowledge.level(item.combat.book_id) >= int(item.combat.learned_at_book_level)
 	if item != null and item.category == "board":
 		var required := registry.get_cultivation(records[item_id].required_cultivation)
 		return int(registry.get_cultivation(cultivation_rank_id).get("order", -1)) >= int(required.order)
@@ -366,7 +397,7 @@ func placement_kind(data: Variant, cell: Vector2i) -> String:
 		if not inventory.swap_target(data.id, cell).is_empty(): return "swap"
 		return "place" if inventory.can_move(data.id, cell) else "invalid"
 	var item := registry.get_item(entry.item_id)
-	if item.category in ["plant", "beast", "mineral", "board", "food"]: return "invalid"
+	if item.category in ["plant", "beast", "mineral", "board", "food", "book"]: return "invalid"
 	if item.is_consumable():
 		var matching := inventory.matching_stack(item.id)
 		if entry.units.size() > 10:
@@ -449,6 +480,9 @@ func _commit() -> void:
 func snapshot() -> Dictionary:
 	var result := layout_snapshot()
 	result.version = 2
+	if not growth.is_empty():
+		result.growth = growth.duplicate(true)
+		result.learning = knowledge.snapshot()
 	result.bag_capacity = bag_capacity
 	result.spirit_stones = spirit_stones
 	result.purchase_serial = purchase_serial
@@ -505,6 +539,29 @@ func formation_snapshot() -> Dictionary:
 
 # Hydration accepts legacy overflow; inventory-changing commands opt into the guard.
 func restore(raw: Variant, enforce_capacity: bool = false) -> String:
+	if not raw is Dictionary or not CultivationGrowth.valid(raw.get("growth", {})): return "修炼成长存档无效。"
+	if raw.has("learning") and not raw.learning is Dictionary: return "学习存档格式无效。"
+	var previous_growth := growth
+	var previous_rank := cultivation_rank_id
+	var previous_knowledge := knowledge.snapshot()
+	var saved_growth: Dictionary = raw.get("growth", {})
+	if not saved_growth.is_empty(): cultivation_rank_id = CultivationGrowth.rank_id(saved_growth)
+	if raw.has("learning") and not knowledge.restore(raw.learning,registry.library,int(registry.get_cultivation(cultivation_rank_id).order)):
+		cultivation_rank_id = previous_rank
+		return knowledge.error
+	growth = saved_growth.duplicate(true)
+	if not growth.is_empty():
+		for key: String in ["version","realm","layer","progress","day_usec","budget","breakthrough_serial","experience"]:
+			if growth.has(key): growth[key]=int(growth[key])
+		for key: String in growth.resources: growth.resources[key]=int(growth.resources[key])
+	var error := _restore_state(raw,enforce_capacity)
+	if not error.is_empty():
+		growth = previous_growth
+		cultivation_rank_id = previous_rank
+		knowledge.restore(previous_knowledge,registry.library,int(registry.get_cultivation(previous_rank).order))
+	return error
+
+func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	if not raw is Dictionary:
 		return "行囊存档格式无效。"
 	var saved_stones: Variant = raw.get("spirit_stones", int(JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json")).spirit_stones))
@@ -598,11 +655,13 @@ func restore(raw: Variant, enforce_capacity: bool = false) -> String:
 		for item_id: String in carried.values():
 			if records[item_id].get("board_layout", "") == selected.id: board_carried = true
 		if not board_carried: return "当前阵盘必须随身携带。"
-	var checked := _validate_layout(raw, carried, true, selected)
+	var checked := _validate_layout(raw, carried, true, selected, receipts.get(TEST_SPELL_GRANT, false))
 	if not checked.error.is_empty():
 		return checked.error
 	if enforce_capacity:
-		var capacity_issue := capacity_error(storage, checked.storage, mini(storage_capacity_limit(), int(saved_capacity)))
+		var test_limit := int(storage_capacity_rules.get("test_capacity_override", 0))
+		var effective_limit := test_limit if test_limit > 0 else mini(storage_capacity_limit(), int(saved_capacity))
+		var capacity_issue := capacity_error(storage, checked.storage, effective_limit, registry)
 		if not capacity_issue.is_empty(): return capacity_issue
 	if not raw.get("formations", []) is Array:
 		return "阵型存档格式无效。"
@@ -685,11 +744,13 @@ func _validate_formation_layout(raw: Variant) -> Dictionary:
 		used[entry.instance_id] = true
 		if not entry.get("unit_ids", [entry.instance_id]) is Array:
 			return {"error": "阵型叠内单位无效。"}
+		var item := registry.get_item(entry.item_id)
+		if item != null and item.category == "book": continue
 		placements.append({"instance_id": entry.instance_id, "item_id": entry.item_id, "cell": [int(cell[0]), int(cell[1])], "unit_ids": entry.get("unit_ids", [entry.instance_id]).duplicate()})
 	_sort_placements(placements)
 	return {"error": "", "layout": {"placements": placements}}
 
-func _validate_layout(raw: Variant, available_owned: Variant = null, return_unusable: bool = false, selected: BoardLayout = null) -> Dictionary:
+func _validate_layout(raw: Variant, available_owned: Variant = null, return_unusable: bool = false, selected: BoardLayout = null, test_spells: bool = false) -> Dictionary:
 	var owned: Dictionary = carried_owned() if available_owned == null else available_owned
 	if selected == null: selected = board
 	if not raw is Dictionary or (raw.get("version") != 1 and raw.get("version") != 2) or raw.get("board_id") != selected.id or not raw.get("placements") is Array:
@@ -709,7 +770,7 @@ func _validate_layout(raw: Variant, available_owned: Variant = null, return_unus
 		var cell: Variant = entry.get("cell")
 		if not cell is Array or cell.size() != 2 or not ContentRegistry._nonnegative_integer(cell[0]) or not ContentRegistry._nonnegative_integer(cell[1]):
 			return {"error": "行囊存档格位无效。"}
-		if not can_use_item(entry.item_id):
+		if not can_use_item(entry.item_id) and not (test_spells and registry.get_item(entry.item_id).category == "spell"):
 			if return_unusable:
 				continue
 			return {"error": "修为不足，暂不可使用此物。"}

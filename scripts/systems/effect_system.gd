@@ -93,5 +93,5 @@ func restore(target: PartyMemberState, resource: String, amount: int, at_usec: i
 	var after := minf(before + amount, limit) if ceiling < 0 else before + minf(amount, maxf(0.0, limit - before))
 	target.set(resource, after)
 	var event := source.duplicate()
-	event.merge({"kind": "restore", "at_usec": at_usec, "target_name": target.definition["name"], "resource": resource, "value": after - before})
+	event.merge({"kind": "restore", "at_usec": at_usec, "target_id": target.id, "target_name": target.definition["name"], "resource": resource, "value": after - before})
 	return event

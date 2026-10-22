@@ -1,0 +1,317 @@
+{
+  "base.cultivation_book.metal_01": {
+    "name": "玄金百炼录",
+    "tags": [
+      "金系",
+      "技艺"
+    ],
+    "flavor_description": "顽铁经炉火，寒锋出百锤。\n方寸藏机巧，千磨始见真。",
+    "description": "九炼真君重订的炼器古录，兼论兵甲法器与精工节材。卷末败炉批记未删，成器之道也藏在失手之中。"
+  },
+  "base.cultivation_book.metal_02": {
+    "name": "庚金真解",
+    "tags": [
+      "金系",
+      "总纲"
+    ],
+    "flavor_description": "金性藏锋非独刚，百兵得法各生芒。",
+    "description": "金道诸宗争鸣汇成的根本经义，贯通术法与兵锋。诸家相左的批注并存，金性从来不止一个“刚”字。"
+  },
+  "base.cultivation_book.metal_03": {
+    "name": "金煞藏锋经",
+    "tags": [
+      "金系",
+      "状态"
+    ],
+    "flavor_description": "寒锋不露，来势自偿；\n一痕未尽，余痛犹长。",
+    "description": "失传兵道刻于护身甲片的秘经，以反锋还击、伤痕耗敌。今本仍依甲片旧次分章，藏锋之意未改。"
+  },
+  "base.cultivation_book.metal_04": {
+    "name": "玄庚剑诀",
+    "tags": [
+      "金系",
+      "战斗"
+    ],
+    "flavor_description": "一线寒光开暮色，千重剑雨敛归锋。",
+    "description": "门人从试剑石刻录成的剑诀，凝剑攻敌、结幕护身。石上两度磨去的剑痕，至今仍留不同注解。"
+  },
+  "base.cultivation_book.metal_05": {
+    "name": "百兵御灵诀",
+    "tags": [
+      "金系",
+      "战斗"
+    ],
+    "flavor_description": "不拘一剑名，各取百兵长。\n一念通金铁，诸锋应我声。",
+    "description": "九炼真君曾校其器性篇，以神识御阵中实兵，附灵、化盾、合击各尽兵长，卷旁犹存炼器与御兵之辩。"
+  },
+  "base.cultivation_book.wood_01": {
+    "name": "百兽驭灵录",
+    "tags": [
+      "木系",
+      "技艺"
+    ],
+    "flavor_description": "林深各有语，不向众生喧。\n识得山中性，同行万里云。",
+    "description": "栖鹿山人重订的御兽古录，辨性育兽，讲求群契协同。其故居未列弟子名，唯刻同游灵兽之形。"
+  },
+  "base.cultivation_book.wood_02": {
+    "name": "青木真解",
+    "tags": [
+      "木系",
+      "总纲"
+    ],
+    "flavor_description": "草木不言枯荣理，一枝深处有春秋。",
+    "description": "木道古宗历代参订的根本经义，贯通伤敌、疗伤与护身。数家论说并存，不以生杀任何一途为旁门。"
+  },
+  "base.cultivation_book.wood_03": {
+    "name": "枯荣生灭经",
+    "tags": [
+      "木系",
+      "状态"
+    ],
+    "flavor_description": "一枝含露，一叶辞秋。\n枯荣相望，生灭同流。",
+    "description": "枯荣散人引青萝旧言而另作参解，精研生机、毒蚀与缠绕。卷末题道：“长养非强留，凋零亦有时。”"
+  },
+  "base.cultivation_book.wood_04": {
+    "name": "万木生杀诀",
+    "tags": [
+      "木系",
+      "战斗"
+    ],
+    "flavor_description": "莫道青枝只报春，万林锋起亦惊尘。",
+    "description": "护持灵林的攻伐秘传，以木灵凝刺成刃，兼可修毒蚀与夺生。旧祠退敌记旁，亦录战后栽下的第一株树。"
+  },
+  "base.cultivation_book.wood_05": {
+    "name": "青萝化生诀",
+    "tags": [
+      "木系",
+      "战斗"
+    ],
+    "flavor_description": "生生不息，藤缠八荒。\n以柔济刚，化生万物。",
+    "description": "上古青萝仙子所留，融毒藤、缠绕与回春于一诀。青萝别府与化生台的旧迹，仍留她以生护持、以毒御敌之意。"
+  },
+  "base.cultivation_book.water_01": {
+    "name": "灵墨玄符录",
+    "tags": [
+      "水系",
+      "技艺"
+    ],
+    "flavor_description": "一砚收江色，落毫寂无声。\n寸笺藏万象，未动已含灵。",
+    "description": "符道古宗的授法传本，以水灵调墨、神识引篆，兼论精篆与备符。宗门已散，授法旧砚仍见于后人记述。"
+  },
+  "base.cultivation_book.water_02": {
+    "name": "玄水真解",
+    "tags": [
+      "水系",
+      "总纲"
+    ],
+    "flavor_description": "水行有势，静亦藏锋。\n一脉不竭，百川自通。",
+    "description": "临江论道之典，贯通水攻与回灵回体。澹月真君曾注“凝冰与流水并非两道”，今本遂并存寒流二解。"
+  },
+  "base.cultivation_book.water_03": {
+    "name": "寒脉流转经",
+    "tags": [
+      "水系",
+      "状态"
+    ],
+    "flavor_description": "清泉循脉续，寒意逐流深。\n盈枯各有路，冰水本同心。",
+    "description": "历代水修参订的灵脉秘经，兼论润脉续养、枯脉耗敌与寒霜。卷后泉眼图几经变化，修法却一脉相承。"
+  },
+  "base.cultivation_book.water_04": {
+    "name": "寒月凝冰诀",
+    "tags": [
+      "水系",
+      "战斗"
+    ],
+    "flavor_description": "月落寒江凝作刃，潮翻霜雪尽成锋。",
+    "description": "澹月真君观寒江凝月而悟的冰法，凝水成锋，破坚覆霜。照月台犹留剑痕，真君之笔却难一言断定。"
+  },
+  "base.cultivation_book.water_05": {
+    "name": "沧澜燃灵诀",
+    "tags": [
+      "水系",
+      "战斗"
+    ],
+    "flavor_description": "潮声未歇，灵泉先涸。\n待到归墟，一水断流。",
+    "description": "以水法削灵耗体，待敌元气空乏，再施归墟断流。附卷兼收敌我手记，同一场斗法，留下两种说辞。"
+  },
+  "base.cultivation_book.fire_01": {
+    "name": "赤炉丹经",
+    "tags": [
+      "火系",
+      "技艺"
+    ],
+    "flavor_description": "炉底三分火，丹中百草春。\n炎心须守静，方得一丸真。",
+    "description": "赤霞丹君重订的丹经，兼论精丹与丰丹。落霞丹台公开授法时，连亲笔败炉录也一并传下。"
+  },
+  "base.cultivation_book.fire_02": {
+    "name": "离火真解",
+    "tags": [
+      "火系",
+      "总纲"
+    ],
+    "flavor_description": "火有明灭，势有藏扬。\n得其真性，寸焰成阳。",
+    "description": "火道诸脉删繁汇订的总纲，明辨火攻、附炎、灼烧与破甲之应。攻伐修士与丹道传人共参离火，批注却各有取舍。"
+  },
+  "base.cultivation_book.fire_03": {
+    "name": "炎煞流火经",
+    "tags": [
+      "火系",
+      "状态"
+    ],
+    "flavor_description": "焰过犹留种，甲深未隔炎。\n余烬微微动，星星不肯眠。",
+    "description": "三卷耐火灵玉合参而成，精研附炎留存、灼烧与绕甲之法。成经者未抹旧名，卷末仍见三家署记。"
+  },
+  "base.cultivation_book.fire_04": {
+    "name": "赤阳真火诀",
+    "tags": [
+      "火系",
+      "战斗"
+    ],
+    "flavor_description": "一线赤锋分夜色，长天烈日坠掌中。",
+    "description": "弟子依绝壁演法录成的真火诀，凝刃成枪，借灼烧爆燃。壁下不夸师门战绩，只记各人看懂了哪一式。"
+  },
+  "base.cultivation_book.fire_05": {
+    "name": "离火燎原诀",
+    "tags": [
+      "火系",
+      "战斗"
+    ],
+    "flavor_description": "一星藏草底，未必照人衣。\n待得原野赤，方知寸焰威。",
+    "description": "历代护山火修增订，积附炎、布灼烧与破甲，再借旧势壮大真炎。卷中退敌后的传书，只叮嘱后人记得收火。"
+  },
+  "base.cultivation_book.earth_01": {
+    "name": "坤元地脉录",
+    "tags": [
+      "土系",
+      "技艺"
+    ],
+    "flavor_description": "山藏千岁骨，石有未言珍。\n循得深根脉，方知大地心。",
+    "description": "地师一脉的勘脉秘典，寻隐矿、识珍材，负岳老人亦留批注。旧山势图未删，变迁的河谷仍可循迹。"
+  },
+  "base.cultivation_book.earth_02": {
+    "name": "厚土真解",
+    "tags": [
+      "土系",
+      "总纲"
+    ],
+    "flavor_description": "山岳无言藏厚力，千钧有势落尘中。",
+    "description": "土道古宗的根本法义，贯通土法与钝兵。传法古殿并陈岳印与旧锤，以示术法与器具虽异，沉势相通。"
+  },
+  "base.cultivation_book.earth_03": {
+    "name": "镇岳沉元经",
+    "tags": [
+      "土系",
+      "状态"
+    ],
+    "flavor_description": "岳立任风急，根深不易倾。\n待他筋力尽，沉势自成城。",
+    "description": "守关土修代代参订，以坚韧抗暴、疲惫助暴、重伤耗敌。负岳旁批“可守者不止一人”，关碑亦留诸名。"
+  },
+  "base.cultivation_book.earth_04": {
+    "name": "撼岳裂地诀",
+    "tags": [
+      "土系",
+      "战斗"
+    ],
+    "flavor_description": "一锤惊石骨，一印压山河。\n地脉翻深响，群峰应势折。",
+    "description": "古代土修观山岳地脉而成的攻伐诀，重击摧敌，牵制敌方武器。附卷与静守之法辩论，双方皆未删去异说。"
+  },
+  "base.cultivation_book.earth_05": {
+    "name": "不动玄岳诀",
+    "tags": [
+      "土系",
+      "战斗"
+    ],
+    "flavor_description": "不争先手胜，静候百锋来。\n千钧藏未发，一震动尘埃。",
+    "description": "负岳老人传下的待发古法，抗暴蓄击，借势反震。旧传独守石关七日，碑上只留“身后有人，不可退”。"
+  },
+  "base.cultivation_book.wind_01": {
+    "name": "听风寻迹录",
+    "tags": [
+      "风系",
+      "技艺"
+    ],
+    "flavor_description": "风过草先语，人行叶有痕。\n不须问远客，山径自开门。",
+    "description": "渡尘客所传，以气灵听风辨息、神识循痕察隐。其人未立山门，诸域旧驿与无名渡口却屡见传书之迹。"
+  },
+  "base.cultivation_book.wind_02": {
+    "name": "御风真解",
+    "tags": [
+      "风系",
+      "总纲"
+    ],
+    "flavor_description": "不借千钧力，偏寻一线隙。\n风行无定处，进退有先机。",
+    "description": "气修诸脉汇参的根本经义，贯通风攻、命中与闪避追击。诸本各有侧重，皆守“快非先，得隙为先”之训。"
+  },
+  "base.cultivation_book.wind_03": {
+    "name": "流风无相经",
+    "tags": [
+      "风系",
+      "状态"
+    ],
+    "flavor_description": "来时不见影，过处已无尘。\n才从锋外过，又向隙中寻。",
+    "description": "由气修身法秘经演成，兼修轻灵、失衡与驱散。诸代传人多省署名，唯补注笔迹仍清晰，风过而意未散。"
+  },
+  "base.cultivation_book.wind_04": {
+    "name": "青冥破空诀",
+    "tags": [
+      "风系",
+      "战斗"
+    ],
+    "flavor_description": "一矢穿云惊宿雾，长风逐隙入青冥。",
+    "description": "高天罡风中演成的攻伐诀，凝风为矢，乘隙破空。后人分赴险峰摹录迎风石刻，方聚散式为今日全本。"
+  },
+  "base.cultivation_book.wind_05": {
+    "name": "听风无影诀",
+    "tags": [
+      "风系",
+      "战斗"
+    ],
+    "flavor_description": "兵未至，身先远；\n风再回，锋已随。",
+    "description": "渡尘客曾校其散注，授预备闪避、武器追击与器具调度。卷末不载胜负，只记数次险中全身而退的经过。"
+  },
+  "base.cultivation_book.thunder_01": {
+    "name": "玄枢阵录",
+    "tags": [
+      "雷系",
+      "技艺"
+    ],
+    "flavor_description": "数点分虚实，诸纹引去来。\n一枢牵众势，静处有风雷。",
+    "description": "藏机真君于问枢塔所留，论阵眼与诸器协同，布阵不限雷属。闭塔数百年后此录重现，传书者始终无名。"
+  },
+  "base.cultivation_book.thunder_02": {
+    "name": "天雷真解",
+    "tags": [
+      "雷系",
+      "总纲"
+    ],
+    "flavor_description": "未鸣先蓄势，既动便惊空。\n掌里雷光敛，攻守一脉通。",
+    "description": "雷道古宗的根本经义，统论雷法攻伐与雷罡反制。旧时受法先试敛雷，再试发雷，故卷首只书一个“蓄”字。"
+  },
+  "base.cultivation_book.thunder_03": {
+    "name": "雷池引霆经",
+    "tags": [
+      "雷系",
+      "状态"
+    ],
+    "flavor_description": "池深藏未响，印落候天声。\n一电牵余电，千钧次第鸣。",
+    "description": "雷池畔数代修士续订，分述雷蕴成盾、雷印引击与连环续电。玄霆尊者的护罡批注，仍存于旧本之间。"
+  },
+  "base.cultivation_book.thunder_04": {
+    "name": "九霄霆光诀",
+    "tags": [
+      "雷系",
+      "战斗"
+    ],
+    "flavor_description": "指端才有电，云外已生雷。\n万籁收声处，九霄一霆来。",
+    "description": "门人录登峰石刻而成，自雷光指推至九霄雷落。旧路题记除记雷法，亦记人修与妖修并肩御敌之事。"
+  },
+  "base.cultivation_book.thunder_05": {
+    "name": "雷罡镇狱诀",
+    "tags": [
+      "雷系",
+      "战斗"
+    ],
+    "flavor_description": "雷敛周身静，锋来霹雳还。\n一声惊未定，余电已成关。",
+    "description": "古代化神玄霆尊者所留，以雷盾、雷印与麻痹反制敌手。尊者虽殒，镇狱台的守禁法念仍依残阵执行旧令。"
+  }
+}

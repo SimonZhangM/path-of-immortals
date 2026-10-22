@@ -1,10 +1,31 @@
 class_name CultivationKnowledge
 extends RefCounted
+signal changed
 
 # Records achieved stages only. Earning cultivation and reset-pill economics are
 # deliberately owned by the future progression module, not by this ledger.
 var learned: Dictionary = {}
+var practice: Dictionary = {}
 var error := ""
+
+func practice_value(book_id: String) -> float:
+	return float(practice.get(book_id, 0.0))
+
+# A designated training site supplies an explicit award. Rates and level
+# thresholds are intentionally unset; accumulating progress never grants levels.
+func add_site_practice(library: CultivationLibrary, book_id: String, amount: float, site: Dictionary) -> bool:
+	if not library.books.has(book_id): return _reject("未知功法：" + book_id)
+	if site.get("type") != "cultivation" or not str(site.get("id", "")).begins_with("base.map_event."): return _reject("只能在指定修炼场所累计修炼度")
+	if not is_finite(amount) or amount <= 0 or not is_finite(practice_value(book_id) + amount): return _reject("修炼度无效")
+	practice[book_id] = practice_value(book_id) + amount
+	error = ""
+	return true
+
+func learned_spells(library: CultivationLibrary) -> Array[String]:
+	var result: Array[String] = []
+	for spell: Dictionary in library.spells.values():
+		if level(spell.book_id) >= int(spell.learned_at_book_level): result.append(spell.id)
+	return result
 
 func level(book_id: String) -> int:
 	return int(learned.get(book_id, {}).get("level", 0))
@@ -27,6 +48,7 @@ func record_achievement(library: CultivationLibrary, book_id: String, stage: int
 	if realm < required: return _reject("当前境界不能达到这一重")
 	if not learned.has(book_id): learned[book_id] = {"level": 0, "branches": {}}
 	learned[book_id].level = stage
+	changed.emit()
 	return true
 
 func choose(library: CultivationLibrary, book_id: String, stage: int, choice: String) -> bool:
@@ -39,14 +61,20 @@ func choose(library: CultivationLibrary, book_id: String, stage: int, choice: St
 	var previous := branch(book_id, stage)
 	if not previous.is_empty() and previous != choice: return _reject("已选分支不能直接重选；当前阶段不开放重选或重置")
 	learned[book_id].branches[str(stage)] = choice
+	changed.emit()
 	return true
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "learned": learned.duplicate(true)}
+	return {"version": 1, "learned": learned.duplicate(true), "practice": practice.duplicate()}
 
 func restore(data: Dictionary, library: CultivationLibrary, realm: int) -> bool:
 	if data.get("version") != 1 or not data.get("learned") is Dictionary: return _reject("学习存档格式无效")
 	var candidate := CultivationKnowledge.new()
+	if not data.get("practice", {}) is Dictionary: return _reject("修炼度存档无效")
+	for id: String in data.get("practice", {}):
+		var amount: Variant = data.practice[id]
+		if not library.books.has(id) or not (amount is int or amount is float) or not is_finite(float(amount)) or amount < 0: return _reject("修炼度存档无效")
+		candidate.practice[id] = float(amount)
 	for id: String in data.learned:
 		if not library.books.has(id): return _reject("学习存档包含未知功法：" + id)
 		var entry: Variant = data.learned[id]
@@ -64,6 +92,8 @@ func restore(data: Dictionary, library: CultivationLibrary, realm: int) -> bool:
 			if not library.branch_unavailable_reason(id, int(stage), choice).is_empty(): continue
 			if not candidate.choose(library, id, int(stage), choice): return _reject("学习分支存档无效")
 	learned = candidate.learned
+	practice = candidate.practice
+	changed.emit()
 	return true
 
 func _reject(message: String) -> bool:

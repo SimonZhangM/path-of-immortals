@@ -10,7 +10,7 @@
     "background": "res://assets/tanchuang-qingshizhen-zongmenpu.webp",
     "conversation_background": "res://assets/tanchuang-qingshizhen-zongmenpu2.webp",
     "conversation_portrait": "res://assets/ui-portrait-xieyunshu.webp",
-    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-zongmenshangpu-boss.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-zongmenshangpu-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   }
 }

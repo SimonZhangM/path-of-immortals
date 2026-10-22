@@ -23,7 +23,8 @@ func _input(event: InputEvent) -> void:
 	var direction := 1.0 if event.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1.0
 	var factor: float = event.factor if event.factor > 0 else 1.0
 	var bar := get_v_scroll_bar()
-	_wheel_target = clampf(_wheel_target + direction * pitch * 0.5 * factor, 0, maxf(0,bar.max_value-bar.page))
+	var limit := maxf(0, bar.max_value - bar.page)
+	_wheel_target = clampf(_wheel_target + direction * pitch * 0.5 * factor, 0, limit)
 	scroll_vertical = roundi(_wheel_target)
 	_last_scroll = scroll_vertical
 	# Stop native ScrollContainer handling from applying a second, fixed step.

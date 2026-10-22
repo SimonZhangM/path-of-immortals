@@ -1,6 +1,9 @@
 class_name PartyMemberState
 extends RefCounted
 
+# Explicit test-save access; never changes learned levels or chosen branches.
+var test_spell_access := false
+
 var id: String
 var definition: Dictionary
 var knowledge := CultivationKnowledge.new()
@@ -144,7 +147,7 @@ func apply_toxin(stacks: int, at_usec: int, source: Dictionary = {}) -> bool:
 		return false
 	if toxin_stacks == 0:
 		toxin_version += 1
-		toxin_next_tick_usec = at_usec + 2_000_000
+		toxin_next_tick_usec = at_usec + 1_000_000
 	toxin_stacks += stacks
 	if not source.is_empty():
 		toxin_source = source.duplicate()
@@ -152,7 +155,7 @@ func apply_toxin(stacks: int, at_usec: int, source: Dictionary = {}) -> bool:
 
 func can_use_item(item: ItemData) -> bool:
 	if item != null and item.category == "book": return true
-	if item != null and item.category == "spell": return knowledge.level(item.combat.book_id) >= int(item.combat.learned_at_book_level)
+	if item != null and item.category == "spell": return test_spell_access or knowledge.level(item.combat.book_id) >= int(item.combat.learned_at_book_level)
 	# Creatures without cultivation use innate attacks, not player equipment ranks.
 	return item != null and (cultivation_rank_id.is_empty() or MapItemQuality.usable(item.quality, cultivation))
 

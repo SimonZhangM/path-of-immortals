@@ -9,17 +9,35 @@
         {
           "name": "余韧",
           "description": "：坚韧成功抗暴后，耗层改为现有层数的三分之一向下取整，至少1层。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-01-yuren.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-01-yuren.webp",
+          "status_icons": [
+            {
+              "name": "坚韧",
+              "icon": "res://assets/buff-tu.webp"
+            }
+          ]
         },
         {
           "name": "留疲",
           "description": "：疲惫配合普通暴击的耗层改为三分之一向下取整，至少1层；不含保证暴击。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-02-liupi.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-02-liupi.webp",
+          "status_icons": [
+            {
+              "name": "疲惫",
+              "icon": "res://assets/debuff-tu.webp"
+            }
+          ]
         },
         {
           "name": "催伤",
-          "description": "：重伤首次生效等待由2秒缩至1秒。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-03-cuishang.webp"
+          "description": "：新施加重伤时，立即生效。",
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-03-cuishang.webp",
+          "status_icons": [
+            {
+              "name": "重伤",
+              "icon": "res://assets/debuff-tu-2.webp"
+            }
+          ]
         }
       ]
     },
@@ -29,17 +47,35 @@
         {
           "name": "固岳",
           "description": "：坚韧每层抗暴率额外＋0.4个百分点。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-04-guyue.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-04-guyue.webp",
+          "status_icons": [
+            {
+              "name": "坚韧",
+              "icon": "res://assets/buff-tu.webp"
+            }
+          ]
         },
         {
           "name": "困乏",
           "description": "：疲惫每层提高被暴击率的效果额外＋0.4个百分点。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-05-kunfa.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-05-kunfa.webp",
+          "status_icons": [
+            {
+              "name": "疲惫",
+              "icon": "res://assets/debuff-tu.webp"
+            }
+          ]
         },
         {
           "name": "沉伤",
           "description": "：重伤的灵力增耗、体力增耗、回血削减效果各＋20%。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-06-chenshang.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-06-chenshang.webp",
+          "status_icons": [
+            {
+              "name": "重伤",
+              "icon": "res://assets/debuff-tu-2.webp"
+            }
+          ]
         }
       ]
     },
@@ -49,17 +85,47 @@
         {
           "name": "反镇",
           "description": "：坚韧实际成功抗暴，给攻击者1层疲惫；守岳式不算。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-07-fanzhen.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-07-fanzhen.webp",
+          "status_icons": [
+            {
+              "name": "坚韧",
+              "icon": "res://assets/buff-tu.webp"
+            },
+            {
+              "name": "疲惫",
+              "icon": "res://assets/debuff-tu.webp"
+            }
+          ]
         },
         {
           "name": "疲生伤",
           "description": "：对已有疲惫目标打出普通暴击，施加1层重伤；破岳式不算。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-08-pishengshang.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-08-pishengshang.webp",
+          "status_icons": [
+            {
+              "name": "疲惫",
+              "icon": "res://assets/debuff-tu.webp"
+            },
+            {
+              "name": "重伤",
+              "icon": "res://assets/debuff-tu-2.webp"
+            }
+          ]
         },
         {
           "name": "养韧",
           "description": "：每4次重伤实际增耗或削减治疗，自身获得1层坚韧。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-09-yangren.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-09-yangren.webp",
+          "status_icons": [
+            {
+              "name": "重伤",
+              "icon": "res://assets/debuff-tu-2.webp"
+            },
+            {
+              "name": "坚韧",
+              "icon": "res://assets/buff-tu.webp"
+            }
+          ]
         }
       ]
     },
@@ -69,17 +135,35 @@
         {
           "name": "岳体",
           "description": "：坚韧每层抗暴率再＋0.6个百分点。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-10-yueti.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-10-yueti.webp",
+          "status_icons": [
+            {
+              "name": "坚韧",
+              "icon": "res://assets/buff-tu.webp"
+            }
+          ]
         },
         {
           "name": "疲极",
           "description": "：疲惫每层提高被暴击率的效果再＋0.6个百分点。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-11-piji.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-11-piji.webp",
+          "status_icons": [
+            {
+              "name": "疲惫",
+              "icon": "res://assets/debuff-tu.webp"
+            }
+          ]
         },
         {
           "name": "伤元",
           "description": "：重伤三项效果再＋30%，与沉伤同修合计＋50%。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-12-shangyuan.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-12-shangyuan.webp",
+          "status_icons": [
+            {
+              "name": "重伤",
+              "icon": "res://assets/debuff-tu-2.webp"
+            }
+          ]
         }
       ]
     },
@@ -89,17 +173,35 @@
         {
           "name": "不倾",
           "description": "：坚韧成功抗暴后，本次攻击的直接伤害包在盾甲前再减伤20%。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-13-buqing.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-13-buqing.webp",
+          "status_icons": [
+            {
+              "name": "坚韧",
+              "icon": "res://assets/buff-tu.webp"
+            }
+          ]
         },
         {
           "name": "疲裂",
           "description": "：疲惫配合普通暴击，每实际消耗1层追加2点基础土伤。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-14-pilie.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-14-pilie.webp",
+          "status_icons": [
+            {
+              "name": "疲惫",
+              "icon": "res://assets/debuff-tu.webp"
+            }
+          ]
         },
         {
           "name": "反噬",
           "description": "：重伤实际阻止的治疗量，其50%转为对被治疗者的土属性派生伤害。",
-          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-15-fanshi.webp"
+          "icon": "res://assets/UI-earth-zhenyuechenyuanjing-effect-15-fanshi.webp",
+          "status_icons": [
+            {
+              "name": "重伤",
+              "icon": "res://assets/debuff-tu-2.webp"
+            }
+          ]
         }
       ]
     }

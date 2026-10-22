@@ -1,0 +1,8 @@
+{
+  "base.cultivation_book.water_04": {
+    "completed_level": 2,
+    "practice": 0.0,
+    "only_when_unstarted": true,
+    "note": "用户暂定展示：完成第二重，刚开始第三重。已有非零学习记录优先；不写玩家存档。"
+  }
+}

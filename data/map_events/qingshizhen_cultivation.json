@@ -1,0 +1,61 @@
+{
+  "id": "base.map_event.qingshizhen.cultivation",
+  "type": "cultivation",
+  "point_id": "base.map.qingshizhen.point.n05",
+  "trigger": "click",
+  "title": "修炼所",
+  "description": "镇中一处清静修行之所。\n可在此调息导气，演练器具，稳固修为。",
+  "leave_label": "稍后再说",
+  "default_mode": "cultivation",
+  "default_days": 10,
+  "durations": [
+    5,
+    10,
+    15
+  ],
+  "modes": [
+    {
+      "id": "cultivation",
+      "name": "专注修为",
+      "description": "感悟天地灵气\n稳固自身修为",
+      "image": "res://assets/UI-xiulian-zzxw1.webp",
+      "selected_image": "res://assets/UI-xiulian-zzxw2.webp"
+    },
+    {
+      "id": "technique",
+      "name": "专注功法",
+      "description": "潜心研习功法\n加深法理领悟",
+      "image": "res://assets/UI-xiulian-zzgf1.webp",
+      "selected_image": "res://assets/UI-xiulian-zzgf2.webp"
+    },
+    {
+      "id": "balanced",
+      "name": "兼修并进",
+      "description": "修为与功法并重\n平衡而稳进",
+      "image": "res://assets/UI-xiulian-jx1.webp",
+      "selected_image": "res://assets/UI-xiulian-jx2.webp"
+    }
+  ],
+  "presentation": {
+    "background": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai-1.webp"
+  },
+  "stage_two": {
+    "background": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai2.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai-2.webp",
+    "description": "凝神静坐，调息凝气。暂离尘嚣，专注眼前的修行。",
+    "status_interval_days": 5,
+    "cultivation_statuses": [
+      "收敛心神，细察周身灵气。",
+      "调匀呼吸，专注灵气运转。",
+      "静守心神，反复体察行气之法。",
+      "循序调息，巩固本次修行体会。"
+    ],
+    "technique_statuses": [
+      "默诵法诀，梳理功法要义。",
+      "循诀运功，体会行气次序。",
+      "反复参照，细察运功关窍。",
+      "温习要诀，整理本次修习心得。"
+    ]
+  }
+}

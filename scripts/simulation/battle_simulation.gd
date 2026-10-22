@@ -115,12 +115,12 @@ func _activate_trait(key: String, at_usec: int) -> void:
 			result = _effects.apply({"trigger": "on_activate", "effect": "damage", "value": trait_data["value"]}, state, target, at_usec, source)
 	elif trait_data["effect"] == "restore_armor":
 		if t01 != null:
-			t01.restore(state.teams[side][0], "armor", trait_data.value, at_usec)
+			t01.restore(state.teams[side][0], "armor", trait_data.value, at_usec, -1.0, source)
 		else:
 			result = _effects.restore(state.teams[side][0], "armor", int(trait_data["value"]), at_usec, source)
 	else:
 		if t01 != null:
-			t01.restore(state.teams[side][0], "hp", trait_data.value, at_usec)
+			t01.restore(state.teams[side][0], "hp", trait_data.value, at_usec, -1.0, source)
 		else:
 			result = _effects.restore(state.teams[side][0], "hp", int(trait_data["value"]), at_usec, source)
 	if not result.is_empty():
@@ -384,7 +384,7 @@ func advance(real_delta: float) -> void:
 			_pending_restores -= 1
 			var p: Dictionary = event.payload
 			if p.member.temporary_effects.get(p.item_id, {}).get("token", -1) == p.token:
-				t01.restore(p.member, p.resource, p.value, at_usec)
+				t01.restore(p.member, p.resource, p.value, at_usec, -1.0, p.get("source", {}))
 		elif event.kind == "t01_wake":
 			pass
 		else:
@@ -425,6 +425,7 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 	runtime["activation_count"] += 1
 	state.revision += 1
 	var source := {"item_id": item.id, "instance_id": id, "owner_id": owner.id, "owner_name": owner.definition["name"], "side": side, "stamina_cost": item.stamina_cost, "stamina_after": owner.stamina}
+	source.entry = owner.inventory.get_instance(id).duplicate(true)
 	_pending_events.append({"kind": "item_activated", "at_usec": at_usec, "owner_id": owner.id, "side": side, "entry": owner.inventory.get_instance(id)})
 	if not item.effects_for("on_activate").filter(func(effect: Dictionary): return effect.effect in ["restore_capped", "restore_ticks", "cleanse_toxin"]).is_empty():
 		for effect: Dictionary in item.effects_for("on_activate"):

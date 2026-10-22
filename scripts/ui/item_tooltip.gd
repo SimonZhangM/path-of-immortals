@@ -1,6 +1,9 @@
 class_name ItemTooltip
 extends PanelContainer
 
+signal technique_requested(book_id: String)
+var details_button: TextureButton
+
 const UI_SCALE := 4.0 / 3.0
 const WIDTH := 720.0
 const RESOURCES := {"hp": "气血", "stamina": "体力", "spirit": "灵力"}
@@ -28,13 +31,30 @@ static var _status_keyword_definitions: Array = []
 static var _status_keywords_loaded := false
 static var _general_keyword_definitions: Array = []
 static var _resource_regions: Dictionary = {}
+static var _practice_display: Dictionary = {}
 const ITEM_TITLE_COLOR := Color("f9f8c8")
 const CLASSIFICATION_COLOR := Color("a7b8c5")
+const SUMMARY_BACKGROUND := Color("0b101b", 0.98)
 var description: String = ""
 var active_keyword := ""
 var _hover_meanings: Dictionary = {}
 var _keyword_inset: MarginContainer
 var _keyword_row: RichTextLabel
+var _spell_item: ItemData
+var _spell_knowledge: CultivationKnowledge
+var _spell_context: Dictionary = {}
+var _spell_identified := true
+
+func _refresh_spell() -> void:
+	if _spell_item == null or _spell_knowledge == null: return
+	for child in get_children():
+		remove_child(child)
+		child.queue_free()
+	_keyword_inset = null
+	_keyword_row = null
+	active_keyword = ""
+	_spell_context.merge(CultivationDescription.tooltip_context(_spell_knowledge, _spell_item.id, _spell_item), true)
+	configure(_spell_item, _spell_context, -1, 0, _spell_identified)
 
 static func _px(design_pixels: float) -> int:
 	# Native 1440p geometry and integer font sizes, with no scaled tooltip texture.
@@ -180,7 +200,10 @@ static func classification_caption(value: String) -> String:
 	return "护"+value.trim_prefix("护具·") if value.begins_with("护具·") else value
 
 static func classification_tags(item: ItemData, vertical_book := false) -> Array:
+	if item.category == "book" and not item.combat.get("description", "").is_empty():
+		return item.tags.duplicate()
 	var tags := [{"book":"功法书","spell":"法术","plant":"草木","beast":"兽材","mineral":"矿石","board":"阵盘","food":"食物"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
+	if item.category == "spell": tags = item.tags.duplicate()
 	if item.category == "board": tags = []
 	if item.category == "item" and "器官" in item.tags: tags[0] = "器官"
 	for tag: String in item.tags:
@@ -200,10 +223,10 @@ static func classification_tags(item: ItemData, vertical_book := false) -> Array
 
 static func effect_text(item: ItemData) -> String:
 	if item.category in ["plant", "mineral", "food"]: return item.combat.get("description", "")
-	if item.category == "board": return item.combat.get("description", "")
+	if item.category == "board" or item.training: return item.combat.get("description", "")
 	if item.category == "beast": return item.combat.get("description", "兽材，仅作材料，不能放入战斗阵盘。")
 	if item.category == "book":
-		return CultivationDescription.book(item.combat)
+		return item.combat.get("description", CultivationDescription.book(item.combat))
 	if item.category == "spell": return CultivationDescription.spell(item.combat)
 	var lines: PackedStringArray = []
 	if item.armor_capacity > 0:
@@ -393,6 +416,12 @@ func configure_description(text: String, terms: Dictionary = {}) -> void:
 	_ignore(self)
 
 func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1, cooling_usec: int = 0, identified: bool = true) -> void:
+	if item.category == "spell" and _entry.has("spell_knowledge"):
+		_spell_item = item
+		_spell_context = _entry.duplicate()
+		_spell_identified = identified
+		_spell_knowledge = _entry.spell_knowledge
+		if not _spell_knowledge.changed.is_connected(_refresh_spell): _spell_knowledge.changed.connect(_refresh_spell)
 	name = "ItemTooltip"
 	custom_minimum_size.x = WIDTH
 	add_theme_stylebox_override("panel", StyleBoxEmpty.new())
@@ -407,7 +436,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	add_child(column)
 	var main := PanelContainer.new()
 	main.name = "SummaryPanel"
-	main.add_theme_stylebox_override("panel", _box(Color("0b101b", 0.98), Color("424955"), _px(18), _px(22)))
+	main.add_theme_stylebox_override("panel", _box(SUMMARY_BACKGROUND, Color("424955"), _px(18), _px(22)))
 	column.add_child(main)
 	var content := VBoxContainer.new()
 	content.add_theme_constant_override("separation", _px(20))
@@ -425,7 +454,10 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	slot.add_child(canvas)
 	var art := MapItemArtwork.new()
 	art.name = "PortraitArtwork"
-	art.configure({"icon": item.icon_path, "name":item.display_name if identified else "？", "quality": item.quality, "art_outline_px": 1}, true)
+	var portrait := MapItemArtwork.item_record(item)
+	portrait.name = item.display_name if identified else "？"
+	portrait.art_outline_px = 1
+	art.configure(portrait, true)
 	canvas.add_child(art)
 	art.position = Vector2(12, 20) * UI_SCALE
 	art.size = Vector2(72, 72) * UI_SCALE
@@ -487,6 +519,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	chips.add_theme_constant_override("v_separation", _px(5))
 	heading.add_child(chips)
 	var tags := classification_tags(item,_entry.get("vertical_book",false))
+	if item.category == "book": tags.append(CultivationDescription.mastery_caption(int(_entry.get("book_level", 0))))
 	if not identified:
 		tags = ["？"]
 	for tag: String in tags:
@@ -502,13 +535,36 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 		flavor_line.add_theme_font_size_override("font_size", _px(15))
 		flavor_line.add_theme_color_override("font_color", Color("a7b8c5"))
 		flavor_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		heading.add_child(flavor_line)
+		if item.category == "book":
+			var flavor_row := HBoxContainer.new()
+			flavor_row.add_theme_constant_override("separation", _px(10))
+			heading.add_child(flavor_row)
+			flavor_line.size_flags_horizontal = SIZE_EXPAND_FILL
+			flavor_row.add_child(flavor_line)
+			details_button = TextureButton.new()
+			details_button.name = "TechniqueDetails"
+			details_button.texture_normal = BattleActionButton.trimmed_art("res://assets/UI-gongfa-gongfaxiangqing.webp")
+			details_button.ignore_texture_size = true
+			details_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+			details_button.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+			details_button.custom_minimum_size = Vector2(_px(132), _px(32)) * 1.1
+			details_button.size_flags_vertical = SIZE_SHRINK_END
+			details_button.mouse_default_cursor_shape = CURSOR_POINTING_HAND
+			details_button.pressed.connect(func(): technique_requested.emit(item.id))
+			flavor_row.add_child(details_button)
+		else: heading.add_child(flavor_line)
 	var divider := HSeparator.new()
 	var line := StyleBoxLine.new()
 	line.color = Color("303846")
 	line.thickness = 1
 	divider.add_theme_stylebox_override("separator", line)
 	content.add_child(divider)
+	if item.category == "book" and identified:
+		_add_book_practice(content, item, _entry)
+		var lower_divider := HSeparator.new()
+		lower_divider.name = "BookPracticeDivider"
+		lower_divider.add_theme_stylebox_override("separator", line.duplicate())
+		content.add_child(lower_divider)
 	description = str(_entry.get("effect_description",effect_text(item))) if identified else MapItemQuality.UNKNOWN_DESCRIPTION
 	var meanings := keyword_meanings(item, description) if identified else {}
 	_hover_meanings = meanings
@@ -547,10 +603,82 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 		_keyword_row.custom_minimum_size.x = WIDTH - _px(74)
 		inset.hide()
 	_ignore(self)
+	if details_button != null: details_button.mouse_filter = MOUSE_FILTER_STOP
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	for body_line: RichTextLabel in body_rows.get_children():
 		body_line.mouse_filter = Control.MOUSE_FILTER_PASS
 		body_line.mouse_default_cursor_shape = Control.CURSOR_ARROW
+
+func _add_book_practice(parent: VBoxContainer, item: ItemData, context: Dictionary) -> void:
+	if _practice_display.is_empty():
+		_practice_display = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/technique_practice_display.json"))
+	var stage := maxi(0,int(context.get("book_level",0)))
+	var maximum := int(item.combat.max_level)
+	var target := float(CultivationGrowth.rules()["book_costs_%d" % maximum][stage]) if stage<maximum else 0.0
+	var current := maxf(0, float(context.get("book_practice", 0)))
+	var row := HBoxContainer.new()
+	row.name = "BookPracticeProgress"
+	row.add_theme_constant_override("separation", _px(10))
+	parent.add_child(row)
+	var title := TextureRect.new()
+	title.name = "PracticeTitle"
+	title.texture = BattleActionButton.trimmed_art(_practice_display.title_image)
+	title.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	title.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	title.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	title.custom_minimum_size = Vector2(_px(92), _px(28)) * 0.9
+	title.size_flags_vertical = SIZE_SHRINK_CENTER
+	row.add_child(title)
+	var bar := ProgressBar.new()
+	bar.name = "PracticeBar"
+	bar.custom_minimum_size = Vector2(_px(140), _px(15))
+	bar.size_flags_horizontal = SIZE_EXPAND_FILL
+	bar.size_flags_vertical = SIZE_SHRINK_CENTER
+	bar.show_percentage = false
+	bar.max_value = maxf(1,target)
+	bar.value = minf(current, target) if target>0 else 1
+	var track := _box(Color("101a24"), Color("69716d"), _px(8), 0)
+	var fill := _box(Color("e9b857"), Color("ffe6a0"), _px(8), 0)
+	fill.shadow_color = Color("e6b13c", 0.15)
+	fill.shadow_size = _px(2)
+	bar.add_theme_stylebox_override("background", track)
+	bar.add_theme_stylebox_override("fill", fill)
+	row.add_child(bar)
+	var value := Label.new()
+	value.name = "PracticeValue"
+	value.text = "%s/%s" % [CultivationGrowth.display(current), CultivationGrowth.display(target)] if target>0 else "已圆满"
+	value.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	value.add_theme_font_size_override("font_size", _px(17))
+	value.add_theme_color_override("font_color", Color("ebcc80"))
+	row.add_child(value)
+	var divider := VSeparator.new()
+	divider.name = "PracticeTargetDivider"
+	divider.custom_minimum_size.y = _px(19)
+	divider.size_flags_vertical = SIZE_SHRINK_CENTER
+	var stroke := StyleBoxLine.new()
+	stroke.vertical = true
+	stroke.color = Color("4c5865")
+	stroke.thickness = 1
+	divider.add_theme_stylebox_override("separator", stroke)
+	row.add_child(divider)
+	var level := maxi(0, int(context.get("book_level", 0)))
+	var numerals := ["零", "一", "二", "三", "四", "五", "六", "七", "八"]
+	var caption := "已圆满" if level >= int(item.combat.max_level) else "第%s重" % numerals[mini(level + 1, 8)]
+	var goal := chip(caption, Color("b6cedf"), UI_SCALE)
+	goal.name = "PracticeNextStage"
+	goal.add_theme_font_override("font", _flavor_font)
+	goal.add_theme_font_size_override("font_size", _px(16))
+	goal.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	goal.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var goal_box := goal.get_theme_stylebox("normal").duplicate() as StyleBoxFlat
+	var ink := CooldownRing.ink_vertical_bounds(_flavor_font, caption, _px(16))
+	var optical_shift := _flavor_font.get_height(_px(16)) * 0.5 - _flavor_font.get_ascent(_px(16)) - (ink.x + ink.y) * 0.5
+	var padding := maxf(_px(2), absf(optical_shift))
+	goal_box.content_margin_top = padding + optical_shift
+	goal_box.content_margin_bottom = padding - optical_shift
+	goal.add_theme_stylebox_override("normal", goal_box)
+	goal.size_flags_vertical = SIZE_SHRINK_CENTER
+	row.add_child(goal)
 
 func show_keyword(word: String) -> void:
 	if _keyword_inset == null: return

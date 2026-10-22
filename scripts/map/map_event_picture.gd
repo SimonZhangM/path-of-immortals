@@ -25,6 +25,8 @@ func _init() -> void:
 	frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	frame.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	illustration.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	add_child(frame)
 	hide()
 

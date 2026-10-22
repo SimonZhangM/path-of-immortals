@@ -25,7 +25,7 @@ func run() -> void:
 		check(tab.pressed.has_connections(),"existing mode callback retained")
 	check(dialog.title_label.position==Vector2(704,107)-dialog.FRAME.position,"shop heading unchanged")
 	check(dialog.slot_frames[0].position==dialog.SLOT_ORIGIN-dialog.FRAME.position,"product grid unchanged")
-	check(load("res://assets/tanchuang-jiaoyi-qingshizhen-shangpu.webp").get_image().has_mipmaps(),"updated artwork mipmaps")
+	check(load("res://assets/tanchuang-qingshizhen-shangpu.webp").get_image().has_mipmaps(),"updated artwork mipmaps")
 	for selling in [false,true]:
 		# Static display of both modes, no mouse events or transactions.
 		dialog.set_selling(selling)

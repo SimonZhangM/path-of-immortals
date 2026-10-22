@@ -3,28 +3,32 @@
     "id": "base.enemy.chisong_liaozhu",
     "name": "赤鬃獠猪",
     "portrait": "res://assets/portrait-enemy-chisongliaozhu.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.qingshihewan_chisong_liaozhu"
   },
   {
     "id": "base.enemy.huiji_shanlang",
     "name": "灰脊山狼",
     "portrait": "res://assets/portrait-enemy-shanjihuilang.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.qingshihewan_huiji_shanlang"
   },
   {
     "id": "base.enemy.qingke_heyuan",
     "name": "青壳河鼋",
     "portrait": "res://assets/portrait-enemy-qingkeheyuan.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.qingshihewan_qingke_heyuan"
   },
   {
     "id": "base.enemy.qingling_yanzhi",
     "name": "青翎岩雉",
     "portrait": "res://assets/portrait-enemy-qinglingyanzhi.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.qingshihewan_qingling_yanzhi"
   },
   {

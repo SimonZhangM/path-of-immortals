@@ -12,7 +12,7 @@
   "duration_days": 1,
   "warehouse_id": "base.warehouse.qingshizhen.home",
   "presentation": {
-    "background": "res://assets/tanchuang-huifu-shineizijia.webp",
-    "illustration": "res://assets/tanchuang-huifu-zijia.webp"
+    "background": "res://assets/tanchuang-qingshizhen-shineizijia1.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-shineizijia2.webp"
   }
 }

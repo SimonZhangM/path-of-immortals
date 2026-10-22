@@ -409,8 +409,12 @@ func _style_collection_tab(button: Button) -> void:
 	for state in ["normal","hover","pressed","hover_pressed"]:
 		var style := button.get_theme_stylebox(state).duplicate() as StyleBoxFlat
 		style.set_corner_radius_all(16)
-		style.content_margin_left = 12
-		style.content_margin_right = 12
+		style.content_margin_left = 8
+		style.content_margin_right = 8
+		if state in ["pressed", "hover_pressed"]:
+			style.bg_color = COLLECTION_SELECTED_FILL
+			style.border_color = COLLECTION_SELECTED_BORDER
+			style.shadow_color = Color("edc35499")
 		button.add_theme_stylebox_override(state,style)
 
 func _style_category_tab(button: Button) -> void:
@@ -674,7 +678,7 @@ func _build_sidebar(board: BoardLayout) -> void:
 	var buffs: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_buffs.json"))
 	for buff: Dictionary in buffs:
 		if buff.id not in ["armor", "shield"]: continue
-		buff_bonus_values[buff.id] = _attribute_row(properties, buff.id, buff.name, load(buff.get("icon_path", "res://assets/buff-%s.webp" % buff.icon)), buff.description, "+0", kai)
+		buff_bonus_values[buff.id] = _attribute_row(properties, buff.id, buff.name, load(buff.icon_path), buff.description, "+0", kai)
 	_rule(properties)
 	var bottom_rule := properties.get_child(-1) as HSeparator
 	bottom_rule.name = "AttributeBottomRule"
@@ -1427,9 +1431,10 @@ func _build_storage() -> void:
 	storage_capacity.align_storage_heading()
 	capacity_slot.custom_minimum_size.x = storage_capacity.size.x
 	capacity_slot.add_child(storage_capacity)
-	var tabs := HBoxContainer.new()
+	var tabs := HFlowContainer.new()
 	tabs.name = "CollectionTabs"
-	tabs.add_theme_constant_override("separation", 8)
+	tabs.add_theme_constant_override("h_separation", 5)
+	tabs.add_theme_constant_override("v_separation", 5)
 	# Add space only below the heading; preserve the title/capacity positions and
 	# all existing gaps between the remaining rows. The item viewport follows.
 	var tabs_margin := MarginContainer.new()
@@ -1452,10 +1457,12 @@ func _build_storage() -> void:
 	filters.add_theme_constant_override("h_separation", 5)
 	filters.add_theme_constant_override("v_separation", 5)
 	storage_toolbar.add_child(filters)
-	for key: String in catalog.category_names:
+	var filter_names := catalog.category_names.duplicate()
+	filter_names.merge(catalog.book_elements)
+	for key: String in filter_names:
 		if key in ["all", "key", "misc"]:
 			continue
-		var button := _compact_button(filters, catalog.category_names[key], 30)
+		var button := _compact_button(filters, filter_names[key], 30)
 		button.name = "CategoryTab_" + key
 		button.add_theme_font_size_override("font_size", 14)
 		button.toggle_mode = true
@@ -1542,7 +1549,7 @@ func _refresh_storage_capacity() -> void:
 	else:
 		var rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/storage_capacity.json"))
 		var limit := int(rules.get("test_capacity_override", 0))
-		storage_capacity.set_capacity(catalog.collection_count("all"), limit if limit > 0 else int(rules.starting_capacity))
+		storage_capacity.set_capacity(catalog.collection_count("all") - catalog.collection_count("spell"), limit if limit > 0 else int(rules.starting_capacity))
 
 func _refresh() -> void:
 	_refresh_storage_capacity()
@@ -1619,7 +1626,7 @@ func _enable_storage_drop(node: Node) -> void:
 		_enable_storage_drop(child)
 
 func _add_item_card(entry: Dictionary) -> void:
-	if not String(entry.get("card_frame", "")).is_empty():
+	if entry.category == "book" or not String(entry.get("card_frame", "")).is_empty():
 		var framed := MapInventoryItemCard.new()
 		framed.configure(entry, catalog.category_names[entry.category], true)
 		_configure_card_transfer(framed)

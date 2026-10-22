@@ -12,7 +12,7 @@
   "duration_days": 1,
   "allow_food": true,
   "presentation": {
-    "background": "res://assets/tanchuang-qingshizhen-xiuxi-linjiangouhuo.webp",
-    "illustration": "res://assets/tanchuang-huifu-linjiangouhuo.webp"
+    "background": "res://assets/tanchuang-huifu-linjiangouhuo1.webp",
+    "illustration": "res://assets/tanchuang-huifu-linjiangouhuo2.webp"
   }
 }

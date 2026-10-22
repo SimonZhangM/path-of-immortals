@@ -18,7 +18,7 @@ func run() -> void:
 	map._try_start_event(CLINIC_POINT,"click",true)
 	await settle()
 	var dialog: MapClinicDialog = map.clinic_dialog
-	check(dialog.illustration.texture.resource_path=="res://assets/tanchuang-jiaoyi-qingshizhen-yiguan-boss.webp","new scene art")
+	check(dialog.illustration.texture.resource_path=="res://assets/tanchuang-qingshizhen-yiguan-boss.webp","new scene art")
 	check(dialog.library.definition.portrait=="res://assets/UI-portrait-suqinghe.webp","same updated portrait path")
 	var portrait: Texture2D = load(dialog.library.definition.portrait)
 	check(portrait.get_image().has_mipmaps() and dialog.illustration.texture.get_image().has_mipmaps(),"both images have mipmaps")

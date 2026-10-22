@@ -1,0 +1,109 @@
+{
+  "texture": "res://assets/UI-gongfa-right-bg-fashu.webp",
+  "dot_texture": "res://assets/UI-gongfa-right-dot.webp",
+  "source_size": [
+    504,
+    1218
+  ],
+  "baseline_sha256": "af12d2ec2c01aeb6b3091c931d79c0880253e9339bba7a9fdc72042bd1b4e462",
+  "baseline_date": "2026-10-20",
+  "tick_art_rects": [
+    [
+      104,
+      973,
+      32,
+      26
+    ],
+    [
+      104,
+      1010,
+      32,
+      26
+    ],
+    [
+      104,
+      1047,
+      32,
+      26
+    ]
+  ],
+  "tick_centers": [
+    [
+      120,
+      986
+    ],
+    [
+      120,
+      1023
+    ],
+    [
+      120,
+      1060
+    ]
+  ],
+  "learning_button_rect": [
+    78,
+    1098,
+    350,
+    80
+  ],
+  "learning_button_center": [
+    253,
+    1138
+  ],
+  "spell_icon_rect": [
+    28,
+    439,
+    132,
+    132
+  ],
+  "progress_label_rect": [
+    32,
+    113,
+    440,
+    38
+  ],
+  "progress_bar_rect": [
+    32,
+    167,
+    440,
+    18
+  ],
+  "progress_cards": [
+    [
+      28,
+      213,
+      112,
+      98
+    ],
+    [
+      154,
+      213,
+      126,
+      98
+    ],
+    [
+      294,
+      213,
+      182,
+      98
+    ]
+  ],
+  "note": "Original 504x1218 canvas coordinates retained after checks/button removal. Independent condition icons share the recorded centers. Button has hover/press feedback only, no learning transaction.",
+  "previous_baseline_sha256": "94540316964acb06386a831e8d53beb0dceda9be0b43256c86e0a0b6c23e8839",
+  "condition_true_texture": "res://assets/UI-gongfa-right-greengou.webp",
+  "condition_false_texture": "res://assets/UI-gongfa-right-redcha.webp",
+  "button_normal_texture": "res://assets/UI-gongfa-right-blackbtn.webp",
+  "button_hover_texture": "res://assets/UI-gongfa-right-goldbtn.webp",
+  "condition_icon_size": [
+    30.6,
+    30.6
+  ],
+  "button_press_scale": 0.97,
+  "button_texture_crop": [
+    4,
+    67,
+    1072,
+    228
+  ]
+}

@@ -27,7 +27,7 @@
     "title_center_y": 134.5,
     "background": "res://assets/tanchuang-qingshizhen-yiguan.webp",
     "treatment_background": "res://assets/tanchuang-qingshizhen-yiguan-2.webp",
-    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-yiguan-boss.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-yiguan-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   }
 }

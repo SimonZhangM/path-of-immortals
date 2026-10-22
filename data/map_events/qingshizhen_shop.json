@@ -8,7 +8,7 @@
     "title_center_y": 135.5,
     "background": "res://assets/tanchuang-qingshizhen-shangpu.webp",
     "conversation_background": "res://assets/tanchuang-qingshizhen-shangpu2.webp",
-    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-shangpu-boss.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-shangpu-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   },
   "dialogue": "res://data/dialogues/qianwanshun.json"

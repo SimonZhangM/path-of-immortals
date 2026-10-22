@@ -21,6 +21,9 @@ func _init(battle: BattleSimulation) -> void:
 static func q(value: float) -> float:
 	return floorf(maxf(0, value) * 10.0 + 0.50000001) / 10.0
 
+static func resource_q(member: PartyMemberState, value: float) -> float:
+	return CultivationGrowth.quantize(value) if member.definition.get("training_precision",false) else q(value)
+
 func roll() -> float:
 	return forced_rolls.pop_front() if not forced_rolls.is_empty() else rng.randf()
 
@@ -76,7 +79,7 @@ func half_consume(member: PartyMemberState, status: String) -> void:
 	var divisor := 3 if choices.has(status) and sim.cultivation.spec(source,choices[status][0],1,choices[status][1]) else 2
 	consume(member,status,maxi(1,layers(member,status)/divisor))
 
-func apply_status(member: PartyMemberState, status: String, amount: int, source: PartyMemberState, at: int, thunder_chunk := false, frost_attack := -1) -> bool:
+func apply_status(member: PartyMemberState, status: String, amount: int, source: PartyMemberState, at: int, thunder_chunk := false, frost_attack := -1, feedback_source: Dictionary = {}) -> bool:
 	var element := T01Definition.status_element(status)
 	if element.is_empty():
 		push_error("Unknown T01 status: " + status)
@@ -92,7 +95,7 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 			var space := capacity(member, status) - layers(member, status)
 			if space <= 0: break
 			var chunk := mini(amount, mini(space, maxi(1, 10 - layers(member, status))))
-			applied = apply_status(member, status, chunk, source, at, true) or applied
+			applied = apply_status(member, status, chunk, source, at, true, frost_attack, feedback_source) or applied
 			amount -= chunk
 		return applied
 	if member.hp <= 0 or amount <= 0 or status == "毒蚀" and at < member.toxin_immune_until_usec:
@@ -133,6 +136,7 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 			pool.batches[-1].frost_attack = frost_attack
 			pool.batches[-1].fresh_bonus = mini(remaining,maxi(0,accepted-original_amount))
 		pool.source_id = source.id
+		pool.feedback_source = feedback_source.duplicate(true)
 		if status=="流血" and not fresh and sim.cultivation.spec(source,"metal",1,"血沸"): direct_hp(member,remaining*sim.cultivation.status_strength(source,status),source,at,status)
 		if status=="灼烧" and not fresh and sim.cultivation.spec(source,"fire",1,"复燃"): pool.revival_until=at+5_000_000
 		if status in ["流血", "灼烧"]:
@@ -140,7 +144,7 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 		elif status == "破甲":
 			pool.next = at + 10_000_000
 		elif status == "驱散":
-			# Core 4.105: only a fresh pool waits2s; stored remainder wakes1s.
+			# Core 1.77: fresh pools wait1s (疾散:0s); stored remainder wakes1s.
 			if not fresh and int(pool.expires) > 0:
 				pool.next = at + 1_000_000
 				pool.expires = 0
@@ -202,7 +206,7 @@ func convert_thunder(member: PartyMemberState, at: int) -> void:
 func active_injury(member: PartyMemberState, at: int) -> int:
 	return layers(member, "重伤") if at >= int(member.combat_statuses.get("重伤", {}).get("start", 9223372036854775807)) else 0
 
-func restore(member: PartyMemberState, resource: String, value: float, at: int, ceiling := -1.0) -> float:
+func restore(member: PartyMemberState, resource: String, value: float, at: int, ceiling := -1.0, attribution: Dictionary = {}) -> float:
 	if member.hp <= 0:
 		return 0
 	if resource == "armor":
@@ -217,10 +221,20 @@ func restore(member: PartyMemberState, resource: String, value: float, at: int, 
 			if sim.cultivation.spec(source,"earth",5,"伤势反噬"): damage(source,member,prevented*.5,"法术型","base.element.earth",at,{"kind":"derived","label":"伤势反噬"},false,{"special":sim.cultivation.has_special(member)})
 		if member.hp<=0: return 0
 	var limit := float(member.maximum(resource)) if ceiling < 0 else minf(ceiling, member.maximum(resource))
-	var actual := q(minf(value, maxf(0, limit - float(member.get(resource)))))
-	member.set(resource, q(float(member.get(resource)) + actual))
-	emit("restore", at, {"target_name": member.definition.name, "resource": resource, "value": actual})
+	var actual := resource_q(member,minf(value, maxf(0, limit - float(member.get(resource)))))
+	member.set(resource, resource_q(member,float(member.get(resource)) + actual))
+	emit_restore(member, resource, actual, at, attribution)
 	return actual
+
+# Presentation attribution is captured at activation, including consumed item cells.
+func item_source(id: String) -> Dictionary:
+	var owner: PartyMemberState = sim._owners[id]
+	return {"owner_id": owner.id, "side": sim.state.item_runtime[id].side, "item_id": sim._definitions[id].id, "instance_id": id, "entry": owner.inventory.get_instance(id).duplicate(true)}
+
+func emit_restore(member: PartyMemberState, resource: String, actual: float, at: int, source: Dictionary = {}) -> void:
+	var event := source.duplicate(true)
+	event.merge({"target_id": member.id, "target_name": member.definition.name, "resource": resource, "value": actual}, true)
+	emit("restore", at, event)
 
 func costs(member: PartyMemberState, item: ItemData, at: int) -> Vector2:
 	var weapons := 0
@@ -230,7 +244,7 @@ func costs(member: PartyMemberState, item: ItemData, at: int) -> Vector2:
 	var multiplier: float = 1.0 + maxi(0, weapons - 1) * 0.25
 	var injury := active_injury(member, at) * sim.cultivation.injury_strength(member)
 	var fee_scale := 1 + float(sim.cultivation.data(member, item).get("cost_pct", 0))
-	return Vector2(q(item.stamina_cost * multiplier + injury) if item.stamina_cost > 0 else 0, q(item.spirit_cost * fee_scale + injury) if item.spirit_cost > 0 else 0)
+	return Vector2(resource_q(member,item.stamina_cost * multiplier + injury) if item.stamina_cost > 0 else 0, resource_q(member,item.spirit_cost * fee_scale + injury) if item.spirit_cost > 0 else 0)
 
 func configuration_issue() -> String:
 	var player: PartyMemberState = sim.state.teams[0][0]
@@ -280,12 +294,13 @@ func activate(id: String, at: int) -> void:
 	var cost: Vector2 = runtime.get("fee_override",costs(owner,item,at))
 	runtime.erase("fee_override")
 	if active_injury(owner,at)>0 and (cost.x>0 or cost.y>0): sim.cultivation.injury_event(sim.cultivation.status_source(owner,"重伤"),at)
-	owner.stamina = q(owner.stamina - cost.x)
-	owner.spirit = q(owner.spirit - cost.y)
+	owner.stamina = resource_q(owner,owner.stamina - cost.x)
+	owner.spirit = resource_q(owner,owner.spirit - cost.y)
 	runtime.activation_count += 1
 	var source := {"item_id": item.id, "instance_id": id, "owner_id": owner.id, "owner_name": owner.definition.name, "side": side, "stamina_cost": cost.x, "spirit_cost": cost.y, "kind": "active", "category": item.category}
 	var activation := source.duplicate()
-	activation.entry = owner.inventory.get_instance(id)
+	source.entry = owner.inventory.get_instance(id).duplicate(true)
+	activation.entry = source.entry
 	emit("item_activated", at, activation)
 	var target := sim.state.target_for(side)
 	var attack: Dictionary = {}
@@ -313,20 +328,20 @@ func activate(id: String, at: int) -> void:
 				if e.status == "寒霜" and not attack.is_empty():
 					continue # Applied before the hit's freeze trigger in attack_item.
 				if e.gate == "always" or e.gate == "hit" and hit or e.gate == "hp_damage" and hp_loss > 0:
-					apply_status(owner if e.target == "self" else target, e.status, e.value, owner, at)
+					apply_status(owner if e.target == "self" else target, e.status, e.value, owner, at, false, -1, source)
 			"restore_capped":
-				restore(owner, e.resource, e.value, at, floorf(float(owner.maximum(e.resource)) * e.cap_numerator / e.cap_denominator))
-			"restore_instant": restore(owner, e.resource, e.value, at)
+				restore(owner, e.resource, e.value, at, floorf(float(owner.maximum(e.resource)) * e.cap_numerator / e.cap_denominator), source)
+			"restore_instant": restore(owner, e.resource, e.value, at, -1.0, source)
 			"restore_armor":
 				var bonus := link_bonus(owner)
-				restore(owner, "armor", e.value + bonus.recovery.get(id, 0), at)
+				restore(owner, "armor", e.value + bonus.recovery.get(id, 0), at, -1.0, source)
 				var stamina_bonus: int = bonus.stamina_recovery.get(id, 0)
-				if stamina_bonus > 0: restore(owner, "stamina", stamina_bonus, at)
+				if stamina_bonus > 0: restore(owner, "stamina", stamina_bonus, at, -1.0, source)
 			"restore_ticks":
 				_serial += 1
 				owner.temporary_effects[item.id] = {"until": at + roundi(e.interval * e.ticks * 1_000_000), "token": _serial}
 				for tick in range(1, int(e.ticks) + 1):
-					sim.queue.schedule(at + roundi(tick * float(e.interval) * 1_000_000), "t01_restore", {"member": owner, "resource": e.resource, "value": e.value, "item_id": item.id, "token": _serial}, -3)
+					sim.queue.schedule(at + roundi(tick * float(e.interval) * 1_000_000), "t01_restore", {"member": owner, "resource": e.resource, "value": e.value, "item_id": item.id, "token": _serial, "source": source.duplicate(true)}, -3)
 					sim._pending_restores += 1
 			"cleanse_toxin":
 				consume(owner, "毒蚀", layers(owner, "毒蚀"))

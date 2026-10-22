@@ -165,5 +165,5 @@ func _get_tooltip(_point: Vector2) -> String:
 func build_item_tooltip(_text: String) -> Object:
 	if model==null: return null
 	var tip := ItemTooltip.new()
-	tip.configure(model.registry.get_item(entry.id))
+	tip.configure(model.registry.get_item(entry.id), CultivationDescription.tooltip_context(model.knowledge, entry.id))
 	return tip

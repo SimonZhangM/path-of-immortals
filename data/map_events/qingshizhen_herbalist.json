@@ -7,7 +7,7 @@
   "presentation": {
     "title_center_y": 133.5,
     "background": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu.webp",
-    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu-boss.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-yaocaipu-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp",
     "conversation_background": "res://assets/tanchuang-jiaoyi-qingshizhen-yaocaipu-2.webp"
   },

@@ -10,6 +10,7 @@ var stamina_cost: float
 var spirit_cost: float
 var rule_version := 0
 var combat: Dictionary = {}
+var training := false
 var effects: Array
 var grid_size: Vector2i
 var icon_path: String
@@ -27,6 +28,7 @@ var armor_slot: String
 
 # Registry validates input before constructing an immutable-by-convention definition.
 func _init(raw: Dictionary) -> void:
+	training = bool(raw.get("training", false))
 	element = raw.get("element", "base.element.none")
 	id = raw["id"]
 	rule_version = int(raw.get("rule_version", 0))

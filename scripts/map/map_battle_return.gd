@@ -42,8 +42,11 @@ func _record_result() -> void:
 				manager.loot_summary = reward_error + " 点击确定重试。"
 				return
 			if not _progression_recorded and player_status != null:
-				player_status.cultivation_bonus_percent = manager._durable_loadout.cultivation_bonus_percent()
-				player_status.award_progression(manager.enemies[0].definition.get("progression_rewards", {}))
+				if not manager._durable_snapshot.get("growth",{}).is_empty():
+					player_status.apply_growth(manager._durable_snapshot.growth)
+				else:
+					player_status.cultivation_bonus_percent = manager._durable_loadout.cultivation_bonus_percent()
+					player_status.award_progression(manager.enemies[0].definition.get("progression_rewards", {}))
 				_progression_recorded = true
 		_recorded = events.resolve_encounter(event_id, manager.simulation.state.result)
 
@@ -75,6 +78,12 @@ func _award_victory() -> String:
 		if deadline>WorldCalendar.MAX_DAY: return "怪物重生日期超出历法范围。"
 		# Defeat deadline and loot receipt commit together; battle seconds cost no days.
 		state.encounter_cooldowns[event_id] = deadline
+	if error.is_empty() and not state.growth.is_empty() and player_status!=null:
+		for key: String in player_status.resources: state.growth.resources[key]=CultivationGrowth.cents(player_status.resources[key])
+		var rewards: Dictionary=enemy.get("progression_rewards",{})
+		var cultivation_reward := snappedf(float(rewards.get("cultivation",0))*(1.0+state.cultivation_bonus_percent()/100.0),0.1)
+		CultivationGrowth.award(state.growth,CultivationGrowth.cents(cultivation_reward))
+		state.growth.experience=int(state.growth.get("experience",0))+int(rewards.get("experience",0))
 	if error.is_empty(): error = MapLoadoutStore.save(state, save_path)
 	if not error.is_empty(): return error
 	# Publish ownership only after the inventory and first-victory receipt save.
@@ -98,6 +107,16 @@ func return_to_map() -> String:
 	if not reward_error.is_empty(): return reward_error
 	if not manager.persist_consumption():
 		return "消耗记录保存失败，请重试。"
+	if manager.simulation.state.result!="victory" and player_status!=null and not manager._durable_snapshot.get("growth",{}).is_empty():
+		var prepared:=MapLoadoutStore.candidate(manager._durable_loadout)
+		if not prepared.error.is_empty(): return prepared.error
+		var next: MapLoadoutState=prepared.state
+		var restore_error:=next.restore(manager._durable_snapshot)
+		if not restore_error.is_empty(): return restore_error
+		for key: String in player_status.resources: next.growth.resources[key]=CultivationGrowth.cents(player_status.resources[key])
+		var save_error:=MapLoadoutStore.save(next,save_path)
+		if not save_error.is_empty(): return save_error
+		manager._durable_snapshot=next.snapshot()
 	var scene := load(map_scene_path) as PackedScene
 	if scene == null:
 		return "原地图暂时无法载入，请重试。"

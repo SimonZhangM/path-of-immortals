@@ -1,5 +1,60 @@
 # 功法中栏图文与技能树定位基准（2026-10-17）
 
+## 风系八重底图更新（2026-10-21）
+
+重新导入用户更新的`UI-wind-middown-8.webp`，源尺寸仍1605×567、裁切仍[14,79,1576,456]；青冥破空诀／听风无影诀共用此新图，既有图标、数字与文字坐标保持。当前SHA-256为`aab82414eb0338fbce63b1f5b3c110df722e90536e9e8197fea6783ae1fe6f46`，两书baseline同步。七系八重右栏现已全部接齐，见[法术右栏](technique-spell-detail-layout.md)与[强化右栏](technique-enhancement-detail-layout.md)。
+
+## 圆环两侧连接遮罩收窄（2026-10-20最新）
+
+共用rank_glow shader的纵向完全抑制区由圆心±8源图px收为y=-4～+3：上端下收4、下端上收5，高度7；上下5px渐变分别为-9～-4及+3～+8，总高17。横向ring_radius-1～ring_radius+2的过渡保持，原图横线不改，七系五重／八重均生效。123项静态渲染与连接线核心像素检查通过，未运行鼠标／键盘检查。
+
+## 右栏玄冰枪首例（2026-10-20最新）
+
+《寒月凝冰诀》第3重已接新法术右栏，其余页面仍为空。新底图完整画布与三个勾／黄色按钮的固定坐标独立记录于[右栏定位说明](technique-spell-detail-layout.md)，不混用中栏源图坐标。顶部进度读实际状态，黄色按钮暂为展示，覆盖下方右栏全部清空的历史描述。
+
+## 七系选中主题与装饰覆盖修正（2026-10-19最新）
+
+选中／悬停光复用technique_categories.json各元素color，亮部由该主题向白色混合，不再固定青蓝。标题文字保护框以栏中心定位，五重宽164、八重奇数100、偶数148源图px，高28、顶为card.y+11；两端金色装饰在保护框之外，完整参加光效。圆环半径分别为五重48、八重奇数44、八重偶数39，去掉额外横向beam，并屏蔽圆环外连接线附近的叠加光，保持原连接线像素和粗细。原按钮命中／图文坐标保持。
+
+右栏清除旧学习详情、强化按钮和对应确认回调，只剩原背景与外框；左侧重数标签继续读取learning_state。此前右栏概念稿尚未接入。以上覆盖下方旧“统一青蓝／短连接光／右栏沿旧实现”记录。
+
+视觉检查使用TECHNIQUE_RANK_VISUAL_ONLY=1运行technique_rank_selection_tests.gd -Render，仅静态切换／渲染，不执行鼠标键盘输入；123项含35本主题与右栏空态，以及水系四种框架标题两端有高亮、连接线两侧像素不变。图例artifacts/technique-rank-revised-water_03-detail.png、technique-rank-theme-fire-detail.png，完整结果见PROJECT_PROGRESS顶部。
+
+## 重数按钮与青蓝选中框（2026-10-19）
+
+map_technique_progress_art的RankSelection层使用独立原生Button，圆环为圆形命中、下方整栏为矩形命中；互斥选择，首次第1重，各书浏览重数仅存当前组件内存。按钮点击或键盘激活发送rank_selected(level)，不调用学习或分支确认。悬停／焦点亮度0.35，选中1.0；聚焦重数按钮时允许ui_accept及原生导航键，G／Esc沿用退出行为。
+
+四份布局新增selection_frames：8的spell_card=[55,244,132,219]、choice_card=[200,243,224,210]（加现有column_offsets、group_pitch与source_origin_offset后取得源图实际坐标）；52a／52b的first_card=[73,192,260,262]，53为[18,193,308,269]（按column_offsets平移）。圆心直接沿现有数字模板与rank_offsets，不重新测一套圆心；布局缩放统一跟随display_crop。
+
+map_technique_rank_glow.gdshader采样当前功法原底图，对圆环和栏框的彩色／金色轮廓叠加青蓝亮边、外光、短横向光及顶端亮点；排除标题文字，保留暗部雕纹。不生成或覆盖美术素材，无动画时间／每帧脚本轮询，技能文字与独立图片位置保持。新增tests/technique_rank_selection_tests.gd为直接输入与渲染专项；图例artifacts/technique-rank-water-third-1920-detail.png及-2560-detail.png。右侧详情仍沿现有实现，概念稿未在此步骤接入。
+
+## 七系八重黄色圆环新版（2026-10-19最新）
+
+七张UI-{element}-middown-8.webp新版只调整第2／4／6／8栏的黄色圆环，14本共用的rank_offsets已对应同步。相对2026-10-18基准，四项偏移分别增加(-1,+1)、(-1,+2)、(0,+2)、(-1,+2)源图px；最终四项rank_offsets分别为[3,2]、[-1,2]、[0,2]、[-1,2]。模板下数字中心为(289,142)、(679,142)、(1074,142)、(1467,142)。不改变column_offsets、奇数重数、source_origin_offset、裁切、技能／名称／说明模板及显示比例。
+
+新版wood SHA-256为88f85c7f6c25eecd48a8f20c0b8260e5d9fc74637eb282d209da1a539ed8d73c；其他六系实际基准存technique_progress_books.json各自layout_overrides。7图导入缓存已同步、源图字节保持。14本三分辨率隔离实际组件静态渲染1680项通过，七系数字目视通过；artifacts/eight-rings-review-20261019.jpg为圆环合图。此节覆盖下方八重旧偶数圆心／哈希记录。
+
+## 全部book右移10px／书名投影（2026-10-19最新）
+
+七系35本中栏book共用BOOK_OFFSET_SCREEN_X=10，_fit_book在原水平定位基础上加10／全局X缩放，实现所有分辨率均向右10屏幕px；变换变化时同步重新布局。图案尺寸、可见边界裁切和原垂直中心保持，覆盖下方旧“水平位置不变”说明。左栏BookName新增Color.BLACK投影、shadow_offset_x=1、shadow_offset_y=1，书名原字号／字体及布局保持；不移动booksimple。金系五本三分辨率466项必要静态渲染通过，完整页面和左栏局部目视通过。
+
+## 六系状态小图与共用底框（2026-10-19最新）
+
+六本{element}_03内容的90项choices现均有status_icons：第1／2／4／5重各单图，第三重各双图，共108图、90框。沿木系53全部几何：单图32；双图各28.8、间距0；单框70×69、双框100×69，以圆心居中整组，底框上移2屏幕px。各系直接共用现有金色UI-wood-middown-53-button.webp，原有reserve_status_space保持，名称不会再额外下移。木系蚀骨／紧缚／固根的1px微调仅属于木系，未复制到新内容。通用状态图来自combat_status_keywords，灵盾例外沿map_buffs的icon_path；不新增悬浮或玩法。
+
+| 系 | 第1／2／4／5重依次 | 第三重第1项 | 第三重第2项 | 第三重第3项 |
+| --- | --- | --- | --- | --- |
+| 金 | 反锋、锋痕、流血 | 反锋＋锋痕 | 锋痕＋流血 | 流血＋反锋 |
+| 水 | 润脉、枯脉、寒霜 | 润脉＋灵盾 | 枯脉＋寒霜 | 寒霜＋润脉 |
+| 火 | 附炎、灼烧、破甲 | 附炎＋灼烧 | 灼烧＋附炎 | 破甲＋灼烧 |
+| 土 | 坚韧、疲惫、重伤 | 坚韧＋疲惫 | 疲惫＋重伤 | 重伤＋坚韧 |
+| 风 | 轻灵、失衡、驱散 | 轻灵＋失衡 | 失衡＋轻灵 | 驱散＋失衡 |
+| 雷 | 雷蕴、雷印、连环 | 雷蕴＋雷印 | 雷印＋连环 | 连环＋雷蕴 |
+
+雷蕴图覆盖其凝成的雷盾相关分支，与通用关键词related_keywords一致；水系盈护的灵盾使用当前player-status-sheild.webp。上述左右顺序按效果来源→作用对象／产物排列。
+
+tests/technique_six_elements_progress_preview.gd支持TECHNIQUE_PROGRESS_STATUS_ONLY=1，仅检查每系第3本；本次六批各3974项、共23844项三分辨率静态渲染通过，六张artifacts/technique-progress-{element}-03.png逐本目视通过。覆盖下方状态图待接说明，技能图与布局原基准保持。
+
 ## 六系354张效果图与文件名同步（2026-10-19最新）
 
 30份technique_progress_{element}_{slug}.json的spell／choices已补齐icon，分别使用各自assets/UI-{element}-{slug}-effect-{NN}-{skill}.webp。每系10＋10＋15＋12＋12＝59张，六系354张；木系59张保持，七系共413张。五重顺stages→choices，八重每组spell在先、choices随后，对应两位序号01起。现有slot几何、52a／52b下移5屏幕px、名称／重数／描述不变；1px金边、3px圆角、376×376源图mipmap沿既有组件，未修改生产脚本或原图片像素。
@@ -66,13 +121,13 @@ UI-wood-middown-8.webp仍供青萝化生诀wood_05和万木生杀诀wood_04共�
 
 ## 七系35本上部齐套（2026-10-18最新）
 
-新增water／fire／earth／wind／thunder各01～05共25条记录，沿technique_book_art.json的稳定书目与拼音前缀绑定对应title／label／book／calligraphy.webp。100图开启mipmap，源字节保持且缓存同步。诗意配词与完整来历逐本取《七系功法_35本四栏文案_20261016.md》，诗句分两行、来历测宽取首20字符。共用木系Overview全部布局与字体、曲线衬底、书体居中和书法处理，不增加按系分支；已有木金10条记录保持。上部现在35本齐全，下部仍由独立登记表管理，仅木系已有技能树。
+新增water／fire／earth／wind／thunder各01～05共25条记录，沿technique_book_art.json的稳定书目与拼音前缀绑定对应title／label／book／calligraphy.webp。100图开启mipmap，源字节保持且缓存同步。诗意配词与完整来历逐本取《七系功法_35本四栏文案.md》，诗句分两行、来历测宽取首20字符。共用木系Overview全部布局与字体、曲线衬底、书体居中和书法处理，不增加按系分支；已有木金10条记录保持。上部现在35本齐全，下部仍由独立登记表管理，仅木系已有技能树。
 
 静态预览tests/technique_five_elements_overview_preview.gd继承金系预览，通过环境变量TECHNIQUE_PREVIEW_ELEMENT选择water／fire／earth／wind／thunder，默认water。每批五书三分辨率466项，共2330项通过；artifacts/technique-overview-{slug}.png为上部、technique-{element}-{slug}.png为全页，overview-review-{element}.jpg为五书审阅合图。五组渲染逐本目视无溢出或重叠，无鼠标行为检查。
 
 ## 金系五本上部图文（2026-10-18最新）
 
-metal_01～05依次玄金百炼录、庚金真解、金煞藏锋经、玄庚剑诀、百兵御灵诀，现与木系五本共同登记technique_overviews.json。各书使用对应UI-metal-{slug}-title／label／book／calligraphy.webp；20图mipmap开启。诗句与完整来历来自《七系功法_35本四栏文案_20261016.md》，诗句按两行排布，来历宽度取首20字符测量。复用现有Overview全部布局及文字／书图／书法处理，无金系专用脚本；下部仍独立登记且尚未接金系。
+metal_01～05依次玄金百炼录、庚金真解、金煞藏锋经、玄庚剑诀、百兵御灵诀，现与木系五本共同登记technique_overviews.json。各书使用对应UI-metal-{slug}-title／label／book／calligraphy.webp；20图mipmap开启。诗句与完整来历来自《七系功法_35本四栏文案.md》，诗句按两行排布，来历宽度取首20字符测量。复用现有Overview全部布局及文字／书图／书法处理，无金系专用脚本；下部仍独立登记且尚未接金系。
 
 专项tests/technique_metal_overview_preview.gd -Render，五书三分辨率466项通过。artifacts/technique-overview-{slug}.png为上部局部，technique-metal-{slug}.png为全页，五本逐张目视通过；木系原数据保持。
 
@@ -185,7 +240,7 @@ status_backplate.columns=[0,1,2,3,4]，screen_offset_y=-2，display_width=70，p
 
 ## 木系五本上部独立展示（2026-10-18最新）
 
-`data/ui/technique_overviews.json`现登记wood_01～05：百兽驭灵录／青木真解／枯荣生灭经／万木生杀诀／青萝化生诀，覆盖下方上部仅青萝或仅两书的历史范围。各自绑定assets中的title／label／book／calligraphy，诗句与完整来历来自`output/imagegen/七系功法_35本四栏文案_20261016.md`；青木单句按逗号分成两行，其余保持原诗意配词。新增三本的origin_width_sample按同款约19字测宽，字体／颜色／原生像素／渐隐与书法墨底算法不变，未另建单书脚本或改公共布局。百兽对应baishouyulinglu，不使用另存baishouyulingjue图。
+`data/ui/technique_overviews.json`现登记wood_01～05：百兽驭灵录／青木真解／枯荣生灭经／万木生杀诀／青萝化生诀，覆盖下方上部仅青萝或仅两书的历史范围。各自绑定assets中的title／label／book／calligraphy，诗句与完整来历来自`output/imagegen/七系功法_35本四栏文案.md`；青木单句按逗号分成两行，其余保持原诗意配词。新增三本的origin_width_sample按同款约19字测宽，字体／颜色／原生像素／渐隐与书法墨底算法不变，未另建单书脚本或改公共布局。百兽对应baishouyulinglu，不使用另存baishouyulingjue图。
 
 新增12图mipmap，五本book已刷新；左栏booksimple不受影响。上部以自身登记表独立决定显隐，下部仍严格使用原青萝／万木登记表，新三本不显示他书技能树，其他30书不显示木系上部。纯静态专项`tests/technique_wood_overview_preview.gd -Render`覆盖五书三分辨率，2K上部截图为`artifacts/technique-overview-<拼音>.png`、整屏为`technique-wood-<拼音>.png`；本轮420项通过。只接展示，不改变学习、解锁、战斗或存档。
 

@@ -45,6 +45,8 @@ static func stay(state: MapLoadoutState, status: MapPlayerStatus, config: Dictio
 	if not error.is_empty(): return {"error":error}
 	# One current lodging effect: later stays replace both strength and expiry.
 	candidate.lodging_bonus = {"source_id":room_id,"percent":int(quote.room.bonus_percent),"start_day":quote.start_day,"expires_day":quote.expires_day}
+	if not candidate.growth.is_empty():
+		for key: String in recovery.result.after: candidate.growth.resources[key]=CultivationGrowth.cents(recovery.result.after[key])
 	error = MapLoadoutStore.save(candidate,path)
 	if not error.is_empty(): return {"error":error}
 	error = state.restore(candidate.snapshot())

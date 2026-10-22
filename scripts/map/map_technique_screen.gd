@@ -33,6 +33,9 @@ var selected_element_id := "base.element.metal"
 var book_list: VBoxContainer
 var book_cards: Array[Button] = []
 var selected_book_id := ""
+var learning_state: MapLoadoutState
+var spell_detail: Control
+var enhancement_detail: Control
 
 func _init() -> void:
 	name = "MapTechniqueScreen"
@@ -67,8 +70,49 @@ func _init() -> void:
 	right_panel.anchor_left = 1.0
 	_build_sidebar()
 	_build_progress_heading()
+	_build_spell_detail()
 	resized.connect(_layout)
 	visibility_changed.connect(_reveal_selected_book)
+	visibility_changed.connect(_refresh_learning)
+	book_selected.connect(func(_id: String): _refresh_learning())
+
+func bind_learning(state: MapLoadoutState, _path: String) -> void:
+	learning_state=state
+	# Read-only detail/left-column labels observe the same authoritative state.
+	state.changed.connect(func():
+		if visible: _refresh_learning()
+	)
+
+func _refresh_learning() -> void:
+	_refresh_spell_detail()
+	if learning_state==null or not visible: return
+	var knowledge:=learning_state.knowledge
+	for card in book_cards:
+		var badge:=card.find_child("Comprehension",true,false) as Label
+		if badge!=null: badge.text=CultivationDescription.mastery_caption(knowledge.level(card.book_id))
+
+func _build_spell_detail() -> void:
+	var layer := Node2D.new()
+	layer.name = "SpellDetailLayer"
+	layer.z_index = 2
+	right_panel.add_child(layer)
+	spell_detail = preload("res://scripts/map/map_technique_spell_detail.gd").new()
+	layer.add_child(spell_detail)
+	enhancement_detail = preload("res://scripts/map/map_technique_enhancement_detail.gd").new()
+	layer.add_child(enhancement_detail)
+	right_panel.resized.connect(func():
+		spell_detail.size = right_panel.size
+		enhancement_detail.size = right_panel.size)
+	progress_art.rank_selected.connect(func(_rank: int): _refresh_spell_detail())
+	progress_art.layout_changed.connect(_refresh_spell_detail)
+
+func _refresh_spell_detail() -> void:
+	if spell_detail == null: return
+	spell_detail.size = right_panel.size
+	spell_detail.show_selection(selected_book_id, progress_art.rank_selection.selected_rank, learning_state)
+	enhancement_detail.size = right_panel.size
+	enhancement_detail.show_selection(selected_book_id, progress_art.rank_selection.selected_rank, learning_state)
+	if enhancement_detail.visible: spell_detail.hide()
 
 func _build_progress_heading() -> void:
 	# Keep these decorative controls out of PanelContainer's sizing pass.
@@ -178,7 +222,7 @@ func _build_sidebar() -> void:
 	book_list.add_theme_constant_override("separation", 10)
 	body.add_child(book_list)
 
-func configure(library: CultivationLibrary) -> void:
+func configure(library: CultivationLibrary, knowledge: CultivationKnowledge = null) -> void:
 	var book_art: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/technique_book_art.json"))
 	for card in book_cards:
 		book_list.remove_child(card)
@@ -195,7 +239,7 @@ func configure(library: CultivationLibrary) -> void:
 			var book: Dictionary = library.books[id]
 			if "base.element." + String(book.element) != element_id: continue
 			var card := preload("res://scripts/map/map_technique_book_card.gd").new()
-			card.configure(book, category.get_theme_color("font_color"), group)
+			card.configure(book, category.get_theme_color("font_color"), group, knowledge.level(book.id) if knowledge != null else 0)
 			if book_art.has(id): card.set_preview_texture(BattleActionButton.trimmed_art(book_art[id]))
 			book_list.add_child(card)
 			book_cards.append(card)
@@ -215,6 +259,18 @@ func configure(library: CultivationLibrary) -> void:
 func _show_category() -> void:
 	for card in book_cards:
 		card.visible = card.element_id == selected_element_id
+
+func focus_book(book_id: String) -> bool:
+	for card in book_cards:
+		if card.book_id != book_id: continue
+		card.button_pressed = true
+		selected_book_id = book_id
+		_reveal_selected_book()
+		progress_art.show_book(book_id)
+		overview.show_book(book_id)
+		_refresh_learning()
+		return true
+	return false
 
 func _reveal_selected_book() -> void:
 	if not visible: return
@@ -240,6 +296,7 @@ func _build_categories() -> void:
 		var button := Button.new()
 		var color := Color(String(category.color))
 		var element_id := String(category.element_id)
+		var text_color := Color("ffe88c") if element_id == "base.element.metal" else color
 		button.name = "Category_" + element_id.get_slice(".", 2)
 		button.text = category.label
 		button.custom_minimum_size = Vector2(31, 31)
@@ -249,7 +306,7 @@ func _build_categories() -> void:
 		button.add_theme_font_override("font", category_font)
 		button.add_theme_font_size_override("font_size", 19)
 		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
-			button.add_theme_color_override(state, color)
+			button.add_theme_color_override(state, text_color)
 		button.add_theme_stylebox_override("normal", _category_style(color, false))
 		button.add_theme_stylebox_override("hover", _category_style(color, false, true))
 		button.add_theme_stylebox_override("pressed", _category_style(color, true))

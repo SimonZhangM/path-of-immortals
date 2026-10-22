@@ -174,16 +174,16 @@ func test_status_timing() -> void:
 		a.stamina = 10
 		r.apply_status(a, status, 5, b, 0)
 		if status == "破甲":
-			tick(r, a, status, 2_000_000)
+			tick(r, a, status, 1_000_000)
 			check(r.layers(a, status) == 5, "armor break holds10s")
 			tick(r, a, status, 10_000_000)
 			check(r.layers(a, status) == 4, "armor break first decay10s")
 			continue
 		if status == "驱散":
 			r.apply_status(a, "反锋", 3, a, 0)
-		tick(r, a, status, 1_999_999)
+		tick(r, a, status, 999_999)
 		check(r.layers(a, status) == 5 and a.hp == 100, "no premature tick " + status)
-		tick(r, a, status, 2_000_000)
+		tick(r, a, status, 1_000_000)
 		match status:
 			"生机": check(a.hp == 105 and r.layers(a, status) == 4, "regen locks5 then consumes1")
 			"毒蚀": check(a.hp == 95 and r.layers(a, status) == 4, "toxin direct5 consumes1")
@@ -192,7 +192,7 @@ func test_status_timing() -> void:
 			"流血", "灼烧":
 				check(a.hp < 100 and r.layers(a, status) == 5, "dot ticks without decay " + status)
 				var next: int = a.combat_statuses[status].next
-				r.apply_status(a, status, 2, b, 2_500_000)
+				r.apply_status(a, status, 2, b, 1_500_000)
 				check(a.combat_statuses[status].next == next, "dot refresh preserves next tick " + status)
 				var expiry: int = a.combat_statuses[status].expires
 				# Resolve every scheduled tick; endpoint must remove before dealing damage.
@@ -202,12 +202,12 @@ func test_status_timing() -> void:
 				tick(r, a, status, expiry)
 				check(a.hp == hp and r.layers(a, status) == 0, "no expiry dot " + status)
 			"重伤":
-				check(r.active_injury(a, 2_000_000) == 5 and r.layers(a, status) == 5, "injury activates2s no decay")
-				check(r.restore(a, "hp", 3, 2_000_000) == 0 and a.hp == 100, "injury cannot invert healing")
-				var cost := r.costs(a, registry.get_item("base.map_item.qingshi_short_sword"), 2_000_000)
+				check(r.active_injury(a, 1_000_000) == 5 and r.layers(a, status) == 5, "injury activates1s no decay")
+				check(r.restore(a, "hp", 3, 1_000_000) == 0 and a.hp == 100, "injury cannot invert healing")
+				var cost := r.costs(a, registry.get_item("base.map_item.qingshi_short_sword"), 1_000_000)
 				check(cost == Vector2(8,0), "injury only charges existing resource cost")
-				tick(r, a, status, 3_000_000)
-				check(r.layers(a, status) == 4, "injury first decay3s")
+				tick(r, a, status, 2_000_000)
+				check(r.layers(a, status) == 4, "injury first decay2s")
 			"驱散":
 				check(r.layers(a, "反锋") == 0 and r.layers(a, status) == 2, "dispel removes one buff layer per unit")
 				r.apply_status(a, "生机", 4, a, 3_000_000)

@@ -1,4 +1,7 @@
 {
-  "root": "E:\\games\\素材\\spine特效",
+  "libraries": [
+    { "id": "classic", "name": "原始 Spine 特效", "root": "E:\\games\\素材\\spine特效" },
+    { "id": "advanced141", "name": "141套Spine高级特效", "root": "E:\\games\\素材\\141套Spine高级特效" }
+  ],
   "port": 8765
 }

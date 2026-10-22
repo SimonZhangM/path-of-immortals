@@ -136,6 +136,10 @@ func _setup_status_header() -> void:
 	if not startup_error.is_empty():
 		push_error(startup_error)
 		return
+	# Events are created before the player status on a fresh map session.
+	# Bind only after initialization so dialogue shares the header's live state.
+	if dialogue != null:
+		dialogue.player_status = player_status
 	status_header = MapStatusHeader.new()
 	startup_error = status_header.configure(player_status, config, definition.get("title_image", ""))
 	if not startup_error.is_empty():
@@ -177,6 +181,25 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 		loadout = null
 		push_error(startup_error)
 		return
+	if loadout.growth.is_empty():
+		if not player_status.growth.is_empty(): loadout.growth=player_status.growth.duplicate(true)
+		else:
+			loadout.growth = CultivationGrowth.initial(int(registry.get_cultivation(loadout.cultivation_rank_id).order))
+			var base := CultivationGrowth.maxima(loadout.growth)
+			for key: String in base: loadout.growth.resources[key] = int(base[key])*100
+		loadout.growth.experience=player_status.experience
+		startup_error=MapLoadoutStore.save(loadout,inventory_save_path)
+		if not startup_error.is_empty(): return
+	player_status._active_board_bonuses=loadout.board.resource_bonuses.duplicate()
+	player_status.character_definition.board_layout=loadout.board.id
+	player_status.apply_growth(loadout.growth)
+	if not player_status.changed.is_connected(player_status.capture_growth): player_status.changed.connect(player_status.capture_growth)
+	loadout.changed.connect(func():
+		if not loadout.growth.is_empty():
+			player_status._active_board_bonuses=loadout.board.resource_bonuses.duplicate()
+			player_status.character_definition.board_layout=loadout.board.id
+			player_status.apply_growth(loadout.growth)
+	)
 	loadout.changed.connect(_refresh_travel_capacity)
 	_refresh_travel_capacity()
 	event_state.reward_claimed = loadout.has_reward
@@ -250,13 +273,15 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	technique_screen = preload("res://scripts/map/map_technique_screen.gd").new()
 	var technique_memory := preload("res://scripts/map/map_technique_view_memory.gd")
 	technique_screen.selected_book_id = technique_memory.read_book(inventory_save_path, registry.library)
-	technique_screen.configure(registry.library)
+	technique_screen.configure(registry.library, loadout.knowledge)
+	technique_screen.bind_learning(loadout,inventory_save_path)
 	technique_screen.book_selected.connect(func(book_id: String):
 		if technique_memory.save_book(inventory_save_path, registry.library, book_id) != OK:
 			push_warning("功法浏览记录保存失败，本次选择仍保留，重启后可能无法恢复。"))
 	add_child(technique_screen)
 	technique_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	technique_screen.close_requested.connect(func(): set_technique_open(false))
+	ItemTooltipHost.for_control(self).technique_requested.connect(_open_book_details)
 	if sign_motion != null:
 		inventory_screen.visibility_changed.connect(func(): sign_motion.set_suspended(is_inventory_open() or is_technique_open()))
 		technique_screen.visibility_changed.connect(func(): sign_motion.set_suspended(is_inventory_open() or is_technique_open()))
@@ -329,6 +354,20 @@ func is_inventory_open() -> bool:
 
 func is_technique_open() -> bool:
 	return technique_screen != null and technique_screen.visible
+
+func _open_book_details(book_id: String) -> void:
+	if not is_visible_in_tree() or not loadout.registry.library.books.has(book_id): return
+	if is_inventory_open():
+		if not _prepare_inventory_close(): return
+		if not inventory_screen.warehouse_id.is_empty(): _close_home_warehouse()
+		else: inventory_screen.hide()
+	elif event_state != null and event_state.is_active(): return
+	technique_screen.show()
+	technique_screen.focus_book(book_id)
+	status_header.map_title.hide()
+	player.pause()
+	_end_drag()
+	_clear_hover()
 
 func set_technique_open(open: bool) -> void:
 	if technique_screen == null or is_technique_open() == open: return
@@ -443,6 +482,13 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventKey and event.pressed and not event.echo:
 			if event.keycode == KEY_ESCAPE or event.is_action_pressed("map_techniques"):
 				set_technique_open(false)
+			else:
+				# Let the focused rank button receive native activation/navigation.
+				# The early return below still prevents map movement shortcuts.
+				var focus := get_viewport().gui_get_focus_owner()
+				if focus != null and technique_screen.progress_art.rank_selection.is_ancestor_of(focus):
+					for action in ["ui_accept", "ui_focus_next", "ui_focus_prev", "ui_left", "ui_right", "ui_up", "ui_down"]:
+						if event.is_action(action): return
 			get_viewport().set_input_as_handled()
 		return
 	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "inn":
@@ -589,6 +635,7 @@ func _setup_events() -> void:
 	dialogue.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	dialogue.advance_requested.connect(_advance_dialogue)
 	reward_dialog = MapRewardDialog.new()
+	reward_dialog.use_small_reward_art(MapExitDialog.DESIGN_SIZE.y)
 	add_child(reward_dialog)
 	reward_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	reward_dialog.accept_requested.connect(_accept_reward)
@@ -633,6 +680,7 @@ func _setup_events() -> void:
 	cultivation_progress_dialog.board_requested.connect(_open_cultivation_inventory)
 	cultivation_progress_dialog.technique_requested.connect(_open_cultivation_techniques)
 	cultivation_progress_dialog.technique_choice.technique_chosen.connect(func(id: String): cultivation_session.choose_technique(id))
+	cultivation_progress_dialog.technique_choice.books_chosen.connect(func(ids: Array): cultivation_session.select_books(ids))
 	cultivation_progress_dialog.technique_choice.closed.connect(func():
 		if cultivation_session!=null: cultivation_session.suspend("choice",false,WorldCalendar.current_day(loadout.calendar))
 	)
@@ -1003,6 +1051,13 @@ func _request_cultivation(mode_id: String, duration_days: int) -> void:
 	if event_state.phase != "cultivation" or not cultivation_dialog.visible: return
 	var session:=MapCultivationSession.new()
 	if not session.begin(event_state.active_event(),mode_id,duration_days,WorldCalendar.current_day(loadout.calendar)): return
+	var books: Array[Dictionary] = []
+	for record: Dictionary in loadout.storage_records():
+		if record.category == "book": books.append(record)
+	session.set_available_techniques(books)
+	if not session.bind(loadout,player_status,inventory_save_path):
+		cultivation_dialog.notice.text=session.error
+		return
 	cultivation_session=session
 	cultivation_dialog.hide()
 	cultivation_progress_dialog.present(session)
@@ -1014,7 +1069,7 @@ func _toggle_cultivation_pause() -> void:
 func _open_cultivation_techniques() -> void:
 	if cultivation_session==null or not cultivation_progress_dialog.visible: return
 	cultivation_session.suspend("choice",true,WorldCalendar.current_day(loadout.calendar))
-	cultivation_progress_dialog.technique_choice.present_techniques(cultivation_session.techniques,cultivation_session.selected_technique_id)
+	cultivation_progress_dialog.technique_choice.present_multiple(cultivation_session.techniques,cultivation_session.pending_ids if cultivation_session._selection_pending else cultivation_session.selected_ids,int(cultivation_session.site.get("slots",1)))
 
 func _open_cultivation_inventory() -> void:
 	if cultivation_session==null or not cultivation_progress_dialog.visible: return
@@ -1374,6 +1429,7 @@ func _setup_player() -> void:
 	_clamp_position()
 
 func _process(delta: float) -> void:
+	if cultivation_session != null and not Engine.is_editor_hint(): cultivation_session.advance(delta)
 	if is_inventory_open() or is_technique_open() or is_exit_open():
 		return
 	if travel != null and player != null:

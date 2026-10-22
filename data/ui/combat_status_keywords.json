@@ -21,7 +21,7 @@
     "kind": "debuff",
     "icon": "res://assets/debuff-jin-2.webp",
     "color": "ffe98c",
-    "description": "首次2秒后开始，每秒按当前层数直接扣气血，绕过盾甲；生效起持续5秒，追加刷新到期但保留下一跳。"
+    "description": "首次1秒后开始，每秒按当前层数直接扣气血，绕过盾甲；生效起持续5秒，追加刷新到期但保留下一跳。"
   },
   {
     "id": "vitality",
@@ -29,7 +29,7 @@
     "kind": "buff",
     "icon": "res://assets/buff-mu.webp",
     "color": "a2f56d",
-    "description": "2秒后开始每秒按当前层数恢复气血，每次恢复后减少1层。"
+    "description": "首次1秒后开始，每秒按当前层数恢复气血，每次结算减少1层。"
   },
   {
     "id": "toxin",
@@ -37,7 +37,7 @@
     "kind": "debuff",
     "icon": "res://assets/debuff-mu.webp",
     "color": "c4f25a",
-    "description": "持续损失气血，无视护甲。"
+    "description": "首次1秒后开始，每秒按当前层数直接扣气血，绕过盾甲，每次结算减少1层。"
   },
   {
     "id": "entangle",
@@ -53,7 +53,7 @@
     "kind": "buff",
     "icon": "res://assets/buff-shui.webp",
     "color": "62dfff",
-    "description": "2秒后开始每秒按当前层数同时恢复灵力和体力，每次恢复后减少1层。"
+    "description": "首次1秒后开始，每秒按当前层数同时恢复灵力和体力，每次结算减少1层。"
   },
   {
     "id": "withered_meridians",
@@ -61,7 +61,7 @@
     "kind": "debuff",
     "icon": "res://assets/debuff-shui.webp",
     "color": "88baff",
-    "description": "2秒后开始每秒按当前层数同时损失灵力和体力，每次结算后减少1层。"
+    "description": "首次1秒后开始，每秒按当前层数同时扣减灵力和体力，每次结算减少1层。"
   },
   {
     "id": "frost",
@@ -85,7 +85,7 @@
     "kind": "debuff",
     "icon": "res://assets/debuff-huo.webp",
     "color": "ff875f",
-    "description": "每层每秒造成1点火属性伤害，持续10秒；再次施加会叠加层数并刷新持续时间。"
+    "description": "首次1秒后开始，每层每秒造成1点火属性伤害；生效起持续10秒，追加刷新到期但保留下一跳。"
   },
   {
     "id": "armor_break",
@@ -117,7 +117,7 @@
     "kind": "debuff",
     "icon": "res://assets/debuff-tu-2.webp",
     "color": "f6b86a",
-    "description": "首次2秒后生效，减少等同层数的每次气血恢复，并增加原本非零的体力和灵力费用；第3秒起每秒减1层。"
+    "description": "首次1秒后生效，减少等同层数的每次气血恢复，并增加原本非零的体力和灵力费用；第2秒起每秒减1层。"
   },
   {
     "id": "agility",
@@ -141,7 +141,7 @@
     "kind": "debuff",
     "icon": "res://assets/debuff-feng-2.webp",
     "color": "a2f7dc",
-    "description": "首次2秒后随机拆除Buff；核心Buff逐层、持续药效和免疫按整份扣除。余层无目标时暂存5秒，有新目标后1秒再结算。"
+    "description": "首次1秒后随机拆除Buff；核心Buff逐层、持续药效和免疫按整份扣除。余层无目标时暂存5秒，有新目标后1秒再结算。"
   },
   {
     "id": "thunder",

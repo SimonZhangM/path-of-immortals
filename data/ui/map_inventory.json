@@ -2,7 +2,9 @@
   "faction_caption": "",
   "bag_caption": "属性加成",
   "motto": "天地灵物，纳于一盘",
-  "board_display_x_offsets": {"base.board.qinglan_4": 2.5},
+  "board_display_x_offsets": {
+    "base.board.qinglan_4": 2.5
+  },
   "board_display_scales": {
     "base.board.bag": 0.8,
     "base.board.qinglan_1": 0.8,
@@ -16,6 +18,7 @@
     "artifact": "法器",
     "board": "阵盘",
     "talisman": "符箓",
+    "book": "书籍",
     "pill": "丹药",
     "throwable": "掷具",
     "bait": "诱饵",
@@ -24,27 +27,90 @@
     "beast": "兽材",
     "mineral": "矿材",
     "exotic": "异材",
+    "material": "灵材",
     "blueprint": "蓝图",
     "pill_recipe": "丹方",
     "artifact_recipe": "器方",
     "talisman_recipe": "符方",
     "bait_recipe": "饵方",
     "key": "关键",
+    "misc": "杂物",
+    "spell": "法术"
+  },
+  "collections": {
+    "all": "全部",
+    "favorite": "收藏",
+    "equipment": "器物",
+    "cultivation": "功法",
+    "consumable": "消耗",
+    "material": "灵材",
+    "key": "关键",
     "misc": "杂物"
   },
-  "collections": {"all": "全部", "favorite": "收藏", "equipment": "器物", "consumable": "消耗", "material": "灵材", "blueprint": "蓝图", "key": "关键", "misc": "杂物"},
+  "book_elements": {
+    "metal": "金系",
+    "wood": "木系",
+    "water": "水系",
+    "fire": "火系",
+    "earth": "土系",
+    "wind": "风系",
+    "thunder": "雷系"
+  },
   "category_groups": {
-    "equipment": ["weapon", "armor", "artifact", "board", "talisman"],
-    "consumable": ["pill", "throwable", "bait", "food"],
-    "material": ["plant", "beast", "mineral", "exotic"],
-    "blueprint": ["pill_recipe", "artifact_recipe", "talisman_recipe", "bait_recipe"]
+    "equipment": [
+      "weapon",
+      "armor",
+      "artifact",
+      "board",
+      "talisman"
+    ],
+    "cultivation": [
+      "book",
+      "spell"
+    ],
+    "consumable": [
+      "pill",
+      "throwable",
+      "bait",
+      "food"
+    ],
+    "material": [
+      "plant",
+      "beast",
+      "mineral",
+      "exotic"
+    ],
+    "blueprint": [
+      "pill_recipe",
+      "artifact_recipe",
+      "talisman_recipe",
+      "bait_recipe"
+    ]
   },
   "formation_icons": [
-    {"name": "攻击", "icon": "res://assets/zhen-zhandou.webp"},
-    {"name": "防御", "icon": "res://assets/zhen-fangyu.webp"},
-    {"name": "平衡", "icon": "res://assets/zhen-pingheng.webp"},
-    {"name": "修炼", "icon": "res://assets/zhen-xiulian.webp"},
-    {"name": "炼丹", "icon": "res://assets/zhen-liandan.webp"},
-    {"name": "炼器", "icon": "res://assets/zhen-lianqi.webp"}
+    {
+      "name": "攻击",
+      "icon": "res://assets/zhen-zhandou.webp"
+    },
+    {
+      "name": "防御",
+      "icon": "res://assets/zhen-fangyu.webp"
+    },
+    {
+      "name": "平衡",
+      "icon": "res://assets/zhen-pingheng.webp"
+    },
+    {
+      "name": "修炼",
+      "icon": "res://assets/zhen-xiulian.webp"
+    },
+    {
+      "name": "炼丹",
+      "icon": "res://assets/zhen-liandan.webp"
+    },
+    {
+      "name": "炼器",
+      "icon": "res://assets/zhen-lianqi.webp"
+    }
   ]
 }

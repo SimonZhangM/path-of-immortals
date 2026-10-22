@@ -8,7 +8,7 @@ var preview_art: TextureRect
 func set_preview_texture(texture: Texture2D) -> void:
 	preview_art.texture = texture
 
-func configure(book: Dictionary, color: Color, group: ButtonGroup) -> void:
+func configure(book: Dictionary, color: Color, group: ButtonGroup, stage: int = 0) -> void:
 	book_id = book.id
 	element_id = "base.element." + String(book.element)
 	name = "Book_" + book_id.get_slice(".", 2)
@@ -17,7 +17,7 @@ func configure(book: Dictionary, color: Color, group: ButtonGroup) -> void:
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	var artwork := AtlasTexture.new()
-	artwork.atlas = load("res://assets/UI-gongfa-left-selectbook.webp")
+	artwork.atlas = load("res://assets/UI-gongfa-left-selectbook-%s.webp" % String(book.element))
 	# Visible frame bounds (alpha >0.1); exclude the source's faint outer halo.
 	artwork.region = Rect2(18, 38, 684, 257)
 	custom_minimum_size = Vector2(241, 94)
@@ -77,12 +77,15 @@ func configure(book: Dictionary, color: Color, group: ButtonGroup) -> void:
 	title.add_theme_font_override("font", book_font)
 	title.add_theme_font_size_override("font_size", 23)
 	title.add_theme_color_override("font_color", Color.WHITE)
+	title.add_theme_color_override("font_shadow_color", Color.BLACK)
+	title.add_theme_constant_override("shadow_offset_x", 1)
+	title.add_theme_constant_override("shadow_offset_y", 1)
 	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(title)
-	# Keep the user's display sample; learning state will be connected separately.
+	# Display the same achieved stage as the inventory mastery background.
 	var status := Label.new()
 	status.name = "Comprehension"
-	status.text = "已领悟"
+	status.text = CultivationDescription.mastery_caption(stage)
 	status.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

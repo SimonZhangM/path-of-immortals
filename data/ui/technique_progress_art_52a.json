@@ -1,5 +1,6 @@
 {
   "texture": "res://assets/UI-wood-middown-52a.webp",
+  "selection_frames": { "first_card": [73, 192, 260, 262] },
   "source_size": [
     1605,
     567

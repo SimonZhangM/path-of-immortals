@@ -1,5 +1,37 @@
 # 地图节点互动与桥头对话（2026-09-15）
 
+## 事件图片与对话新框（2026-10-22更新）
+
+河湾两段剧情共用map-event-chatframe.webp，对话内容按新头像窗口、姓名牌和正文区域排版；主角名读当前MapPlayerStatus.display_name，外门弟子显示“青岚宗弟子”。主角头像继续读当前境界，NPC头像不变。右侧提示三角使用map-event-chatframe-next.webp，作为原整框点击推进的装饰，不额外引入点击逻辑；参考图的回顾／自动／跳过功能未新增。
+
+受伤弟子的事件图框换map-event-picframe.webp，插画保持map-event-1-1.webp；2026-10-22新图框体在源画布内下移14px，取图区域同步改为[101,17,1471,907]，裁切尺寸不变，保证游戏中框体布局位置与大小不变且底角完整。内嵌窗口相对裁切微调为[62,91,1349,758]，等比覆盖并裁切溢出，边缘少量压入金线下避免漏缝。聊天框有效裁切[27,126,2113,437]，头像按椭圆窗口覆盖，姓名按楷体可用宽度适配。三张新图开启mipmap。图片框和聊天框共用屏幕水平中心；布局计算完成后两者一起下移20设计px（1080p为20、2K约26.67），不以位移反算图片尺寸。纯插画阶段隐藏姓名／三角／正文，桥头无插画时只显示聊天框。字段与来源保留于两个事件JSON，实测入口tests/event_dialogue_frames_preview.gd。本条覆盖下方旧map-dialogue／map-event-frame及旧内容坐标说明。
+
+## 剧情领取小号底图（2026-10-21）
+
+剧情“获得物品”领取框单独使用UI-jiaohu-size-s.webp，按有效可见区域等比缩放，与UI-jiaohu-size-m同为363设计px高（2K为484px）。MapScreen对reward_dialog调用use_small_reward_art；原540设计画布内的物品卡、标题、按钮沿用，整体显示乘363/540，标题按新分割线居中。新图开启mipmap，领取与音效逻辑不变。战利品／采集结果继承框未启用此替换，仍保留size1及原尺寸。此条覆盖下方剧情领取框的旧size1／540px显示说明，不改变其他弹窗。静态渲染入口为tests/story_reward_small_art_preview.gd，不包含鼠标或领取行为测试。
+
+## 恢复弹窗素材命名统一（2026-10-21）
+
+当前三个恢复地点按下表加载，覆盖下方历史路径；仅文件名与引用变更，原图内容、UID、mipmap、裁切、文案与休息规则保持。
+
+| 地点 | 弹窗底图 | 内部场景图 |
+|---|---|---|
+| 林间篝火 | `tanchuang-huifu-linjiangouhuo1.webp` | `tanchuang-huifu-linjiangouhuo2.webp` |
+| 山道歇舍 | `tanchuang-huifu-shandaoxieshe1.webp` | `tanchuang-huifu-shandaoxieshe2.webp` |
+| 自己家 | `tanchuang-qingshizhen-shineizijia1.webp` | `tanchuang-qingshizhen-shineizijia2.webp` |
+
+## 店铺人物插画命名统一（2026-10-21）
+
+当前六处店铺人物插画统一为 `tanchuang-qingshizhen-{地点}-boss.webp`，地点分别为liandanfang、shangpu、tiejiangpu、yaocaipu、yiguan、zongmenshangpu；仅去掉旧前缀中的jiaoyi，保留当前在用图像字节、UID及mipmap设置。六份事件配置、钱万顺对话头像和相关测试引用同步迁移；客栈原命名已符合规则，无需修改。医馆目标名称原有的停用旧图已清理，现同名文件是迁移后的当前在用插画。此条覆盖下方历史插画路径及旧图保留说明，背景、裁切、位置、对白与交易规则保持。
+
+## 修炼节点累计提升显示规则（2026-10-19，已确认待实现）
+
+所有修炼节点阶段2的两条进度行右端，改为本次累计获得的人物修为／对应功法修炼度，例“＋18.3”“＋42.6”，不再使用百分比。功法按本书分别计数、书名明确归属，多本不能求和后显示为一本的进度；跨层／跨重不清本次累计。进度条仍显示目标完成比例。
+
+后台修炼数值以两位小数记账，界面四舍五入到一位；尚无收益显示＋0.0，未选功法显示—。每修炼日实际运行阵盘60模拟秒，持续结算体灵消耗／恢复，暂停冻结，跨日保留CD与余额。凡人引气成功率100%。完整规则与候选参数见核心01第1.74及[第四版策划](cultivation-growth-proposal-2026-10-19.md)。
+
+本条是最新确认的目标，并非运行完成记录。当前MapCultivationSession仍只有会话／显示接口，MapCultivationProgressDialog仍读比例；本轮未启用未定产出表或虚构收益。正式接入须以实际事件累计增量替换百分比，不直接用修炼天数乘估算值。
+
 ## 重进地图时恢复路牌状态（2026-10-17）
 
 初始化先无动画同步存档中的日历／节点期限，再统一隐藏已完成路牌，在首个可绘制帧之前完成。初始化不能把历史完成状态当成新完成事件播放0.3秒淡出；立即隐藏操作可以收尾已经开始的淡出。运行中完成事件仍沿用0.3秒淡出，路径圆点和路线不变；遭遇击败后20天、宝箱领取后40天恢复路牌，按当前轮次领取记录判断，含第二轮及后续宝箱。上述持久化冷却覆盖下方早期“重启恢复怪物”的历史说明；采集的重启恢复测试规则保持。
@@ -552,7 +584,7 @@ MapEventState.resolved_event读取地点固定enemy_id（无轮换表时兼容�
 
 ## 怪物资料归属与专属战场（2026-10-08）
 
-八套头像／阵盘引用存于data/ui/enemy_art.json；敌人JSON使用art_profile，Registry合并为运行时portrait／portrait_includes_frame／board_layout，保持所有UI统一读取。美术档案可以先于完整怪物数据注册，不产生可战敌人。
+八套头像／阵盘引用存于data/ui/enemy_art.json；敌人JSON使用art_profile，Registry合并为运行时portrait／portrait_includes_frame／board_layout及可选portrait_frame，保持所有UI统一读取。2026-10-22当前河湾四怪改为无框头像＋独立凡人框，两处共用居中比例，原头像尺寸不变；[几何与验证](enemy-portrait-fit.md)。美术档案可以先于完整怪物数据注册，不产生可战敌人。
 
 敌人主档的presentation统一管理rank_label、category_label、description、battle_background、summary；遭遇事件只保留节点、触发、现场文案、战斗入口与弹窗皮肤。动态摘要行只配stat，显示时从PartyMemberState计算，禁止同时填写value；攻击特点等静态介绍仍配value。EnemyPresentation提供共享校验和展示读取，Registry校验字段与素材引用，地图拒绝展示资料不完整的敌人。旧事件内enemy_rank／enemy_category／enemy_description与presentation.enemy_summary／battle_background已迁移，后续重复配置会被拒绝。
 

@@ -96,10 +96,21 @@ func _ready() -> void:
 			loadout.cultivation_rank_id = party[0].cultivation_rank_id
 			startup_error = MapLoadoutStore.load_into(loadout, loadout_save_path)
 			if startup_error.is_empty():
+				if loadout.growth.is_empty() and not player_snapshot.get("growth",{}).is_empty(): loadout.growth=player_snapshot.growth.duplicate(true)
 				_durable_loadout = loadout
 				_durable_snapshot = loadout.snapshot()
 				party[0].inventory = loadout.inventory
+				party[0].knowledge = loadout.knowledge
+				party[0].test_spell_access = loadout.content_grants.get(MapLoadoutState.TEST_SPELL_GRANT, false)
 				party[0].board = loadout.board
+				if not loadout.growth.is_empty():
+					party[0].cultivation_rank_id=CultivationGrowth.rank_id(loadout.growth)
+					party[0].definition.cultivation_rank=party[0].cultivation_rank_id
+					var limits:=CultivationGrowth.maxima(loadout.growth)
+					for key: String in limits: party[0].definition["max_"+key]=limits[key]
+					# Map snapshots already contain live resources. Standalone entry reads durable values.
+					player_snapshot.character=party[0].definition.duplicate(true)
+					for key: String in limits: player_snapshot.resources[key]=int(loadout.growth.resources.get(key,limits[key]*100))/100.0
 				party[0].definition.board_layout = loadout.board.id
 				party[0].definition.food_modifiers = MapFood.modifiers(loadout)
 				storage = loadout.storage
@@ -109,11 +120,6 @@ func _ready() -> void:
 			return
 	else:
 		_seed_storage()
-	if use_saved_loadout:
-		startup_error = CultivationStore.load_into(party[0].knowledge,registry.library,T01CombatRules.rank(party[0]),loadout_save_path+".cultivation.json")
-		if not startup_error.is_empty():
-			push_error(startup_error)
-			return
 	if cultivation_preview:
 		_setup_cultivation_preview()
 	_placement_rng.randomize()
@@ -287,7 +293,7 @@ func change_board(storage_id: String) -> bool:
 	member.definition.board_layout = selected.id
 	for returned: Dictionary in overflow:
 		simulation.detach(returned.instance_id)
-		if registry.get_item(returned.item_id).category not in ["spell", "book"]:
+		if registry.get_item(returned.item_id).category != "book":
 			storage.put(returned)
 	if simulation.t01 != null:
 		simulation.t01.refresh_equipment(member)
@@ -349,7 +355,7 @@ func equip(storage_id: String, member_index: int, cell: Vector2i, quantity: int 
 			return _inventory_result(false)
 		simulation.remember_paused_item(displaced, returned.units)
 		simulation.detach(displaced)
-		if registry.get_item(returned.item_id).category not in ["spell", "book"]:
+		if registry.get_item(returned.item_id).category != "book":
 			storage.put(returned)
 		placed = entry.instance_id
 	else:
@@ -384,8 +390,8 @@ func can_unequip(member_index: int, id: String) -> bool:
 
 func _storage_capacity_error(additions: Array, remove_id: String = "", remove_count: int = 0) -> String:
 	if _durable_loadout == null: return ""
-	var physical := additions.filter(func(entry: Dictionary): return not entry.is_empty() and registry.get_item(entry.item_id).category not in ["spell","book"])
-	return MapLoadoutState.capacity_error(storage,MapLoadoutState.projected_storage(storage,physical,remove_id,remove_count),_durable_loadout.storage_capacity_limit())
+	var physical := additions.filter(func(entry: Dictionary): return not entry.is_empty() and registry.get_item(entry.item_id).category != "book")
+	return MapLoadoutState.capacity_error(storage,MapLoadoutState.projected_storage(storage,physical,remove_id,remove_count),_durable_loadout.storage_capacity_limit(),registry)
 
 func unequip(member_index: int, id: String, single: bool = false) -> bool:
 	if not can_edit_inventory() or member_index < 0 or member_index >= party.size():
@@ -402,7 +408,7 @@ func unequip(member_index: int, id: String, single: bool = false) -> bool:
 	simulation.remember_paused_item(id, entry.units)
 	if bag.get_instance(id).is_empty():
 		simulation.detach(id)
-	if registry.get_item(entry.item_id).category not in ["spell","book"]: storage.put(entry)
+	if registry.get_item(entry.item_id).category != "book": storage.put(entry)
 	inventory_changed.emit()
 	return _inventory_result(true)
 
@@ -486,7 +492,19 @@ func choose_cultivation_branch(book_id: String, stage: int, choice: String) -> b
 	return true
 
 func _save_knowledge(old: Dictionary) -> bool:
-	var error := CultivationStore.save(party[0].knowledge,loadout_save_path+".cultivation.json" if use_saved_loadout else "")
+	var error := ""
+	if use_saved_loadout and _durable_snapshot.has("growth"):
+		var prepared:=MapLoadoutStore.candidate(_durable_loadout)
+		error=prepared.error
+		if error.is_empty():
+			var next: MapLoadoutState=prepared.state
+			var raw:=_durable_snapshot.duplicate(true)
+			raw.learning=party[0].knowledge.snapshot()
+			error=next.restore(raw)
+			if error.is_empty(): error=MapLoadoutStore.save(next,loadout_save_path)
+			if error.is_empty(): _durable_snapshot=next.snapshot()
+	else:
+		error=CultivationStore.save(party[0].knowledge,loadout_save_path+".cultivation.json" if use_saved_loadout else "")
 	if not error.is_empty():
 		party[0].knowledge.restore(old,registry.library,T01CombatRules.rank(party[0]))
 		feedback.emit(error)
@@ -501,12 +519,8 @@ func record_book_acquired(book_id: String) -> bool:
 	return _save_knowledge(old)
 
 func equip_known_book(book_id: String, cell: Vector2i, vertical := false) -> bool:
-	if not can_edit_inventory() or not party[0].knowledge.learned.has(book_id): return false
-	var id := "run."+book_id
-	if not party[0].inventory.add_item(id,book_id,cell,vertical): return false
-	simulation.attach(party[0],0,id,simulation.state.phase==GameState.Phase.BATTLE)
-	inventory_changed.emit()
-	return true
+	# Compatibility command: physical books can never occupy a battle cell.
+	return false
 
 func equip_learned_spell(spell_id: String, cell: Vector2i) -> bool:
 	var item := registry.get_item(spell_id)
@@ -557,7 +571,6 @@ func _setup_cultivation_preview() -> void:
 	party[0].inventory=InventoryState.new(registry,party[0].board.grid_size)
 	party[0].inventory.add_item("preview.spell",preview_spell_id,Vector2i.ZERO)
 	party[0].inventory.add_item("preview.weapon","base.map_item.qingshi_short_sword",Vector2i(0,1))
-	party[0].inventory.add_item("preview.book",spell.book_id,Vector2i(1,1))
 	storage=SharedStorage.new()
 	enemies[0].definition.max_hp=5000
 	enemies[0].definition.name="法术观察用木桩"

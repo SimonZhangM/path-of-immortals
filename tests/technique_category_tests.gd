@@ -69,7 +69,7 @@ func run() -> void:
 			var title: Label = card.find_child("BookName",true,false)
 			actual.append(title.text)
 			var labels := card.find_children("*","Label",true,false)
-			check(labels.size()==2 and labels[1].text=="已领悟", "only book name and comprehension badge remain")
+			check(labels.size()==2 and labels[1].text=="未领悟", "book name and actual initial comprehension badge")
 			check(absf(labels[1].get_global_rect().position.x-title.get_global_rect().position.x)<0.1 and labels[1].get_theme_stylebox("normal") is StyleBoxFlat, "outlined badge starts flush with book name")
 			check(card.preview_art.texture is AtlasTexture and card.preview_art.texture.atlas.resource_path==artwork[card.book_id] and card.preview_art.texture.atlas.get_image().has_mipmaps(), "matching imported simple cover with mipmaps")
 			check(card.preview_art.size.x==62 and card.preview_art.get_global_rect().end.x<title.get_global_rect().position.x and card.preview_art.stretch_mode==TextureRect.STRETCH_KEEP_ASPECT_CENTERED, "left cover preserves aspect and clears text")

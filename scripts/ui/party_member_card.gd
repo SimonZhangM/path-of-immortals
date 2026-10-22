@@ -5,7 +5,9 @@ signal clicked(index: int)
 
 const BAR_WIDTH := 200.0
 const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
+const ENEMY_FRAMES = preload("res://scripts/presentation/enemy_portrait_frames.gd")
 const BASE_SIZE := Vector2(410, 236)
+const ENEMY_PORTRAIT_CANVAS_SIZE := 272.0
 const COMPACT_SCALE := 0.66
 var member_index: int = -1
 var stat_bars: Dictionary = {}
@@ -24,6 +26,7 @@ var _content: HBoxContainer
 var _last_values: Array = []
 var _last_cultivation_id: String = "uninitialized"
 var _frame_override: Dictionary = {}
+var _separate_enemy_frame := false
 var nameplate: TextureRect
 var name_label: Label
 var hit_effects: Array[HitFeedback] = []
@@ -31,6 +34,7 @@ var portrait_vertical_offset := 0.0
 
 func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) -> void:
 	_frame_override = frame_override.duplicate(true)
+	_separate_enemy_frame = member.definition.has("portrait_frame") and not _frame_override.get("player_level_frame", false)
 	member_index = index
 	name = "PartyMember%d" % (index + 1)
 	custom_minimum_size = BASE_SIZE
@@ -43,8 +47,8 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 	add_child(_content)
 	portrait = TextureRect.new()
 	portrait.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	portrait.texture = load(member.definition["portrait"])
-	if member.definition.has("portrait_region"):
+	portrait.texture = PLAYER_FRAMES.portrait_for(member.cultivation_rank_id) if _frame_override.get("player_level_frame", false) else load(member.definition["portrait"])
+	if not _frame_override.get("player_level_frame", false) and member.definition.has("portrait_region"):
 		var region: Array = member.definition.portrait_region
 		var cropped := AtlasTexture.new()
 		cropped.atlas = portrait.texture
@@ -53,7 +57,7 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var cultivation := _resolved_frame_style(member)
-	if member.definition.get("portrait_includes_frame", false): cultivation = {}
+	if member.definition.get("portrait_includes_frame", false) or _separate_enemy_frame: cultivation = {}
 	if not cultivation.is_empty():
 		_portrait_slot = Control.new()
 		_portrait_slot.custom_minimum_size = Vector2(236, 236)
@@ -81,7 +85,10 @@ func configure(index: int, member: RefCounted, frame_override: Dictionary = {}) 
 		_content.add_child(image_slot)
 		image_slot.add_child(portrait)
 		portrait.position = Vector2(-18, -18 + portrait_vertical_offset)
-		portrait.size = Vector2(272, 272)
+		portrait.size = Vector2.ONE * ENEMY_PORTRAIT_CANVAS_SIZE
+	if _separate_enemy_frame:
+		portrait_frame = ENEMY_FRAMES.create_overlay(portrait)
+		ENEMY_FRAMES.show_definition(portrait_frame, member.definition)
 	# Fixed resource origin: extra armor/status lines never recenter the bars
 	# or enlarge the portrait's HBox minimum height.
 	var details := Control.new()
@@ -192,8 +199,9 @@ func _layout_defense_rows() -> void:
 
 func _layout_portrait() -> void:
 	if _frame_override.get("player_level_frame", false):
-		# Keep the old portrait/ring scale and center, while showing the full ornament.
-		var source_scale := minf(_portrait_slot.size.x, _portrait_slot.size.y) / PLAYER_FRAMES.RING_REFERENCE_SIZE
+		# Match the enemy's painted circle, not its transparent source canvas.
+		var circle_size: float = ENEMY_PORTRAIT_CANVAS_SIZE * ENEMY_FRAMES.geometry.portrait_radius * 2.0 / ENEMY_FRAMES.geometry.portrait_canvas_size
+		var source_scale := circle_size / PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE
 		portrait.size = Vector2.ONE * PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE * source_scale
 		portrait.position = (_portrait_slot.size - portrait.size) * 0.5 + Vector2(0, portrait_vertical_offset)
 		portrait_frame.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -233,7 +241,7 @@ func _layout_nameplate() -> void:
 		var display_scale := _content.scale.x
 		nameplate.size = Vector2(210, 48) * display_scale
 		nameplate.position = Vector2(portrait.position.x + portrait.size.x * 0.5, portrait.position.y + portrait.size.y - 7) * display_scale - Vector2(nameplate.size.x * 0.5, 0)
-		if _frame_override.is_empty():
+		if _frame_override.is_empty() or _frame_override.get("player_level_frame", false):
 			nameplate.position.y = 200 + portrait_vertical_offset * display_scale
 
 func _draw() -> void:
@@ -254,15 +262,17 @@ func set_primary(primary: bool) -> void:
 
 func refresh(member: RefCounted) -> void:
 	name_label.text = "队友 · %s" % member.definition["name"] if member is CompanionState else str(member.definition["name"])
-	if member is not CompanionState and not member.cultivation.is_empty() and not member.definition.get("portrait_includes_frame", false):
+	if member is not CompanionState and not member.cultivation.is_empty() and not member.definition.get("portrait_includes_frame", false) and not _separate_enemy_frame and not _frame_override.get("player_level_frame", false):
 		name_label.text += " · %s" % member.cultivation["name"]
 	if member.cultivation_rank_id != _last_cultivation_id:
 		_last_cultivation_id = member.cultivation_rank_id
+		if _frame_override.get("player_level_frame", false):
+			portrait.texture = PLAYER_FRAMES.portrait_for(member.cultivation_rank_id)
 		var cultivation: Dictionary = member.cultivation
 		_title.text = str(member.definition["name"])
 		if not cultivation.is_empty():
 			_title.text += "（%s）" % cultivation["name"]
-			if portrait_frame != null:
+			if portrait_frame != null and not _separate_enemy_frame:
 				var frame_style := _resolved_frame_style(member)
 				portrait_frame.texture = _frame_texture(frame_style)
 				var window: Array = frame_style["portrait_window"]

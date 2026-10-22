@@ -17,10 +17,7 @@ func spec(member: PartyMemberState, element: String, stage: int, choice: String)
 
 func general(member: PartyMemberState, element: String, stage: int, choice: String) -> bool:
 	var book := "base.cultivation_book.%s_02" % element
-	if member.knowledge.branch(book, stage) != choice: return false
-	for id: String in sim._definitions:
-		if sim._owners[id] == member and sim._definitions[id].id == book and not sim.timeline.blocked(id, sim.state.time_usec, true): return true
-	return false
+	return member.knowledge.branch(book, stage) == choice
 
 func data(member: PartyMemberState, item: ItemData) -> Dictionary:
 	return sim._registry.library.resolved(member, item.id) if item.category == "spell" else {}
@@ -99,7 +96,7 @@ func can_cast(id: String, at: int) -> bool:
 		if p.opcode == "command_weapon": ids = selected_weapons(owner,id,at)
 		if ids.is_empty(): return false
 		cost += participant_cost(owner, id, at)
-		return owner.stamina >= rules.q(cost.x) and owner.spirit >= rules.q(cost.y)
+		return owner.stamina >= rules.resource_q(owner,cost.x) and owner.spirit >= rules.resource_q(owner,cost.y)
 	return true
 
 func activation_source(id: String, at: int) -> Dictionary:
@@ -108,10 +105,11 @@ func activation_source(id: String, at: int) -> Dictionary:
 	var cost: Vector2 = sim.state.item_runtime[id].get("fee_override",rules.costs(member,item,at))
 	sim.state.item_runtime[id].erase("fee_override")
 	if rules.active_injury(member,at)>0 and (cost.x>0 or cost.y>0): injury_event(status_source(member,"重伤"),at)
-	member.stamina = rules.q(member.stamina - cost.x)
-	member.spirit = rules.q(member.spirit - cost.y)
+	member.stamina = rules.resource_q(member,member.stamina - cost.x)
+	member.spirit = rules.resource_q(member,member.spirit - cost.y)
 	sim.state.item_runtime[id].activation_count += 1
 	var src := {"kind": "active", "item_id": item.id, "instance_id": id, "owner_id": member.id, "owner_name": member.definition.name, "side": sim.state.item_runtime[id].side, "category": item.category, "label": item.display_name, "stamina_cost": cost.x, "spirit_cost": cost.y, "spell": data(member, item)}
+	src.entry = member.inventory.get_instance(id).duplicate(true)
 	var event := src.duplicate(true)
 	event.entry = member.inventory.get_instance(id)
 	rules.emit("item_activated", at, event)
@@ -127,10 +125,10 @@ func cast(id: String, at: int) -> void:
 	var target := source_for(owner)
 	match p.opcode:
 		"attack": spell_attack(owner, target, item, p, src, at)
-		"status": statuses(owner, target, p, {"hit": true}, at)
+		"status": statuses(owner, target, p, {"hit": true}, at, src)
 		"heal":
-			rules.restore(owner, "hp", p.heal * (1 + float(p.get("heal_pct", 0)) + healing_bonus(owner, "wood")), at)
-			statuses(owner, target, p, {"hit": true}, at)
+			rules.restore(owner, "hp", p.heal * (1 + float(p.get("heal_pct", 0)) + healing_bonus(owner, "wood")), at, -1.0, src)
+			statuses(owner, target, p, {"hit": true}, at, src)
 		"sword_screen":
 			if not owner.thunder_shields.is_empty():
 				target.paralyzed_until = maxi(target.paralyzed_until, at + owner.thunder_shields.size() * 1_000_000)
@@ -150,8 +148,8 @@ func cast(id: String, at: int) -> void:
 			for weapon: String in ids:
 				var def: ItemData = sim._definitions[weapon]
 				var cost: Vector2 = fees[weapon]
-				owner.stamina = rules.q(owner.stamina - rules.q(cost.x))
-				owner.spirit = rules.q(owner.spirit - rules.q(cost.y))
+				owner.stamina = rules.resource_q(owner,owner.stamina - rules.resource_q(owner,cost.x))
+				owner.spirit = rules.resource_q(owner,owner.spirit - rules.resource_q(owner,cost.y))
 				var a := weapon_attack(def)
 				var ratio := float(p.main_ratio if weapon == main else p.other_ratio) if p.opcode == "weapon_union" else 1.0
 				parts.append({"base": a.value * ratio, "element": def.element, "type": a.damage_type, "main": weapon == main, "original": a.value})
@@ -173,15 +171,15 @@ func cast(id: String, at: int) -> void:
 func spell_attack(owner: PartyMemberState, target: PartyMemberState, item: ItemData, p: Dictionary, src: Dictionary, at: int) -> Dictionary:
 	src.spell = p
 	var result := rules.attack_item(owner, target, item, {"value": p.damage, "damage_type": "法术型"}, at, src)
-	if result.hit: statuses(owner, target, p, result, at)
+	if result.hit: statuses(owner, target, p, result, at, src)
 	return result
 
-func statuses(owner: PartyMemberState, target: PartyMemberState, p: Dictionary, result: Dictionary, at: int) -> void:
+func statuses(owner: PartyMemberState, target: PartyMemberState, p: Dictionary, result: Dictionary, at: int, feedback: Dictionary = {}) -> void:
 	for entry: Dictionary in p.get("statuses", []):
 		if entry.status == "寒霜" and p.damage > 0: continue
 		var recipient := owner if entry.target == "self" else target
 		if entry.gate == "always" or entry.gate == "hit" and result.hit or entry.gate == "hp_damage" and result.get("hp_loss", 0) > 0 or entry.gate == "armor_damage" and result.get("armor_loss", 0) > 0:
-			var accepted := rules.apply_status(recipient, entry.status, entry.count, owner, at)
+			var accepted := rules.apply_status(recipient, entry.status, entry.count, owner, at, false, -1, feedback)
 			if accepted and recipient.combat_statuses.has(entry.status):
 				var pool: Dictionary = recipient.combat_statuses[entry.status]
 				if entry.status == "枯脉" and p.has("wither_resource"):
@@ -381,8 +379,8 @@ func after_primary(owner: PartyMemberState, target: PartyMemberState, item: Item
 		rules.schedule_status(target,"破甲")
 	if p.has("drain_spirit"):
 		var drained := minf(target.spirit,p.drain_spirit)
-		target.spirit=rules.q(target.spirit-drained)
-		if p.has("drain_return"): rules.restore(owner,"spirit",drained*p.drain_return,at)
+		target.spirit=rules.resource_q(target,target.spirit-drained)
+		if p.has("drain_return"): rules.restore(owner,"spirit",drained*p.drain_return,at,-1.0,source)
 	if p.has("life_per_hp") and result.hp_loss>0: rules.apply_status(owner,"生机",maxi(1,roundi(result.hp_loss*p.life_per_hp)),owner,at)
 	if p.has("poison_entangle") and before["毒蚀"]>0: rules.apply_status(target,"缠绕",p.poison_entangle,owner,at)
 	if target.hp>0 and p.has("root"): sim.timeline.apply_control(target,"root","weapons",roundi(p.root*1_000_000),owner.id,at)
@@ -401,8 +399,8 @@ func after_primary(owner: PartyMemberState, target: PartyMemberState, item: Item
 		var a := float(owner.spirit)/owner.maximum("spirit") if owner.maximum("spirit")>0 else 0.0
 		var b := float(owner.stamina)/owner.maximum("stamina") if owner.maximum("stamina")>0 else 0.0
 		var share := b/(a+b) if a+b>0 else .5
-		rules.restore(owner,"spirit",portion*share,at)
-		rules.restore(owner,"stamina",portion*(1-share),at)
+		rules.restore(owner,"spirit",portion*share,at,-1.0,source)
+		rules.restore(owner,"stamina",portion*(1-share),at,-1.0,source)
 	if result.hp_loss>0 and before["流血"]>0 and spec(owner,"metal",5,"血势不绝"): rules.apply_status(target,"流血",1,owner,at)
 	if item.element=="base.element.thunder" and result.effective>0: lightning(owner,target,p,at,context)
 
@@ -458,10 +456,12 @@ func followup(owner: PartyMemberState, target: PartyMemberState, item: ItemData,
 
 func initial_delay(source: PartyMemberState, status: String) -> int:
 	var early := {"生机":["wood","早春"],"毒蚀":["wood","潜毒"],"润脉":["water","活泉"],"枯脉":["water","潜枯"]}
-	if early.has(status) and spec(source,early[status][0],1,early[status][1]): return 1_500_000
-	if status=="重伤" and spec(source,"earth",1,"催伤"): return 1_000_000
-	if status=="驱散" and spec(source,"wind",1,"疾散"): return 1_000_000
-	return 2_000_000
+	# Core 1.77: fresh pools wait one second; early branches settle at the
+	# application timestamp through the same deterministic status queue.
+	if early.has(status) and spec(source,early[status][0],1,early[status][1]): return 0
+	if status=="重伤" and spec(source,"earth",1,"催伤"): return 0
+	if status=="驱散" and spec(source,"wind",1,"疾散"): return 0
+	return 1_000_000
 
 func status_strength(source: PartyMemberState, status: String) -> float:
 	var names := {"反锋":["metal","蕴锋","化锋"],"锋痕":["metal","刻痕","深痕"],"流血":["metal","炼血","沸血"],"生机":["wood","养生","生息绵长"],"毒蚀":["wood","蚀骨","蚀骨渐深"],"润脉":["water","养脉","长养"],"枯脉":["water","蚀脉","深枯"],"灼烧":["fire","炽灼","灼火入骨"]}
@@ -489,7 +489,7 @@ func status_tick(member: PartyMemberState, status: String, pool: Dictionary, n: 
 			var value := n*(status_strength(source,status)+healing_bonus(source,"wood"))
 			var missing := member.maximum("hp")-member.hp
 			var prevented := minf(value,rules.active_injury(member,at)*injury_strength(member))
-			var actual := rules.restore(member,"hp",value,at)
+			var actual := rules.restore(member,"hp",value,at,-1.0,pool.get("feedback_source",{}))
 			if missing>0 and spec(source,"wood",5,"生生不息"): add_barrier(member,maxf(0,value-prevented-actual)*.5,"status.life")
 		"润脉","枯脉": resource_tick(member,status,pool,n,source,at)
 		"重伤":
@@ -515,8 +515,11 @@ func resource_tick(member: PartyMemberState, status: String, pool: Dictionary, n
 	var transfer := Vector2(overflow.y,overflow.x)*ratio
 	var second := Vector2(minf(transfer.x,room.x-first.x),minf(transfer.y,room.y-first.y))
 	var delta := first+second
-	member.spirit=rules.q(old.x+delta.x*(1 if gain else -1))
-	member.stamina=rules.q(old.y+delta.y*(1 if gain else -1))
+	member.spirit=rules.resource_q(member,old.x+delta.x*(1 if gain else -1))
+	member.stamina=rules.resource_q(member,old.y+delta.y*(1 if gain else -1))
+	if gain:
+		rules.emit_restore(member,"spirit",member.spirit-old.x,at,pool.get("feedback_source",{}))
+		rules.emit_restore(member,"stamina",member.stamina-old.y,at,pool.get("feedback_source",{}))
 	if gain and spec(source,"water",3,"盈流成护"):
 		var leftover := overflow.x+overflow.y if room.x==0 and room.y==0 else transfer.x+transfer.y-second.x-second.y
 		add_barrier(member,leftover*.5,"status.resources")
@@ -590,6 +593,7 @@ func tax_attempt(id: String, at: int) -> bool:
 	if not enough:
 		sim.state.item_runtime[id].erase("fee_override")
 		sim.state.item_runtime[id].erase("participant_fees")
+		sim.timeline.activation_failed(id,at,"cast_tax")
 		sim.timeline.restart(id,at)
 		rules.emit("cast_interrupted",at,{"item_id":item.id,"label":"镇脉诀","target_name":member.definition.name})
 	return enough

@@ -35,7 +35,7 @@ func configure(status: String, actor: PartyMemberState, game: GameManager) -> vo
 	title.add_theme_color_override("font_color",Color(ItemTooltip.status_keyword_colors()[word]))
 	title.add_theme_font_override("font",ItemTooltip._term_font)
 	var effect: String = ItemTooltip.status_keyword_meanings()[word]
-	if word == "毒蚀": effect = "首次2秒后开始，每秒按当前层数直接扣气血，绕过盾甲，每次减少1层。"
+	if word == "毒蚀": effect = "首次1秒后开始，每秒按当前层数直接扣气血，绕过盾甲，每次减少1层。"
 	if word == "雷蕴": effect += "\n雷盾：按60%吸收伤害，每层破裂向敌方施加1秒麻痹；优先于灵盾。"
 	_label(column,effect,23)
 	_line(column)

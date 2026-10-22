@@ -104,7 +104,7 @@ func test_all_spells() -> void:
 				if spell.opcode=="status": check(sim.t01.layers(p,spell.statuses[0].status)>0 or not p.thunder_shields.is_empty(),"self status effect "+id+choice)
 				if spell.opcode=="enchant": check(not p.weapon_enchantment.is_empty(),"enchant pending")
 				if spell.opcode=="weapon_barrier": check(p.barrier>0,"weapon shield present")
-			check(registry.get_item(id).icon_path.is_empty(),"empty icon "+id)
+			check(registry.get_item(id).icon_path.ends_with(".webp") and ResourceLoader.exists(registry.get_item(id).icon_path),"spell artwork "+id)
 
 func test_review_revisions() -> void:
 	# Measure the actual timer and resource debit, not just the branch dictionary.
@@ -122,9 +122,8 @@ func test_review_revisions() -> void:
 		var p: PartyMemberState = sim.state.teams[0][0]
 		var e: PartyMemberState = sim.state.teams[1][0]
 		learn(p,"base.cultivation_book.wind_02",1,choice)
-		check(p.inventory.add_item("wind_general","base.cultivation_book.wind_02",Vector2i(3,0)),"equip wind general")
-		sim.attach(p,0,"wind_general",true)
-		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.wind",0),.7),"inserting general grants no accuracy")
+		check(not p.inventory.add_item("wind_general","base.cultivation_book.wind_02",Vector2i(3,0)),"general book cannot equip")
+		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.wind",0),.8 if choice=="风锋" else .7),"learned general applies without book or entry delay")
 		sim.advance(3)
 		var chance := .8 if choice=="风锋" else .7
 		check(is_equal_approx(sim.cultivation.hit_chance(p,e,.7,"base.element.wind",3_000_000),chance),"only 风锋 increases active wind accuracy")
@@ -157,11 +156,11 @@ func test_review_revisions() -> void:
 	check(tianluo.choose(registry.library,"base.cultivation_book.wood_05",8,"天罗固缚"),"rejected choice does not consume selection opportunity")
 	check(not tianluo.choose(registry.library,"base.cultivation_book.wood_05",8,"引火召雷"),"no link selection after active choice")
 	for id: String in registry.library.books:
-		var text := ItemTooltip.effect_text(registry.get_item(id))
-		check(text.contains("【上阵参悟】") and text.contains("赢得战斗"),"book tooltip identifies battle experience requirement")
-	check(ItemTooltip.effect_text(registry.get_item("base.cultivation_book.wood_02")).contains("连携系统开放后可用"),"deferred options visible as preview only")
-	check(ItemTooltip.effect_text(registry.get_item("base.cultivation_book.wood_03")).contains("【学成常驻】"),"specialization persistent label")
-	check(ItemTooltip.effect_text(registry.get_item("base.cultivation_book.wood_04")).contains("【上阵生效】"),"combat book explains independent spells")
+		var text := CultivationDescription.book(registry.get_item(id).combat)
+		check(text.contains("特定场所修炼") and not text.contains("赢得战斗"),"mechanical description identifies site cultivation requirement")
+	check(CultivationDescription.book(registry.get_item("base.cultivation_book.wood_02").combat).contains("连携系统开放后可用"),"deferred options visible as preview only")
+	check(CultivationDescription.book(registry.get_item("base.cultivation_book.wood_03").combat).contains("【学成常驻】"),"specialization persistent label")
+	check(CultivationDescription.book(registry.get_item("base.cultivation_book.wood_04").combat).contains("【上阵生效】"),"combat book explains independent spells")
 
 func test_modes_controls() -> void:
 	var sim := battle("base.spell.metal_01")
@@ -395,14 +394,12 @@ func test_book_rules() -> void:
 	var sim := battle("base.spell.metal_01")
 	var p: PartyMemberState = sim.state.teams[0][0]
 	learn(p,"base.cultivation_book.metal_02",1,"锐金")
-	check(not sim.cultivation.general(p,"metal",1,"锐金"),"general learned but unequipped inactive")
-	check(p.inventory.add_item("general","base.cultivation_book.metal_02",Vector2i(3,0)),"general occupies1")
-	sim.attach(p,0,"general",true)
-	check(not sim.cultivation.general(p,"metal",1,"锐金"),"general insertion CD inactive")
+	check(sim.cultivation.general(p,"metal",1,"锐金"),"learned general active without original book")
+	check(not p.inventory.add_item("general","base.cultivation_book.metal_02",Vector2i(3,0)),"original book cannot enter board")
 	sim.advance(3)
 	check(sim.cultivation.general(p,"metal",1,"锐金"),"general active after entry")
 	sim.timeline.apply_control(p,"disable","items",3_000_000,"enemy",3_000_000)
-	check(not sim.cultivation.general(p,"metal",1,"锐金"),"disabled general listener inactive")
+	check(sim.cultivation.general(p,"metal",1,"锐金"),"item disable does not remove learned passive")
 	learn(p,"base.cultivation_book.metal_03",1,"回锋")
 	check(sim.cultivation.spec(p,"metal",1,"回锋"),"specialization passive requires no book slot")
 	var k := CultivationKnowledge.new()
@@ -411,9 +408,9 @@ func test_book_rules() -> void:
 	check(copy.restore(k.snapshot(),registry.library,4) and copy.learned.has("base.cultivation_book.metal_04"),"zero-stage acquisition survives reload")
 	check(not copy.restore({"version":1,"learned":{"bad.id":{"level":0,"branches":{}}}},registry.library,4),"unknown zero-stage book rejected")
 	var bag := InventoryState.new(registry,Vector2i(3,3))
-	check(bag.add_item("vertical","base.cultivation_book.metal_04",Vector2i(2,1),true),"book two cells vertical fit")
-	check(bag.item_at(Vector2i(2,2))=="vertical" and not bag.add_item("blocked","base.spell.metal_01",Vector2i(2,2)),"vertical occupancy respected")
-	check(not bag.move_item("vertical",Vector2i(2,2)),"vertical out-of-bounds rejected")
+	check(not bag.add_item("vertical","base.cultivation_book.metal_04",Vector2i(2,1),true),"rotated book also forbidden")
+	check(bag.available_cells("base.cultivation_book.metal_04").is_empty(),"book has no deployment cells")
+	check(bag.add_item("spell","base.spell.metal_01",Vector2i.ZERO),"independent spell still deploys")
 	var bad: Dictionary = registry.library.spells["base.spell.metal_01"].duplicate(true)
 	bad.silent_new_effect=10
 	check(not CultivationLibrary.validate_spell(bad),"unknown spell property rejected")
@@ -475,7 +472,7 @@ func test_passives_and_recovery() -> void:
 	p.knowledge.choose(registry.library,"base.cultivation_book.wood_03",4,"生息绵长")
 	p.hp=p.maximum("hp")-6
 	sim.t01.apply_status(p,"生机",10,p,0)
-	sim.advance(2)
+	sim.advance(1)
 	check(p.hp==p.maximum("hp") and is_equal_approx(p.barrier,3.5),"life 30 percent strengthening;13 heal uses6, overflow7 creates3.5 shield")
 	var old_barrier := p.barrier
 	sim.advance(1)
@@ -484,7 +481,7 @@ func test_passives_and_recovery() -> void:
 	p=resources.state.teams[0][0]
 	learn(p,"base.cultivation_book.water_03",3,"盈流成护")
 	resources.t01.apply_status(p,"润脉",10,p,0)
-	resources.advance(2)
+	resources.advance(1)
 	check(p.barrier==10,"both resources full convert20 directly at50 percent")
 	var frost := battle("base.spell.water_01","覆霜")
 	p=frost.state.teams[0][0]; e=frost.state.teams[1][0]
@@ -498,7 +495,7 @@ func test_passives_and_recovery() -> void:
 	p.knowledge.choose(registry.library,"base.cultivation_book.wood_03",2,"蚀骨")
 	poison.timeline.apply_control(p,"weakness","all",5_000_000,"enemy",0)
 	poison.t01.apply_status(e,"毒蚀",10,p,0)
-	poison.advance(2)
+	poison.advance(1)
 	check(is_equal_approx(e.maximum("hp")-e.hp,13),"poison30 percent specialization unaffected by weakness")
 	check(is_equal_approx(poison.t01.adjusted_damage(p,e,100,"钝击","base.element.none",2_000_000,{"kind":"active"},true),80),"weakness direct reduction20 percent")
 	var thunder := battle()
@@ -506,7 +503,7 @@ func test_passives_and_recovery() -> void:
 	learn(p,"base.cultivation_book.thunder_03",4,"雷罡凝实")
 	p.knowledge.choose(registry.library,"base.cultivation_book.thunder_03",2,"凝罡")
 	learn(p,"base.cultivation_book.thunder_02",1,"雷罡")
-	p.inventory.add_item("thunder_general","base.cultivation_book.thunder_02",Vector2i.ZERO); thunder.attach(p,0,"thunder_general",false)
+	check(p.inventory.get_instance("thunder_general").is_empty(),"thunder general works without a book instance")
 	thunder.t01.apply_status(p,"雷蕴",10,p,0)
 	check(p.thunder_shields==[140.0] and thunder.cultivation.absorption(p)==.8,"new thunder shield +10+20+10 percent and absorption80 percent")
 	var return_flow := battle("base.spell.water_08","回澜")

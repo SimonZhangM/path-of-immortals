@@ -10,6 +10,8 @@ static func rest(state: MapLoadoutState, status: MapPlayerStatus, event: Diction
 	var candidate: MapLoadoutState = prepared.state
 	var error := candidate.advance_days(int(event.duration_days),event.id)
 	if error.is_empty() and not food_id.is_empty(): error = MapFood.apply_to_candidate(candidate,food_id,result.result,status.maxima)
+	if not candidate.growth.is_empty():
+		for key: String in result.result.after: candidate.growth.resources[key]=CultivationGrowth.cents(result.result.after[key])
 	if error.is_empty(): error = MapLoadoutStore.save(candidate,path)
 	if not error.is_empty(): return {"error":error}
 	error = state.restore(candidate.snapshot())

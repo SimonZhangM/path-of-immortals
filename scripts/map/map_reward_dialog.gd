@@ -9,6 +9,8 @@ const CONTENT_WIDTH := 480.0
 const ACTION_SIZE := Vector2(CONTENT_WIDTH / 3.0, 57.6)
 const ACTION_BOTTOM_GAP := 64.2
 var canvas: Control
+var backing: TextureRect
+var _display_height := DESIGN_SIZE.y
 var heading: Label
 var card: MapInventoryItemCard
 var accept_button: TextureButton
@@ -30,7 +32,7 @@ func _init() -> void:
 	canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	canvas.size = DESIGN_SIZE
 	add_child(canvas)
-	var backing := TextureRect.new()
+	backing = TextureRect.new()
 	var atlas := AtlasTexture.new()
 	atlas.atlas = load("res://assets/UI-jiaohu-size1.webp")
 	# Align the higher-resolution frame with the original 540px layout.
@@ -64,6 +66,22 @@ func _init() -> void:
 	pick_sound.volume_db = -4
 	add_child(pick_sound)
 	resized.connect(_layout)
+
+func use_small_reward_art(display_height: float) -> void:
+	# Story and battle rewards opt in; gathering keeps its original presentation.
+	_display_height = display_height
+	var source: Texture2D = load("res://assets/UI-jiaohu-size-s.webp")
+	var atlas := AtlasTexture.new()
+	atlas.atlas = source
+	atlas.region = preload("res://scripts/map/map_texture_metrics.gd").inspect(source).visible_rect
+	backing.texture = atlas
+	var factor := DESIGN_SIZE.y / atlas.get_height()
+	backing.size = atlas.get_size() * factor
+	backing.position = (DESIGN_SIZE - backing.size) * 0.5
+	# Center the retained heading between the new top inner edge and divider.
+	var title_center := backing.position.y + ((48.0 + 162.0) * 0.5 - atlas.region.position.y) * factor
+	heading.position.y = title_center - heading.size.y * 0.5
+	_layout()
 
 func _label(text: String, rect: Rect2, font_size: int, color: Color, parent: Control = null) -> Label:
 	var label := Label.new()
@@ -100,7 +118,7 @@ func present(record: Dictionary, category_name: String) -> void:
 	_layout()
 
 func _layout() -> void:
-	var factor := minf(size.x / 1920.0, size.y / 1080.0)
+	var factor := minf(size.x / 1920.0, size.y / 1080.0) * _display_height / DESIGN_SIZE.y
 	canvas.scale = Vector2.ONE * factor
 	canvas.position = (size - DESIGN_SIZE * factor) * 0.5
 

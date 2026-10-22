@@ -10,6 +10,7 @@ var empty_label: Label
 func _init() -> void:
 	super()
 	name = "BattleRewardDialog"
+	use_small_reward_art(MapExitDialog.DESIGN_SIZE.y)
 	z_index = 44
 	(get_child(0) as ColorRect).color = Color(0, 0, 0, 0.5)
 	accept_button.position.x = 300
@@ -29,14 +30,14 @@ func _init() -> void:
 	review_button.pressed.connect(func(): review_requested.emit())
 	scroll = ScrollContainer.new()
 	scroll.name = "LootScroll"
-	scroll.position = Vector2(66, 163)
+	scroll.position = Vector2(66, 155)
 	scroll.size = Vector2(408, 244)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	canvas.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_theme_constant_override("margin_top", 24)
+	margin.add_theme_constant_override("margin_top", 16)
 	margin.add_theme_constant_override("margin_bottom", 24)
 	scroll.add_child(margin)
 	var center := CenterContainer.new()
@@ -59,7 +60,7 @@ func present_loot(records: Array[Dictionary], categories: Dictionary, error: Str
 	for record in records:
 		var item_card := MapInventoryItemCard.new()
 		item_card.configure(record, categories.get(record.category, record.category))
-		item_card.set_card_width(120)
+		item_card.set_card_width(152 if records.size() < 3 else 120)
 		item_card.tooltip_text = ""
 		item_card.mouse_filter = MOUSE_FILTER_IGNORE
 		grid.add_child(item_card)

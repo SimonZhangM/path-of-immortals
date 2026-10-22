@@ -8,13 +8,21 @@ signal board_layout_changed
 
 const PULSE_DURATION := 0.24
 const FLASH_SHADER := preload("res://scripts/ui/item_flash.gdshader")
+const WEAPON_FEEDBACK := preload("res://scripts/ui/weapon_activation_feedback.gd")
 var _pulses: Dictionary = {}
+var _weapon_feedback: Dictionary = {}
 
 var _hover_dimensions := Vector2i.ONE
 var manager: GameManager
 var member_index: int = 0
 var enemy_side: bool = false
 var compact: bool = false
+var show_cooldown_badges := true:
+	set(value):
+		if show_cooldown_badges == value: return
+		show_cooldown_badges = value
+		if not value: _clear_weapon_feedback()
+		queue_redraw()
 var display_side: float = 0.0
 var input_art_bounds_only := false
 var inventory: InventoryState:
@@ -87,6 +95,12 @@ func _has_point(point: Vector2) -> bool:
 	return (visible_art_rect() if input_art_bounds_only else Rect2(Vector2.ZERO, size)).has_point(point)
 
 func _process(delta: float) -> void:
+	for id in _weapon_feedback.keys():
+		var effect = _weapon_feedback[id]
+		effect.advance(delta)
+		if effect.elapsed >= WEAPON_FEEDBACK.DURATION or inventory.get_instance(id).is_empty():
+			effect.queue_free()
+			_weapon_feedback.erase(id)
 	for id in _pulses.keys():
 		_pulses[id]["elapsed"] += delta
 		if _pulses[id]["elapsed"] >= PULSE_DURATION:
@@ -136,6 +150,9 @@ func _refresh_artworks() -> void:
 		var footprint := board_layout.footprint_rect(instance.cell, Vector2i(1,2) if instance.get("vertical_book",false) else item.grid_size, size)
 		var enlargement := pulse_scale(_pulses[id].elapsed / PULSE_DURATION) if _pulses.has(id) else 1.0
 		_artworks[id].place_on_board(footprint, enlargement)
+		if _weapon_feedback.has(id):
+			_weapon_feedback[id].layout_from(_artworks[id], footprint)
+			_artworks[id].position.x += _weapon_feedback[id].shake_x()
 		_artworks[id].modulate.a = 0.25 if _native_drag_active and _drag_instance == id else 1.0
 	for id in _artworks.keys():
 		if not visible_ids.has(id):
@@ -146,10 +163,20 @@ func _refresh_artworks() -> void:
 func _on_presentation_events(events: Array[Dictionary]) -> void:
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
 	for event in events:
-		if event["kind"] != "item_activated" or event["owner_id"] != owner.id or event["side"] != (1 if enemy_side else 0):
+		if event["kind"] not in ["item_activated", "item_activation_failed"] or event["owner_id"] != owner.id or event["side"] != (1 if enemy_side else 0):
 			continue
 		var entry: Dictionary = event["entry"]
 		var id: String = entry["instance_id"]
+		if manager.registry.get_item(entry.item_id).category == "weapon":
+			if not show_cooldown_badges: continue
+			if _weapon_feedback.has(id): _weapon_feedback[id].queue_free()
+			var effect = WEAPON_FEEDBACK.new()
+			effect.failed = event.kind == "item_activation_failed"
+			add_child(effect)
+			_weapon_feedback[id] = effect
+			_refresh_artworks()
+			continue
+		if event.kind == "item_activation_failed": continue
 		if _pulses.has(id):
 			_pulses[id]["overlay"].queue_free()
 		var overlay := TextureRect.new()
@@ -181,6 +208,7 @@ func cooldown_progress(instance_id: String) -> float:
 	return manager.simulation.activation_progress(instance_id)
 
 func reset_interaction() -> void:
+	_clear_weapon_feedback()
 	_generation += 1
 	selected_instance = ""
 	_drag_instance = ""
@@ -188,11 +216,25 @@ func reset_interaction() -> void:
 	_hover_cell = Vector2i(-100, -100)
 	queue_redraw()
 
+func _clear_weapon_feedback() -> void:
+	for effect in _weapon_feedback.values(): effect.queue_free()
+	_weapon_feedback.clear()
+
 func grid_rect() -> Rect2:
 	return board_layout.footprint_rect(Vector2i.ZERO, inventory.grid_size, size)
 
 func cell_center(cell: Vector2i) -> Vector2:
 	return board_layout.footprint_rect(cell, Vector2i.ONE, size).get_center()
+
+func recovery_origin(event: Dictionary) -> Vector2:
+	var entry := inventory.get_instance(event.get("instance_id", ""))
+	if entry.is_empty(): entry = event.get("entry", {})
+	if entry.is_empty(): return Vector2.INF
+	var item := manager.registry.get_item(entry.get("item_id", ""))
+	if item == null: return Vector2.INF
+	var dimensions := Vector2i(1, 2) if entry.get("vertical_book", false) else item.grid_size
+	var center := board_layout.footprint_rect(entry.cell, dimensions, size).get_center()
+	return get_global_transform_with_canvas() * center
 
 func _cell_at(point: Vector2) -> Vector2i:
 	return board_layout.cell_at(point, size)
@@ -249,13 +291,14 @@ func _draw() -> void:
 		if ghost:
 			continue
 		var remaining := manager.simulation.cooling_remaining_usec(instance["instance_id"])
-		if remaining > 0:
+		if remaining > 0 and show_cooldown_badges:
 			CooldownRing.paint_text(self, rotation_ring_center(rect, item), str(ceili(remaining / 1_000_000.0)), 22 if compact else 32)
 		if remaining == 0 and item.cooldown_usec > 0:
 			var seconds := item.cooldown_usec / 1_000_000.0
 			var left := seconds if manager.simulation.state.phase == GameState.Phase.PREPARATION else seconds * (1.0 - cooldown_progress(id))
 			if manager.simulation.state.phase == GameState.Phase.PREPARATION and item.combat.get("first_ready",false): left = 0
-			CooldownRing.paint(self, rotation_ring_center(rect, item), 23, left, seconds, CooldownRing.tint(manager.registry, item.element))
+			if show_cooldown_badges:
+				CooldownRing.paint(self, rotation_ring_center(rect, item), 23, left, seconds, CooldownRing.tint(manager.registry, item.element))
 			if manager.simulation.state.item_runtime.get(id,{}).get("barrier_stopped",false):
 				draw_string(get_theme_default_font(),rect.position+Vector2(8,25),"灵盾已满·停用",HORIZONTAL_ALIGNMENT_LEFT,rect.size.x-16,16,Color.WHITE)
 		if item.is_consumable():
@@ -409,9 +452,9 @@ func build_item_tooltip(_for_text: String) -> Object:
 	var panel := ItemTooltip.new()
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
 	if item.category == "spell":
-		_tooltip_entry.effect_description = CultivationDescription.spell(manager.registry.library.resolved(owner,item.id))
+		_tooltip_entry.merge(CultivationDescription.tooltip_context(owner.knowledge, item.id, item), true)
 	elif item.category == "book":
-		_tooltip_entry.effect_description = ItemTooltip.effect_text(item)+"\n当前已修至%d重。" % owner.knowledge.level(item.id)
+		_tooltip_entry.merge(CultivationDescription.tooltip_context(owner.knowledge, item.id), true)
 	panel.configure(item, _tooltip_entry, owner.defense if manager.simulation.state.legacy_fixed_defense else -1, manager.simulation.cooling_remaining_usec(_tooltip_entry["instance_id"]), manager.party[0].can_use_item(item))
 	return panel
 

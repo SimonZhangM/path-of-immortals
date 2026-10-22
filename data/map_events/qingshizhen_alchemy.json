@@ -9,7 +9,7 @@
     "background": "res://assets/tanchuang-qingshizhen-liandanfang.webp",
     "conversation_background": "res://assets/tanchuang-qingshizhen-liandanfang2.webp",
     "crafting_background": "res://assets/tanchuang-qingshizhen-liandanfang2.webp",
-    "illustration": "res://assets/tanchuang-jiaoyi-qingshizhen-liandanfang-boss.webp",
+    "illustration": "res://assets/tanchuang-qingshizhen-liandanfang-boss.webp",
     "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
   },
   "dialogue": "res://data/dialogues/luhuaizhen.json"

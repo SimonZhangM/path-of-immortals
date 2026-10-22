@@ -84,11 +84,7 @@ func configure(speaker: String, lines: Array, library: NpcDialogueLibrary, statu
 	text_label.size = Vector2(TEXT_WIDTH,bubble.size.y)
 	var face: Texture2D
 	if is_player:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = load(status.character_definition.portrait)
-		var crop: Array = status.character_definition.get("portrait_region",[])
-		atlas.region = Rect2(crop[0],crop[1],crop[2],crop[3]) if crop.size()==4 else Rect2(Vector2.ZERO,atlas.atlas.get_size())
-		face = atlas
+		face = PLAYER_FRAMES.portrait_for(status.cultivation_rank_id)
 	else:
 		face = load(library.definition.portrait)
 		if library.definition.has("portrait_region"):
@@ -98,13 +94,16 @@ func configure(speaker: String, lines: Array, library: NpcDialogueLibrary, statu
 			atlas.region = Rect2(crop[0],crop[1],crop[2],crop[3])
 			face = atlas
 	portrait = _image(face,Rect2(portrait_x+8,20,88,88))
+	if is_player:
+		portrait.size = Vector2.ONE * 88.0 * PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE / 432.0
+		portrait.position = Vector2(portrait_x + 52, 64) - portrait.size * 0.5
 	var mask := ShaderMaterial.new()
 	mask.shader = preload("res://scripts/ui/portrait_mask.gdshader")
 	mask.set_shader_parameter("portrait_size",portrait.size)
 	portrait.material = mask
 	var center := portrait.position+portrait.size*0.5
 	if is_player:
-		var scale_factor := 88.0/PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE
+		var scale_factor := 88.0/432.0
 		rim = _image(load(PLAYER_FRAMES.path_for(status.cultivation_rank_id)),Rect2(center-PLAYER_FRAMES.SOURCE_CENTER*scale_factor,PLAYER_FRAMES.SOURCE_SIZE*scale_factor))
 	else:
 		# Original ring is centered near (318,313) in its 627px source.

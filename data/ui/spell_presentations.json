@@ -1,0 +1,1682 @@
+{
+  "base.spell.metal_01": {
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-01-gengfengjian.webp",
+    "frame": "res://assets/UI-metal-xuangengjianjue-spellframe-1x1.webp",
+    "book_name": "玄庚剑诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08213716108452951,
+      0.07057416267942583,
+      0.8365231259968102,
+      0.8365231259968102
+    ],
+    "clip_rect": [
+      0.08213716108452951,
+      0.08452950558213716,
+      0.8365231259968102,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接金属性攻击。",
+    "branch_descriptions": {
+      "剑锋": "本体伤害＋25%。",
+      "留痕": "命中施加3层锋痕。"
+    }
+  },
+  "base.spell.metal_02": {
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-04-fenguangjianyu.webp",
+    "frame": "res://assets/UI-metal-xuangengjianjue-spellframe-1x1.webp",
+    "book_name": "玄庚剑诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08213716108452951,
+      0.07057416267942583,
+      0.8365231259968102,
+      0.8365231259968102
+    ],
+    "clip_rect": [
+      0.08213716108452951,
+      0.08452950558213716,
+      0.8365231259968102,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "一次金属性剑雨攻击。",
+    "branch_descriptions": {
+      "骤雨": "本术冷却－25%。",
+      "聚锋": "本体伤害＋30%。"
+    }
+  },
+  "base.spell.metal_03": {
+    "icon": "res://assets/UI-metal-xuangengjianjue-effect-07-huifengjianmu.webp",
+    "frame": "res://assets/UI-metal-xuangengjianjue-spellframe-1x1.webp",
+    "book_name": "玄庚剑诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08213716108452951,
+      0.07057416267942583,
+      0.8365231259968102,
+      0.8365231259968102
+    ],
+    "clip_rect": [
+      0.08213716108452951,
+      0.08452950558213716,
+      0.8365231259968102,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "生成30点特殊剑幕，吸收率40%。",
+    "branch_descriptions": {
+      "护主": "本术剑幕值提高至50。",
+      "返剑": "剑幕被攻击击破时，向攻击者反击15点基础金伤。"
+    }
+  },
+  "base.spell.metal_04": {
+    "icon": "res://assets/UI-metal-xuangengjianjue-spell-xuangengguiyijian-board-1x2.webp",
+    "frame": "res://assets/UI-metal-xuangengjianjue-spellframe-1x2.webp",
+    "book_name": "玄庚剑诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.05918827508455468,
+      0.05749718151071026,
+      0.8816234498308907,
+      0.8816234498308907
+    ],
+    "clip_rect": [
+      0.11161217587373168,
+      0.05749718151071026,
+      0.7767756482525366,
+      0.8816234498308907
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "高威力金属性攻击。",
+    "branch_descriptions": {
+      "破军": "本体伤害＋40%。",
+      "留煞": "本体伤害－20%，命中施加6层锋痕，真正伤及气血再施加3层流血。"
+    }
+  },
+  "base.spell.metal_05": {
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-01-fulingshu.webp",
+    "frame": "res://assets/UI-metal-baibingyulingjue-spellframe-1x1.webp",
+    "book_name": "百兵御灵诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.09330143540669857,
+      0.08413078149920256,
+      0.8141945773524721,
+      0.8141945773524721
+    ],
+    "clip_rect": [
+      0.09330143540669857,
+      0.08931419457735247,
+      0.8141945773524721,
+      0.8038277511961722
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "下一次武器攻击追加金伤，基础量为该次武器基础攻击与强化之和的50%。",
+    "branch_descriptions": {
+      "锐灵": "附灵比例由50%提高至75%。",
+      "血锋": "该次武器真正伤及气血，施加2层流血。"
+    }
+  },
+  "base.spell.metal_06": {
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-04-yubingshu.webp",
+    "frame": "res://assets/UI-metal-baibingyulingjue-spellframe-1x1.webp",
+    "book_name": "百兵御灵诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.09330143540669857,
+      0.08413078149920256,
+      0.8141945773524721,
+      0.8141945773524721
+    ],
+    "clip_rect": [
+      0.09330143540669857,
+      0.08931419457735247,
+      0.8141945773524721,
+      0.8038277511961722
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "调用一把已完成入阵的武器额外攻击，不改变其正常",
+    "branch_descriptions": {
+      "疾御": "本术冷却、灵力费用各－25%。",
+      "重御": "被调用武器本次本体伤害＋50%。"
+    }
+  },
+  "base.spell.metal_07": {
+    "icon": "res://assets/UI-metal-baibingyulingjue-effect-07-bingjiahuayuan.webp",
+    "frame": "res://assets/UI-metal-baibingyulingjue-spellframe-1x1.webp",
+    "book_name": "百兵御灵诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.09330143540669857,
+      0.08413078149920256,
+      0.8141945773524721,
+      0.8141945773524721
+    ],
+    "clip_rect": [
+      0.09330143540669857,
+      0.08931419457735247,
+      0.8141945773524721,
+      0.8038277511961722
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "取最强武器的基础攻击与强化之和，按100%生成灵盾。",
+    "branch_descriptions": {
+      "固元": "转盾比例提高至150%。",
+      "返锋": "下一次武器发动时，消耗本术剩余灵盾的50%，按1∶1增加该次武器基础伤害，仅一次。"
+    }
+  },
+  "base.spell.metal_08": {
+    "icon": "res://assets/UI-metal-baibingyulingjue-spell-baibingguiyuan-board-2x1.webp",
+    "frame": "res://assets/UI-metal-baibingyulingjue-spellframe-2x1.webp",
+    "book_name": "百兵御灵诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.05918827508455468,
+      0.05665163472378805,
+      0.883314543404735,
+      0.883314543404735
+    ],
+    "clip_rect": [
+      0.05918827508455468,
+      0.1161217587373168,
+      0.883314543404735,
+      0.7643742953776775
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "一次多武器合击：最强武器贡献100%，其余各50%，保留各自类型；各武器另付正常费用的50%。",
+    "branch_descriptions": {
+      "主兵": "最强武器贡献200%，其余各50%。",
+      "群兵": "最强及其余武器均贡献100%。"
+    }
+  },
+  "base.spell.wood_01": {
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-01-qingmuci.webp",
+    "frame": "res://assets/UI-wood-wanmushengshajue-spellframe-1x1.webp",
+    "book_name": "万木生杀诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.07376395534290271,
+      0.8333333333333334,
+      0.8333333333333334
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8333333333333334,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接木属性攻击。",
+    "branch_descriptions": {
+      "锐刺": "本体伤害＋25%。",
+      "毒芽": "命中施加3层毒蚀。"
+    }
+  },
+  "base.spell.wood_02": {
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-04-qingtengren.webp",
+    "frame": "res://assets/UI-wood-wanmushengshajue-spellframe-1x1.webp",
+    "book_name": "万木生杀诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.07376395534290271,
+      0.8333333333333334,
+      0.8333333333333334
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8333333333333334,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接木属性攻击。",
+    "branch_descriptions": {
+      "连刃": "本术冷却、灵力费用各－25%。",
+      "缚刃": "命中施加5层缠绕。"
+    }
+  },
+  "base.spell.wood_03": {
+    "icon": "res://assets/UI-wood-wanmushengshajue-effect-07-senluolingshi.webp",
+    "frame": "res://assets/UI-wood-wanmushengshajue-spellframe-1x1.webp",
+    "book_name": "万木生杀诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.07376395534290271,
+      0.8333333333333334,
+      0.8333333333333334
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8333333333333334,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "木属性攻击，本术命中率额外＋15个百分点。",
+    "branch_descriptions": {
+      "穿林": "本体伤害＋30%。",
+      "毒翎": "真正伤及气血时，施加4层毒蚀。"
+    }
+  },
+  "base.spell.wood_04": {
+    "icon": "res://assets/UI-wood-wanmushengshajue-spell-wanmusenluo-board-2x1.webp",
+    "frame": "res://assets/UI-wood-wanmushengshajue-spellframe-2x1.webp",
+    "book_name": "万木生杀诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.05580608793686584,
+      0.05298759864712514,
+      0.8895152198421646,
+      0.8895152198421646
+    ],
+    "clip_rect": [
+      0.05580608793686584,
+      0.10597519729425028,
+      0.8895152198421646,
+      0.7835400225479143
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "高威力木属性攻击。",
+    "branch_descriptions": {
+      "森罗尽发": "本体伤害＋40%。",
+      "枯荣夺生": "每实际造成10点气血伤害，自身获得1层生机；四舍五入，正数伤血至少得1层。"
+    }
+  },
+  "base.spell.wood_05": {
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-01-fulingteng.webp",
+    "frame": "res://assets/UI-wood-qingluohuashengjue-spellframe-1x1.webp",
+    "book_name": "青萝化生诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08373205741626795,
+      0.07216905901116427,
+      0.8349282296650717,
+      0.8349282296650717
+    ],
+    "clip_rect": [
+      0.08373205741626795,
+      0.0861244019138756,
+      0.8349282296650717,
+      0.8070175438596491
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加3层缠绕。",
+    "branch_descriptions": {
+      "盘根": "本术施加缠绕提高至5层。",
+      "疾藤": "本术冷却、灵力费用各－25%。"
+    }
+  },
+  "base.spell.wood_06": {
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-04-shimaijing.webp",
+    "frame": "res://assets/UI-wood-qingluohuashengjue-spellframe-1x1.webp",
+    "book_name": "青萝化生诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08373205741626795,
+      0.07216905901116427,
+      0.8349282296650717,
+      0.8349282296650717
+    ],
+    "clip_rect": [
+      0.08373205741626795,
+      0.0861244019138756,
+      0.8349282296650717,
+      0.8070175438596491
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加4层毒蚀。",
+    "branch_descriptions": {
+      "入骨": "本术施加毒蚀提高至6层。",
+      "蔓生": "目标攻击前已有毒蚀，命中再施加3层缠绕。"
+    }
+  },
+  "base.spell.wood_07": {
+    "icon": "res://assets/UI-wood-qingluohuashengjue-effect-07-huichunshu.webp",
+    "frame": "res://assets/UI-wood-qingluohuashengjue-spellframe-1x1.webp",
+    "book_name": "青萝化生诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08373205741626795,
+      0.07216905901116427,
+      0.8349282296650717,
+      0.8349282296650717
+    ],
+    "clip_rect": [
+      0.08373205741626795,
+      0.0861244019138756,
+      0.8349282296650717,
+      0.8070175438596491
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "恢复15点基础气血，并获得4层生机。",
+    "branch_descriptions": {
+      "急生": "本术即时回血＋50%，生机仍为4层。",
+      "长养": "即时回血－25%，生机提高至6层。"
+    }
+  },
+  "base.spell.wood_08": {
+    "icon": "res://assets/UI-wood-qingluohuashengjue-spell-qingluotianluo-board-2x1.webp",
+    "frame": "res://assets/UI-wood-qingluohuashengjue-spellframe-2x1.webp",
+    "book_name": "青萝化生诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.06031567080045096,
+      0.06059751972942503,
+      0.8799323562570462,
+      0.8799323562570462
+    ],
+    "clip_rect": [
+      0.06031567080045096,
+      0.12175873731679819,
+      0.8799323562570462,
+      0.7576099210822999
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加8层缠绕，并使敌方武器定身1秒。",
+    "branch_descriptions": {
+      "天罗固缚": "缠绕提高至12层，定身提高至1.5秒。",
+      "引火召雷": "开放本术接后续火／雷法术的指定连携，基础追加比例20%；连携模块暂缓。"
+    }
+  },
+  "base.spell.water_01": {
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-01-hanyueren.webp",
+    "frame": "res://assets/UI-water-hanyueningbingjue-spellframe-1x1.webp",
+    "book_name": "寒月凝冰诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08133971291866028,
+      0.07256778309409888,
+      0.8373205741626795,
+      0.8373205741626795
+    ],
+    "clip_rect": [
+      0.08133971291866028,
+      0.08452950558213716,
+      0.8373205741626795,
+      0.8133971291866029
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接水属性攻击。",
+    "branch_descriptions": {
+      "凝锋": "本体伤害＋25%，盾后余伤再＋10%，可继续扣甲和气血。",
+      "覆霜": "命中施加3层寒霜。"
+    }
+  },
+  "base.spell.water_02": {
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-04-xuanbingqiang.webp",
+    "frame": "res://assets/UI-water-hanyueningbingjue-spellframe-1x1.webp",
+    "book_name": "寒月凝冰诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08133971291866028,
+      0.07256778309409888,
+      0.8373205741626795,
+      0.8373205741626795
+    ],
+    "clip_rect": [
+      0.08133971291866028,
+      0.08452950558213716,
+      0.8373205741626795,
+      0.8133971291866029
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接水属性攻击。",
+    "branch_descriptions": {
+      "贯寒": "本体伤害＋30%，适用相克收益再＋10个百分点。",
+      "裂冰": "按实际入甲伤害另加30%护甲专属伤害，额外量不溢出扣血。"
+    }
+  },
+  "base.spell.water_03": {
+    "icon": "res://assets/UI-water-hanyueningbingjue-effect-07-canglanhanchao.webp",
+    "frame": "res://assets/UI-water-hanyueningbingjue-spellframe-1x1.webp",
+    "book_name": "寒月凝冰诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08133971291866028,
+      0.07256778309409888,
+      0.8373205741626795,
+      0.8373205741626795
+    ],
+    "clip_rect": [
+      0.08133971291866028,
+      0.08452950558213716,
+      0.8373205741626795,
+      0.8133971291866029
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "较强水属性攻击。",
+    "branch_descriptions": {
+      "叠浪": "本术冷却、灵力费用各－25%。",
+      "凝潮": "本体伤害＋30%，命中施加2层寒霜。"
+    }
+  },
+  "base.spell.water_04": {
+    "icon": "res://assets/UI-water-hanyueningbingjue-spell-hanyuetianhe-board-1x2.webp",
+    "frame": "res://assets/UI-water-hanyueningbingjue-spellframe-1x2.webp",
+    "book_name": "寒月凝冰诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.060879368658399095,
+      0.05975197294250282,
+      0.8804960541149943,
+      0.8804960541149943
+    ],
+    "clip_rect": [
+      0.11837655016910936,
+      0.05975197294250282,
+      0.7655016910935738,
+      0.8804960541149943
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "高威力水属性攻击。",
+    "branch_descriptions": {
+      "断江": "本体伤害＋40%，盾后余伤再＋15%，可继续扣甲和气血。",
+      "覆海": "本体伤害－20%，命中施加6层寒霜。"
+    }
+  },
+  "base.spell.water_05": {
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-01-ranlingzhi.webp",
+    "frame": "res://assets/UI-water-canglanranlingjue-spellframe-1x1.webp",
+    "book_name": "沧澜燃灵诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08373205741626795,
+      0.07376395534290271,
+      0.8341307814992025,
+      0.8341307814992025
+    ],
+    "clip_rect": [
+      0.08373205741626795,
+      0.08771929824561403,
+      0.8341307814992025,
+      0.80622009569378
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中并直接削减目标6点灵力。",
+    "branch_descriptions": {
+      "深蚀": "直接扣灵提高至9点。",
+      "回流": "把本术实际削减灵力的50%回补自身。"
+    }
+  },
+  "base.spell.water_06": {
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-04-duanmaiyin.webp",
+    "frame": "res://assets/UI-water-canglanranlingjue-spellframe-1x1.webp",
+    "book_name": "沧澜燃灵诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08373205741626795,
+      0.07376395534290271,
+      0.8341307814992025,
+      0.8341307814992025
+    ],
+    "clip_rect": [
+      0.08373205741626795,
+      0.08771929824561403,
+      0.8341307814992025,
+      0.80622009569378
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加4层枯脉。",
+    "branch_descriptions": {
+      "封灵": "施加者参与加层后，当前统一枯脉池扣灵＋25%，直到清空。",
+      "困体": "同样使当前枯脉池扣体＋25%；同一人同池只计一次，不同人可相加。"
+    }
+  },
+  "base.spell.water_07": {
+    "icon": "res://assets/UI-water-canglanranlingjue-effect-07-hanchaosuozhen.webp",
+    "frame": "res://assets/UI-water-canglanranlingjue-spellframe-1x1.webp",
+    "book_name": "沧澜燃灵诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08373205741626795,
+      0.07376395534290271,
+      0.8341307814992025,
+      0.8341307814992025
+    ],
+    "clip_rect": [
+      0.08373205741626795,
+      0.08771929824561403,
+      0.8341307814992025,
+      0.80622009569378
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加6层寒霜，通常仍只触发1层冻结。",
+    "branch_descriptions": {
+      "积霜": "本术施加寒霜提高至10层。",
+      "骤冻": "施法前目标已有寒霜，本次常规寒霜冻结额外＋0.2秒。"
+    }
+  },
+  "base.spell.water_08": {
+    "icon": "res://assets/UI-water-canglanranlingjue-spell-guixuduanliu-board-2x1.webp",
+    "frame": "res://assets/UI-water-canglanranlingjue-spellframe-2x1.webp",
+    "book_name": "沧澜燃灵诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.06031567080045096,
+      0.05749718151071026,
+      0.8816234498308907,
+      0.8816234498308907
+    ],
+    "clip_rect": [
+      0.06031567080045096,
+      0.11724915445321307,
+      0.8816234498308907,
+      0.762119503945885
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "按目标现有灵力、体力的平均缺失比例P增伤：",
+    "branch_descriptions": {
+      "枯海": "缺失比例按1.5倍计入，最终仍最多两倍基础伤害。",
+      "回澜": "取资源缺失增伤实际造成的有效损失，按自身资源剩余比例反向分配，恢复灵力与体力；溢出作废。"
+    }
+  },
+  "base.spell.fire_01": {
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-01-chiyanren.webp",
+    "frame": "res://assets/UI-fire-chiyangzhenhuojue-spellframe-1x1.webp",
+    "book_name": "赤阳真火诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08133971291866028,
+      0.08293460925039872,
+      0.8397129186602871,
+      0.8397129186602871
+    ],
+    "clip_rect": [
+      0.08133971291866028,
+      0.08293460925039872,
+      0.8397129186602871,
+      0.8125996810207337
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "直接火属性攻击。",
+    "branch_descriptions": {
+      "烈锋": "本体伤害＋25%，盾后余伤再＋10%，可继续扣甲和气血。",
+      "蓄焰": "命中后自身获得3层附炎。"
+    }
+  },
+  "base.spell.fire_02": {
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-04-yanlongqiang.webp",
+    "frame": "res://assets/UI-fire-chiyangzhenhuojue-spellframe-1x1.webp",
+    "book_name": "赤阳真火诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08133971291866028,
+      0.08293460925039872,
+      0.8397129186602871,
+      0.8397129186602871
+    ],
+    "clip_rect": [
+      0.08133971291866028,
+      0.08293460925039872,
+      0.8397129186602871,
+      0.8125996810207337
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "直接火属性攻击。",
+    "branch_descriptions": {
+      "贯阳": "本体伤害＋30%。",
+      "熔锋": "实际扣除护甲时，施加3层破甲。"
+    }
+  },
+  "base.spell.fire_03": {
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-07-lieyangyin.webp",
+    "frame": "res://assets/UI-fire-chiyangzhenhuojue-spellframe-1x1.webp",
+    "book_name": "赤阳真火诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08133971291866028,
+      0.08293460925039872,
+      0.8397129186602871,
+      0.8397129186602871
+    ],
+    "clip_rect": [
+      0.08133971291866028,
+      0.08293460925039872,
+      0.8397129186602871,
+      0.8125996810207337
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "命中时按目标预存灼烧产生爆燃：每层追加1点基础火伤。",
+    "branch_descriptions": {
+      "阳爆": "本体直接伤害＋30%。",
+      "焚印": "本术爆燃追加伤害＋50%，本体不变。"
+    }
+  },
+  "base.spell.fire_04": {
+    "icon": "res://assets/UI-fire-chiyangzhenhuojue-spell-chiyangtianhuo-board-1x2.webp",
+    "frame": "res://assets/UI-fire-chiyangzhenhuojue-spellframe-1x2.webp",
+    "book_name": "赤阳真火诀",
+    "quality": "灵品",
+    "viewport": [
+      0.02452085682074408,
+      0.023111612175873732,
+      0.9509582863585119,
+      0.9509582863585119
+    ],
+    "art_rect": [
+      0.06567080045095829,
+      0.07046223224351747,
+      0.8686583990980834,
+      0.8686583990980834
+    ],
+    "clip_rect": [
+      0.12401352874859076,
+      0.07046223224351747,
+      0.7519729425028185,
+      0.8568207440811725
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "高威力火属性攻击。",
+    "branch_descriptions": {
+      "焚灭": "本体伤害＋40%。",
+      "天火余烬": "本体伤害－20%，命中施加6层灼烧，实际扣甲再施加4层破甲。"
+    }
+  },
+  "base.spell.fire_05": {
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-01-yinyanjue.webp",
+    "frame": "res://assets/UI-fire-lihuoliaoyuanjue-spellframe-1x1.webp",
+    "book_name": "离火燎原诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08253588516746412,
+      0.08532695374800638,
+      0.8365231259968102,
+      0.8365231259968102
+    ],
+    "clip_rect": [
+      0.08293460925039872,
+      0.08532695374800638,
+      0.835725677830941,
+      0.8125996810207337
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "自身获得6层附炎。",
+    "branch_descriptions": {
+      "聚炎": "本次获得附炎提高至10层。",
+      "疾引": "本术冷却、灵力费用各－25%。"
+    }
+  },
+  "base.spell.fire_06": {
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-04-rongjiayan.webp",
+    "frame": "res://assets/UI-fire-lihuoliaoyuanjue-spellframe-1x1.webp",
+    "book_name": "离火燎原诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08253588516746412,
+      0.08532695374800638,
+      0.8365231259968102,
+      0.8365231259968102
+    ],
+    "clip_rect": [
+      0.08293460925039872,
+      0.08532695374800638,
+      0.835725677830941,
+      0.8125996810207337
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "命中施加4层破甲；预存破甲且本体实际入甲时，每预存层额外产生0.5点护甲专属熔爆火伤。",
+    "branch_descriptions": {
+      "深熔": "本术施加破甲提高至6层。",
+      "炽裂": "本术熔爆追加伤害＋50%，仍只扣甲。"
+    }
+  },
+  "base.spell.fire_07": {
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-07-liaoyuanhuo.webp",
+    "frame": "res://assets/UI-fire-lihuoliaoyuanjue-spellframe-1x1.webp",
+    "book_name": "离火燎原诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08253588516746412,
+      0.08532695374800638,
+      0.8365231259968102,
+      0.8365231259968102
+    ],
+    "clip_rect": [
+      0.08293460925039872,
+      0.08532695374800638,
+      0.835725677830941,
+      0.8125996810207337
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "命中施加6层灼烧。",
+    "branch_descriptions": {
+      "续燃": "本术施加灼烧提高至10层。",
+      "烈灼": "本体伤害＋40%，施加灼烧减至3层。"
+    }
+  },
+  "base.spell.fire_08": {
+    "icon": "res://assets/UI-fire-lihuoliaoyuanjue-spell-lihuozhenyan-board-1x2.webp",
+    "frame": "res://assets/UI-fire-lihuoliaoyuanjue-spellframe-1x2.webp",
+    "book_name": "离火燎原诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.040586245772266064,
+      0.04735062006764374,
+      0.9165727170236753,
+      0.9165727170236753
+    ],
+    "clip_rect": [
+      0.09244644870349493,
+      0.04735062006764374,
+      0.8128523111612176,
+      0.9047350620067643
+    ],
+    "placement_mode": "approved_fire_top_aligned_bottom_overlap",
+    "summary": "目标预存灼烧、破甲合计每层，使本体火伤＋1%，本项最高＋100%。",
+    "branch_descriptions": {
+      "炎尽": "每层增伤提高至1.5%，本项最高＋150%。",
+      "余火": "命中后获得6层附炎，并刷新目标已有灼烧和破甲的持续时间。"
+    }
+  },
+  "base.spell.earth_01": {
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-01-yangangchui.webp",
+    "frame": "res://assets/UI-earth-hanyueliedijue-spellframe-1x1.webp",
+    "book_name": "撼岳裂地诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.07456140350877193,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8325358851674641,
+      0.8094098883572568
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接土属性攻击。",
+    "branch_descriptions": {
+      "重岳": "本体伤害＋25%。",
+      "震乏": "命中施加4层疲惫。"
+    }
+  },
+  "base.spell.earth_02": {
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-04-zhuiyueyin.webp",
+    "frame": "res://assets/UI-earth-hanyueliedijue-spellframe-1x1.webp",
+    "book_name": "撼岳裂地诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.07456140350877193,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8325358851674641,
+      0.8094098883572568
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中后按目标预存疲惫，每层追加2点震溃基础土伤，不消耗疲惫。",
+    "branch_descriptions": {
+      "镇山": "本体伤害＋30%。",
+      "乘乏": "本术震溃追加伤害＋50%。"
+    }
+  },
+  "base.spell.earth_03": {
+    "icon": "res://assets/UI-earth-hanyueliedijue-effect-07-dimaizhen.webp",
+    "frame": "res://assets/UI-earth-hanyueliedijue-spellframe-1x1.webp",
+    "book_name": "撼岳裂地诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.07456140350877193,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8325358851674641,
+      0.8094098883572568
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中使敌方武器定身1秒，暂停武器入阵、轮转并禁止外部调用。",
+    "branch_descriptions": {
+      "裂地": "本体伤害＋30%。",
+      "沉岳": "定身提高至2秒，命中施加3层重伤。"
+    }
+  },
+  "base.spell.earth_04": {
+    "icon": "res://assets/UI-earth-hanyueliedijue-spell-shanhebeng-board-2x1.webp",
+    "frame": "res://assets/UI-earth-hanyueliedijue-spellframe-2x1.webp",
+    "book_name": "撼岳裂地诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.0580608793686584,
+      0.0552423900789177,
+      0.8850056369785795,
+      0.8850056369785795
+    ],
+    "clip_rect": [
+      0.0580608793686584,
+      0.11724915445321307,
+      0.8850056369785795,
+      0.7609921082299888
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中后按目标预存重伤，每层追加2点崩体基础土伤，不消耗重伤。",
+    "branch_descriptions": {
+      "倾岳": "本体伤害＋40%。",
+      "伤崩": "本术崩体追加伤害＋50%。"
+    }
+  },
+  "base.spell.earth_05": {
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-01-shouyueshi.webp",
+    "frame": "res://assets/UI-earth-budongxuanyuejue-spellframe-1x1.webp",
+    "book_name": "不动玄岳诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0733652312599681,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.08692185007974482,
+      0.8325358851674641,
+      0.8054226475279107
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后抵消下一次合格暴击，本次直接伤害包减伤20%。",
+    "branch_descriptions": {
+      "镇身": "本术减伤提高至40%。",
+      "蓄岳": "原攻击结算后，自身获得4层坚韧。"
+    }
+  },
+  "base.spell.earth_06": {
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-04-poyueshi.webp",
+    "frame": "res://assets/UI-earth-budongxuanyuejue-spellframe-1x1.webp",
+    "book_name": "不动玄岳诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0733652312599681,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.08692185007974482,
+      0.8325358851674641,
+      0.8054226475279107
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后令下一次合格武器攻击保证暴击；钝击武器本体额外增伤20%。",
+    "branch_descriptions": {
+      "崩击": "钝击武器本次暴击倍率由1.5提高至1.75。",
+      "震伤": "本次武器实际扣盾、甲或血，施加3层重伤。"
+    }
+  },
+  "base.spell.earth_07": {
+    "icon": "res://assets/UI-earth-budongxuanyuejue-effect-07-zhenmaijue.webp",
+    "frame": "res://assets/UI-earth-budongxuanyuejue-spellframe-1x1.webp",
+    "book_name": "不动玄岳诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0733652312599681,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.08692185007974482,
+      0.8325358851674641,
+      0.8054226475279107
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后令敌方下一次合格发动的非零资源费用＋50%，并施加3层重伤；资源不足可截断发动。",
+    "branch_descriptions": {
+      "沉耗": "该次费用增幅提高至＋100%。",
+      "伤元": "费用增幅改为＋25%，施加重伤提高至6层。"
+    }
+  },
+  "base.spell.earth_08": {
+    "icon": "res://assets/UI-earth-budongxuanyuejue-spell-xuanyuefanzhen-board-2x1.webp",
+    "frame": "res://assets/UI-earth-budongxuanyuejue-spellframe-2x1.webp",
+    "book_name": "不动玄岳诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.0636978579481398,
+      0.06397970687711386,
+      0.8731679819616686,
+      0.8731679819616686
+    ],
+    "clip_rect": [
+      0.0636978579481398,
+      0.1273957158962796,
+      0.8731679819616686,
+      0.7463359639233371
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后受到攻击、护甲实际受损且结算后仍存活，按本次损甲量的50%反击土伤。",
+    "branch_descriptions": {
+      "借力": "损甲转伤比例提高至100%。",
+      "镇敌": "转伤比例改为25%，反击命中施加2层疲惫、2层重伤。"
+    }
+  },
+  "base.spell.wind_01": {
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-01-fengyushi.webp",
+    "frame": "res://assets/UI-wind-qingmingpokongjue-spellframe-1x1.webp",
+    "book_name": "青冥破空诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0729665071770335,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8325358851674641,
+      0.80622009569378
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "风属性攻击，本术命中率额外＋15个百分点。",
+    "branch_descriptions": {
+      "疾羽": "本术冷却－25%，灵力费用不变，初学为3秒／4灵力。",
+      "透风": "本体伤害＋25%。"
+    }
+  },
+  "base.spell.wind_02": {
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-04-chuanyunqiang.webp",
+    "frame": "res://assets/UI-wind-qingmingpokongjue-spellframe-1x1.webp",
+    "book_name": "青冥破空诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0729665071770335,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8325358851674641,
+      0.80622009569378
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接风属性攻击。",
+    "branch_descriptions": {
+      "贯云": "本体伤害＋30%。",
+      "破隙": "命中后按目标预存失衡，每层追加2点基础风伤。"
+    }
+  },
+  "base.spell.wind_03": {
+    "icon": "res://assets/UI-wind-qingmingpokongjue-effect-07-liekonggangfeng.webp",
+    "frame": "res://assets/UI-wind-qingmingpokongjue-spellframe-1x1.webp",
+    "book_name": "青冥破空诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0729665071770335,
+      0.8325358851674641,
+      0.8325358851674641
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.0861244019138756,
+      0.8325358851674641,
+      0.80622009569378
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加4层失衡。",
+    "branch_descriptions": {
+      "风暴": "本体伤害＋30%。",
+      "乱流": "本术施加失衡提高至8层。"
+    }
+  },
+  "base.spell.wind_04": {
+    "icon": "res://assets/UI-wind-qingmingpokongjue-spell-qingmingguanri-board-1x2.webp",
+    "frame": "res://assets/UI-wind-qingmingpokongjue-spellframe-1x2.webp",
+    "book_name": "青冥破空诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.07158962795941376,
+      0.06144306651634724,
+      0.8579481397970687,
+      0.8579481397970687
+    ],
+    "clip_rect": [
+      0.12401352874859076,
+      0.06144306651634724,
+      0.7531003382187148,
+      0.8579481397970687
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "高威力风属性攻击。",
+    "branch_descriptions": {
+      "贯日": "本体伤害＋40%，盾后余伤再＋15%，可继续扣甲和气血。",
+      "逐隙": "每层预存失衡使本体伤害＋1%，本项最高＋50%；命中再施加6层失衡。"
+    }
+  },
+  "base.spell.wind_05": {
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-01-tingfengbu.webp",
+    "frame": "res://assets/UI-wind-tingfengwuyingjue-spellframe-1x1.webp",
+    "book_name": "听风无影诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0729665071770335,
+      0.8333333333333334,
+      0.8333333333333334
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.08532695374800638,
+      0.8333333333333334,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后保证闪避下一次合格可闪避攻击。",
+    "branch_descriptions": {
+      "留风": "本术成功闪避后获得4层轻灵。",
+      "借势": "本术成功闪避后，己方一件正在冷却的穿刺武器剩余冷却－2秒。"
+    }
+  },
+  "base.spell.wind_06": {
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-04-zhuifengshi.webp",
+    "frame": "res://assets/UI-wind-tingfengwuyingjue-spellframe-1x1.webp",
+    "book_name": "听风无影诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0729665071770335,
+      0.8333333333333334,
+      0.8333333333333334
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.08532695374800638,
+      0.8333333333333334,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后，武器原始攻击命中时保证发动一次追击；伤害取首击盾甲前武器本体的50%，另判命中。",
+    "branch_descriptions": {
+      "贯影": "本术追击比例提高至75%，穿刺武器提高至100%；与逐影连锋增量相加。",
+      "疾追": "本术追击命中率＋15个百分点。"
+    }
+  },
+  "base.spell.wind_07": {
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-07-huifengyin.webp",
+    "frame": "res://assets/UI-wind-tingfengwuyingjue-spellframe-1x1.webp",
+    "book_name": "听风无影诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08452950558213716,
+      0.0729665071770335,
+      0.8333333333333334,
+      0.8333333333333334
+    ],
+    "clip_rect": [
+      0.08452950558213716,
+      0.08532695374800638,
+      0.8333333333333334,
+      0.8086124401913876
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "推进己方一件合格物品剩余",
+    "branch_descriptions": {
+      "顺风": "推进量提高至4秒。",
+      "逆风": "改为敌方一件合格物品剩余冷却＋2秒，同次不再推进己方。"
+    }
+  },
+  "base.spell.wind_08": {
+    "icon": "res://assets/UI-wind-tingfengwuyingjue-spell-qingfengdichen-board-2x1.webp",
+    "frame": "res://assets/UI-wind-tingfengwuyingjue-spellframe-2x1.webp",
+    "book_name": "听风无影诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.05693348365276212,
+      0.05834272829763247,
+      0.8866967305524239,
+      0.8866967305524239
+    ],
+    "clip_rect": [
+      0.05693348365276212,
+      0.11837655016910936,
+      0.8866967305524239,
+      0.7666290868094702
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加8层驱散，按驱散规则拆除增益。",
+    "branch_descriptions": {
+      "洗尘": "施加驱散提高至12层，本术所施驱散额外拆1层的概率＋20个百分点。",
+      "乘风": "命中并成功施加驱散，己方一件正在冷却的穿刺武器或其他风法剩余冷却－2秒，不要求已拆增益。"
+    }
+  },
+  "base.spell.thunder_01": {
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-01-leiguangzhi.webp",
+    "frame": "res://assets/UI-thunder-jiuxiaotingguangjue-spellframe-1x1.webp",
+    "book_name": "九霄霆光诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08532695374800638,
+      0.07216905901116427,
+      0.8301435406698564,
+      0.8301435406698564
+    ],
+    "clip_rect": [
+      0.08532695374800638,
+      0.08692185007974482,
+      0.8301435406698564,
+      0.8006379585326954
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "直接雷属性攻击。",
+    "branch_descriptions": {
+      "疾电": "本术冷却、灵力费用各－25%。",
+      "刻雷": "命中施加3层雷印。"
+    }
+  },
+  "base.spell.thunder_02": {
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-04-xuantingqiang.webp",
+    "frame": "res://assets/UI-thunder-jiuxiaotingguangjue-spellframe-1x1.webp",
+    "book_name": "九霄霆光诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08532695374800638,
+      0.07216905901116427,
+      0.8301435406698564,
+      0.8301435406698564
+    ],
+    "clip_rect": [
+      0.08532695374800638,
+      0.08692185007974482,
+      0.8301435406698564,
+      0.8006379585326954
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加2层雷印。",
+    "branch_descriptions": {
+      "贯霆": "本体伤害＋30%。",
+      "引印": "本术施加雷印提高至5层。"
+    }
+  },
+  "base.spell.thunder_03": {
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-07-liantingshu.webp",
+    "frame": "res://assets/UI-thunder-jiuxiaotingguangjue-spellframe-1x1.webp",
+    "book_name": "九霄霆光诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08532695374800638,
+      0.07216905901116427,
+      0.8301435406698564,
+      0.8301435406698564
+    ],
+    "clip_rect": [
+      0.08532695374800638,
+      0.08692185007974482,
+      0.8301435406698564,
+      0.8006379585326954
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "提供额外一次连环机会：未引雷时可触发两记连环闪电，引雷时可雷击后再连环；仍需已有状态。",
+    "branch_descriptions": {
+      "疾霆": "本术冷却、灵力费用各－25%。",
+      "重链": "额外机会产生的那记连环闪电伤害＋50%，不强化第一记普通连环或雷击。"
+    }
+  },
+  "base.spell.thunder_04": {
+    "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-spell-jiuxiaoleiluo-board-1x2.webp",
+    "frame": "res://assets/UI-thunder-jiuxiaotingguangjue-spellframe-1x2.webp",
+    "book_name": "九霄霆光诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.06567080045095829,
+      0.05580608793686584,
+      0.8686583990980834,
+      0.8686583990980834
+    ],
+    "clip_rect": [
+      0.10372040586245772,
+      0.05580608793686584,
+      0.7925591882750845,
+      0.8686583990980834
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "高威力雷属性攻击。",
+    "branch_descriptions": {
+      "镇邪": "本术直接雷伤对鬼、妖、魔再＋30个百分点，合计＋50%；不加到雷印雷击。",
+      "引劫": "本术实际引发的雷印雷击伤害＋50%，本体不变。"
+    }
+  },
+  "base.spell.thunder_05": {
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-01-leiganghuti.webp",
+    "frame": "res://assets/UI-thunder-leigangzhenyujue-spellframe-1x1.webp",
+    "book_name": "雷罡镇狱诀",
+    "quality": "下品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08532695374800638,
+      0.0729665071770335,
+      0.8293460925039873,
+      0.8293460925039873
+    ],
+    "clip_rect": [
+      0.08532695374800638,
+      0.08851674641148326,
+      0.8293460925039873,
+      0.7982456140350878
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "自身获得6层雷蕴，战斗中每10层可转为一层雷盾，仍受存活层数限制。",
+    "branch_descriptions": {
+      "聚罡": "本次获得雷蕴提高至10层。",
+      "疾护": "本术冷却、灵力费用各－25%。"
+    }
+  },
+  "base.spell.thunder_06": {
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-04-yinleiyin.webp",
+    "frame": "res://assets/UI-thunder-leigangzhenyujue-spellframe-1x1.webp",
+    "book_name": "雷罡镇狱诀",
+    "quality": "凡品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08532695374800638,
+      0.0729665071770335,
+      0.8293460925039873,
+      0.8293460925039873
+    ],
+    "clip_rect": [
+      0.08532695374800638,
+      0.08851674641148326,
+      0.8293460925039873,
+      0.7982456140350878
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加6层雷印；新印不回溯触发本次引雷。",
+    "branch_descriptions": {
+      "深印": "本术施加雷印提高至10层。",
+      "疾引": "本术冷却、灵力费用各－25%。"
+    }
+  },
+  "base.spell.thunder_07": {
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-07-leifanshi.webp",
+    "frame": "res://assets/UI-thunder-leigangzhenyujue-spellframe-1x1.webp",
+    "book_name": "雷罡镇狱诀",
+    "quality": "上品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.08532695374800638,
+      0.0729665071770335,
+      0.8293460925039873,
+      0.8293460925039873
+    ],
+    "clip_rect": [
+      0.08532695374800638,
+      0.08851674641148326,
+      0.8293460925039873,
+      0.7982456140350878
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "待发后任一雷盾层被攻击击破且成功麻痹攻击者，发动一次雷属性反击，独立判命中。",
+    "branch_descriptions": {
+      "震返": "本术反击伤害＋30%。",
+      "连锁": "反击命中施加4层连环，新层供后续攻击使用。"
+    }
+  },
+  "base.spell.thunder_08": {
+    "icon": "res://assets/UI-thunder-leigangzhenyujue-spell-leiyusuo-board-2x1.webp",
+    "frame": "res://assets/UI-thunder-leigangzhenyujue-spellframe-2x1.webp",
+    "book_name": "雷罡镇狱诀",
+    "quality": "灵品",
+    "viewport": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    "art_rect": [
+      0.06538895152198422,
+      0.058624577226606536,
+      0.8692220969560316,
+      0.8692220969560316
+    ],
+    "clip_rect": [
+      0.06538895152198422,
+      0.12063134160090191,
+      0.8692220969560316,
+      0.7452085682074409
+    ],
+    "placement_mode": "actual_straight_inner_edges_centered_cover_ignore_corner_intrusions",
+    "summary": "命中施加4层雷印；目标命中前已麻痹，则剩余麻痹延长1秒。",
+    "branch_descriptions": {
+      "锁狱": "对已有麻痹目标的延长量提高至2秒。",
+      "雷刑": "本体伤害＋30%，施加雷印提高至8层，仍保留基础延长1秒。"
+    }
+  }
+}

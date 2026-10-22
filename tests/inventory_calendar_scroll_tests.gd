@@ -54,6 +54,8 @@ func run() -> void:
 		var scroll := ui.grid.get_parent() as ScrollContainer
 		var pitch: float = scroll.row_pitch()
 		verify(pitch > 0,"row-sized wheel step available")
+		var last_card := ui.grid.get_child(ui.grid.get_child_count() - 1) as Control
+		verify(absf(ui.grid.get_combined_minimum_size().y - last_card.get_rect().end.y) <= 1, "content ends at final card without bottom padding")
 		if DisplayServer.get_name() == "headless":
 			var card := ui.grid.get_child(0) as Control
 			var point := card.get_global_rect().get_center()
@@ -72,6 +74,25 @@ func run() -> void:
 			await wheel(point,MOUSE_BUTTON_WHEEL_UP)
 			await wheel(point,MOUSE_BUTTON_WHEEL_UP)
 			verify(scroll.scroll_vertical == 0,"two up returns to original position without rounding drift")
+			var bar := scroll.get_v_scroll_bar()
+			var limit := maxf(0, bar.max_value - bar.page)
+			# Near the bottom, keep the regular half-row step without snapping.
+			scroll.scroll_vertical = roundi(limit - pitch * 0.5 - 12.0)
+			await settle()
+			var near_bottom := scroll.scroll_vertical
+			await wheel(point, MOUSE_BUTTON_WHEEL_DOWN)
+			verify(absf(scroll.scroll_vertical - near_bottom - pitch * 0.5) <= 1, "near-bottom step does not absorb extra space")
+			await wheel(point, MOUSE_BUTTON_WHEEL_DOWN)
+			verify(absf(scroll.scroll_vertical - limit) <= 1, "scroll reaches actual content end")
+			var bottom := scroll.scroll_vertical
+			await wheel(point, MOUSE_BUTTON_WHEEL_DOWN)
+			verify(scroll.scroll_vertical == bottom, "no extra tiny scroll after final row")
+			verify(absf(last_card.get_global_rect().end.y - scroll.get_global_rect().end.y) <= 2, "final card bottom aligns with viewport bottom")
+		if DisplayServer.get_name() != "headless" and map_name == "qingshizhen":
+			scroll.scroll_vertical = roundi(scroll.get_v_scroll_bar().max_value)
+			await settle()
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().get_region(Rect2i(ui.storage_panel.get_global_rect())).save_png("res://artifacts/inventory-bottom-no-padding.png")
 		ui.set_warehouse("base.warehouse.qingshizhen.home")
 		await settle()
 		verify(map.calendar_readout.is_visible_in_tree(),"warehouse date shown")

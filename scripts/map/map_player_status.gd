@@ -24,6 +24,8 @@ var rest_days_spent := 0
 var last_rest: Dictionary = {}
 var calendar_record: Dictionary = {}
 var initial_age := 15
+var growth: Dictionary = {}
+var _growth_registry: ContentRegistry
 
 func configure(registry: ContentRegistry, config: Dictionary) -> String:
 	var character := registry.get_character(config.get("character_id", ""))
@@ -37,6 +39,7 @@ func configure(registry: ContentRegistry, config: Dictionary) -> String:
 		if not id is String or id == character.id or id in companion_ids or registry.get_character(id).is_empty():
 			return "当前队友不存在或重复。"
 		companion_ids.append(id)
+	_growth_registry = registry
 	character_definition = character.duplicate(true)
 	character_definition.portrait = config.get("portrait", character.portrait)
 	if config.has("portrait_region"):
@@ -145,7 +148,11 @@ func apply_battle_resources(member: PartyMemberState, defeated := false) -> void
 
 func award_progression(rewards: Dictionary) -> void:
 	# Progress is retained across maps in this session; breakthrough rules are separate.
-	cultivation_progress = snappedf(cultivation_progress + cultivation_gain(float(rewards.get("cultivation",0))),0.1)
+	if not growth.is_empty():
+		CultivationGrowth.award(growth,CultivationGrowth.cents(cultivation_gain(float(rewards.get("cultivation",0)))))
+		apply_growth(growth)
+	else:
+		cultivation_progress = snappedf(cultivation_progress + cultivation_gain(float(rewards.get("cultivation",0))),0.1)
 	experience += int(rewards.get("experience", 0))
 	changed.emit()
 
@@ -157,4 +164,29 @@ func battle_snapshot() -> Dictionary:
 	current.name = display_name
 	current.cultivation_rank = cultivation_rank_id
 	current.food_modifiers = food_modifiers.duplicate()
-	return {"character": current, "resources": resources.duplicate(), "companion_ids": companion_ids.duplicate()}
+	return {"character": current, "resources": resources.duplicate(), "companion_ids": companion_ids.duplicate(),"growth":growth.duplicate(true)}
+
+func apply_growth(value: Dictionary) -> void:
+	growth = value
+	cultivation_rank_id = CultivationGrowth.rank_id(growth)
+	var layer := int(growth.layer)
+	var names := ["一","二","三","四","五","六","七","八","九","十"]
+	rank_name = str(_growth_registry.get_cultivation(cultivation_rank_id).name)
+	if int(growth.realm)>0: rank_name += " · " + names[layer-1] + "层"
+	character_definition.cultivation_rank = cultivation_rank_id
+	character_definition.cultivation_stage = names[layer-1]+"层" if int(growth.realm)>0 else ""
+	var base := CultivationGrowth.maxima(growth)
+	for key: String in base:
+		character_definition["max_"+key] = base[key]
+		maxima[key] = int(base[key])+int(_active_board_bonuses.get(key,0))
+		resources[key] = minf(maxima[key],int(growth.resources.get(key,CultivationGrowth.cents(resources.get(key,maxima[key]))))/100.0)
+	cultivation_progress = int(growth.progress)/100.0
+	cultivation_required = maxi(1,CultivationGrowth.target(growth)/100)
+	lifespan = int(CultivationGrowth.rules().realms[int(growth.realm)].lifespan)
+	experience = int(growth.get("experience",experience))
+	changed.emit()
+
+func capture_growth() -> void:
+	if growth.is_empty(): return
+	for key: String in resources: growth.resources[key] = CultivationGrowth.cents(resources[key])
+	growth.experience=experience

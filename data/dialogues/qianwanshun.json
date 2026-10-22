@@ -1,7 +1,7 @@
 {
   "id": "base.npc.qianwanshun",
   "name": "钱万顺",
-  "portrait": "res://assets/tanchuang-jiaoyi-qingshizhen-shangpu-boss.webp",
+  "portrait": "res://assets/tanchuang-qingshizhen-shangpu-boss.webp",
   "portrait_region": [
     305,
     294,

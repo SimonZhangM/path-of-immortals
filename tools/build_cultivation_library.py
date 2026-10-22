@@ -219,6 +219,12 @@ branch_display_names.update({
   "连霆不绝": "续霆"
  }
 })
+# Core 01 section 1.73: fixed orientation; spells cannot rotate on the board.
+vertical_spells = {
+ 'base.spell.metal_04', 'base.spell.water_04',
+ 'base.spell.fire_04', 'base.spell.fire_08',
+ 'base.spell.wind_04', 'base.spell.thunder_04',
+}
 books=[]; spells=[]
 for b in m['books']:
  b={k:v for k,v in b.items() if k not in ['status','dependencies']}
@@ -239,7 +245,9 @@ for old in m['spells']:
  s={k:v for k,v in old.items() if k not in ['status','dependencies']}
  params=D[s['element']][int(s['id'][-2:])-1].copy()
  s.update(icon='',opcode='attack',prepared=False,**{})
- s.update(params);spells.append(s)
+ s.update(params)
+ if s['cells'] == 2:s['size'] = [1,2] if s['id'] in vertical_spells else [2,1]
+ spells.append(s)
 out=root/'data/cultivation_library.json'
 out.write_text(json.dumps(dict(version=1,source='docs/01_核心定案_七系功法与战斗规则.md',books=books,spells=spells),ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(f'{len(books)} books / {len(spells)} spells -> {out}')

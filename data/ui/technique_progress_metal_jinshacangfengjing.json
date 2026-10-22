@@ -9,17 +9,35 @@
         {
           "name": "回锋",
           "description": "：反锋触发后保留25%层数。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-01-huifeng.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-01-huifeng.webp",
+          "status_icons": [
+            {
+              "name": "反锋",
+              "icon": "res://assets/buff-jin.webp"
+            }
+          ]
         },
         {
           "name": "留痕",
           "description": "：锋痕触发后保留25%层数；本次仍按触发前层数结算。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-02-liuhen.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-02-liuhen.webp",
+          "status_icons": [
+            {
+              "name": "锋痕",
+              "icon": "res://assets/debuff-jin.webp"
+            }
+          ]
         },
         {
           "name": "血沸",
           "description": "：向已有流血的目标再加流血，刷新持续时间，新增层立即结算一次。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-03-xuefei.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-03-xuefei.webp",
+          "status_icons": [
+            {
+              "name": "流血",
+              "icon": "res://assets/debuff-jin-2.webp"
+            }
+          ]
         }
       ]
     },
@@ -29,17 +47,35 @@
         {
           "name": "蕴锋",
           "description": "：反锋伤害＋10%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-04-yunfeng.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-04-yunfeng.webp",
+          "status_icons": [
+            {
+              "name": "反锋",
+              "icon": "res://assets/buff-jin.webp"
+            }
+          ]
         },
         {
           "name": "刻痕",
           "description": "：锋痕追加伤害＋10%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-05-kehen.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-05-kehen.webp",
+          "status_icons": [
+            {
+              "name": "锋痕",
+              "icon": "res://assets/debuff-jin.webp"
+            }
+          ]
         },
         {
           "name": "炼血",
           "description": "：流血跳伤＋10%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-06-lianxue.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-06-lianxue.webp",
+          "status_icons": [
+            {
+              "name": "流血",
+              "icon": "res://assets/debuff-jin-2.webp"
+            }
+          ]
         }
       ]
     },
@@ -49,17 +85,47 @@
         {
           "name": "生痕",
           "description": "：反锋真正伤及气血，施加1层锋痕。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-07-shenghen.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-07-shenghen.webp",
+          "status_icons": [
+            {
+              "name": "反锋",
+              "icon": "res://assets/buff-jin.webp"
+            },
+            {
+              "name": "锋痕",
+              "icon": "res://assets/debuff-jin.webp"
+            }
+          ]
         },
         {
           "name": "见血",
           "description": "：锋痕真正伤及气血，施加1层流血。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-08-jianxue.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-08-jianxue.webp",
+          "status_icons": [
+            {
+              "name": "锋痕",
+              "icon": "res://assets/debuff-jin.webp"
+            },
+            {
+              "name": "流血",
+              "icon": "res://assets/debuff-jin-2.webp"
+            }
+          ]
         },
         {
           "name": "养锋",
           "description": "：流血每次成功结算，自身获得1层反锋。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-09-yangfeng.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-09-yangfeng.webp",
+          "status_icons": [
+            {
+              "name": "流血",
+              "icon": "res://assets/debuff-jin-2.webp"
+            },
+            {
+              "name": "反锋",
+              "icon": "res://assets/buff-jin.webp"
+            }
+          ]
         }
       ]
     },
@@ -69,17 +135,35 @@
         {
           "name": "化锋",
           "description": "：反锋伤害再＋20%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-10-huafeng.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-10-huafeng.webp",
+          "status_icons": [
+            {
+              "name": "反锋",
+              "icon": "res://assets/buff-jin.webp"
+            }
+          ]
         },
         {
           "name": "深痕",
           "description": "：锋痕追加伤害再＋20%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-11-shenhen.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-11-shenhen.webp",
+          "status_icons": [
+            {
+              "name": "锋痕",
+              "icon": "res://assets/debuff-jin.webp"
+            }
+          ]
         },
         {
           "name": "沸血",
           "description": "：流血跳伤再＋20%；与第二重同向强化合计＋30%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-12-feixue.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-12-feixue.webp",
+          "status_icons": [
+            {
+              "name": "流血",
+              "icon": "res://assets/debuff-jin-2.webp"
+            }
+          ]
         }
       ]
     },
@@ -89,17 +173,35 @@
         {
           "name": "镇兵",
           "description": "：触发反锋的敌方武器下一轮冷却延长1秒。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-13-zhenbing.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-13-zhenbing.webp",
+          "status_icons": [
+            {
+              "name": "反锋",
+              "icon": "res://assets/buff-jin.webp"
+            }
+          ]
         },
         {
           "name": "透骨",
           "description": "：本次触发前锁定的锋痕每层，使武器本体伤害＋1%。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-14-tougu.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-14-tougu.webp",
+          "status_icons": [
+            {
+              "name": "锋痕",
+              "icon": "res://assets/debuff-jin.webp"
+            }
+          ]
         },
         {
           "name": "续血",
           "description": "：主动攻击命中已有流血的目标且伤及气血，再加1层流血并刷新持续时间，每次攻击至多一次。",
-          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-15-xuxue.webp"
+          "icon": "res://assets/UI-metal-jinshacangfengjing-effect-15-xuxue.webp",
+          "status_icons": [
+            {
+              "name": "流血",
+              "icon": "res://assets/debuff-jin-2.webp"
+            }
+          ]
         }
       ]
     }

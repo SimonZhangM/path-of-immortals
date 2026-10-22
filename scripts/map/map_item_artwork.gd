@@ -11,6 +11,31 @@ const OUTLINE_COLOR := Color("151515")
 const OUTLINE_SCREEN_WIDTH := 0.5
 var _outline_layers: Array[TextureRect] = []
 var _outline_basis := Transform2D(Vector2.ZERO, Vector2.ZERO, Vector2.ZERO)
+static var _spell_art: Dictionary = {}
+var _is_spell := false
+var _board_spell_viewport := Vector4(0, 0, 1, 1)
+
+static func item_record(item: ItemData) -> Dictionary:
+	return {"id":item.id, "icon":item.icon_path, "name":item.display_name, "category":item.category, "quality":item.quality, "art_outline_px":int(item.combat.get("art_outline_px",0))}
+
+static func spell_presentation(id: String) -> Dictionary:
+	if not id.begins_with("base.spell."): return {}
+	if _spell_art.is_empty(): _spell_art = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/spell_presentations.json"))
+	return _spell_art.get(id, {})
+
+func _configure_spell(presentation: Dictionary) -> void:
+	_is_spell = true
+	texture = load(presentation.frame)
+	var bounds := TextureMetrics.solid_rect(texture)
+	var dimensions := texture.get_size()
+	_board_spell_viewport = Vector4(bounds.position.x / dimensions.x, bounds.position.y / dimensions.y, bounds.size.x / dimensions.x, bounds.size.y / dimensions.y)
+	var paint := ShaderMaterial.new()
+	paint.shader = preload("res://scripts/map/map_spell_art.gdshader")
+	paint.set_shader_parameter("spell_art", load(presentation.icon))
+	for key: String in ["viewport", "art_rect", "clip_rect"]:
+		var r: Array = presentation[key]
+		paint.set_shader_parameter("viewport_rect" if key == "viewport" else key, Vector4(r[0], r[1], r[2], r[3]))
+	material = paint
 
 func _ready() -> void:
 	set_notify_transform(true)
@@ -43,10 +68,15 @@ func _update_outline_offsets() -> void:
 static func battle_record(game: GameManager, item: ItemData) -> Dictionary:
 	if game._durable_loadout != null and game._durable_loadout.records.has(item.id):
 		return game._durable_loadout.records[item.id]
-	return {"icon": item.icon_path, "name": item.display_name, "quality": item.quality, "art_outline_px": int(item.combat.get("art_outline_px", 0))}
+	return item_record(item)
 
 func place_on_board(footprint: Rect2, enlargement: float = 1.0) -> void:
-	var rect := ItemDragPreview.artwork_rect(footprint)
+	# Match the green placement area; ordinary items retain their icon padding.
+	var rect := footprint.grow(-3) if _is_spell else ItemDragPreview.artwork_rect(footprint)
+	if _is_spell:
+		stretch_mode = TextureRect.STRETCH_SCALE
+		material.set_shader_parameter("viewport_rect", _board_spell_viewport)
+		material.set_shader_parameter("corner_radius_px", 3.0)
 	size = rect.size * enlargement
 	position = rect.get_center() - size * 0.5
 	center_visible_at(rect.get_center())
@@ -58,7 +88,10 @@ func configure(record: Dictionary, storage_quality_glow: bool = false) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	var outline_source: Texture2D
 	var path: String = record.get("icon", "")
-	if not path.is_empty() and ResourceLoader.exists(path, "Texture2D"):
+	var spell := spell_presentation(record.get("id", ""))
+	if not spell.is_empty():
+		_configure_spell(spell)
+	elif not path.is_empty() and ResourceLoader.exists(path, "Texture2D"):
 		var source: Texture2D = load(path)
 		var trimmed := AtlasTexture.new()
 		trimmed.atlas = source

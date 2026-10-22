@@ -110,7 +110,9 @@ func _get_tooltip(_point: Vector2) -> String:
 
 func build_item_tooltip(_for_text: String) -> Object:
 	var panel := ItemTooltip.new()
-	panel.configure(item, _entry, -1, 0, _identified())
+	var context := _entry.duplicate(true)
+	context.merge(CultivationDescription.tooltip_context(manager.party[0].knowledge, item.id, item), true)
+	panel.configure(item, context, -1, 0, _identified())
 	return panel
 
 func _identified() -> bool:

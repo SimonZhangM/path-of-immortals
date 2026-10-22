@@ -1,6 +1,7 @@
 extends TextureRect
 
 signal layout_changed
+signal rank_selected(level: int)
 
 # Source coordinates survive a replacement that removes the baked-in icons.
 var books: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/technique_progress_books.json"))
@@ -12,6 +13,8 @@ var status_backplates: Array[TextureRect] = []
 var captions: Array[Label] = []
 var _font: SystemFont
 var _name_font: SystemFont
+var rank_selection: Control
+var _selected_ranks: Dictionary = {}
 
 func _init() -> void:
 	name = "TechniqueProgressArtwork"
@@ -30,6 +33,7 @@ func _init() -> void:
 	_name_font.font_names = PackedStringArray(["HarmonyOS Sans SC", "鸿蒙简体", "sans-serif"])
 	_name_font.font_weight = 400
 	_build_contents()
+	_build_rank_selection()
 	resized.connect(_layout_contents)
 	set_notify_transform(true)
 	hide()
@@ -59,8 +63,18 @@ func show_book(book_id: String) -> void:
 	status_backplates.clear()
 	captions.clear()
 	_build_contents()
+	_build_rank_selection()
 	_layout_contents()
 	layout_changed.emit()
+
+func _build_rank_selection() -> void:
+	rank_selection = preload("res://scripts/map/map_technique_rank_selection.gd").new()
+	add_child(rank_selection)
+	rank_selection.configure(self, int(_selected_ranks.get(content.book_id, 1)))
+	rank_selection.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rank_selection.rank_selected.connect(func(level: int):
+		_selected_ranks[content.book_id] = level
+		rank_selected.emit(level))
 
 func _build_contents() -> void:
 	if reference.get("layout_kind", "") == "five_choices":

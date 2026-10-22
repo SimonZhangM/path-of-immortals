@@ -45,6 +45,7 @@ static func treat(state: MapLoadoutState, status: MapPlayerStatus, config: Dicti
 	if config.has("dialogue_unlock_flag"):
 		candidate.narrative.flags[config.dialogue_unlock_flag] = true
 	candidate.spirit_stones -= int(result.fee)
+	if not candidate.growth.is_empty(): candidate.growth.resources.hp=CultivationGrowth.cents(float(result.after))
 	var error := MapLoadoutStore.save(candidate,path)
 	if not error.is_empty(): return {"error":error}
 	error = state.restore(candidate.snapshot())

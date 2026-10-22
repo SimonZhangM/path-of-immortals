@@ -4422,5 +4422,28 @@
     "base_damage": 30,
     "hit_chance": 0.9,
     "art_outline_px": 1
+  },
+  {
+    "id": "base.map_item.training_guide_stone",
+    "name": "导引石",
+    "flavor_description": "收敛心神，循石导气。",
+    "description": "仅在修炼点生效。每6秒消耗6体力、2灵力，帮助所选功法积累修炼度。",
+    "category": "artifact",
+    "subcategory": "修炼",
+    "quality": "下品",
+    "quantity": 1,
+    "grant_on_start": false,
+    "acquired_at": 1000,
+    "enhancement_level": 0,
+    "icon": "res://assets/zhen-xiulian.webp",
+    "card_frame": "res://assets/level-1.webp",
+    "footprint_rows": 1,
+    "footprint_columns": 1,
+    "cooldown": 6,
+    "base_stamina_cost": 6,
+    "spirit_cost": 2,
+    "training": true,
+    "effects": [],
+    "uses_per_unit": 0
   }
 ]

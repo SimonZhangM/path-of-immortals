@@ -53,7 +53,7 @@ func run() -> void:
 			var previous_scale := minf(old_box.size.x / used.size.x, old_box.size.y / used.size.y)
 			check(book.size.is_equal_approx(visible_art.size * previous_scale), "visible book physical size unchanged")
 			var previous_x := old_box.position.x + (old_box.size.x - used.size.x * previous_scale) * 0.5 + (visible_art.position.x - used.position.x) * previous_scale
-			check(is_equal_approx(book.position.x, previous_x), "visible book horizontal position unchanged")
+			check(is_equal_approx((book.position.x - previous_x) * overview.get_global_transform_with_canvas().get_scale().x, 10.0), "visible book moves right ten screen pixels")
 			check(screen.progress_art.visible == screen.progress_art.books.has(book_id), "lower charts follow their own registry")
 			for key: String in overview.artwork:
 				var art: TextureRect = overview.artwork[key]

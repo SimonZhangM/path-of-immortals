@@ -13,6 +13,7 @@ func bind_battle(game: GameManager, board_view: InventoryView) -> void:
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 func drag_data() -> Dictionary:
+	if entry.category == "book": return {}
 	var storage_id: String = entry.get("storage_id", "")
 	if not manager.can_edit_inventory() or not identified or manager.storage.get_entry(storage_id).is_empty():
 		return {}
@@ -70,5 +71,7 @@ func _notification(what: int) -> void:
 
 func build_item_tooltip(_for_text: String) -> Object:
 	var tooltip := ItemTooltip.new()
-	tooltip.configure(manager.registry.get_item(entry.id), manager.storage.get_entry(entry.storage_id), -1, 0, identified)
+	var context := manager.storage.get_entry(entry.storage_id)
+	context.merge(CultivationDescription.tooltip_context(manager.party[0].knowledge, entry.id, manager.registry.get_item(entry.id)), true)
+	tooltip.configure(manager.registry.get_item(entry.id), context, -1, 0, identified)
 	return tooltip

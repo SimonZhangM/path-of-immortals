@@ -2,9 +2,15 @@ $ErrorActionPreference = 'Stop'
 $previewDirectory = $PSScriptRoot
 $previewConfig = Get-Content -LiteralPath (Join-Path $previewDirectory 'config.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $previewUrl = "http://127.0.0.1:$($previewConfig.port)"
+$previewLibraries = if ($previewConfig.libraries) { @($previewConfig.libraries) } else { @([pscustomobject]@{id='classic'; root=$previewConfig.root}) }
 try {
     $previewHealth = Invoke-RestMethod "$previewUrl/api/health" -TimeoutSec 2
-    if ($previewHealth.app -ne 'local-spine-preview' -or $previewHealth.root -ne $previewConfig.root) { throw 'The configured port is used by a different application or library.' }
+    $previewSameLibraries = @($previewHealth.libraries).Count -eq $previewLibraries.Count
+    foreach ($previewLibrary in $previewLibraries) {
+        $previewMatch = @($previewHealth.libraries | Where-Object { $_.id -eq $previewLibrary.id -and $_.root -eq $previewLibrary.root })
+        if ($previewMatch.Count -ne 1) { $previewSameLibraries = $false }
+    }
+    if ($previewHealth.app -ne 'local-spine-preview' -or -not $previewSameLibraries) { throw 'The configured port is used by another application or an older library configuration. Stop the preview server, then start it again.' }
     Start-Process $previewUrl
     exit 0
 } catch {

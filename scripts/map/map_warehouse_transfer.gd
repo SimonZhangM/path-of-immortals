@@ -104,8 +104,9 @@ static func preview(state: MapLoadoutState, id: String, item_id: String, withdra
 	var available := 0
 	for record: Dictionary in source:
 		if record.id == item_id: available += int(record.quantity)
-	var used := destination.size()
+	var used := state.storage_used_slots() if withdraw else destination.size()
 	var extra := 0 if item_id.is_empty() or destination.any(func(record: Dictionary): return record.id == item_id) else 1
+	if withdraw and state.records.get(item_id, {}).get("category") == "spell": extra = 0
 	var capacity := state.storage_capacity_limit() if withdraw else state.warehouse_capacity_limit(id)
 	var blocked: bool = not withdraw and state.records.get(item_id,{}).get("board_layout","") == state.board.id
 	if withdraw and used+extra > maxi(used,capacity): blocked = true

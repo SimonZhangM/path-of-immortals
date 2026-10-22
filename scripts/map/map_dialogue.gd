@@ -3,9 +3,14 @@ extends Control
 
 signal advance_requested
 
+const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
+var player_status: MapPlayerStatus
+
 var background: TextureRect
 var portrait: TextureRect
 var text_label: Label
+var speaker_name: Label
+var next_marker: TextureRect
 var picture: MapEventPicture
 var _art: Dictionary = {}
 var _textures: Dictionary = {}
@@ -21,6 +26,7 @@ func _init() -> void:
 	picture = MapEventPicture.new()
 	add_child(picture)
 	portrait = _image("SpeakerPortrait")
+	portrait.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	var portrait_mask := ShaderMaterial.new()
 	portrait_mask.shader = preload("res://scripts/ui/portrait_mask.gdshader")
@@ -37,12 +43,22 @@ func _init() -> void:
 	font.font_names = PackedStringArray(["KaiTi", "楷体", "STKaiti", "Kaiti SC", "serif"])
 	text_label.add_theme_font_override("font", font)
 	add_child(text_label)
+	speaker_name = Label.new()
+	speaker_name.name = "SpeakerName"
+	speaker_name.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	speaker_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	speaker_name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	speaker_name.add_theme_font_override("font", font)
+	speaker_name.add_theme_color_override("font_color", Color("f0dfba"))
+	add_child(speaker_name)
+	next_marker = _image("NextMarker")
 	resized.connect(_layout)
 
 func _image(node_name: String) -> TextureRect:
 	var image := TextureRect.new()
 	image.name = node_name
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	image.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	add_child(image)
@@ -64,6 +80,8 @@ func prepare(registry: MapEventRegistry) -> String:
 			atlas.region = region
 			textures[key] = atlas
 		textures.speakers = {event.speaker_id: textures.portrait}
+		if event.presentation.has("next_image"):
+			textures.next_marker = load(event.presentation.next_image)
 		for speaker_id in event.get("speakers", {}):
 			var speaker: Dictionary = event.speakers[speaker_id]
 			var texture := load(speaker.portrait) as Texture2D
@@ -78,6 +96,12 @@ func prepare(registry: MapEventRegistry) -> String:
 		if event.presentation.has("illustration"):
 			var art: Dictionary = event.presentation.illustration
 			var frame_texture := load(art.frame) as Texture2D
+			if art.has("frame_region"):
+				var crop: Array = art.frame_region
+				var frame_atlas := AtlasTexture.new()
+				frame_atlas.atlas = frame_texture
+				frame_atlas.region = Rect2(crop[0], crop[1], crop[2], crop[3])
+				frame_texture = frame_atlas
 			var image_texture := load(art.image) as Texture2D
 			var slot: Array = art.image_slot
 			if frame_texture == null or image_texture == null or not Rect2(Vector2.ZERO, frame_texture.get_size()).encloses(Rect2(slot[0], slot[1], slot[2], slot[3])):
@@ -91,10 +115,20 @@ func present(event: Dictionary, line: String, speaker_id: String = "", phase: St
 	_art = event.presentation
 	background.texture = _textures[event.id].background
 	portrait.texture = _textures[event.id].speakers.get(speaker_id, _textures[event.id].portrait)
+	var resolved_speaker: String = event.speaker_id if speaker_id.is_empty() else speaker_id
+	if player_status != null and resolved_speaker == "base.map_player.chen_yu":
+		portrait.texture = PLAYER_FRAMES.portrait_for(player_status.cultivation_rank_id)
+		speaker_name.text = player_status.display_name
+	else:
+		var speaker: Dictionary = event.get("speakers", {}).get(resolved_speaker, {})
+		speaker_name.text = speaker.get("name", event.get("speaker_name", ""))
+	next_marker.texture = _textures[event.id].get("next_marker")
 	text_label.text = line
 	background.visible = phase == "dialogue"
 	portrait.visible = phase == "dialogue"
 	text_label.visible = phase == "dialogue"
+	speaker_name.visible = phase == "dialogue" and _art.has("name_rect")
+	next_marker.visible = phase == "dialogue" and next_marker.texture != null
 	picture.visible = _art.has("illustration")
 	if picture.visible:
 		picture.configure(_textures[event.id].illustration_frame, _textures[event.id].illustration_image, _art.illustration.image_slot)
@@ -132,11 +166,17 @@ func _layout() -> void:
 	background.position = Vector2(size.x * 0.5, size.y * 0.75) - background.size * 0.5
 	if picture.visible:
 		picture.layout_for(size, background.get_rect())
+	var shift := float(_art.get("offset_y", 0.0)) * minf(size.x / 1920.0, size.y / 1080.0)
+	background.position.y += shift
+	if picture.visible:
+		picture.position.y += shift
 	var slot: Array = _art.portrait_slot
 	var center := Vector2(slot[0] + slot[2] * 0.5, slot[1] + slot[3] * 0.5)
 	var portrait_size := portrait.texture.get_size()
 	portrait_size *= float(_art.portrait_max_size) / maxf(portrait_size.x, portrait_size.y)
 	portrait.size = portrait_size * factor
+	if _art.get("portrait_fills_slot", false):
+		portrait.size = Vector2(slot[2], slot[3]) * factor
 	portrait.position = background.position + center * factor - portrait.size * 0.5
 	portrait.material.set_shader_parameter("portrait_size", portrait.size)
 	var text_rect: Array = _art.text_rect
@@ -146,3 +186,16 @@ func _layout() -> void:
 	text_label.size = text_size
 	# Label updates its wrapped minimum height after the new width/font is shaped.
 	text_label.set_deferred("size", text_size)
+	if speaker_name.visible:
+		var name_rect: Array = _art.name_rect
+		speaker_name.position = background.position + Vector2(name_rect[0], name_rect[1]) * factor
+		speaker_name.size = Vector2(name_rect[2], name_rect[3]) * factor
+		var name_size := maxi(15, roundi(28.0 * text_factor))
+		var name_font := speaker_name.get_theme_font("font")
+		while name_size > 12 and name_font.get_string_size(speaker_name.text, HORIZONTAL_ALIGNMENT_LEFT, -1, name_size).x > speaker_name.size.x - 12 * factor:
+			name_size -= 1
+		speaker_name.add_theme_font_size_override("font_size", name_size)
+	if next_marker.visible:
+		var next_rect: Array = _art.next_rect
+		next_marker.position = background.position + Vector2(next_rect[0], next_rect[1]) * factor
+		next_marker.size = Vector2(next_rect[2], next_rect[3]) * factor

@@ -8,6 +8,7 @@ signal changed
 var category_names: Dictionary = {}
 var collection_names: Dictionary = {}
 var category_groups: Dictionary = {}
+var book_elements: Dictionary = {}
 var collection := "all"
 var category := "all"
 var quality := ""
@@ -22,16 +23,20 @@ func configure(config: Dictionary) -> void:
 	category_names = config.categories.duplicate()
 	collection_names = config.collections.duplicate()
 	category_groups = config.category_groups.duplicate(true)
+	book_elements = config.get("book_elements", {}).duplicate()
 
 func subcategories() -> Array:
+	if collection == "cultivation": return ["book", "spell"] + book_elements.keys()
 	if collection == "all":
 		var children: Array = []
 		for group: Array in category_groups.values():
 			children.append_array(group)
-		children = children.filter(func(key): return key not in category_groups.get("blueprint", []))
+		children = children.filter(func(key): return key not in category_groups.get("blueprint", []) and key not in category_groups.get("material", []))
+		children.append("material")
 		children.append("blueprint")
 		return children
 	if collection == "blueprint": return ["blueprint"]
+	if collection == "material": return ["material"]
 	return category_groups.get(collection, []).duplicate()
 
 func replace_entries(records: Array) -> String:
@@ -42,13 +47,15 @@ func replace_entries(records: Array) -> String:
 			return "物品记录必须为对象。"
 		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(raw.get("buff_bonuses", {})):
 			return "物品常驻增益加成无效。"
-		for key in ["id", "name", "category", "quality"]:
+		for key in ["id", "name", "category"]:
 			if not raw.get(key) is String or raw[key].strip_edges().is_empty():
 				return "物品字段无效：" + key
 		if ids.has(raw.id) or raw.category == "all" or not category_names.has(raw.category):
 			return "物品ID重复或类别无效。"
-		if MapItemQuality.level(raw.quality) == 0:
+		if not raw.get("quality") is String or (MapItemQuality.level(raw.quality) == 0 and not (raw.category == "book" and raw.quality.is_empty())):
 			return "物品品级须为下品、凡品、良品、上品、灵品、玄品或仙品。"
+		if raw.category == "book" and (not raw.get("element") is String or raw.element.trim_prefix("base.element.") not in book_elements):
+			return "功法所属元素系无效。"
 		if raw.has("subcategory"):
 			if not raw.subcategory is String or raw.subcategory.strip_edges().is_empty():
 				return "物品细分类须为非空文字。"
@@ -116,7 +123,7 @@ func replace_entries(records: Array) -> String:
 		if raw.category in ["artifact", "pill"] and (raw.has("effects") or raw.has("cooldown") or raw.has("uses_per_unit")):
 			if not ContentRegistry._positive_number(raw.get("cooldown")) or not ContentRegistry._nonnegative_integer(raw.get("uses_per_unit", 0)):
 				return "法器／丹药轮转或使用次数无效。"
-			if not raw.get("effects") is Array or raw.effects.is_empty():
+			if not raw.get("effects") is Array or (raw.effects.is_empty() and not raw.get("training",false)):
 				return "法器／丹药须有有效效果。"
 			for effect: Variant in raw.effects:
 				if not effect is Dictionary or not EffectSystem.validate_definition(effect) or effect.trigger != "on_activate":
@@ -187,7 +194,7 @@ func total_count() -> int:
 func qualities() -> Array[String]:
 	var values: Array[String] = []
 	for entry in _entries:
-		if entry.quality not in values:
+		if not entry.quality.is_empty() and entry.quality not in values:
 			values.append(entry.quality)
 	values.sort()
 	return values
@@ -205,7 +212,7 @@ func _in_collection(entry: Dictionary, key: String) -> bool:
 		return true
 	if key == "favorite":
 		return entry.get("favorite", false)
-	if key in ["key", "misc"]:
+	if key in ["key", "misc", "book", "spell"]:
 		return entry.category == key
 	return entry.category in category_groups.get(key, [])
 
@@ -221,7 +228,7 @@ func visible_entries() -> Array[Dictionary]:
 	for entry in _entries:
 		if not _in_collection(entry, collection):
 			continue
-		if category != "all" and entry.category != category and not (category == "blueprint" and entry.category in category_groups.get("blueprint", [])):
+		if not _matches_category(entry):
 			continue
 		if not quality.is_empty() and entry.quality != quality:
 			continue
@@ -241,3 +248,9 @@ func visible_entries() -> Array[Dictionary]:
 		return a.acquired_at > b.acquired_at if newest_first else a.acquired_at < b.acquired_at
 	)
 	return result
+
+func _matches_category(entry: Dictionary) -> bool:
+	if category == "all": return true
+	if collection == "cultivation" and book_elements.has(category):
+		return entry.category in ["book", "spell"] and entry.get("element", "") == "base.element." + category
+	return entry.category == category or (category in ["blueprint", "material"] and entry.category in category_groups.get(category, []))

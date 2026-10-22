@@ -130,6 +130,7 @@ func wake(at: int) -> void:
 				var fee := sim.t01.costs(member, item, at)
 				if member.stamina < fee.x or member.spirit < fee.y:
 					t.request = false
+					activation_failed(id, at, "insufficient_resources")
 					restart(id, at)
 			continue
 		t.request = false
@@ -146,6 +147,7 @@ func event(payload: Dictionary, at: int) -> void:
 	settle(id, at)
 	if timers[id].entry <= 0 and timers[id].cd <= 0 and timers[id].get("block_at_zero", false) and consume_block(id, at): return
 	if timers[id].entry <= 0 and timers[id].cd <= 0 and sim._owners[id].paralyzed_until > at:
+		activation_failed(id, at, "paralyzed")
 		restart(id, at)
 	else: sync(id, at)
 
@@ -156,6 +158,12 @@ func restart(id: String, at: int) -> void:
 	sim.state.item_runtime[id].erase("next_cd_extra")
 	sim.state.item_runtime[id].prepared = false
 	sync(id, at)
+
+func activation_failed(id: String, at: int, reason: String) -> void:
+	# A discrete failed cycle, never a UI inference from a zero CD or a miss.
+	if not sim._definitions.has(id) or sim._definitions[id].category != "weapon": return
+	var owner: PartyMemberState = sim._owners[id]
+	sim.t01.emit("item_activation_failed", at, {"instance_id": id, "item_id": sim._definitions[id].id, "owner_id": owner.id, "side": sim.state.item_runtime[id].side, "entry": owner.inventory.get_instance(id).duplicate(true), "reason": reason})
 
 func set_mode(id: String, automatic: bool) -> bool:
 	if not timers.has(id) or sim._definitions[id].combat.get("prepared", false): return false
@@ -300,6 +308,7 @@ func consume_block(id: String, at: int) -> bool:
 	if not timers[id].get("block_next", false): return false
 	timers[id].erase("block_next")
 	timers[id].erase("block_at_zero")
+	activation_failed(id, at, "round_blocked")
 	restart(id, at)
 	sim.t01.emit("cast_interrupted", at, {"item_id":sim._definitions[id].id, "label":"下一轮封锁", "target_name":sim._owners[id].definition.name})
 	return true

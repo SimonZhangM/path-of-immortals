@@ -12,6 +12,9 @@ func check(ok: bool, message: String) -> void:
 func settle() -> void:
 	for frame in 8: await process_frame
 func enter_battle(map: Node) -> Node:
+	map.loadout.encounter_cooldowns.erase(EVENT)
+	MapLoadoutStore.save(map.loadout,map.inventory_save_path)
+	if map.event_state.encounters.has(EVENT): map.event_state.encounters[EVENT].remaining_days=0
 	map.event_state.respawn_encounter(EVENT)
 	map.travel.current_node_id = POINT
 	map.travel.mode = "idle"
@@ -31,14 +34,14 @@ func return_from(battle: Node) -> Node:
 func check_resources(map: Node, values: Dictionary, message: String) -> void:
 	for key: String in values:
 		check(is_equal_approx(float(map.player_status.resources[key]),float(values[key])),message + " " + key)
-		check(map.status_header.values[key].text == "%s/%d" % [EffectSystem.number_text(values[key]),map.player_status.maxima[key]],"header keeps decimal: " + key)
+		check(map.status_header.values[key].text == "%s/%d" % [EffectSystem.number_text(values[key]),map.player_status.maxima[key]],"header uses original number format: " + key)
 		check(is_equal_approx(map.status_header.bars[key].value,float(values[key])),"bar keeps decimal: " + key)
 func run() -> void:
 	create_timer(60).timeout.connect(func(): quit(2))
 	AudioServer.set_bus_mute(0,true)
 	MapEventState.session_completed.clear()
 	var map = load("res://scenes/maps/qingshihewan.tscn").instantiate()
-	map.inventory_save_path = ""
+	map.inventory_save_path = "user://test-growth-battle-%d.json" % Time.get_ticks_usec()
 	map.arrival_point_id = POINT
 	root.add_child(map)
 	current_scene = map
@@ -46,7 +49,9 @@ func run() -> void:
 	check(map.startup_error.is_empty(),"map startup")
 	var status: MapPlayerStatus = map.player_status
 	status.cultivation_progress = 27
+	map.loadout.growth.progress=2700
 	status.spirit_stones = 123
+	map.loadout.spirit_stones=123
 	status.experience = 45
 	status.set_resource("hp",37.4)
 	status.set_resource("stamina",22.6)

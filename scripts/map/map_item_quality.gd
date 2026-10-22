@@ -8,6 +8,13 @@ const COLORS := [Color("a5a5a5"), Color("51b879"), Color("3296ed"), Color("ed8b2
 # 6 is gold. Keep progression order independent of artwork filenames.
 const BACKGROUND_LEVELS := [1, 2, 3, 4, 5, 7, 6]
 const UNKNOWN_DESCRIPTION := "此物灵机深藏，你的修为尚不足以参透，暂不可使用。待境界提升后再行探究。"
+static var _mastery_backgrounds: Dictionary = {}
+
+static func book_background_quality(max_level: int, stage: int) -> String:
+	if _mastery_backgrounds.is_empty():
+		_mastery_backgrounds = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/technique_mastery_backgrounds.json"))
+	var steps: Array = _mastery_backgrounds["eight_stage" if max_level == 8 else "five_stage"]
+	return str(steps[clampi(stage, 0, steps.size() - 1)])
 
 static func level(quality: String) -> int:
 	return QUALITIES.find(quality) + 1

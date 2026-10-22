@@ -21,6 +21,7 @@ var values: Dictionary = {}
 var hero_name: Label
 var hero_rank: Label
 var portrait_frame: TextureRect
+var portrait: TextureRect
 var _frame_rank_id := ""
 var _portrait_group: Control
 var _portrait_group_origin := Vector2.ZERO
@@ -95,11 +96,9 @@ func configure(status: MapPlayerStatus, config: Dictionary, title_image := "") -
 	right_art = _image("res://assets/map-head2.webp", RIGHT_REGION)
 	# Draw the continuous rule above both ornaments so head2 cannot cover its end.
 	content.add_child(connection)
-	var portrait_path: String = config.get("portrait", "")
-	var region: Array = config.get("portrait_region", [])
-	if region.size() != 4 or not ResourceLoader.exists(portrait_path, "Texture2D"):
-		return "地图状态栏头像配置无效。"
-	var portrait := _image(portrait_path, Rect2(region[0], region[1], region[2], region[3]))
+	var face := PLAYER_FRAMES.portrait_for(state.cultivation_rank_id)
+	portrait = _image(face.atlas.resource_path, face.region)
+	portrait.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	var portrait_group := Control.new()
 	portrait_group.name = "PortraitGroup"
 	portrait_group.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -110,8 +109,8 @@ func configure(status: MapPlayerStatus, config: Dictionary, title_image := "") -
 	_portrait_group_origin = portrait_group.position
 	content.add_child(portrait_group)
 	portrait.reparent(portrait_group, false)
-	portrait.position = Vector2(78, 18)
-	portrait.size = Vector2(96, 96)
+	portrait.size = Vector2.ONE * PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE * (48.0 / 216.0)
+	portrait.position = Vector2(126, 66) - portrait.size * 0.5
 	var mask := ShaderMaterial.new()
 	mask.shader = preload("res://scripts/ui/portrait_mask.gdshader")
 	mask.set_shader_parameter("portrait_size", portrait.size)
@@ -236,6 +235,7 @@ func configure(status: MapPlayerStatus, config: Dictionary, title_image := "") -
 func refresh() -> void:
 	if _frame_rank_id != state.cultivation_rank_id:
 		_frame_rank_id = state.cultivation_rank_id
+		portrait.texture = PLAYER_FRAMES.portrait_for(_frame_rank_id)
 		var atlas := AtlasTexture.new()
 		atlas.atlas = load(PLAYER_FRAMES.path_for(_frame_rank_id))
 		atlas.region = Rect2(Vector2.ZERO, PLAYER_FRAMES.SOURCE_SIZE)
@@ -259,9 +259,8 @@ func refresh() -> void:
 		values[key].text = "%s/%d" % [EffectSystem.number_text(current), maximum]
 
 func _fit_portrait_frame_top() -> void:
-	var source: Texture2D = portrait_frame.texture.atlas
-	var source_top := float(source.get_image().get_used_rect().position.y)
-	var top_in_group := portrait_frame.position.y + source_top * (48.0 / 216.0)
+	# Reserve the full shared canvas, so changing realm never shifts the face.
+	var top_in_group := portrait_frame.position.y
 	_portrait_group.position = _portrait_group_origin
 	_portrait_group.position.y = maxf(_portrait_group_origin.y, 2.0 - top_in_group * _portrait_group.scale.y)
 

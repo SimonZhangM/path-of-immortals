@@ -7,14 +7,18 @@ const assetUrl = relative => '/asset/' + relative.split('/').map(encodeURICompon
 let catalog, filtered = [], page = 1, views = [], paused = false, speed = 1, zoom = 1;
 let generation = 0, controller, renderer, detailView = null, previousFocus = null;
 let toastTimer, searchTimer;
+let libraryId = null, folder = '';
+const folderCollator = new Intl.Collator('zh-CN', { numeric: true });
 const savedKey = 'spine-preview-v1';
 function toast(message) { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').hidden = true, 3200); }
-function save() { try { localStorage.setItem(savedKey, JSON.stringify({ query: $('search').value, version: $('version').value, page, background: $('background').value, speed, zoom })); } catch {} }
+function save() { try { localStorage.setItem(savedKey, JSON.stringify({ query: $('search').value, version: $('version').value, page, background: $('background').value, speed, zoom, libraryId, folder })); } catch {} }
 function restore() {
   try {
     const saved = JSON.parse(localStorage.getItem(savedKey) || '{}');
     $('search').value = saved.query || '';
-    if (['', '2.1', '3.6'].includes(saved.version)) $('version').value = saved.version;
+    if (['', '2.1', '3.6', '3.8'].includes(saved.version)) $('version').value = saved.version;
+    if (typeof saved.libraryId === 'string') libraryId = saved.libraryId;
+    if (typeof saved.folder === 'string') folder = saved.folder;
     if (['dark', 'light', 'black', 'checker'].includes(saved.background)) $('background').value = saved.background;
     if ([0.25, 0.5, 1, 2].includes(saved.speed)) speed = Number($('speed').value = saved.speed);
     if (saved.zoom >= 0.25 && saved.zoom <= 2.5) zoom = Number($('zoom').value = saved.zoom);
@@ -24,7 +28,7 @@ function restore() {
   $('zoom-value').value = `${Math.round(zoom * 100)}%`;
 }
 async function fetchOk(url, signal) { const response = await fetch(url, { signal }); if (!response.ok) throw new Error(`文件读取失败 (${response.status})：${decodeURIComponent(url)}`); return response; }
-async function copyPath(item) { try { await navigator.clipboard.writeText(item.path); toast('已复制 JSON 完整路径'); } catch { toast(`路径：${item.path}`); } }
+async function copyPath(item) { try { await navigator.clipboard.writeText(item.path); toast('已复制素材完整路径'); } catch { toast(`路径：${item.path}`); } }
 function release(view) { renderer.release(view.images); for (const image of view.images.values()) image.close?.(); view.images.clear(); view.effect = null; }
 function fillAnimations(select, item, value) {
   select.replaceChildren();
@@ -43,9 +47,11 @@ function failView(view, error) {
 }
 function card(item, index) {
   const element = document.createElement('article'); element.className = 'card'; element.dataset.state = 'loading'; element.dataset.id = item.id;
-  element.innerHTML = '<div class="card-top"><span class="ordinal"></span><h2></h2><button class="expand" aria-label="放大查看" title="放大查看">⛶</button></div><div class="preview" role="button" tabindex="0" aria-label="放大查看特效"><div class="loading">加载中</div></div><div class="card-bottom"><span class="version-tag"></span><select aria-label="选择动画"></select><button class="copy" title="复制 JSON 文件完整路径">复制路径</button></div>';
+  element.innerHTML = '<div class="card-top"><span class="ordinal"></span><h2></h2><button class="expand" aria-label="放大查看" title="放大查看">⛶</button></div><p class="card-location"></p><div class="preview" role="button" tabindex="0" aria-label="放大查看特效"><div class="loading">加载中</div></div><div class="card-bottom"><span class="version-tag"></span><select aria-label="选择动画"></select><button class="copy" title="复制素材文件完整路径">复制路径</button></div>';
   element.querySelector('.ordinal').textContent = String(index + 1).padStart(3, '0');
   element.querySelector('h2').textContent = item.name; element.querySelector('h2').title = item.folder + '\n' + item.name;
+  element.querySelector('.card-location').textContent = `${item.libraryName} / ${item.folder || '根目录'}`;
+  element.querySelector('.card-location').title = item.path;
   element.querySelector('.version-tag').textContent = item.version;
   const view = { item, card: element, preview: element.querySelector('.preview'), message: element.querySelector('.loading'), select: element.querySelector('select'), expand: element.querySelector('.expand'), images: new Map(), effect: null };
   fillAnimations(view.select, item);
@@ -60,7 +66,7 @@ async function loadView(view, signal, token) {
   try {
     if (view.item.error) throw new Error(view.item.error);
     const [json, atlasText] = await Promise.all([
-      fetchOk(assetUrl(view.item.id), signal).then(r => r.json()),
+      fetchOk(assetUrl(view.item.id), signal).then(async r => view.item.format === 'skel' ? new Uint8Array(await r.arrayBuffer()) : r.json()),
       fetchOk(assetUrl(view.item.atlas), signal).then(r => r.text()),
     ]);
     // Each atlas block starts with its image page; images remain in memory for this page only.
@@ -72,7 +78,7 @@ async function loadView(view, signal, token) {
       view.images.set(pageNames[i], image);
     }
     if (token !== generation) return;
-    view.effect = createEffect(json, atlasText, view.images);
+    view.effect = createEffect(json, atlasText, view.images, view.item.version);
     for (const image of view.images.values()) renderer.texture(image);
     view.message.hidden = true; view.card.dataset.state = 'ready';
     view.preview.setAttribute('aria-label', `放大查看 ${view.item.name}`);
@@ -106,14 +112,73 @@ function renderPage(next = page) {
 }
 function filter(reset = true) {
   const words = $('search').value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean), version = $('version').value;
-  filtered = catalog.items.filter(item => (!version || item.version.startsWith(version)) && words.every(word => `${item.name} ${item.folder}`.toLocaleLowerCase().includes(word)));
+  filtered = catalog.items.filter(item => (!libraryId || item.libraryId === libraryId) && (!folder || item.folder === folder || item.folder.startsWith(folder + '/')) && (!version || item.version.startsWith(version)) && words.every(word => `${item.name} ${item.folder} ${item.libraryName}`.toLocaleLowerCase().includes(word)));
+  const library = catalog.libraries.find(library => library.id === libraryId);
+  $('scope').textContent = `${library?.name || '全部素材库'} / ${folder || '全部文件夹'}`;
+  $('reset-scope').hidden = !folder;
+  $('source').textContent = library ? (library.error ? `${library.root} · 无法读取，请检查目录` : library.root) : `已连接 ${catalog.libraries.length} 个素材库`;
+  $('source').title = library?.error || library?.root || catalog.libraries.map(library => library.root).join('\n');
+  for (const button of $('folders').querySelectorAll('[data-folder]')) button.setAttribute('aria-pressed', button.dataset.folder === folder);
   renderPage(reset ? 1 : page);
+}
+function chooseFolder(path) { folder = path; filter(); }
+function renderFolders() {
+  $('folders').replaceChildren();
+  $('folder-search').disabled = !libraryId;
+  if (!libraryId) {
+    const hint = document.createElement('p'); hint.className = 'folder-hint'; hint.textContent = '选择一个素材库，浏览其中的文件夹。'; $('folders').append(hint); return;
+  }
+  const root = { children: new Map(), count: 0, path: '', name: '全部文件夹' };
+  for (const item of catalog.items.filter(item => item.libraryId === libraryId)) {
+    root.count++;
+    let node = root;
+    for (const name of item.folder.split('/').filter(Boolean)) {
+      if (!node.children.has(name)) node.children.set(name, { name, path: node.path ? `${node.path}/${name}` : name, children: new Map(), count: 0 });
+      node = node.children.get(name); node.count++;
+    }
+  }
+  const query = $('folder-search').value.trim().toLocaleLowerCase();
+  const matches = node => !query || node.path.toLocaleLowerCase().includes(query) || [...node.children.values()].some(matches);
+  function renderNode(node, parent, isRoot = false) {
+    if (!isRoot && !matches(node)) return;
+    const branch = document.createElement('div'); branch.className = 'folder-branch';
+    const row = document.createElement('div'); row.className = 'folder-row';
+    const children = document.createElement('div'); children.className = 'folder-children';
+    children.hidden = !isRoot && !query && !(folder === node.path || folder.startsWith(node.path + '/'));
+    if (node.children.size && !isRoot) {
+      const toggle = document.createElement('button'); toggle.className = 'folder-toggle'; toggle.textContent = children.hidden ? '›' : '⌄'; toggle.setAttribute('aria-label', `展开或收起 ${node.path}`); toggle.setAttribute('aria-expanded', !children.hidden);
+      toggle.addEventListener('click', () => { children.hidden = !children.hidden; toggle.textContent = children.hidden ? '›' : '⌄'; toggle.setAttribute('aria-expanded', !children.hidden); }); row.append(toggle);
+    }
+    const button = document.createElement('button'); button.className = 'folder-choice'; button.dataset.folder = node.path; button.title = node.path || '全部文件夹'; button.setAttribute('aria-pressed', node.path === folder);
+    const label = document.createElement('span'); label.textContent = node.name;
+    const count = document.createElement('small'); count.textContent = node.count;
+    button.append(label, count); button.addEventListener('click', () => chooseFolder(node.path)); row.append(button); branch.append(row);
+    for (const child of [...node.children.values()].sort((a, b) => folderCollator.compare(a.name, b.name))) renderNode(child, children);
+    if (node.children.size) branch.append(children);
+    parent.append(branch);
+  }
+  renderNode(root, $('folders'), true);
+}
+function renderLibraries() {
+  $('libraries').replaceChildren();
+  for (const library of [{ id: '', name: '全部素材', count: catalog.items.length }, ...catalog.libraries]) {
+    const button = document.createElement('button'); button.dataset.library = library.id; button.setAttribute('aria-pressed', library.id === libraryId);
+    const label = document.createElement('span'); label.textContent = library.name;
+    const count = document.createElement('small'); count.textContent = library.error ? '不可用' : library.count;
+    button.append(label, count); button.title = library.error || library.root || '显示所有已配置素材库';
+    button.addEventListener('click', () => { libraryId = library.id; folder = ''; $('folder-search').value = ''; renderLibraries(); renderFolders(); filter(); });
+    $('libraries').append(button);
+  }
 }
 async function refresh(rescan = false) {
   $('refresh').disabled = true; $('refresh').textContent = '扫描中…';
   try {
     catalog = await (await fetchOk('/api/catalog' + (rescan ? '?refresh=1' : ''))).json();
-    $('total').textContent = catalog.items.length; $('source').textContent = catalog.root; $('source').title = catalog.root;
+    if (libraryId === null) { libraryId = catalog.libraries.at(-1)?.id || ''; page = 1; $('search').value = ''; $('version').value = ''; }
+    if (libraryId && !catalog.libraries.some(library => library.id === libraryId)) { libraryId = ''; folder = ''; }
+    if (folder && !catalog.items.some(item => item.libraryId === libraryId && (item.folder === folder || item.folder.startsWith(folder + '/')))) folder = '';
+    $('total').textContent = catalog.items.length;
+    renderLibraries(); renderFolders();
     filter(!rescan ? false : true);
     if (rescan) toast(`扫描完成，共 ${catalog.items.length} 个特效`);
   } catch (error) { $('source').textContent = '素材读取失败'; $('results').textContent = error.message; toast(error.message); }
@@ -136,7 +201,9 @@ function togglePlay() { paused = !paused; $('play').textContent = $('detail-play
 function replay() { for (const view of detailView ? [detailView] : views) view.effect?.reset(); }
 $('search').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { if (catalog) filter(); }, 180); });
 $('version').addEventListener('change', () => catalog && filter());
-$('clear-search').addEventListener('click', () => { $('search').value = ''; $('version').value = ''; filter(); });
+$('clear-search').addEventListener('click', () => { $('search').value = ''; $('version').value = ''; folder = ''; renderFolders(); filter(); });
+$('folder-search').addEventListener('input', renderFolders);
+$('reset-scope').addEventListener('click', () => chooseFolder(''));
 $('refresh').addEventListener('click', () => refresh(true));
 $('play').addEventListener('click', togglePlay); $('replay').addEventListener('click', replay);
 $('speed').addEventListener('change', () => { speed = Number($('speed').value); save(); });

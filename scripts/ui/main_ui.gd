@@ -8,6 +8,8 @@ const LAYOUT_SIZE := Vector2(1920, 1080)
 const PLAYBACK_SIDE := 48.0 * 0.7071067811865476
 const PLAYBACK_GAP := 8
 const FixedSeparatorValue := preload("res://scripts/ui/fixed_separator_value.gd")
+const RestoreFlight := preload("res://scripts/ui/restore_flight.gd")
+var _restore_flights: Array = []
 @export var preview_all_status_icons := true
 @export_file("*.webp", "*.png") var battle_background_path := ""
 @onready var manager: GameManager = $"../GameManager"
@@ -49,6 +51,8 @@ var victory_view := VictoryView.NONE
 var victory_banner
 var victory_rewards
 var _log_button: BattleActionButton
+var _book_details: MapTechniqueScreen
+var _resume_after_book_details := false
 
 func _ready() -> void:
 	set_deferred("oversampling_with_scale", CanvasItem.OVERSAMPLING_WITH_SCALE_ENABLED)
@@ -64,12 +68,34 @@ func _ready() -> void:
 	manager.presentation_events.connect(_on_events)
 	manager.battle_restarted.connect(_on_restart)
 	manager.battle_started.connect(_on_started)
+	manager.adjustment_changed.connect(_clear_restore_flights)
 	manager.battle_review_requested.connect(_review_victory)
 	manager.battle_exit_requested.connect(_exit_battle)
+	ItemTooltipHost.for_control(self).technique_requested.connect(_open_book_details)
 	game_audio = GameAudio.new()
 	add_child(game_audio)
 	game_audio.configure(manager, defer_battle_music)
 	_on_restart()
+
+func _open_book_details(book_id: String) -> void:
+	if not is_visible_in_tree() or not manager.registry.library.books.has(book_id) or is_instance_valid(_book_details): return
+	_resume_after_book_details = manager.simulation.state.phase == GameState.Phase.BATTLE and not manager.simulation.clock.paused
+	manager.pause_battle()
+	_book_details = MapTechniqueScreen.new()
+	_book_details.configure(manager.registry.library, manager.party[0].knowledge)
+	add_child(_book_details)
+	_book_details.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_book_details.close_requested.connect(_close_book_details)
+	_book_details.show()
+	_book_details.focus_book(book_id)
+
+func _close_book_details() -> void:
+	if not is_instance_valid(_book_details): return
+	_book_details.hide()
+	_book_details.queue_free()
+	_book_details = null
+	if _resume_after_book_details and manager.simulation.state.phase == GameState.Phase.BATTLE and manager.simulation.clock.paused: manager.toggle_pause()
+	_resume_after_book_details = false
 
 func _fit_native_layout() -> void:
 	# Retain authored proportions; canvas items and fonts render at output resolution.
@@ -477,8 +503,57 @@ func _build_log() -> void:
 
 func _process(_delta: float) -> void:
 	_refresh()
+	_advance_restore_flights(_delta)
+
+func _advance_restore_flights(delta: float) -> void:
+	if not is_visible_in_tree() or manager.adjustment_open or victory_view != VictoryView.NONE:
+		_clear_restore_flights()
+		return
+	for flight in _restore_flights.duplicate():
+		flight.advance(delta)
+		if flight.elapsed >= RestoreFlight.DURATION:
+			_restore_flights.erase(flight)
+			flight.queue_free()
+
+func _clear_restore_flights() -> void:
+	for flight in _restore_flights:
+		flight.hide()
+		flight.queue_free()
+	_restore_flights.clear()
+
+func _show_restore(event: Dictionary) -> void:
+	var resource: String = event.get("resource", "")
+	for panel: TeamPanel in [ally_panel, enemy_panel]:
+		for index in panel.members.size():
+			if panel.members[index].id != event.get("target_id", ""): continue
+			var card: PartyMemberCard = panel.cards[index]
+			var bar: Control = card.stat_bars.get(resource)
+			var icon: TextureRect = card.stat_icons.get(resource)
+			if resource in ["armor", "barrier"]:
+				var row := card.armor_status if resource == "armor" else card.barrier_status
+				bar = row.bar
+				icon = row.icon
+			if bar == null or icon == null or not bar.is_visible_in_tree(): return
+			var origin := Vector2.INF
+			for source_panel: TeamPanel in [ally_panel, enemy_panel]:
+				for source_index in source_panel.members.size():
+					if source_panel.members[source_index].id == event.get("owner_id", ""):
+						origin = source_panel.bags[source_index].recovery_origin(event)
+			# Passive recovery with no item attribution originates at its resource icon.
+			if not origin.is_finite():
+				origin = icon.get_global_transform_with_canvas() * (icon.size * 0.5)
+			var flight := RestoreFlight.new()
+			add_child(flight)
+			flight.configure(icon.texture, get_global_transform_with_canvas().affine_inverse() * origin, bar)
+			_restore_flights.append(flight)
+			return
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(_book_details):
+		if event is InputEventKey:
+			if event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or event.is_action_pressed("map_techniques")): _close_book_details()
+			get_viewport().set_input_as_handled()
+		return
 	if victory_view in [VictoryView.BANNER, VictoryView.REWARDS]:
 		if event is InputEventKey: get_viewport().set_input_as_handled()
 		return
@@ -533,6 +608,9 @@ func _refresh() -> void:
 	_layout_time_suffix()
 	_bag_button.disabled = not manager.can_adjust()
 	var reviewing := victory_view == VictoryView.REVIEW
+	for panel in [ally_panel, enemy_panel]:
+		for board: InventoryView in panel.bags:
+			board.show_cooldown_badges = not reviewing
 	_battle_button.disabled = state.is_finished() and not reviewing
 	_battle_button.caption = "离开战场" if reviewing else ("战斗开始" if preparing else ("战斗结束" if state.is_finished() else ("战斗继续" if sim.clock.paused else "战斗暂停")))
 	_battle_button.action_icon = null if reviewing else (_wait_icon if fighting and not sim.clock.paused else _battle_icon)
@@ -559,6 +637,7 @@ func _refresh() -> void:
 		_status.text = "战斗已暂停" if sim.clock.paused else "战斗进行中"
 
 func _on_restart() -> void:
+	_clear_restore_flights()
 	victory_view = VictoryView.NONE
 	victory_banner.reset()
 	victory_rewards.hide()
@@ -647,19 +726,33 @@ func _art(path: String) -> TextureRect:
 	return view
 
 func _on_started() -> void:
+	_clear_restore_flights()
 	_log_label.text = _battle_log.consume([], manager.registry)
 	_refresh()
 
 func _on_events(events: Array[Dictionary]) -> void:
 	_log_label.text = _battle_log.consume(events, manager.registry)
+	var sounded := {}
 	for event in events:
+		if event["kind"] == "restore":
+			if float(event.get("value", 0)) <= 0: continue
+			if not is_visible_in_tree() or victory_view != VictoryView.NONE or manager.adjustment_open: continue
+			var key := "restore:%s:%s:%s:%s" % [event.get("at_usec", 0), event.get("owner_id", ""), event.get("instance_id", event.get("item_id", "")), event.get("target_id", "")]
+			if not sounded.has(key):
+				sounded[key] = true
+				game_audio.play("restore")
+			_show_restore(event)
+			continue
 		if event["kind"] != "damage":
 			continue
 		var target_panel := enemy_panel if event["side"] == 0 else ally_panel
 		for index in target_panel.members.size():
 			if target_panel.members[index].id == event["target_id"]:
 				target_panel.cards[index].show_hit(event["value"])
-				game_audio.play("hit")
+				var sound_key := "%s:%s:%s:%s" % [event.get("at_usec", 0), event.get("owner_id", ""), event.get("instance_id", event.get("item_id", "")), event["target_id"]]
+				if not sounded.has(sound_key):
+					sounded[sound_key] = true
+					game_audio.play(GameAudio.impact_kind(event, manager.registry))
 				break
 
 func _label(parent: Node, value: String, font_size: int, color: Color) -> Label:

@@ -47,7 +47,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-metal-middown-8.webp",
-      "baseline_sha256": "4beef24c40c467e6c5faf3904ae238eb8140301f1a2b868262bfdab74d5610d2"
+      "baseline_sha256": "ad8252ef2f4ac6c5ebe53b27da28eb306c1ff29c89c3db16bd15c2b63c3c4a4d"
     },
     "content": "res://data/ui/technique_progress_metal_xuangengjianjue.json"
   },
@@ -55,7 +55,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-metal-middown-8.webp",
-      "baseline_sha256": "4beef24c40c467e6c5faf3904ae238eb8140301f1a2b868262bfdab74d5610d2"
+      "baseline_sha256": "ad8252ef2f4ac6c5ebe53b27da28eb306c1ff29c89c3db16bd15c2b63c3c4a4d"
     },
     "content": "res://data/ui/technique_progress_metal_baibingyulingjue.json"
   },
@@ -87,7 +87,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-water-middown-8.webp",
-      "baseline_sha256": "e141869400ad12842d44a5125422f6da9fb0bba58d57e15a342fcb6043be8aed"
+      "baseline_sha256": "a64943bb6f77639b34cb375ead7b1b4dce8fbfda2c49b61ba11049c9fb7c5ce6"
     },
     "content": "res://data/ui/technique_progress_water_hanyueningbingjue.json"
   },
@@ -95,7 +95,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-water-middown-8.webp",
-      "baseline_sha256": "e141869400ad12842d44a5125422f6da9fb0bba58d57e15a342fcb6043be8aed"
+      "baseline_sha256": "a64943bb6f77639b34cb375ead7b1b4dce8fbfda2c49b61ba11049c9fb7c5ce6"
     },
     "content": "res://data/ui/technique_progress_water_canglanranlingjue.json"
   },
@@ -127,7 +127,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-fire-middown-8.webp",
-      "baseline_sha256": "4b21430fc057515873dade4f8e2fe40ad18bbb1ec3b4160b90877ae93d52afda"
+      "baseline_sha256": "65ee25d89f61ceb6033a4e66f8688afad9fe50fe97e7bd37a97ff7a7bdcb706f"
     },
     "content": "res://data/ui/technique_progress_fire_chiyangzhenhuojue.json"
   },
@@ -135,7 +135,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-fire-middown-8.webp",
-      "baseline_sha256": "4b21430fc057515873dade4f8e2fe40ad18bbb1ec3b4160b90877ae93d52afda"
+      "baseline_sha256": "65ee25d89f61ceb6033a4e66f8688afad9fe50fe97e7bd37a97ff7a7bdcb706f"
     },
     "content": "res://data/ui/technique_progress_fire_lihuoliaoyuanjue.json"
   },
@@ -167,7 +167,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-earth-middown-8.webp",
-      "baseline_sha256": "d3bae216c244d4d06a0a29063b6dbb8e3353b019dc356175182d1ebf3fd71539"
+      "baseline_sha256": "2e8d46646abcfb4174ea7ddd27bc5f5b9e16651454df5543c0dc5b6f6893dcc7"
     },
     "content": "res://data/ui/technique_progress_earth_hanyueliedijue.json"
   },
@@ -175,7 +175,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-earth-middown-8.webp",
-      "baseline_sha256": "d3bae216c244d4d06a0a29063b6dbb8e3353b019dc356175182d1ebf3fd71539"
+      "baseline_sha256": "2e8d46646abcfb4174ea7ddd27bc5f5b9e16651454df5543c0dc5b6f6893dcc7"
     },
     "content": "res://data/ui/technique_progress_earth_budongxuanyuejue.json"
   },
@@ -207,7 +207,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-wind-middown-8.webp",
-      "baseline_sha256": "bd59cfc302557c7e55a0c2e91a7104bfc3767750d656c0ab87a3396b12c31257"
+      "baseline_sha256": "aab82414eb0338fbce63b1f5b3c110df722e90536e9e8197fea6783ae1fe6f46"
     },
     "content": "res://data/ui/technique_progress_wind_qingmingpokongjue.json"
   },
@@ -215,7 +215,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-wind-middown-8.webp",
-      "baseline_sha256": "bd59cfc302557c7e55a0c2e91a7104bfc3767750d656c0ab87a3396b12c31257"
+      "baseline_sha256": "aab82414eb0338fbce63b1f5b3c110df722e90536e9e8197fea6783ae1fe6f46"
     },
     "content": "res://data/ui/technique_progress_wind_tingfengwuyingjue.json"
   },
@@ -247,7 +247,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-thunder-middown-8.webp",
-      "baseline_sha256": "2a5ecbde09f9b1dde8f785e7e3b240005e9b697c8ceadd6e35968b0f608cf9ee"
+      "baseline_sha256": "6bcb469d6b100c866fa0b8b980161955de40ce8e9edefffe521f83d2a66819c0"
     },
     "content": "res://data/ui/technique_progress_thunder_jiuxiaotingguangjue.json"
   },
@@ -255,7 +255,7 @@
     "layout": "res://data/ui/technique_progress_art.json",
     "layout_overrides": {
       "texture": "res://assets/UI-thunder-middown-8.webp",
-      "baseline_sha256": "2a5ecbde09f9b1dde8f785e7e3b240005e9b697c8ceadd6e35968b0f608cf9ee"
+      "baseline_sha256": "6bcb469d6b100c866fa0b8b980161955de40ce8e9edefffe521f83d2a66819c0"
     },
     "content": "res://data/ui/technique_progress_thunder_leigangzhenyujue.json"
   }
