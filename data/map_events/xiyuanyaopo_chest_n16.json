@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.xiyuanyaopo.chest_n16",
+  "type": "chest",
+  "point_id": "base.map.xiyuanyaopo.point.n16",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.xiyuanyaopo.chest_n16",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-xxyp-baoxiang-huayinshiping1.webp",
+    "chest_image": "res://assets/tanchuang-xxyp-baoxiang-huayinshiping0.webp",
+    "result_illustration": "res://assets/tanchuang-xxyp-baoxiang-huayinshiping2.webp"
+  },
+  "observation": {
+    "location_name": "花荫石坪",
+    "location_description": "山径尽头，一株花树斜倚崖边，细碎花瓣散落在平坦的青石上。树下草叶半掩，露出一只木匣的轮廓。",
+    "chest_name": "花下木匣",
+    "description": "这里背风临水，像是行人歇脚的地方。拂去匣盖上的落花，仔细查看树根旁的木匣，或许还能找到被人遗落的物件。",
+    "result_description": "打开机关，两格中各露出一件物品，可以选择一件收下。"
+  },
+  "respawn_days": 40
+}

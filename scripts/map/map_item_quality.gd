@@ -3,7 +3,7 @@ extends RefCounted
 
 # Authored rarity order; independent of item enhancement level.
 const QUALITIES := ["下品", "凡品", "良品", "上品", "灵品", "玄品", "仙品"]
-const COLORS := [Color("a5a5a5"), Color("51b879"), Color("3296ed"), Color("ed8b28"), Color("b65cde"), Color("e33d3d"), Color("e9bd47")]
+const COLORS := [Color("a5a5a5"), Color("51b879"), Color("3296ed"), Color("b65cde"), Color("ed8b28"), Color("e33d3d"), Color("e9bd47")]
 # Background source numbering differs from rarity/badge order: 7 is red,
 # 6 is gold. Keep progression order independent of artwork filenames.
 const BACKGROUND_LEVELS := [1, 2, 3, 4, 5, 7, 6]

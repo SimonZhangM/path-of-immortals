@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.xiyuanyaopo.gathering_n18",
+  "type": "gathering",
+  "point_id": "base.map.xiyuanyaopo.point.n18",
+  "trigger": "arrival",
+  "title": "瀑前苔石",
+  "item_id": "base.material.xilutai",
+  "reward_prefix": "base.map_reward.xiyuanyaopo.gathering_n18",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-xyyp-caiyao-puqianshitai.webp",
+    "description": "溪水润泽岩面，石隙间生着湿润的溪露苔。",
+    "notes": {
+      "base.gathering.quick": "采下近处的溪露苔，\n省时省力。",
+      "base.gathering.careful": "仔细查看石隙，\n采集成熟的溪露苔。",
+      "base.gathering.deep": "沿着水岸与坡地，\n寻找更多溪露苔。"
+    }
+  }
+}

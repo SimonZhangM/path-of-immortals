@@ -101,6 +101,8 @@ func rest_and_gather(map: Node) -> void:
 		var day_before:=WorldCalendar.current_day(map.loadout.calendar)
 		var forecast: Dictionary=map.gathering_dialog.options.forecast(2)
 		map._begin_gathering(forecast)
+		if map.event_state.phase == "gathering_animation":
+			await map.gathering_animation.finished
 		check(map.event_state.phase=="gathering_reward","gathering result created")
 		check(WorldCalendar.current_day(map.loadout.calendar)==day_before+int(forecast.days),"herb/mining spends selected duration")
 		map._cancel_gathering()

@@ -11,6 +11,12 @@ func dispose_map(map: Node) -> void:
 	map.queue_free()
 	await settle()
 
+func wait_for_mining(map: Node) -> void:
+	var deadline := Time.get_ticks_msec() + 8000
+	while map.event_state.phase == "gathering_animation" and Time.get_ticks_msec() < deadline:
+		await process_frame
+	check(map.event_state.phase == "gathering_reward", "mining playback completes before reward")
+
 func run() -> void:
 	create_timer(50).timeout.connect(func(): quit(2))
 	AudioServer.set_bus_mute(0,true)
@@ -57,7 +63,7 @@ func run() -> void:
 			await settle()
 			check(map.gathering_dialog.method_note.get_line_count() == 2, "each harvest description has exactly two lines")
 			var button := map.gathering_dialog.action_buttons[index] as TextureButton
-			check(button != null and button.texture_normal.resource_path == options.methods[index].button_idle and button.texture_hover.resource_path == options.methods[index].button_selected, "normal and selected-hover art mapped")
+			check(button != null and button.texture_normal.resource_path == options.methods[index].button_selected and button.texture_hover == button.texture_normal, "selected art persists without hover")
 			check(map.gathering_dialog.value_labels[0].text.contains("块") and not map.gathering_dialog.value_labels[0].text.contains("株"), "mining forecast unit")
 		check(map.gathering_dialog.herb_category.text == "矿石", "mineral rounded tag")
 		var tip: ItemTooltip = map.gathering_dialog.herb_slot.build_item_tooltip("")
@@ -104,7 +110,9 @@ func run() -> void:
 			check(map.loadout.snapshot() == snapshot and not map.gathering_dialog.error_label.text.is_empty(), "failed preparation atomic")
 			map.inventory_save_path = save_path
 		await click(map.gathering_dialog.action_buttons[method_index])
-		check(map.event_state.phase == "gathering_reward" and map.gathering_result.visible, "second click rolls result")
+		check(map.event_state.phase == "gathering_animation" and not map.gathering_result.visible, "second click starts mining playback")
+		await wait_for_mining(map)
+		check(map.gathering_result.visible, "playback then shows saved result")
 		var offer: Dictionary = map.loadout.gathering_offers[event.id].duplicate(true)
 		check(offer.quantity in [method_index+1,method_index+2] and offer.days == method_index+1, "actual bounded roll")
 		check(map.gathering_result.quantity_label.text == "数量：%d块" % offer.quantity, "reward unit")
@@ -133,6 +141,7 @@ func run() -> void:
 	check(map.gathering_dialog.options.unit == "株" and map.gathering_dialog.action_buttons[1] is TextureButton, "herb profile restored")
 	await click(map.gathering_dialog.action_buttons[1])
 	await click(map.gathering_dialog.action_buttons[1])
+	await wait_for_gathering(map)
 	check(map.gathering_result.quantity_label.text.ends_with("株"), "herb reward compatibility")
 	await click(map.gathering_result.accept_button)
 	await dispose_map(map)
@@ -142,6 +151,7 @@ func run() -> void:
 	check(map.event_state.phase == "gathering", "restart mine available after claimed roll")
 	await click(map.gathering_dialog.action_buttons[1])
 	await click(map.gathering_dialog.action_buttons[1])
+	await wait_for_mining(map)
 	var again: Dictionary = map.loadout.gathering_offers["base.map_event.qingshihewan.mining_n19"]
 	check(again.id.ends_with(".2") and again.days == 2 and again.quantity in [2,3], "middle tier fresh receipt")
 	await click(map.gathering_result.accept_button)

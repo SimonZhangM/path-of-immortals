@@ -12,10 +12,12 @@
 ## 素材与文案
 
 - 二选一底图使用原始 `assets/UI-gongfa-right-bg-fashu1in2.webp`，三选一使用新增 `assets/UI-gongfa-right-bg-fashu1in3.webp`；均为504×1218，只开启mipmap，不修改图片。
-- 进度、前置法术简栏、按钮沿用[法术右栏定位](technique-spell-detail-layout.md)。简栏只保留图标、名称、分类和诗意配词，不重复功能描述、要点或学习条件。
+- 进度、前置法术简栏、按钮沿用[法术右栏定位](technique-spell-detail-layout.md)。简栏只保留图标、名称、分类和诗意配词（2026-10-23：分类隐藏“X属性”，与完整法术页一致），不重复功能描述、要点或学习条件。
 - 每张强化卡展示技能图、名称、全部分类、诗意配词、功能描述及全部核心要点；内容完整同步[357项强化文案](../output/imagegen/七系功法_357项强化文案.md)全部最新正文，包括最新重链／引劫要点。
 - 数据在[technique_enhancement_details.json](../data/ui/technique_enhancement_details.json)，以功法稳定ID、重数、现行branch_key索引；图片沿既有中栏映射。[同步工具](../tools/sync_technique_enhancement_details.py)从35本美术注册表及两份文案生成全量数据，`--check`只核验快照、357个连续编号及资源路径。技艺的运行分支尚未注册，其勾选采用`ui.enhancement.<元素>_01.<重数>.<选项>`预览标识，不新增或改写玩法ID。
 - 56个前置法术简栏从[56项法术文案](../output/imagegen/七系功法_56项法术文案.md)独立同步名称／分类／配词，并使用该书既有方形技能图。完整奇数重法术右栏现也已覆盖七系56术，简栏仍只保留四项概要内容。
+
+2026-10-23分类清理：法术和强化不显示将两个buff／debuff联动合写的标签（如“附炎施灼”“灼伤蓄炎”），保留独立状态与单一机制／共鸣分类。18处已同步源文案和运行数据；未设4标签硬上限，剩余19项五标签条目见[全量检查清单](technique-category-audit-2026-10-23.md)。
 
 ## 排版与交互
 

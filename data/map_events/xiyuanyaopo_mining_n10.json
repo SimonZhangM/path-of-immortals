@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.xiyuanyaopo.mining_n10",
+  "type": "gathering",
+  "point_id": "base.map.xiyuanyaopo.point.n10",
+  "trigger": "arrival",
+  "title": "西崖灵矿",
+  "item_id": "base.currency.spirit_stones",
+  "reward_prefix": "base.map_reward.xiyuanyaopo.mining_n10",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-xyyp-wakuang-xiyalingkuang.webp",
+    "description": "岩壁间露出灵石矿脉，可沿石隙逐层开采。",
+    "notes": {
+      "base.gathering.mining_shallow": "敲取外露的灵石，\n省时省力。",
+      "base.gathering.mining_vein": "循着矿脉走向，\n仔细开采灵石。",
+      "base.gathering.mining_deep": "凿开深处岩层，\n搜寻更多灵石。"
+    }
+  }
+}

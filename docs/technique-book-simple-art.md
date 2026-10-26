@@ -1,6 +1,6 @@
 # 七系35本左栏简洁书籍｜左侧书名修正版
 
-完成：2026-10-17（生成批次从2026-10-16开始）。同日按用户要求统一放入七系目录，命名UI-{element}-{书名拼音}-booksimple.png；原始提示词位于各系_generation子目录，图像内容未改。四类配套素材见[完整索引](../output/imagegen/README.md)。
+完成：2026-10-17（生成批次从2026-10-16开始）。同日按用户要求统一放入七系目录，命名UI-{element}-{书名拼音}-booksimple.png；原始提示词位于各系_generation子目录，图像内容未改。四类配套素材见[完整索引](../output/imagegen/素材索引与记录/README.md)。
 
 按用户纠正，35本统一为**左装订脊 → 左侧书名竖签 → 右侧主题纹样**。金系5本重新生成，其余六系30本完成；每本各一张独立透明PNG，未经合图裁切或镜像处理。
 
@@ -94,4 +94,4 @@
 
 ## 旧版停用
 
-旧右侧书名简洁版已停用。本次整理前，原metal／wood／water-books-simple目录已不在imagegen中，未恢复或补建；当前只采用本清单35张左侧书名修正版，均在各元素目录下以booksimple结尾。原simple-left路径的新旧对应见[迁移记录](../output/imagegen/asset-migration-2026-10-17.json)。
+旧右侧书名简洁版已停用。本次整理前，原metal／wood／water-books-simple目录已不在imagegen中，未恢复或补建；当前只采用本清单35张左侧书名修正版，均在各元素目录下以booksimple结尾。原simple-left路径的新旧对应见[迁移记录](../output/imagegen/素材索引与记录/asset-migration-2026-10-17.json)。

@@ -1,0 +1,805 @@
+{
+  "source": "output/imagegen/灵根_四类灵根文案.md",
+  "elements": [
+    "metal",
+    "wood",
+    "water",
+    "fire",
+    "earth",
+    "wind",
+    "thunder"
+  ],
+  "records": [
+    {
+      "id": "base.root_copy.01",
+      "count": 1,
+      "name": "金系天灵根",
+      "phrase": "一锋破晓 · 百兵争鸣",
+      "description": "金灵独聚，清鸣如剑，锋芒藏于一息之间。可修习金系功法，参炼器之理，走御剑御兵之道，于千锤百炼中磨出一线寒光。",
+      "elements": [
+        "metal"
+      ]
+    },
+    {
+      "id": "base.root_copy.02",
+      "count": 1,
+      "name": "木系天灵根",
+      "phrase": "一木逢春 · 枯荣随心",
+      "description": "一缕青气蕴于灵根，如深林藏春，生意不绝。可修习木系功法，滋养生机、以毒蚀敌，亦可研习驭兽之道，在草木荣枯间体悟生杀之变。",
+      "elements": [
+        "wood"
+      ]
+    },
+    {
+      "id": "base.root_copy.03",
+      "count": 1,
+      "name": "水系天灵根",
+      "phrase": "寒月照川 · 柔波藏锋",
+      "description": "水灵澄澈，静时如潭映月，动时似寒潮奔涌。可修习水系功法，调运灵息、凝霜制敌，亦可研习制符之道，以流水之柔蓄冰锋之锐。",
+      "elements": [
+        "water"
+      ]
+    },
+    {
+      "id": "base.root_copy.04",
+      "count": 1,
+      "name": "火系天灵根",
+      "phrase": "星火燎原 · 烈焰凌霄",
+      "description": "灵根之中似藏一簇长明火，温可养丹，烈可燎原。可修习火系功法，研丹道、御真火，以灼灼锋芒破开前路。",
+      "elements": [
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.05",
+      "count": 1,
+      "name": "土系天灵根",
+      "phrase": "厚土载身 · 群岳为凭",
+      "description": "土灵深厚，如群山立于大地，沉静之中自有雄浑。可修习土系功法，稳守反击、重击制敌，亦可研习勘脉采矿之术，于山川之间立定根基。",
+      "elements": [
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.06",
+      "count": 1,
+      "name": "风系天灵根",
+      "phrase": "清风入怀 · 身与云游",
+      "description": "风灵轻逸，不拘一隅，如长空流云，来去无迹。可修习风系功法，循迹寻幽，闪转追击，于无形之处寻得先机。",
+      "elements": [
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.07",
+      "count": 1,
+      "name": "雷系天灵根",
+      "phrase": "一念惊雷 · 霆光破夜",
+      "description": "雷灵凝于一脉，静藏电芒，动发霆音。可修习雷系功法，参阵理、引天雷，亦能积雷成盾，使霆威既能攻敌，也能护身。",
+      "elements": [
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.08",
+      "count": 2,
+      "name": "金木双灵根",
+      "phrase": "青枝藏锋 · 生杀有度",
+      "description": "金有肃杀之锐，木有荣枯之变，青枝与寒锋各藏一重意境。可修习金、木两系功法，兼修御兵攻伐与生机毒蚀之道，刚柔之间，自有取舍。",
+      "elements": [
+        "metal",
+        "wood"
+      ]
+    },
+    {
+      "id": "base.root_copy.09",
+      "count": 2,
+      "name": "金水双灵根",
+      "phrase": "寒锋映月 · 流水含光",
+      "description": "剑光如月，水意如霜，清寒之中自藏锋芒。可修习金、水两系功法，御剑御兵，凝霜制敌，在兵锋与寒潮间铺陈攻势。",
+      "elements": [
+        "metal",
+        "water"
+      ]
+    },
+    {
+      "id": "base.root_copy.10",
+      "count": 2,
+      "name": "金火双灵根",
+      "phrase": "炉火淬锋 · 百炼成兵",
+      "description": "金之坚锐，火之炽烈，恰如顽铁入炉，百炼见锋。可修习金、火两系功法，研炼器与丹道，亦可兼修兵刃攻伐与烈焰攻坚，行事自有锐意。",
+      "elements": [
+        "metal",
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.11",
+      "count": 2,
+      "name": "金土双灵根",
+      "phrase": "厚土藏锋 · 重岳承兵",
+      "description": "金藏于山，锋蕴于静，厚重之下自有凌厉。可修习金、土两系功法，以御兵之锐求攻，以重岳之势立守，进退皆可从容筹谋。",
+      "elements": [
+        "metal",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.12",
+      "count": 2,
+      "name": "金风双灵根",
+      "phrase": "风催剑影 · 锐气穿云",
+      "description": "风过处，寒光一线；剑起时，衣袂无声。可修习金、风两系功法，兼取御兵攻伐与轻灵追击之长，于疾行剑影之间寻隙而进。",
+      "elements": [
+        "metal",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.13",
+      "count": 2,
+      "name": "金雷双灵根",
+      "phrase": "雷鸣剑啸 · 锋动九霄",
+      "description": "兵锋清鸣，雷霆震野，金光电芒交映于长空。可修习金、雷两系功法，御兵与引雷并修，也可研习炼器与阵法，锋芒之外更藏变化。",
+      "elements": [
+        "metal",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.14",
+      "count": 2,
+      "name": "水木双灵根",
+      "phrase": "灵泽生生 · 万物相济",
+      "description": "水之润泽，木之生发，清泉过处，枯枝亦见新芽。可修习水、木两系功法，兼修滋养生机与寒霜制敌之法，柔和之中亦有坚韧。",
+      "elements": [
+        "wood",
+        "water"
+      ]
+    },
+    {
+      "id": "base.root_copy.15",
+      "count": 2,
+      "name": "木火双灵根",
+      "phrase": "春枝藏焰 · 薪火不息",
+      "description": "青枝含春，赤焰照野，生意与烈意同在一身。可修习木、火两系功法，养生机、研丹道，也可兼修草木侵蚀与烈焰攻伐，使仙途多几分变化。",
+      "elements": [
+        "wood",
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.16",
+      "count": 2,
+      "name": "木土双灵根",
+      "phrase": "深根抱石 · 万木成林",
+      "description": "根入厚土，枝向青天，历风雨而生意不改。可修习木、土两系功法，兼修生机恢复与稳守反制之法，如老树立于山间，沉着而有韧性。",
+      "elements": [
+        "wood",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.17",
+      "count": 2,
+      "name": "木风双灵根",
+      "phrase": "风过青梢 · 万叶随行",
+      "description": "风行林间，枝叶皆动，轻灵之中自有绵长生意。可修习木、风两系功法，研习驭兽与寻踪，亦可兼修毒蚀制敌与闪转追击，行走山野，各有所用。",
+      "elements": [
+        "wood",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.18",
+      "count": 2,
+      "name": "木雷双灵根",
+      "phrase": "春雷醒木 · 生杀同枝",
+      "description": "春雷过野，草木知时；霆光落处，亦见肃杀。可修习木、雷两系功法，兼探枯荣变化与引雷守御之道，在生机与雷威之间择路而行。",
+      "elements": [
+        "wood",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.19",
+      "count": 2,
+      "name": "水火双灵根",
+      "phrase": "寒光照焰 · 水火同修",
+      "description": "一脉含霜，一脉藏焰，冷暖两意各有锋芒。可修习水、火两系功法，既能以寒霜牵制，也可凭烈焰攻坚，在清寒与炽烈之间调遣所学。",
+      "elements": [
+        "water",
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.20",
+      "count": 2,
+      "name": "水土双灵根",
+      "phrase": "山静水深 · 刚柔相济",
+      "description": "山有不移之骨，水有曲折之势，沉静之中藏着转圜。可修习水、土两系功法，兼取寒霜牵制与重岳守御之长，稳住阵脚，再寻反击之机。",
+      "elements": [
+        "water",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.21",
+      "count": 2,
+      "name": "水风双灵根",
+      "phrase": "长风渡水 · 寒浪逐云",
+      "description": "风掠长川，水光流转，寒意随浪而起。可修习水、风两系功法，兼修冰法牵制与轻灵闪避之术，进可逐隙追击，退可迂回周旋。",
+      "elements": [
+        "water",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.22",
+      "count": 2,
+      "name": "水雷双灵根",
+      "phrase": "寒潮映电 · 霆光照川",
+      "description": "寒潭映电，霆声越岸。水意幽深，雷威迅烈，各展其势。可修习水、雷两系功法，以冰法牵制，以雷术攻守，于清寒与迅烈之间自择仙途。",
+      "elements": [
+        "water",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.23",
+      "count": 2,
+      "name": "火土双灵根",
+      "phrase": "赤焰映岳 · 攻守有凭",
+      "description": "赤焰照山，厚土承岳，炽烈与沉稳同居一身。可修习火、土两系功法，兼取烈焰攻坚与稳守反制之长，如山腹藏火，静有所守，动有所发。",
+      "elements": [
+        "fire",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.24",
+      "count": 2,
+      "name": "火风双灵根",
+      "phrase": "风卷流焰 · 赤光逐影",
+      "description": "赤焰掠空，长风无迹，烈意与轻灵各自舒展。可修习火、风两系功法，兼修火法攻伐与闪避追击，在疾行流焰之间把握进攻时机。",
+      "elements": [
+        "fire",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.25",
+      "count": 2,
+      "name": "火雷双灵根",
+      "phrase": "雷火照夜 · 霆焰惊天",
+      "description": "火光腾起，雷声破夜，两般烈意映照长空。可修习火、雷两系功法，兼修灼烧攻坚与雷击爆发，也可凭雷盾守御，在猛烈攻势中留一分持重。",
+      "elements": [
+        "fire",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.26",
+      "count": 2,
+      "name": "土风双灵根",
+      "phrase": "身轻如羽 · 心稳如山",
+      "description": "风可越岭，山自岿然，轻重两意各得其所。可修习土、风两系功法，兼取稳守反击与轻灵闪避之长，动时逐风，定时如岳。",
+      "elements": [
+        "earth",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.27",
+      "count": 2,
+      "name": "土雷双灵根",
+      "phrase": "雷动千山 · 重岳不移",
+      "description": "雷声撼岳，山骨沉雄，威势之下仍有稳固根基。可修习土、雷两系功法，既可重击反制，也能积雷成盾，在厚重守势中酝酿反攻。",
+      "elements": [
+        "earth",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.28",
+      "count": 2,
+      "name": "风雷双灵根",
+      "phrase": "风雷并起 · 掠影惊霄",
+      "description": "长风过隙，惊雷破云，来去之间尽是迅疾之意。可修习风、雷两系功法，兼取闪避追击与引雷攻伐之长，身随风动，术逐雷鸣。",
+      "elements": [
+        "wind",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.29",
+      "count": 3,
+      "name": "金木水真灵根",
+      "phrase": "清泉养木 · 碧叶藏锋",
+      "description": "清泉穿林，碧叶含露，一线剑光映在水间。可修习金、木、水三系功法，兼取御兵攻伐、生机恢复与寒霜制敌之长，在锋芒与润泽之间从容修行。",
+      "elements": [
+        "metal",
+        "wood",
+        "water"
+      ]
+    },
+    {
+      "id": "base.root_copy.30",
+      "count": 3,
+      "name": "金木火真灵根",
+      "phrase": "青枝映焰 · 赤炼生锋",
+      "description": "青枝有生意，炉火有烈性，金锋在明灭之间显露。可修习金、木、火三系功法，既能研炼器、丹道，也可兼修草木生杀与兵火攻伐，所学各有所用。",
+      "elements": [
+        "metal",
+        "wood",
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.31",
+      "count": 3,
+      "name": "金木土真灵根",
+      "phrase": "山藏剑骨 · 林蕴生机",
+      "description": "山骨藏金，林根入土，沉厚之中既有锋锐，也有生机。可修习金、木、土三系功法，以兵锋求攻，以厚土立守，亦可修习草木恢复之法，进退皆有余地。",
+      "elements": [
+        "metal",
+        "wood",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.32",
+      "count": 3,
+      "name": "金木风真灵根",
+      "phrase": "林风过刃 · 叶动锋随",
+      "description": "长风拂林，落叶轻旋，剑影在疏枝之间一闪而过。可修习金、木、风三系功法，兼修御兵、毒蚀制敌与闪转追击之道，在轻灵变化中择机出手。",
+      "elements": [
+        "metal",
+        "wood",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.33",
+      "count": 3,
+      "name": "金木雷真灵根",
+      "phrase": "青木承霆 · 剑啸春山",
+      "description": "春山木醒，远空雷动，一声剑啸穿过层层青色。可修习金、木、雷三系功法，御兵与引雷并修，也能滋养生机、研习毒蚀，锋芒之外，亦见枯荣深意。",
+      "elements": [
+        "metal",
+        "wood",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.34",
+      "count": 3,
+      "name": "金水火真灵根",
+      "phrase": "冰映赤焰 · 剑分寒暑",
+      "description": "冰光映火，冷暖交辉，剑锋在寒暑两意之间澄然如一。可修习金、水、火三系功法，兼修御兵、冰法与真火，在寒霜牵制和烈焰攻坚之间选择进攻之路。",
+      "elements": [
+        "metal",
+        "water",
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.35",
+      "count": 3,
+      "name": "金水土真灵根",
+      "phrase": "山川凝剑 · 厚重含锋",
+      "description": "山立水绕，寒锋倒映于深潭，静中自有不露的锋芒。可修习金、水、土三系功法，兼取御兵攻伐、寒霜制敌与稳守反击之长，于山川沉静处寻得破局之机。",
+      "elements": [
+        "metal",
+        "water",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.36",
+      "count": 3,
+      "name": "金水风真灵根",
+      "phrase": "风拂寒刃 · 剑影流波",
+      "description": "风过长川，水光如练，寒刃随影掠过波心。可修习金、水、风三系功法，兼修御兵、冰法与轻灵身法，既能牵制周旋，也可寻隙追击。",
+      "elements": [
+        "metal",
+        "water",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.37",
+      "count": 3,
+      "name": "金水雷真灵根",
+      "phrase": "雷照霜锋 · 剑鸣沧海",
+      "description": "雷光照海，霜色映剑，清寒之中忽见霆威。可修习金、水、雷三系功法，兼修御兵攻伐与冰雷诸术，以寒霜制敌，以雷盾护身，再凭兵锋争得先机。",
+      "elements": [
+        "metal",
+        "water",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.38",
+      "count": 3,
+      "name": "金火土真灵根",
+      "phrase": "山炉藏焰 · 百锻出锋",
+      "description": "山石为炉，赤焰为光，金锋在千锤百炼中渐成。可修习金、火、土三系功法，既可勘脉炼器，也能兼修兵火攻坚与重岳守御，在沉稳中磨砺锐气。",
+      "elements": [
+        "metal",
+        "fire",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.39",
+      "count": 3,
+      "name": "金火风真灵根",
+      "phrase": "风掠赤锋 · 烈刃凌云",
+      "description": "流火掠空，长风过刃，赤色剑影划开云际。可修习金、火、风三系功法，兼取御兵之锐、真火之烈与身法之轻，在疾行追击中铺陈攻势。",
+      "elements": [
+        "metal",
+        "fire",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.40",
+      "count": 3,
+      "name": "金火雷真灵根",
+      "phrase": "霆火炼锋 · 一剑惊天",
+      "description": "霆光照刃，烈火映空，兵鸣与雷声同在耳畔。可修习金、火、雷三系功法，兼修御兵、烈焰与雷击；攻伐之外，亦可深研炼器、丹道与阵法。",
+      "elements": [
+        "metal",
+        "fire",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.41",
+      "count": 3,
+      "name": "金土风真灵根",
+      "phrase": "岳立锋藏 · 风起剑行",
+      "description": "山岳不动，长风自来，一柄藏锋之剑静候出鞘。可修习金、土、风三系功法，兼修御兵、稳守与闪避追击，轻重相择，动静之间皆可立身。",
+      "elements": [
+        "metal",
+        "earth",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.42",
+      "count": 3,
+      "name": "金土雷真灵根",
+      "phrase": "雷震金石 · 岳峙锋鸣",
+      "description": "雷声震谷，金石长鸣，重岳之下自藏锐意。可修习金、土、雷三系功法，既能御兵重击，也可修习厚土反制与雷盾守御，在稳固阵脚后转守为攻。",
+      "elements": [
+        "metal",
+        "earth",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.43",
+      "count": 3,
+      "name": "金风雷真灵根",
+      "phrase": "风驰剑影 · 雷动寒芒",
+      "description": "长风卷起剑影，雷光照亮寒芒，来去之间声势骤起。可修习金、风、雷三系功法，兼取御兵攻伐、闪转追击与引雷之长，在迅疾变化中把握出手时机。",
+      "elements": [
+        "metal",
+        "wind",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.44",
+      "count": 3,
+      "name": "木水火真灵根",
+      "phrase": "春泉映火 · 枯荣有序",
+      "description": "春泉润枝，明火映叶，荣枯冷暖各有时序。可修习木、水、火三系功法，兼修生机恢复、寒霜牵制与烈焰攻坚，在滋养与攻伐之间体悟不同法门。",
+      "elements": [
+        "wood",
+        "water",
+        "fire"
+      ]
+    },
+    {
+      "id": "base.root_copy.45",
+      "count": 3,
+      "name": "木水土真灵根",
+      "phrase": "山泉润野 · 深林含春",
+      "description": "厚土承根，山泉穿野，深林之中长藏一脉春意。可修习木、水、土三系功法，兼顾生机恢复、灵息调运与稳守反制，循着山川草木之理积累根基。",
+      "elements": [
+        "wood",
+        "water",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.46",
+      "count": 3,
+      "name": "木水风真灵根",
+      "phrase": "风来水碧 · 林静生香",
+      "description": "风来林动，水过苔青，轻灵与生意同在山野之间。可修习木、水、风三系功法，滋养生机、凝霜制敌，也可循迹寻踪，在迂回游走中施展所学。",
+      "elements": [
+        "wood",
+        "water",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.47",
+      "count": 3,
+      "name": "木水雷真灵根",
+      "phrase": "雷醒春林 · 清流映电",
+      "description": "惊雷唤醒春林，电芒落入清流，静谧山野忽见新意。可修习木、水、雷三系功法，兼修生机恢复、寒霜制敌与雷术攻守，既有绵长积累，也有迅烈锋芒。",
+      "elements": [
+        "wood",
+        "water",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.48",
+      "count": 3,
+      "name": "木火土真灵根",
+      "phrase": "根盘厚壤 · 焰照青山",
+      "description": "根盘厚壤，赤焰照山，草木的生意与岩石的沉稳各有所依。可修习木、火、土三系功法，兼取生机恢复、烈焰攻坚与重岳守御之长，在持守中积蓄进取之力。",
+      "elements": [
+        "wood",
+        "fire",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.49",
+      "count": 3,
+      "name": "木火风真灵根",
+      "phrase": "长风拂绿 · 流火照林",
+      "description": "长风掠过绿野，火光映亮林梢，轻灵之中又见炽烈。可修习木、火、风三系功法，兼修毒蚀制敌、持续灼烧与闪避追击，在行止变化中延续攻势。",
+      "elements": [
+        "wood",
+        "fire",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.50",
+      "count": 3,
+      "name": "木火雷真灵根",
+      "phrase": "青枝沐电 · 烈焰生辉",
+      "description": "青枝映电，烈焰照野，生意与肃杀交织成不同景象。可修习木、火、雷三系功法，探草木枯荣，修火雷攻伐，也可滋养生机，于生杀之间自择分寸。",
+      "elements": [
+        "wood",
+        "fire",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.51",
+      "count": 3,
+      "name": "木土风真灵根",
+      "phrase": "风越千林 · 根抱重山",
+      "description": "长风越林而去，深根抱石而生，枝叶轻盈，根基沉稳。可修习木、土、风三系功法，既可滋养生机、稳守阵脚，也能闪转追击，如山间老树，能守一处，亦知风向。",
+      "elements": [
+        "wood",
+        "earth",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.52",
+      "count": 3,
+      "name": "木土雷真灵根",
+      "phrase": "雷惊深壑 · 木立苍山",
+      "description": "雷声惊动深壑，苍木立于群山，枝梢有生意，山骨有坚韧。可修习木、土、雷三系功法，兼修生机恢复、重击反制与雷盾守御，在持久周旋中等待反攻。",
+      "elements": [
+        "wood",
+        "earth",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.53",
+      "count": 3,
+      "name": "木风雷真灵根",
+      "phrase": "风鸣万叶 · 雷叩春门",
+      "description": "风鸣万叶，雷叩春山，林间处处皆是将发未发的生意。可修习木、风、雷三系功法，兼修草木侵蚀、轻灵追击与引雷之术，在绵长消耗与迅疾攻伐之间取舍。",
+      "elements": [
+        "wood",
+        "wind",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.54",
+      "count": 3,
+      "name": "水火土真灵根",
+      "phrase": "寒泉映岳 · 赤焰照岩",
+      "description": "寒泉绕山，赤焰照岩，冷暖两意皆有厚土承托。可修习水、火、土三系功法，兼修冰法牵制、烈焰攻坚与稳守反击，寒热各有所用，攻守自有章法。",
+      "elements": [
+        "water",
+        "fire",
+        "earth"
+      ]
+    },
+    {
+      "id": "base.root_copy.55",
+      "count": 3,
+      "name": "水火风真灵根",
+      "phrase": "风携霜色 · 浪映霞光",
+      "description": "风中有霜色，水面映火光，冷暖随行，明灭不定。可修习水、火、风三系功法，以寒霜牵制、烈焰攻伐，也可施展轻灵身法，在进退之间转换所用之术。",
+      "elements": [
+        "water",
+        "fire",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.56",
+      "count": 3,
+      "name": "水火雷真灵根",
+      "phrase": "霜华照火 · 雷霆渡川",
+      "description": "霜华映焰，雷霆越川，清寒与炽烈各自成势。可修习水、火、雷三系功法，兼修冰法、真火与雷术，既有牵制攻坚之路，也有雷盾守御之法。",
+      "elements": [
+        "water",
+        "fire",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.57",
+      "count": 3,
+      "name": "水土风真灵根",
+      "phrase": "风越层峦 · 水绕千峰",
+      "description": "风越层峦，水绕千峰，山岳沉稳，风行水转。可修习水、土、风三系功法，兼取冰法牵制、厚土反制与轻灵闪避之长，在动静之间耐心周旋。",
+      "elements": [
+        "water",
+        "earth",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.58",
+      "count": 3,
+      "name": "水土雷真灵根",
+      "phrase": "雷声入岳 · 寒浪拍山",
+      "description": "雷声入岳，寒浪拍山，深沉水意之上忽现电芒。可修习水、土、雷三系功法，兼修寒霜牵制、重击反制与雷盾守御，在雷光与重岳守势之中，静候反击时机。",
+      "elements": [
+        "water",
+        "earth",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.59",
+      "count": 3,
+      "name": "水风雷真灵根",
+      "phrase": "风起潮生 · 雷惊云海",
+      "description": "长风起处，潮声渐盛，一线雷光照开云海。可修习水、风、雷三系功法，既可凝霜牵制，也能闪避追击、引雷攻敌，在流转不息中寻得战机。",
+      "elements": [
+        "water",
+        "wind",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.60",
+      "count": 3,
+      "name": "火土风真灵根",
+      "phrase": "风行赤野 · 火映重峦",
+      "description": "风行赤野，火映重峦，山的沉稳与风的轻灵各成气象。可修习火、土、风三系功法，兼取烈焰攻坚、厚土反制与闪转追击之长，动有锐意，守有根基。",
+      "elements": [
+        "fire",
+        "earth",
+        "wind"
+      ]
+    },
+    {
+      "id": "base.root_copy.61",
+      "count": 3,
+      "name": "火土雷真灵根",
+      "phrase": "重岳藏焰 · 惊雷裂空",
+      "description": "山腹藏焰，惊雷裂空，沉雄之势中蓄着炽烈锋芒。可修习火、土、雷三系功法，兼修火雷攻伐、重击反制与雷盾守御，在稳守与猛攻之间自定章法。",
+      "elements": [
+        "fire",
+        "earth",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.62",
+      "count": 3,
+      "name": "火风雷真灵根",
+      "phrase": "风驰电掣 · 烈火横空",
+      "description": "长风卷过，烈火横空，雷光在云隙之间骤然明灭。可修习火、风、雷三系功法，兼修火雷攻伐与闪避追击，以迅疾身法周旋，以炽烈术法争锋。",
+      "elements": [
+        "fire",
+        "wind",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.63",
+      "count": 3,
+      "name": "土风雷真灵根",
+      "phrase": "风雷撼岳 · 巍然自持",
+      "description": "风雷撼动长空，群岳仍自巍然，动静轻重皆在一身。可修习土、风、雷三系功法，兼取稳守反制、轻灵闪避与引雷之长，在沉着与迅疾之间把握进退。",
+      "elements": [
+        "earth",
+        "wind",
+        "thunder"
+      ]
+    },
+    {
+      "id": "base.root_copy.64",
+      "count": 4,
+      "name": "四灵根",
+      "phrase": "四灵并蕴 · 诸法兼修",
+      "description": "四种灵气交织于身，各具其性，各有所长。可修习自身四种灵根对应的功法，于诸般传承之间取舍兼修，寻一条自己的仙途。"
+    },
+    {
+      "id": "base.root_copy.65",
+      "count": 4,
+      "name": "四灵根",
+      "phrase": "四气藏真 · 殊途同修",
+      "description": "四缕灵气各循其脉，如溪流分向不同山谷。可修习对应四系功法，既可择一门深研，也可兼取诸家所长，于取舍之间渐明所求。"
+    },
+    {
+      "id": "base.root_copy.66",
+      "count": 4,
+      "name": "四灵根",
+      "phrase": "四脉含灵 · 百炼成章",
+      "description": "四道灵息深藏于身，初看纷杂，细察各有章法。可修习对应四系功法，于反复修习中辨明诸法所长，让每一分积累都成为前行的根基。"
+    },
+    {
+      "id": "base.root_copy.67",
+      "count": 4,
+      "name": "四灵根",
+      "phrase": "四灵共栖 · 道由心择",
+      "description": "四种灵性同栖一身，禀性各异，却都能成为修行的凭依。可修习对应四系功法，借诸法之长应对不同境遇，进退取舍，自有章法。"
+    },
+    {
+      "id": "base.root_copy.68",
+      "count": 4,
+      "name": "四灵根",
+      "phrase": "四源汇流 · 久修见真",
+      "description": "四源灵气汇入经脉，如细流行过千山，曲折亦能致远。可修习对应四系功法，在不同传承中细究精义，以长久积累磨出属于自己的道途。"
+    },
+    {
+      "id": "base.root_copy.69",
+      "count": 5,
+      "name": "五灵根",
+      "phrase": "五灵交汇 · 万象入怀",
+      "description": "五种灵气汇于一身，气象纷繁，修行贵在持恒。可修习自身五种灵根对应的功法，法门虽广，仍须择其所长，或专研一途，或有度兼修。"
+    },
+    {
+      "id": "base.root_copy.70",
+      "count": 5,
+      "name": "五灵根",
+      "phrase": "五气同藏 · 广纳诸法",
+      "description": "五缕灵气各具神采，如群峰并峙，各蕴一重气象。可修习对应五系功法，览诸家传承，辨法门异同，择其合宜者潜心修习。"
+    },
+    {
+      "id": "base.root_copy.71",
+      "count": 5,
+      "name": "五灵根",
+      "phrase": "五脉蕴真 · 博采精修",
+      "description": "五道灵息交织，所向各异，求道之路亦有多般选择。可修习对应五系功法，广览诸法而有所取舍，择合宜之法潜心精研，博采而不失专精。"
+    },
+    {
+      "id": "base.root_copy.72",
+      "count": 5,
+      "name": "五灵根",
+      "phrase": "五灵同蕴 · 择法求真",
+      "description": "五种灵性如星错列，光彩各异，共照漫长仙途。可修习对应五系功法，于诸般术法与技艺间辨明所求，择所长而修，渐得其中精义。"
+    },
+    {
+      "id": "base.root_copy.73",
+      "count": 5,
+      "name": "五灵根",
+      "phrase": "五源归身 · 自辟仙途",
+      "description": "五源灵气汇于方寸，法门虽众，道心须定。可修习对应五系功法，从不同传承中积累见识，择所信、修所长，于纷繁法门之间走出自己的路。"
+    }
+  ]
+}

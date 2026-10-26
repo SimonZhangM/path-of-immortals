@@ -2,8 +2,10 @@ class_name MapLoadoutStore
 extends RefCounted
 
 const DEFAULT_PATH := "user://inventory_loadout.json"
+const GameSaveSession = preload("res://scripts/entry/game_save_session.gd")
 
 static func session_path(configured: String) -> String:
+	if not GameSaveSession.active_path.is_empty(): return GameSaveSession.active_path
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--loadout-save="):
 			return argument.trim_prefix("--loadout-save=")
@@ -63,6 +65,8 @@ static func _load_inventory(state: MapLoadoutState, path: String) -> String:
 	if not FileAccess.file_exists(path):
 		# Recover the last complete file if shutdown interrupted the rename.
 		if not FileAccess.file_exists(path + ".bak"):
+			if GameSaveSession.resume_requested:
+				return "最后使用的存档已不存在，无法继续修行。"
 			return save(state, path)
 		path += ".bak"
 	var file := FileAccess.open(path, FileAccess.READ)

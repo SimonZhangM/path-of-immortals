@@ -3,6 +3,17 @@ extends Control
 
 const BASE_WIDTH := 1920.0
 const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
+const RESOURCE_PATHS := ["res://assets/map-head.webp", "res://assets/map-head2.webp", "res://assets/map-head3.webp",
+	"res://assets/player-status-health.webp", "res://assets/player-status-stamina.webp", "res://assets/player-status-spirit.webp",
+	"res://assets/player-status-level.webp", "res://assets/player-status-coin.webp", "res://assets/player-status-exp.webp"]
+
+static func startup_textures(title_image: String) -> Array:
+	var paths: Array = RESOURCE_PATHS.duplicate()
+	paths.append(title_image if not title_image.is_empty() else "res://assets/map-title-qshw.webp")
+	paths.append_array(PLAYER_FRAMES.paths.values())
+	paths.append_array(PLAYER_FRAMES.portrait_paths.values())
+	return paths
+
 const LEFT_REGION := Rect2(7, 45, 887, 231)
 const RIGHT_REGION := Rect2(695, 7, 1171, 689)
 const LEFT_TIP := Vector2(803, 173.5)
@@ -265,7 +276,10 @@ func _fit_portrait_frame_top() -> void:
 	_portrait_group.position.y = maxf(_portrait_group_origin.y, 2.0 - top_in_group * _portrait_group.scale.y)
 
 func _layout() -> void:
-	if content == null:
+	# configure() runs before the header has a parent/width. Keep a valid
+	# transform until anchoring supplies its real size: a zero scale corrupts
+	# inherited oversampling for the buttons and text during staged startup.
+	if content == null or size.x <= 0.0:
 		return
 	var zoom := size.x / BASE_WIDTH
 	content.scale = Vector2.ONE * zoom

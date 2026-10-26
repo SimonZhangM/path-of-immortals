@@ -195,6 +195,10 @@ func add_reward(reward: Dictionary) -> String:
 	var grants: Dictionary = granted_rewards.duplicate(true)
 	grants[reward.get("id", "")] = {"item_id": reward.get("item_id"), "quantity": reward.get("quantity")}
 	next.granted_rewards = grants
+	if reward.get("item_id") == MapGatheringRewards.SPIRIT_STONE_ID:
+		if not ContentRegistry._positive_integer(reward.get("quantity")) or reward.quantity > 10000:
+			return "灵石奖励数量无效。"
+		next.spirit_stones = spirit_stones + int(reward.quantity)
 	if records.has(reward.get("item_id")) and ContentRegistry._positive_integer(reward.get("quantity")) and reward.quantity <= 10000:
 		var amount := int(reward.quantity)
 		if test_replay:
@@ -620,9 +624,9 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 		var grant: Variant = grants[reward_id]
 		if not reward_id is String or not reward_id.begins_with("base.map_reward.") or not grant is Dictionary:
 			return "剧情奖励存档标识无效。"
-		if not grant.get("item_id") is String or not records.has(grant.item_id) or not ContentRegistry._nonnegative_integer(grant.get("quantity")) or grant.quantity < 1 or grant.quantity > 10000:
+		if not grant.get("item_id") is String or (not records.has(grant.item_id) and grant.item_id != MapGatheringRewards.SPIRIT_STONE_ID) or not ContentRegistry._nonnegative_integer(grant.get("quantity")) or grant.quantity < 1 or grant.quantity > 10000:
 			return "剧情奖励存档物品或数量无效。"
-		if raw.get("version", 1) == 1:
+		if raw.get("version", 1) == 1 and grant.item_id != MapGatheringRewards.SPIRIT_STONE_ID:
 			for index in int(grant.quantity):
 				owned["reward.%s.%d" % [reward_id, index]] = grant.item_id
 	if not receipts.get("qinglan.boards.v1", false):

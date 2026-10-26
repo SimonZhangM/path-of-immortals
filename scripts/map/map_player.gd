@@ -88,6 +88,10 @@ func _apply_animation_layout() -> void:
 		scale = Vector2.ONE * float(_action_scales[String(animation)])
 		offset = _action_offsets[String(animation)]
 
+func action_scale_in_canvas(action: String) -> Vector2:
+	# Presentation overlays must include the map camera's current zoom/fit scale.
+	return get_parent().get_global_transform_with_canvas().get_scale() * float(_action_scales.get(action, scale.x))
+
 func present(travel: MapTravelState) -> void:
 	var movement := travel.map_position - position
 	if absf(movement.x) > 0.001:

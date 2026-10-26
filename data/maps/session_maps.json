@@ -2,6 +2,7 @@
   "default_map": "base.map.qingshihewan",
   "scenes": {
     "base.map.qingshihewan": "res://scenes/maps/qingshihewan.tscn",
-    "base.map.qingshizhen": "res://scenes/maps/qingshizhen.tscn"
+    "base.map.qingshizhen": "res://scenes/maps/qingshizhen.tscn",
+    "base.map.xiyuanyaopo": "res://scenes/maps/xiyuanyaopo.tscn"
   }
 }

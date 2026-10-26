@@ -89,7 +89,7 @@ func current_speaker_id() -> String:
 func advance() -> String:
 	if not is_active():
 		return ""
-	if phase in ["reward", "encounter", "chest_observation", "chest", "gathering", "gathering_reward", "rest", "shop", "clinic", "inn", "cultivation"]:
+	if phase in ["reward", "encounter", "chest_observation", "chest", "gathering", "gathering_animation", "gathering_reward", "rest", "shop", "clinic", "inn", "cultivation"]:
 		return ""
 	if phase == "illustration":
 		phase = "dialogue"

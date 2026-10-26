@@ -8,10 +8,20 @@
   "item_tags_offset_y": -1,
   "method_name_offset_y": 2,
   "text_buttons": false,
+  "gathering_animation": {
+    "texture": "res://assets/mining-180-spritesheet-15x12.png",
+    "source_facing": "left",
+    "frame_size": [360, 360],
+    "columns": 15,
+    "rows": 12,
+    "fps": 30,
+    "character_rect": [155, 40, 169, 276],
+    "walk_visible_height": 266
+  },
   "methods": [
-    {"id": "base.gathering.mining_shallow", "name": "浅层敲取", "base": 1, "extra_min": 0, "extra_max": 1, "days": 1, "color": "f1cc72", "button_idle": "res://assets/tanchuang-wakuang-qiancengqiaoqu1.webp", "button_selected": "res://assets/tanchuang-wakuang-qiancengqiaoqu2.webp"},
-    {"id": "base.gathering.mining_vein", "name": "循脉开采", "base": 2, "extra_min": 0, "extra_max": 1, "days": 2, "color": "85c9fa", "button_idle": "res://assets/tanchuang-wakuang-xunmaikaicai1.webp", "button_selected": "res://assets/tanchuang-wakuang-xunmaikaicai2.webp"},
-    {"id": "base.gathering.mining_deep", "name": "深层开凿", "base": 3, "extra_min": 0, "extra_max": 1, "days": 3, "color": "c7a0fa", "button_idle": "res://assets/tanchuang-wakuang-shencengkaizao1.webp", "button_selected": "res://assets/tanchuang-wakuang-shencengkaizao2.webp"}
+    {"id": "base.gathering.mining_shallow", "name": "浅层敲取", "base": 1, "extra_min": 0, "extra_max": 1, "days": 1, "animation_frames": 108, "color": "f1cc72", "button_idle": "res://assets/tanchuang-wakuang-qiancengqiaoqu1.webp", "button_selected": "res://assets/tanchuang-wakuang-qiancengqiaoqu2.webp"},
+    {"id": "base.gathering.mining_vein", "name": "循脉开采", "base": 2, "extra_min": 0, "extra_max": 1, "days": 2, "animation_frames": 142, "color": "85c9fa", "button_idle": "res://assets/tanchuang-wakuang-xunmaikaicai1.webp", "button_selected": "res://assets/tanchuang-wakuang-xunmaikaicai2.webp"},
+    {"id": "base.gathering.mining_deep", "name": "深层开凿", "base": 3, "extra_min": 0, "extra_max": 1, "days": 3, "animation_frames": 180, "color": "c7a0fa", "button_idle": "res://assets/tanchuang-wakuang-shencengkaizao1.webp", "button_selected": "res://assets/tanchuang-wakuang-shencengkaizao2.webp"}
   ],
   "locations": {
     "base.material.cutiekuang": {

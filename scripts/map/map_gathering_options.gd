@@ -13,6 +13,7 @@ var illustration_frame := ""
 var item_name_offset_y := 0.0
 var item_tags_offset_y := 0.0
 var method_name_offset_y := 0.0
+var gathering_animation: Dictionary = {}
 
 static func path_for_record(record: Dictionary) -> String:
 	return "res://data/ui/mining_options.json" if record.get("category") == "mineral" else "res://data/ui/gathering_options.json"
@@ -27,6 +28,7 @@ func load_options(path := "res://data/ui/gathering_options.json") -> String:
 		var offset: Variant = raw.get(key, 0)
 		if not (offset is int or offset is float) or not is_finite(float(offset)): return "采集文字偏移无效：" + key
 	if not native_buttons is bool: return "采集按钮类型无效。"
+	if not raw.get("gathering_animation", {}) is Dictionary: return "采集动画配置无效。"
 	var next_background: Variant = raw.get("background", "res://assets/tanchuang-caiji1.webp")
 	if not next_background is String or not ResourceLoader.exists(next_background, "Texture2D"): return "采集底图缺失。"
 	var next_frame: Variant = raw.get("illustration_frame", "")
@@ -75,6 +77,7 @@ func load_options(path := "res://data/ui/gathering_options.json") -> String:
 	item_name_offset_y = float(raw.get("item_name_offset_y", 0))
 	item_tags_offset_y = float(raw.get("item_tags_offset_y", 0))
 	method_name_offset_y = float(raw.get("method_name_offset_y", 0))
+	gathering_animation = raw.get("gathering_animation", {}).duplicate(true)
 	return ""
 
 func forecast(index: int) -> Dictionary:

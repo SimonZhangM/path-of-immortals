@@ -1,0 +1,154 @@
+{
+  "reference_size": [
+    2560,
+    1440
+  ],
+  "page_count": 4,
+  "identity_form": {
+    "name_pool": "res://data/character_name_pool.json",
+    "name_texture": "res://assets/UI-start-name.webp",
+    "name_region": [60, 94, 966, 170],
+    "name_rect": [1040, 700, 500, 90],
+    "name_label_rect": [908, 700, 108, 90],
+    "gender_label_rect": [908, 840, 108, 96],
+    "gender_rect": [1040, 844.8, 500, 86.4],
+    "gender_gap": 24,
+    "selection_default": "res://assets/UII-start-selection-default.webp",
+    "selection_default_region": [27, 22, 510, 206],
+    "selection_selected": "res://assets/UII-start-selection-hover.webp",
+    "selection_selected_region": [17, 14, 528, 222],
+    "dice_pattern": "res://assets/UI-start-dice-%02d.webp",
+    "dice_region": [38, 38, 300, 300],
+    "dice_rect": [1560, 700, 90, 90],
+    "dice_fps": 30,
+    "dice_seconds": 1.0,
+    "font_size": 36,
+    "label_font_size": 40
+  },
+  "layout": {
+    "world_title_rect": [1208, 64, 144, 43],
+    "world_title_font_size": 38,
+    "world_title_gap": 15,
+    "shade": {
+      "opacity": 0.8,
+      "top_half_width": 0.245,
+      "bottom_half_width": 0.18,
+      "bottom_y": 0.46,
+      "bottom_fade_start": 0.3,
+      "bottom_feather": 0.105
+    },
+    "title_region": [
+      32,
+      64,
+      1412,
+      604
+    ],
+    "title_rect": [
+      940,
+      62,
+      680,
+      291
+    ],
+    "description_rect": [
+      440,
+      366,
+      1680,
+      232
+    ],
+    "description_font_size": 32,
+    "description_line_gap": 22,
+    "button": "res://assets/UI-start-goldbutton.webp",
+    "button_region": [
+      20,
+      96,
+      1046,
+      167
+    ],
+    "button_rect": [
+      950,
+      1108,
+      660,
+      106
+    ],
+    "button_text": "继 续",
+    "button_arrow": "›",
+    "button_arrow_offset": 86,
+    "button_font_size": 42,
+    "progress_rect": [
+      1200,
+      1264,
+      160,
+      22
+    ],
+    "dot_diameter": 22,
+    "dot_gap": 24
+  },
+  "pages": [
+    {
+      "id": "base.introduction.canglan_world",
+      "background": "res://assets/UI-start-bg1.webp",
+      "title": "res://assets/UI-start-bg1-title.webp",
+      "lines": [
+        "这里是苍澜界。",
+        "群山万壑，江河浩渺，仙门林立，城池相望。",
+        "凡人、修士、妖族与山野万灵，共生于这片辽阔的天地。",
+        "各有所求，也各自踏上属于自己的道路。"
+      ]
+    },
+    {
+      "id": "base.introduction.immortals_and_mortals",
+      "background": "res://assets/UI-start-bg2.webp",
+      "title": "res://assets/UI-start-bg2-title.webp",
+      "lines": [
+        "仙门并非遥不可及，",
+        "修士与凡人也常在山河间往来。",
+        "有人安守烟火，在市井田畴中经营一方天地，",
+        "也有人仰望云上道途，踏上长生之路。"
+      ]
+    },
+    {
+      "id": "base.introduction.qingshi_youth",
+      "background": "res://assets/UI-start-bg3.webp",
+      "title": "res://assets/UI-start-bg3-title.webp",
+      "lines": [
+        "你自青石镇而生，今年十五岁。",
+        "自幼在镇中长大，随叶松年在药铺中帮忙，",
+        "熟识百草药性，也习惯了小镇的烟火日常，",
+        "却尚未踏上真正的仙途。"
+      ],
+      "identity_enabled": true,
+      "button_text": "选择灵根",
+      "button_arrow_offset": 128,
+      "shade": {
+        "opacity": 0.8,
+        "top_half_width": 0.245,
+        "bottom_half_width": 0.18,
+        "bottom_y": 0.76,
+        "bottom_fade_start": 0.55,
+        "bottom_feather": 0.105
+      }
+    },
+    {
+      "id": "base.introduction.journey_preparation",
+      "background": "res://assets/UI-start-bg4.webp",
+      "title": "res://assets/UI-start-bg4-title.webp",
+      "root_selection_art": {
+        "texture": "res://assets/UI-start-linggen-xuanze.webp",
+        "core_texture": "res://assets/UI-start-linggen-xuanze-core.webp",
+        "core_pivot": [610, 706],
+        "background_anchor": [920, 1250],
+        "art_anchor": [610, 1283],
+        "width": 800,
+        "center_scale": 1.15,
+        "offset": [-5, 0],
+        "selection_effects": "res://data/ui/root_selection_effects.json"
+      },
+      "description_align_first_line": true,
+      "lines": [
+        "天地灵气，汇于七源。",
+        "与天道共鸣，寻长生之路。"
+      ],
+      "show_continue": false
+    }
+  ]
+}

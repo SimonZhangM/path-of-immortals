@@ -73,8 +73,8 @@ func run() -> void:
 		for other in 3:
 			check(dialog.selection_frames[other].visible == (other == index), "exclusive selection")
 			var expected: String = dialog.options.methods[other]["button_selected" if other == index else "button_idle"]
-			check(dialog.action_buttons[other].texture_normal.resource_path == dialog.options.methods[other].button_idle, "selection alone keeps idle art")
-			check(dialog.action_buttons[other].texture_hover.resource_path == expected, "hover art follows selection")
+			check(dialog.action_buttons[other].texture_normal.resource_path == expected, "selection keeps lit art")
+			check(dialog.action_buttons[other].texture_hover.resource_path == expected, "hover does not change selected art")
 		check(dialog.value_labels[0].get_parsed_text() == "%d株" % (index+1), "base forecast")
 		check(dialog.value_labels[1].get_parsed_text() == "0～1株", "extra forecast")
 		check(dialog.value_labels[2].get_parsed_text() == dialog.options.methods[index].name, "method forecast")

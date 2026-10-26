@@ -1,0 +1,41 @@
+{
+  "id": "base.map.xiyuanyaopo",
+  "name": "西源药坡",
+  "exploration": {
+    "enabled": true,
+    "hint_length": 72.0
+  },
+  "music": [
+    "res://assets/bgm-qingshihewan-1.mp3"
+  ],
+  "background": "res://assets/map-xiyuanyaopo.webp",
+  "marker": "res://assets/mapdot.webp",
+  "source_size": [
+    2787,
+    1568
+  ],
+  "layout_scene": "res://scenes/maps/xiyuanyaopo_layout.tscn",
+  "sign_motion": "res://data/ui/map_sign_motion.json",
+  "start_point": "base.map.xiyuanyaopo.point.n01",
+  "show_map_title": false,
+  "exits": [
+    {
+      "point_id": "base.map.xiyuanyaopo.point.n01",
+      "title": "前往 青石镇",
+      "scene": "res://scenes/maps/qingshizhen.tscn",
+      "target_point": "base.map.qingshizhen.point.n04",
+      "target_facing": "left"
+    }
+  ],
+  "event_files": [
+    "res://data/map_events/xiyuanyaopo_gathering_n07.json",
+    "res://data/map_events/xiyuanyaopo_gathering_n12.json",
+    "res://data/map_events/xiyuanyaopo_gathering_n13.json",
+    "res://data/map_events/xiyuanyaopo_gathering_n18.json",
+    "res://data/map_events/xiyuanyaopo_mining_n10.json",
+    "res://data/map_events/xiyuanyaopo_mining_n17.json",
+    "res://data/map_events/xiyuanyaopo_mining_n15.json",
+    "res://data/map_events/xiyuanyaopo_chest_n05.json",
+    "res://data/map_events/xiyuanyaopo_chest_n16.json"
+  ]
+}

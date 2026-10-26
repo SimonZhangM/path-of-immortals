@@ -82,7 +82,7 @@ func replace_entries(records: Array) -> String:
 			return "物品图片须为有效资源路径。"
 		if not icon_path_text.is_empty():
 			var icon_texture := load(icon_path_text) as Texture2D
-			if not TextureMetrics.inspect(icon_texture).has_mipmaps:
+			if not TextureMetrics.has_mipmaps(icon_texture):
 				return "物品图片必须启用mipmap。"
 		if not raw.get("card_frame", "") is String:
 			return "物品底框须为资源路径。"

@@ -26,7 +26,7 @@ func present_herb(record: Dictionary, model: MapLoadoutState) -> void:
 		card.queue_free()
 	card = HerbCard.new()
 	card.configure(record,"矿石" if mineral else "草木")
-	card.loadout = model
+	card.loadout = model if model.records.has(record.id) else null
 	card.mouse_filter = MOUSE_FILTER_STOP
 	card.set_card_width(152)
 	card.size = card.custom_minimum_size

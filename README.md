@@ -1,4 +1,22 @@
-# 修仙之路 · Path of Immortals
+# 苍澜界
+
+西源药坡（2026-10-25）：从青石镇最右上N04出入口前往，新地图左下N01可返回。已接19节点／18路线、四处采药、三处采矿和两处宝箱；灵石矿三档产量直接入余额。7处采集左图、两宝箱两页左图及第一页右侧独立宝箱图均已接。[节点与规则](docs/map-interaction-design.md#西源药坡地图接入2026-10-25)、[采集配图](docs/map-interaction-design.md#溪源药坡采集场景图2026-10-25)、[宝箱配图](docs/map-interaction-design.md#溪源药坡宝箱配图2026-10-25)，直接运行场景为`scenes/maps/xiyuanyaopo.tscn`，正常继续修行仍恢复实际存档原落点。
+
+继续修行加载页（2026-10-25）：等待时保留当前完整开始封面，居中提示“正在进入苍澜界…”，地图就绪后淡入。开场音乐在菜单、创角往返及加载期间持续播放，正式进入地图时才淡出并接上地图音乐。重启“测试开始界面”查看。[实现与验证](docs/game-entry-points.md#开始页面2026-10-24)。
+
+开始页（2026-10-24）：重启[测试开始界面](测试开始界面.cmd)。“继续修行”在无存档时隐藏，有档时载入最后使用那份的最新内容并进入游戏；已有旧测试存档也会被识别。“开启新程”进入四页创角，“退出游戏”可用；读档列表／设置／制作名单暂留接口。两主按钮已缩小10%，六菜单下移15px。[配置与验证](docs/game-entry-points.md#开始页面2026-10-24)。
+
+准备页翻页（2026-10-24）：重启[测试踏入仙途](测试踏入仙途.cmd)，四页继续与圆点回看已加入0.4秒背景淡化、15px前景轻移；动画期间防连点，往返保留创角草稿。[参数与专项验证](docs/game-entry-points.md#四页翻页过渡2026-10-24)。
+
+第4页灵根组合图（2026-10-24）：重启“测试踏入仙途”，选择灵根后右栏阵纹上显示对应圆圈。单圆居中／双圆左右／三圆上1下2／四圆四角／五圆上2下3，四、五灵根使用通用圆圈。布局配置见[data/ui/root_selection_panel.json](data/ui/root_selection_panel.json)，运行与验证见[启动说明](docs/game-entry-points.md)。
+
+采药动作（2026-10-23）：F8停止后F5重启，在河湾N04／N31／N36选定采药方式并再次点击执行。1／2／3天分别播放前60／110／180帧，30 FPS（2／约3.67／6秒），人物在实际事件节点原地播放，播完显示获得物品框。采药与采矿动作均无额外全屏黑色蒙版。素材已放assets，详情见[采药动作](docs/map-interaction-design.md#采药动作与采集无蒙版播放2026-10-23)；专项`./tests/run_t01.ps1 -Script res://tests/herbalism_animation_tests.gd`，加`-Render`只做静态预览。
+
+功法美术查看：[功法美术预览](output/imagegen/功法美术预览.html)是七系效果图、法术边框及书籍的统一入口。具体预览页在`output/imagegen/功法效果预览/`，素材清单与整理记录在`output/imagegen/素材索引与记录/`；四份功法文案仍在imagegen根目录。
+
+采矿动作（2026-10-22）：F8停止旧运行后F5重启，到河湾N19溪湾砂矿／N22西崖矿隙，先选方式再点采矿按钮。耗时保持1／2／3日，分别播放到第108／142／180帧，30 FPS（3.6／约4.73／6秒），播完显示收获。采矿人物脚底锚定触发事件的路径节点，随地图视图定位，可视大小匹配当前地图缩放下的行走人物；已有待领结果直接显示收获。操作与实现见[采矿动作](docs/map-interaction-design.md#采矿动作播放2026-10-22)，专项`tests/mining_animation_tests.gd`，加`-Render`仅静态预览。
+
+开发启动入口（2026-10-23）：项目根目录双击[直接进入游戏](直接进入游戏.cmd)、[测试开始界面](测试开始界面.cmd)或[测试踏入仙途](测试踏入仙途.cmd)。前者沿用当前角色续档；开始页“开始游戏”进入“初入苍澜”第1页，准备入口可直接预览该页。“继续”依次进入第2页“仙凡之间”和第3页“青石年少”；第3页可填写姓名、选择性别，点击骰子播放1秒后从男50／女50的姓名库不重复取名，已选性别仅抽对应名字，未选则从全部100名抽取，“选择灵根”进入第4页灵根选择。四圆点标示当前页，已访问页可点击回看并保留姓名／性别。第4页已接右栏、73条文案等概率随机和1秒灵核旋转，结果保留在创角草稿；“踏入仙途”仅预留草稿确认信号，正式创角和转场待接。Esc返回开始页，尚不创建新角色或修改正式存档。项目管理器“运行”／F5仍直接进游戏，两个新场景可F6单独运行，原存档目录固定保留。详见[启动入口与存档说明](docs/game-entry-points.md)。
 
 战斗展示更新（2026-10-22）：F8后F5重启，主角圆形头像与敌人等大、圆心齐平，主角名字后不再显示境界。战利品弹窗沿温玉佩领取框的简洁底图和高度，保留复盘／确定，单件奖励卡大小一致；新sfx-magic已重新导入并核对缓存。静态预览入口`tests/battle_portrait_reward_preview.gd`；头像几何见[主角头像说明](docs/player-portrait-fit.md)。
 
@@ -26,13 +44,13 @@
 
 修炼成长（2026-10-19最新）：F8停止后F5重启，到青石镇修炼所或河湾瀑下静台，选模式与5／10／15天。进入进度页均等待点击“开始修炼”；功法／兼修须先选书，选书和调整阵盘不自动开始。首次进入赠导引石，请通过“阵盘调整”自行上阵。默认1倍、60模拟秒完成一日，暂停／结束保留不足一天的进度。倍速／灵石辅助／突破控制行和底部资源提示已移除；灵石辅助加成、扣费停用，旧辅助日不会继续扣费。修炼累计增量保留两位、显示一位，当前修为仅显示当前值；G右栏已清空待新设计，奇数重法术仍自动入袋。详见[运行接入](docs/cultivation-runtime-2026-10-19.md)。专项：`./tests/run_t01.ps1 -Script res://tests/cultivation_runtime_tests.gd`，`-Render`生成预览。
 
-七系法术正式接入（2026-10-19最新）：**F8停止后F5重启，按I→功法→法术**查看56术并放入阵盘测试；书籍和法术同属功法，第二排可按类型或七系筛选。当前存档已补全部56术各1，功法仍0重、分支及修炼度保持。**法术不占储物袋容量，当前仍96/999**；分类数量正常显示，阵盘仍按1／2格占位。源WebP与透明框分层绘制，第7重14术使用新矩形图，背景按1／3／5／7重对应下／凡／上／灵；选择本术强化后悬浮效果立即刷新。专项：`./tests/run_t01.ps1 -Script res://tests/spell_inventory_integration_tests.gd -Render`。
+七系法术正式接入（2026-10-19最新）：**F8停止后F5重启，按I→功法→法术**查看56术并放入阵盘测试；书籍和法术同属功法，第二排可按类型或七系筛选。当前存档已补全部56术各1，功法仍0重、分支及修炼度保持。**法术不占储物袋容量，当前仍96/999**；分类数量正常显示，阵盘仍按1／2格占位。源WebP与透明框分层绘制，第7重14术使用新矩形图，法术卡背景与边框按1／3／5／7重对应凡／良／上／灵（2026-10-23修订）；选择本术强化后悬浮效果立即刷新。专项：`./tests/run_t01.ps1 -Script res://tests/spell_inventory_integration_tests.gd -Render`。
 
 同日展示修订：法术移除重复重数、上阵与操作提示，首句为《书名》第X重；入阵图框铺满对应绿色占格区域，四角3px圆角。书籍标签顺序功法／书籍／X系／定位，法术为功法／法术／X系／占格。必要静态预览：`./tests/run_t01.ps1 -Script res://tests/spell_presentation_preview.gd -Render`，不运行鼠标或战斗模拟。
 
-图框定位由[data/ui/spell_presentations.json](data/ui/spell_presentations.json)维护，同步工具[tools/sync_spell_presentations.py](tools/sync_spell_presentations.py)读取已认可的美术清单和简明介绍，不改图片像素。独立框及历史套图预览见[56术预览](output/imagegen/seven-elements-spell-frames-handpaint-2026-10-19.html)。测试补发工具[tools/grant_test_combat_spells.gd](tools/grant_test_combat_spells.gd)默认只读，`--apply`才备份并写入，当前实档已有凭证，无需再次执行。
+图框定位由[data/ui/spell_presentations.json](data/ui/spell_presentations.json)维护，同步工具[tools/sync_spell_presentations.py](tools/sync_spell_presentations.py)读取已认可的美术清单和简明介绍，不改图片像素。独立框及历史套图预览见[56术预览](output/imagegen/功法效果预览/seven-elements-spell-frames-handpaint-2026-10-19.html)。测试补发工具[tools/grant_test_combat_spells.gd](tools/grant_test_combat_spells.gd)默认只读，`--apply`才备份并写入，当前实档已有凭证，无需再次执行。
 
-两格法术固定方向（2026-10-19）：data/cultivation_library.json中的14个第四术显式记录size，6个1×2、8个2×1；另外42术仍1×1。方向不可旋转、分支不改占格，表见核心01第1.73。直接检查：`./tests/run_t01.ps1 -Script res://tests/spell_board_footprint_tests.gd`，配合cultivation_combat_tests.gd；构建器tools/build_cultivation_library.py同步该表。新增14张手绘矩形底图见[统一预览](output/imagegen/spell-board-rectangles-2026-10-19.html)，原正方形技能图保留；装饰框及阵盘纹理已绑定，见上条。
+两格法术固定方向（2026-10-19）：data/cultivation_library.json中的14个第四术显式记录size，6个1×2、8个2×1；另外42术仍1×1。方向不可旋转、分支不改占格，表见核心01第1.73。直接检查：`./tests/run_t01.ps1 -Script res://tests/spell_board_footprint_tests.gd`，配合cultivation_combat_tests.gd；构建器tools/build_cultivation_library.py同步该表。新增14张手绘矩形底图见[统一预览](output/imagegen/功法效果预览/spell-board-rectangles-2026-10-19.html)，原正方形技能图保留；装饰框及阵盘纹理已绑定，见上条。
 
 功法修习状态（2026-10-19最新）：所有原书不可进入阵盘，已学总纲／被动强化直接按各自条件生效；法术仍独立上阵。I中0重书无背景，重数背景按`data/ui/technique_mastery_backgrounds.json`切换；G左栏显示真实未领悟／重数。指定场所候选书及修炼度读写接口已接，正式收益／升级阈值和八重书玄品切换仍待定。全部页第二排草木／兽材／矿材／异材合为灵材。专项：`./tests/run_t01.ps1 -Script res://tests/book_mastery_rules_tests.gd`，加`-Render`可生成各重背景对照；规则以核心01第1.72为准。
 
@@ -40,33 +58,33 @@
 
 七系下部展示（2026-10-19最新）：金水火土风雷30本已按技艺52a／总纲52b／状态53／战斗8接入各系底图、名称、重数及354张技能强化图，沿木系位置、金边圆角；七系共413张图齐全。31张旧技能名游戏素材已改名并同步引用，六系状态小图和小背景框也已按木系方式补齐。F8后F5重启，G选择对应系／书目查看。静态预览：`$env:TECHNIQUE_PROGRESS_ELEMENT = 'metal'`后运行`./tests/run_t01.ps1 -Script res://tests/technique_six_elements_progress_preview.gd -Render`，元素可换water／fire／earth／wind／thunder；结束可`Remove-Item Env:TECHNIQUE_PROGRESS_ELEMENT`。本轮仍为展示，不代表学习流程已接。
 
-七系融合手绘素材齐套（2026-10-18最新）：最后雷系五本59张技能及强化源图完成，见[雷系统一预览／80px查看](output/imagegen/thunder-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，六系计划354／354完成，含木系共413张。雷系待审阅，本轮未接游戏；覆盖下方旧批次接续进度。
+七系融合手绘素材齐套（2026-10-18最新）：最后雷系五本59张技能及强化源图完成，见[雷系统一预览／80px查看](output/imagegen/功法效果预览/thunder-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/素材索引与记录/README.md)。沿木系认可风格，六系计划354／354完成，含木系共413张。雷系待审阅，本轮未接游戏；覆盖下方旧批次接续进度。
 
 八重功法底图更新（2026-10-18最新）：青萝化生诀与万木生杀诀共用新版UI-wood-middown-8，现与52／53同尺寸、同中心；12个图标、圆环数字及名称／说明已按新图同步。F8后F5重启，G→木选择这两本查看。必要静态预览仍为`./tests/run_t01.ps1 -Script res://tests/technique_progress_heading_preview.gd -Render`。
 
-风系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/wind-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，本轮未接游戏。六系计划金水火土风295／354完成，余雷系59张，覆盖下方旧接续进度。
+风系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/功法效果预览/wind-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/素材索引与记录/README.md)。沿木系认可风格，本轮未接游戏。六系计划金水火土风295／354完成，余雷系59张，覆盖下方旧接续进度。
 
-土系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/earth-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，旧战斗源图保留，本轮未接游戏。六系计划金水火土236／354完成，余风雷118张，下一批风系，覆盖下方旧接续进度。
+土系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/功法效果预览/earth-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/素材索引与记录/README.md)。沿木系认可风格，旧战斗源图保留，本轮未接游戏。六系计划金水火土236／354完成，余风雷118张，下一批风系，覆盖下方旧接续进度。
 
 七系功法中栏上部（2026-10-18最新）：新增水火土风雷25本，上部35本现已齐套。F8后F5重启，按G选择对应系／书目，即显示各自标题、标签、诗句、完整来历、中央书图和右侧书法；排版沿木系。下部仍只有木系已接。必要静态预览：先设`$env:TECHNIQUE_PREVIEW_ELEMENT = 'water'`（可换fire／earth／wind／thunder），再运行`./tests/run_t01.ps1 -Script res://tests/technique_five_elements_overview_preview.gd -Render`；每批五本，结束可用`Remove-Item Env:TECHNIQUE_PREVIEW_ELEMENT`清除选择。
 
 金系功法中栏上部（2026-10-18）：F8后F5重启，G→金，可查看五本各自标题、标签、诗句、完整来历、中央书图与右侧书法。使用UI-metal-*素材及《35本四栏文案》，布局沿木系；金系下部技能树尚未接入。必要静态预览：`./tests/run_t01.ps1 -Script res://tests/technique_metal_overview_preview.gd -Render`。
 
-火系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/fire-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，旧战斗源图保留，未接入游戏。六系计划金水火177／354已完成，下一批土系，覆盖下方旧接续进度。
+火系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/功法效果预览/fire-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/素材索引与记录/README.md)。沿木系认可风格，旧战斗源图保留，未接入游戏。六系计划金水火177／354已完成，下一批土系，覆盖下方旧接续进度。
 
 
-水系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/water-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。沿木系认可风格，名称采用最新定稿；仅新增源素材，未接入游戏。六系计划已完成金水118／354张，下一批火系，覆盖下方旧接续进度。
+水系融合手绘素材（2026-10-18最新）：五本59张技能及强化源图完成，见[统一预览／80px查看](output/imagegen/功法效果预览/water-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/素材索引与记录/README.md)。沿木系认可风格，名称采用最新定稿；仅新增源素材，未接入游戏。六系计划已完成金水118／354张，下一批火系，覆盖下方旧接续进度。
 
 
 功法分支名称（2026-10-18）：95项最新定稿与木系17项已写入[简明介绍](docs/七系功法简明介绍.md)及运行显示映射，旧逻辑键和存档保持。六系技能面板仍待接入；金系源素材清单／总览已用新名，图片路径不变。
 
 
-金系融合手绘素材（2026-10-18）：沿木系新风格完成五本59张技能及强化源图，见[统一预览／80px查看](output/imagegen/metal-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/README.md)。只新增美术源图，未接入游戏；六系分批制作下一批为水系。
+金系融合手绘素材（2026-10-18）：沿木系新风格完成五本59张技能及强化源图，见[统一预览／80px查看](output/imagegen/功法效果预览/metal-arts-handpaint-2026-10-18.html)及[素材索引](output/imagegen/素材索引与记录/README.md)。只新增美术源图，未接入游戏；六系分批制作下一批为水系。
 
 
 功法浏览记忆（2026-10-18）：重启后主动选择一本功法，即会记住最后查看的书；G重新打开、从储物袋切回以及重启读档都会恢复它并显示所属系。仅切换分类不会覆盖记忆，记录独立于人物学习状态。木系五张book已按可见图案在上边框与修行进度线之间垂直居中，书体大小／水平位置不变。
 
-火土功法效果图源素材（2026-10-17）：赤阳真火诀／离火燎原诀／撼岳裂地诀／不动玄岳诀各12张，见[48张逐组预览](output/imagegen/fire-earth-effects-2026-10-17.html)及[素材索引与提示词](output/imagegen/README.md)。均1254×1254无框满幅；本轮仅出图归档，未绑定游戏。
+火土功法效果图源素材（2026-10-17）：赤阳真火诀／离火燎原诀／撼岳裂地诀／不动玄岳诀各12张，见[48张逐组预览](output/imagegen/功法效果预览/fire-earth-effects-2026-10-17.html)及[素材索引与提示词](output/imagegen/素材索引与记录/README.md)。均1254×1254无框满幅；本轮仅出图归档，未绑定游戏。
 
 功法中栏上部（2026-10-18）：F8后F5重启，按G→木，五本功法均可查看各自标题／标签／完整诗句与来历、最新中央book及右侧书法。正文使用原生像素楷体、亮米白色和渐隐衬底；百兽／青木／枯荣下部已接五重框架，见下一条。当前只展示，学习／强化操作仍未接。必要静态预览：`./tests/run_t01.ps1 -Script res://tests/technique_wood_overview_preview.gd -Render`。
 
@@ -78,7 +96,7 @@
 
 **功法简洁封面（2026-10-17）：**重新运行后按G，七系各5本均显示对应booksimple封面；书名下方只留青绿细框“已领悟”标签。稳定ID路径表为data/ui/technique_book_art.json，原分类／选择操作保持；正式学习账本仍待接。静态检查`./tests/run_t01.ps1 -Script res://tests/technique_category_tests.gd -Render`，各系预览artifacts/technique-covers-0～6.png。覆盖下方空图片槽与第一重的历史说明。
 
-**七系美术素材（2026-10-17）：**[素材索引](output/imagegen/README.md)列出35本书的book／title／booksimple／label对应，按元素目录与UI英文命名整理，未选书籍图在独立backup目录。后续书法意象图遵循用户选定的[借春生模板](docs/calligraphy-art-template.md)。仅素材归档，游戏绑定状态见对应清单。
+**七系美术素材（2026-10-17）：**[素材索引](output/imagegen/素材索引与记录/README.md)列出35本书的book／title／booksimple／label对应，按元素目录与UI英文命名整理，未选书籍图在独立backup目录。后续书法意象图遵循用户选定的[借春生模板](docs/calligraphy-art-template.md)。仅素材归档，游戏绑定状态见对应清单。
 
 **储物袋容量与走跑（2026-10-16）：**储物袋改100种，仓库／袋内均显示实际计数。同种堆叠占1位；普通取出、购买、领取及阵盘退袋不能增加超额种类，已有超额保留并可存入仓库整理。战斗掉落允许超额入袋，但超过容量时所有地图只能走；整理至100种以内恢复正常，相邻一节点走、超过一段路线跑。F8后F5重启应用，当前测试存档已单次备份、重置7位NPC对话及相关对话线索、灵石64→164，未改物品、地图落点或日历。必要检查：`./tests/run_t01.ps1 -Script res://tests/storage_capacity_limits_tests.gd`及`./tests/run_t01.ps1 -Script res://tests/map_travel_tests.gd`，覆盖下方历史25／99及允许任意超额的说明。
 

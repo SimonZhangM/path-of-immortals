@@ -309,32 +309,38 @@ func _add_summary_category(index: int) -> void:
 	style.set_corner_radius_all(4)
 	tag.add_theme_stylebox_override("normal", style)
 
+static func visible_spell_categories(summary: Dictionary) -> Array:
+	# Hide element labels only on the technique page; shared copy and item
+	# tooltip classification retain their authored element information.
+	return summary.categories.filter(func(category): return category not in ["金属性", "木属性", "水属性", "火属性", "土属性", "风属性", "雷属性"])
+
 func _set_spell_summary(summary: Dictionary, shown: bool) -> void:
+	var categories := visible_spell_categories(summary)
 	spell_icon.texture = load(summary.icon)
 	spell_icon.visible = shown
 	labels.SpellName.text = summary.name
 	labels.SpellName.visible = shown
 	labels.Poem.text = "“%s”" % summary.poem
 	labels.Poem.visible = shown
-	while category_count < summary.categories.size():
+	while category_count < categories.size():
 		_add_summary_category(category_count)
 		detail_nodes.append(labels["Category%d" % category_count])
 		category_count += 1
 	summary_extra_height = 0.0
 	var widths: Array[float] = []
-	var total: float = 10.0 * (summary.categories.size() - 1)
-	for category: String in summary.categories:
+	var total: float = 10.0 * (categories.size() - 1)
+	for category: String in categories:
 		var width := 88.0 if category.length() == 3 else category.length() * 20.0 + 24.0
 		widths.append(width)
 		total += width
 	# Keep the established water row; longer five-tag summaries wrap at full size.
-	var wrap: bool = summary.categories.size() > 4
-	var trim: float = 0.0 if wrap else maxf(0, total - 293) / summary.categories.size()
+	var wrap: bool = categories.size() > 4
+	var trim: float = 0.0 if wrap else maxf(0, total - 293) / maxi(1, categories.size())
 	var tag_x := 181.0
 	for index in category_count:
 		var tag: Label = labels["Category%d" % index]
-		tag.visible = shown and index < summary.categories.size()
-		tag.text = summary.categories[index] if index < summary.categories.size() else ""
+		tag.visible = shown and index < categories.size()
+		tag.text = categories[index] if index < categories.size() else ""
 		if index < widths.size():
 			var width: float = widths[index] - trim
 			if wrap and tag_x + width > 474:

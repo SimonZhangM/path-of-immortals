@@ -1,8 +1,8 @@
 # 七系功法书籍插画选用清单
 
-**2026-10-17侧穗修订：**以下35本正式源PNG已基于原选图编辑成1254×1254透明正方形，保留左侧书名、封面与特色挂件，穗移至左侧并逐图检查完整性。[新旧对照](../output/imagegen/book-square-side-tassels-2026-10-17.html)／[文件与提示词索引](../output/imagegen/book-square-side-tassels-index.md)。原先选中的35张1086×1448图片已移入[独立备份](../output/imagegen/backup/books-before-square-side-tassels-2026-10-17/)，原01／02及无编号选用历史保持；同名JSON记录当前哈希和原图备份。本次未同步assets中的运行时素材。
+**2026-10-17侧穗修订：**以下35本正式源PNG已基于原选图编辑成1254×1254透明正方形，保留左侧书名、封面与特色挂件，穗移至左侧并逐图检查完整性。[新旧对照](../output/imagegen/功法效果预览/book-square-side-tassels-2026-10-17.html)／[文件与提示词索引](../output/imagegen/素材索引与记录/book-square-side-tassels-index.md)。原先选中的35张1086×1448图片已移入[独立备份](../output/imagegen/backup/books-before-square-side-tassels-2026-10-17/)，原01／02及无编号选用历史保持；同名JSON记录当前哈希和原图备份。本次未同步assets中的运行时素材。
 
-选用确认：2026-10-16；路径整理：2026-10-17。以下35本均按用户明确选择登记；原来只有书名、没有编号的12张为用户单独提供并已决定采用的版本，不需要再二选一。现按元素归档并统一UI命名；23张未选原图已移入[独立备份](../output/imagegen/backup/unselected-books/)，原PNG内容不变。四类配套素材及label对应见[完整索引](../output/imagegen/README.md)。
+选用确认：2026-10-16；路径整理：2026-10-17。以下35本均按用户明确选择登记；原来只有书名、没有编号的12张为用户单独提供并已决定采用的版本，不需要再二选一。现按元素归档并统一UI命名；23张未选原图已移入[独立备份](../output/imagegen/backup/unselected-books/)，原PNG内容不变。四类配套素材及label对应见[完整索引](../output/imagegen/素材索引与记录/README.md)。
 
 本清单仅记录书籍插画，不包含书名书法图或技艺／总纲／状态／战斗标签。已与[data/cultivation_library.json](../data/cultivation_library.json)的35本书名和稳定ID逐一核对。选用记录不代表已接入游戏：本次未修改运行目录的icon或绑定书卡图片。
 

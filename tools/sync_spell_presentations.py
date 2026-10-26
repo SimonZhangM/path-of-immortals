@@ -27,7 +27,7 @@ for s in manifest['spells']:
         next_line=source.split(line,1)[1].splitlines()[1]
         match=re.search(pattern,next_line)
         if match:branch_text[branch]=match.group(1).strip()
-    presentations[s['id']]={'icon':icon,'frame':frame,'book_name':s['book_name'],'quality':{1:'下品',3:'凡品',5:'上品',7:'灵品'}[raw['learned_at_book_level']], 'viewport':norm(f['preview_viewport_xywh']),'art_rect':norm(f['art_rect_xywh']),'clip_rect':norm(f['art_clip_xywh']),'placement_mode':f['placement_mode'],'summary':summary,'branch_descriptions':branch_text}
+    presentations[s['id']]={'icon':icon,'frame':frame,'book_name':s['book_name'],'quality':{1:'凡品',3:'良品',5:'上品',7:'灵品'}[raw['learned_at_book_level']], 'viewport':norm(f['preview_viewport_xywh']),'art_rect':norm(f['art_rect_xywh']),'clip_rect':norm(f['art_clip_xywh']),'placement_mode':f['placement_mode'],'summary':summary,'branch_descriptions':branch_text}
 out=ROOT/'data/ui/spell_presentations.json'
 out.write_text(json.dumps(presentations,ensure_ascii=False,indent=2)+'\n','utf-8')
 for path in {v[k] for v in presentations.values() for k in ['icon','frame']}:

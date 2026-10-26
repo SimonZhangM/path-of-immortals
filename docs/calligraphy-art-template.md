@@ -6,7 +6,7 @@
 
 - 模板：[青萝化生诀书法意象](../output/imagegen/wood/UI-wood-qingluohuashengjue-calligraphy.png)。
 - 原生成文件：exec-0c3f3316-1658-477c-8bf3-aa93e877bdba.png；原交付文件名：藤生万象-一念化生-借春生印-v2.png。
-- 887×1774、32位RGBA／ARGB、真实透明通道。准确SHA-256见[素材索引](../output/imagegen/asset-catalog.json)的calligraphy_template。
+- 887×1774、32位RGBA／ARGB、真实透明通道。准确SHA-256见[素材索引](../output/imagegen/素材索引与记录/asset-catalog.json)的calligraphy_template。
 - 原始两轮提示词保留在[生成记录](../output/imagegen/wood/_generation/wood-calligraphy-extract-2026-10-17/prompts-v2.json)，不得将其中第一轮输出当成已选模板。
 
 ## 后续固定规范
@@ -24,7 +24,7 @@
 
 ## 内容来源与验收
 
-2026-10-17执行结果：七系35张已齐备，木系原5张保持；水系5张已按上述固定墨底要求修复，金系保留用户认为尚可的版本，火土风雷均使用固定墨底提示词。完整文件、极简总结与最终生成记录见[35张书法索引](../output/imagegen/calligraphy-index.md)。其余30张为生成待审，尚未接入游戏。
+2026-10-17执行结果：七系35张已齐备，木系原5张保持；水系5张已按上述固定墨底要求修复，金系保留用户认为尚可的版本，火土风雷均使用固定墨底提示词。完整文件、极简总结与最终生成记录见[35张书法索引](../output/imagegen/素材索引与记录/calligraphy-index.md)。其余30张为生成待审，尚未接入游戏。
 
 后续用户指定文案优先。要求按书籍内容生成时，查[35本四栏文案](../output/imagegen/七系功法_35本四栏文案.md)对应书目；本模板取自《青萝化生诀》的“极简总结”。不把“评估要点”label或书名title误当意象正文。
 

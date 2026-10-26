@@ -43,6 +43,11 @@ func capture(path: String) -> void:
 	if DisplayServer.get_name() == "headless": return
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(path)
+func wait_for_gathering(map: Node) -> void:
+	var deadline := Time.get_ticks_msec() + 8000
+	while map.event_state.phase == "gathering_animation" and Time.get_ticks_msec() < deadline:
+		await process_frame
+	check(map.event_state.phase == "gathering_reward", "gathering playback completes before reward")
 func run() -> void:
 	create_timer(50).timeout.connect(func(): quit(2))
 	AudioServer.set_bus_mute(0,true)
@@ -88,7 +93,9 @@ func run() -> void:
 			check(map.loadout.snapshot() == before and map.gathering_dialog.visible and not map.gathering_dialog.error_label.text.is_empty(), "failed preparation grants nothing")
 			map.inventory_save_path = save_path
 		await click(map.gathering_dialog.action_buttons[index])
-		check(map.event_state.phase == "gathering_reward" and map.gathering_result.visible, "selected button opens actual result")
+		check(map.event_state.phase == "gathering_animation" and not map.gathering_result.visible, "selected button starts herb animation")
+		await wait_for_gathering(map)
+		check(map.gathering_result.visible, "animation then opens actual result")
 		var offer: Dictionary = map.loadout.gathering_offers[event.id].duplicate(true)
 		check(offer.quantity in [index+1,index+2] and offer.days == index+1, "actual quantity in confirmed bounds")
 		check(map.gathering_result.heading.text == "获得"+map.loadout.records[event.item_id].name and map.gathering_result.quantity_label.text == "数量：%d株" % offer.quantity, "reward title/explicit quantity")
@@ -129,6 +136,7 @@ func run() -> void:
 	await click(map.gathering_dialog.action_buttons[0])
 	var again: Dictionary = map.loadout.gathering_offers["base.map_event.qingshihewan.gathering_n04"]
 	check(again.id.ends_with(".2"), "respawn uses fresh receipt")
+	await wait_for_gathering(map)
 	await click(map.gathering_result.accept_button)
 	check(map.loadout.snapshot().owned_units.values().count("base.material.zhixuecao") > int(again.quantity), "respawn adds to existing herb stack")
 	var broken: Dictionary = map.loadout.snapshot()

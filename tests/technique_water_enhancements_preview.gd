@@ -49,9 +49,10 @@ func run() -> void:
 				if combat:
 					var spell: Dictionary = page.prerequisite
 					check(detail.selected_spell_id == page.spell_id and detail.labels.SpellName.text == spell.name and detail.spell_icon.texture.resource_path == spell.icon, "correct prerequisite spell summary")
-					for index in spell.categories.size():
+					var visible_categories: Array = detail.visible_spell_categories(spell)
+					for index in visible_categories.size():
 						var tag: Label = detail.labels["Category%d" % index]
-						check(tag.visible and tag.text == spell.categories[index], "every prerequisite category present")
+						check(tag.visible and tag.text == visible_categories[index], "visible prerequisite categories present")
 						check(tag.get_theme_font("font").get_string_size(tag.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tag.get_theme_font_size("font_size")).x <= tag.size.x + 1, "prerequisite tag text fits")
 						check(tag.get_global_rect().end.y < detail.labels.Poem.get_global_rect().position.y + 2, "summary tags clear poem")
 					var poem: Label = detail.labels.Poem

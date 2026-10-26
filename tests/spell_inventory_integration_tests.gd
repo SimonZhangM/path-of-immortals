@@ -62,7 +62,7 @@ func run() -> void:
 		var p: Dictionary = item.combat.presentation
 		check(p.icon.ends_with(".webp") and p.frame.ends_with(".webp"), "webp")
 		check(load(p.icon).get_image().has_mipmaps() and load(p.frame).get_image().has_mipmaps(), "mipmaps")
-		check(item.quality==MapItemQuality.book_background_quality(8,int(item.combat.learned_at_book_level)), "tier background")
+		check(item.quality=={1:"凡品",3:"良品",5:"上品",7:"灵品"}[int(item.combat.learned_at_book_level)], "spell tier background")
 		check(("-board-" in item.icon_path)==(int(item.combat.learned_at_book_level)==7), "rank 7 uses new rectangular art")
 		var art := MapItemArtwork.new()
 		art.configure(MapItemArtwork.item_record(item))

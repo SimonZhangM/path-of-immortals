@@ -101,7 +101,13 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			continue
 		if raw.type == "gathering":
 			if not raw.get("title") is String or raw.title.is_empty() or not raw.presentation is Dictionary: return "采集地点展示配置无效。"
-			if not raw.get("item_id") is String or not raw.item_id.begins_with("base.material."): return "采集材料引用无效。"
+			if not raw.get("item_id") is String or (not raw.item_id.begins_with("base.material.") and raw.item_id != MapGatheringRewards.SPIRIT_STONE_ID): return "采集材料引用无效。"
+			if raw.presentation.has("illustration") and (not raw.presentation.illustration is String or (not raw.presentation.illustration.is_empty() and not ResourceLoader.exists(raw.presentation.illustration,"Texture2D"))): return "采集场景图无效。"
+			if raw.presentation.has("description") and not raw.presentation.description is String: return "采集地点描述无效。"
+			if raw.presentation.has("notes"):
+				if not raw.presentation.notes is Dictionary: return "采集方式说明无效。"
+				for note: Variant in raw.presentation.notes.values():
+					if not note is String: return "采集方式说明无效。"
 			if raw.get("reward_prefix") != raw.id.replace("base.map_event.","base.map_reward."): return "采集奖励前缀无效。"
 			loaded[raw.id] = raw.duplicate(true)
 			point_index[raw.point_id] = raw.id
@@ -117,7 +123,8 @@ func configure(definitions: Array, point_ids: Array) -> String:
 					if not raw.observation.get(key) is String or raw.observation[key].strip_edges().is_empty():
 						return "宝箱观察文案缺失：" + key
 				for key in ["illustration", "chest_image", "result_illustration"]:
-					if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key], "Texture2D"):
+					var picture: Variant = raw.presentation.get(key, "")
+					if not picture is String or (not picture.is_empty() and not ResourceLoader.exists(picture, "Texture2D")):
 						return "宝箱图片不存在：" + key
 			for previous: Dictionary in loaded.values():
 				if previous.get("reward_id",previous.get("reward",{}).get("id","")) == raw.reward_id: return "宝箱奖励标识重复。"

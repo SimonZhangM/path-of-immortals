@@ -4,6 +4,7 @@ extends RefCounted
 # Retain textures (not CPU images) for the session; resource changes invalidate
 # their metrics so a reimport/update cannot leave stale bounds or mipmap status.
 static var _metrics: Dictionary = {}
+static var _mipmap_status: Dictionary = {}
 static var _alignment_overrides: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/item_art_alignment.json"))
 
 static func alignment_center(texture: Texture2D) -> Vector2:
@@ -42,8 +43,21 @@ static func inspect(texture: Texture2D) -> Dictionary:
 			texture.changed.connect(invalidate)
 	return _metrics[texture]
 
+static func has_mipmaps(texture: Texture2D) -> bool:
+	# Catalog validation does not need to scan transparent bounds on every icon.
+	# Keep the original pixel-accurate inspection for the UI that actually uses it.
+	if texture == null: return false
+	if _metrics.has(texture): return _metrics[texture].has_mipmaps
+	if not _mipmap_status.has(texture):
+		var image := texture.get_image()
+		_mipmap_status[texture] = image != null and image.has_mipmaps()
+		var invalidate := _invalidate.bind(texture)
+		if not texture.changed.is_connected(invalidate): texture.changed.connect(invalidate)
+	return _mipmap_status[texture]
+
 static func _invalidate(texture: Texture2D) -> void:
 	_metrics.erase(texture)
+	_mipmap_status.erase(texture)
 
 static func solid_rect(texture: Texture2D) -> Rect2:
 	var metrics := inspect(texture)

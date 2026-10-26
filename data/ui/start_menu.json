@@ -1,0 +1,52 @@
+{
+	"music": {"stream": "res://assets/game-start.mp3", "volume_db": -6.0},
+  "reference_size": [2560, 1440],
+  "background": "res://assets/UI-game-bg1.webp",
+  "backgrounds": [
+    "res://assets/UI-game-bg1.webp",
+    "res://assets/UI-game-bg2.webp",
+    "res://assets/UI-game-bg3.webp",
+    "res://assets/UI-game-bg4.webp",
+    "res://assets/UI-game-bg5.webp"
+  ],
+  "shade": {"opacity": 0.82, "fade_start": 0.10, "fade_end": 0.70},
+  "logo": "res://assets/UI-game-canglanjie.webp",
+  "logo_region": [10, 88, 1654, 768],
+  "logo_rect": [65, 75, 925, 429.5],
+  "tagline": "凡 尘 尽 处 · 仙 途 始 于 苍 澜",
+  "tagline_rect": [78, 517, 868, 50],
+  "tagline_font_size": 31,
+  "tagline_color": "fff4dc",
+  "tagline_space_adjust": -4,
+  "tagline_gap": 16,
+  "line_width": 150,
+  "line_left": "res://assets/UI-game-line-left.webp",
+  "line_right": "res://assets/UI-game-line-rightleft.webp",
+  "continue": {
+    "texture": "res://assets/UI-game-continue.webp",
+    "region": [8, 34, 1430, 274],
+    "rect": [194.5, 630.6105, 621, 118.989]
+  },
+  "start": {
+    "texture": "res://assets/UI-game-start.webp",
+    "region": [8, 30, 1430, 275],
+    "rect": [194.5, 766.617, 621, 119.421]
+  },
+  "menu": {
+    "texture": "res://assets/UI-game-4menu.webp",
+    "region": [6, 126, 1146, 654],
+    "rect": [239.2, 955.664, 525.6, 299.952],
+    "fade_start": 0.5,
+    "fade_end": 1.0,
+    "right_opacity": 0.25,
+    "rows": [
+      {"action": "load", "label": "读取存档", "y": 128, "height": 150},
+      {"action": "settings", "label": "游戏设置", "y": 296, "height": 150},
+      {"action": "credits", "label": "制作名单", "y": 462, "height": 150},
+      {"action": "exit", "label": "退出游戏", "y": 627, "height": 151}
+    ]
+  },
+  "version": "版本 v0.1",
+  "version_rect": [2240, 1365, 270, 40],
+  "version_font_size": 23
+}

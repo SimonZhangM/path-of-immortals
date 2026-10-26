@@ -40,9 +40,10 @@ func run() -> void:
 				check(current == progress_by_book[entry.book_id], "one progress record shared by book")
 			else:
 				progress_by_book[entry.book_id] = current
-			for category in entry.categories.size():
+			var visible_categories: Array = detail.visible_spell_categories(entry)
+			for category in visible_categories.size():
 				var tag: Label = detail.labels["Category%d" % category]
-				check(tag.visible and tag.text == entry.categories[category], "all classification tags present")
+				check(tag.visible and tag.text == visible_categories[category], "visible spell classification tags present")
 				check(tag.get_global_rect().end.x <= screen.right_panel.get_global_rect().end.x - 8, "tag stays in panel")
 			for point in entry.core_points.size():
 				var label: Label = detail.labels["CorePoint%d" % point]

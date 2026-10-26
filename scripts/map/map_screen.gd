@@ -32,6 +32,7 @@ var chest_dialog: Control
 var chest_observation_dialog: Control
 var gathering_dialog: MapGatheringDialog
 var gathering_result: Control
+var gathering_animation: MapGatheringAnimation
 var rest_dialog: MapRestDialog
 var cultivation_dialog: MapCultivationDialog
 var cultivation_progress_dialog: MapCultivationProgressDialog
@@ -52,6 +53,11 @@ var arrival_point_id := ""
 var arrival_facing := ""
 var defer_map_music := false
 var defer_location_save := false
+var staged_startup := false
+var defer_optional_views := false
+var _inventory_ui_config: Dictionary
+var startup_timings: Dictionary = {}
+var _startup_registry: ContentRegistry
 var sign_motion: MapSignMotion
 var player_status: MapPlayerStatus
 var status_header: MapStatusHeader
@@ -77,6 +83,7 @@ func _ready() -> void:
 	mouse_exited.connect(_clear_hover)
 	resized.connect(_fit_map)
 	_fit_map()
+	if staged_startup: return
 	if not Engine.is_editor_hint():
 		_setup_player()
 		if startup_error.is_empty():
@@ -92,6 +99,36 @@ func _ready() -> void:
 		if startup_error.is_empty():
 			if not defer_location_save: activate_location()
 			if not defer_map_music: MapPresentation.enter_map(definition)
+			var remember_error := MapLoadoutStore.GameSaveSession.remember(inventory_save_path)
+			if remember_error != OK:
+				push_warning("无法记录最后使用的存档：%s" % error_string(remember_error))
+
+func initialize_staged() -> void:
+	_startup_registry = ContentRegistry.new()
+	var registry_started := Time.get_ticks_usec()
+	if not _startup_registry.load_base_content():
+		startup_error = "地图玩家状态配置无效：" + "; ".join(_startup_registry.errors)
+		return
+	startup_timings.registry = (Time.get_ticks_usec()-registry_started)/1000.0
+	await get_tree().process_frame
+	var resources := preload("res://scripts/map/map_startup_resources.gd").new()
+	await resources.prepare(get_tree(), _startup_registry, definition)
+	# Scene-tree construction stays on the main thread, with a rendered frame
+	# between stages so the loading page continues to receive input and animate.
+	for step: Callable in [_setup_player, _setup_events, _setup_status_header, _setup_initial_inventory,
+			_restore_saved_location, _setup_exploration]:
+		if not startup_error.is_empty(): return
+		var started := Time.get_ticks_usec()
+		step.call()
+		startup_timings[step.get_method()] = (Time.get_ticks_usec()-started)/1000.0
+		await get_tree().process_frame
+		await get_tree().process_frame
+	if startup_error.is_empty(): startup_error = MapPresentation.validate_music(definition)
+	if not startup_error.is_empty(): return
+	if not defer_location_save: activate_location()
+	if not defer_map_music: MapPresentation.enter_map(definition)
+	var remember_error := MapLoadoutStore.GameSaveSession.remember(inventory_save_path)
+	if remember_error != OK: push_warning("无法记录最后使用的存档：%s" % error_string(remember_error))
 
 func _restore_saved_location() -> void:
 	# Explicit transition/battle-return arrivals always take precedence.
@@ -119,8 +156,8 @@ func _save_location() -> void:
 	if not location_save_error.is_empty(): push_warning("地图落点尚未保存：" + location_save_error)
 
 func _setup_status_header() -> void:
-	var registry := ContentRegistry.new()
-	if not registry.load_base_content():
+	var registry := _startup_registry if _startup_registry != null else ContentRegistry.new()
+	if _startup_registry == null and not registry.load_base_content():
 		startup_error = "地图玩家状态配置无效：" + "; ".join(registry.errors)
 		push_error(startup_error)
 		return
@@ -150,16 +187,21 @@ func _setup_status_header() -> void:
 	add_child(status_header)
 	status_header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	status_header.map_title.visible = bool(definition.get("show_map_title", true))
+	if staged_startup: return
 	_setup_inventory(registry)
-	if startup_error.is_empty():
-		calendar_readout = MapCalendarReadout.new()
-		# Shared date banner for fullscreen inventory, warehouse and techniques.
-		calendar_readout.hide()
-		add_child(calendar_readout)
-		inventory_screen.visibility_changed.connect(_update_calendar_visibility)
-		technique_screen.visibility_changed.connect(_update_calendar_visibility)
-		resized.connect(_layout_calendar)
-		_update_calendar_readout()
+	if startup_error.is_empty() and not defer_optional_views: _ensure_calendar_readout()
+
+func _setup_initial_inventory() -> void:
+	_setup_inventory(_startup_registry)
+
+func _ensure_calendar_readout() -> void:
+	if calendar_readout != null: return
+	calendar_readout = MapCalendarReadout.new()
+	# Shared date banner is only needed when a fullscreen workspace opens.
+	calendar_readout.hide()
+	add_child(calendar_readout)
+	resized.connect(_layout_calendar)
+	_update_calendar_readout()
 
 func _refresh_travel_capacity() -> void:
 	travel.set_running_allowed(not loadout.storage_over_capacity())
@@ -167,6 +209,7 @@ func _refresh_travel_capacity() -> void:
 func _setup_inventory(registry: ContentRegistry) -> void:
 	inventory_save_path = MapLoadoutStore.session_path(inventory_save_path)
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/map_inventory.json"))
+	_inventory_ui_config = config
 	var character := registry.get_character(player_status.character_id)
 	inventory_catalog = MapInventoryCatalog.new()
 	inventory_catalog.configure(config)
@@ -222,7 +265,7 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 			var food_shop := MapShop.new()
 			startup_error = food_shop.load_catalog(event.food_catalog,loadout)
 			if not startup_error.is_empty(): return
-		if event.type == "gathering" and (not loadout.records.has(event.item_id) or loadout.records[event.item_id].category not in ["plant", "mineral"]):
+		if event.type == "gathering" and MapGatheringRewards.record_for(loadout.records, event.item_id).get("category") not in ["plant", "mineral"]:
 			startup_error = "采集点引用了未知材料。"
 			return
 		if event.type == "chest":
@@ -259,8 +302,18 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	# Restore persisted deadlines before the first frame, without completion fades.
 	_sync_calendar(false)
 	_sync_completed_signs()
+	ItemTooltipHost.for_control(self).technique_requested.connect(_open_book_details)
+	if not defer_optional_views:
+		_ensure_inventory_view()
+		_ensure_technique_view()
+
+func _ensure_inventory_view() -> void:
+	if inventory_screen != null: return
+	_ensure_calendar_readout()
+	# Catalog/state exist before any UI; refresh from the current state on first open.
+	inventory_catalog.replace_entries(loadout.storage_records())
 	inventory_screen = MapInventoryScreen.new()
-	inventory_screen.configure(inventory_catalog, config, registry.get_board(character.board_layout), loadout, player_status)
+	inventory_screen.configure(inventory_catalog, _inventory_ui_config, loadout.board, loadout, player_status)
 	inventory_screen.formation_save_callback = _save_loadout
 	add_child(inventory_screen)
 	inventory_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -270,6 +323,12 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	inventory_screen.warehouse_quantity_transfer_requested.connect(func(id: String, item_id: String, withdraw: bool, quantity: int): _transfer_warehouse(id,item_id,withdraw,false,quantity))
 	inventory_screen.warehouse_undo_requested.connect(_undo_warehouse)
 	inventory_screen.warehouse_history_provider = func(): return warehouse_transfers.view_history(loadout)
+	inventory_screen.visibility_changed.connect(_update_optional_view_visibility)
+
+func _ensure_technique_view() -> void:
+	if technique_screen != null: return
+	_ensure_calendar_readout()
+	var registry := loadout.registry
 	technique_screen = preload("res://scripts/map/map_technique_screen.gd").new()
 	var technique_memory := preload("res://scripts/map/map_technique_view_memory.gd")
 	technique_screen.selected_book_id = technique_memory.read_book(inventory_save_path, registry.library)
@@ -281,11 +340,11 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	add_child(technique_screen)
 	technique_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	technique_screen.close_requested.connect(func(): set_technique_open(false))
-	ItemTooltipHost.for_control(self).technique_requested.connect(_open_book_details)
-	if sign_motion != null:
-		inventory_screen.visibility_changed.connect(func(): sign_motion.set_suspended(is_inventory_open() or is_technique_open()))
-		technique_screen.visibility_changed.connect(func(): sign_motion.set_suspended(is_inventory_open() or is_technique_open()))
-		sign_motion.set_suspended(inventory_screen.visible)
+	technique_screen.visibility_changed.connect(_update_optional_view_visibility)
+
+func _update_optional_view_visibility() -> void:
+	_update_calendar_visibility()
+	if sign_motion != null: sign_motion.set_suspended(is_inventory_open() or is_technique_open())
 
 var warehouse_transfers := preload("res://scripts/map/map_warehouse_transfer.gd").new()
 
@@ -362,6 +421,7 @@ func _open_book_details(book_id: String) -> void:
 		if not inventory_screen.warehouse_id.is_empty(): _close_home_warehouse()
 		else: inventory_screen.hide()
 	elif event_state != null and event_state.is_active(): return
+	_ensure_technique_view()
 	technique_screen.show()
 	technique_screen.focus_book(book_id)
 	status_header.map_title.hide()
@@ -370,8 +430,9 @@ func _open_book_details(book_id: String) -> void:
 	_clear_hover()
 
 func set_technique_open(open: bool) -> void:
-	if technique_screen == null or is_technique_open() == open: return
+	if is_technique_open() == open: return
 	if open and (is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
+	if open: _ensure_technique_view()
 	ItemTooltipHost.for_control(self).dismiss()
 	technique_screen.visible = open
 	status_header.map_title.visible = not open and bool(definition.get("show_map_title", true))
@@ -411,8 +472,11 @@ func _handle_fullscreen_switch(event: InputEventKey) -> bool:
 		if not inventory_screen.warehouse_id.is_empty(): _close_home_warehouse()
 		else: inventory_screen.hide()
 	if is_technique_open(): technique_screen.hide()
-	if to_techniques: technique_screen.show()
+	if to_techniques:
+		_ensure_technique_view()
+		technique_screen.show()
 	else:
+		_ensure_inventory_view()
 		inventory_screen.set_warehouse()
 		inventory_screen.show()
 	ItemTooltipHost.for_control(self).dismiss()
@@ -429,10 +493,11 @@ func set_inventory_open(open: bool) -> void:
 	if not open and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
 		_close_home_warehouse()
 		return
-	if inventory_screen == null or is_technique_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
+	if is_technique_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
 		return
 	if is_inventory_open() == open:
 		return
+	if open: _ensure_inventory_view()
 	if not open and not _prepare_inventory_close(): return
 	inventory_screen.visible = open
 	status_header.map_title.visible = not open and bool(definition.get("show_map_title", true))
@@ -478,6 +543,11 @@ func _input(event: InputEvent) -> void:
 		if _handle_fullscreen_switch(event):
 			get_viewport().set_input_as_handled()
 			return
+	if not Engine.is_editor_hint() and event_state != null and event_state.phase == "gathering_animation":
+		# The short committed action cannot be skipped or submit another gather.
+		if event is InputEventKey or event is InputEventMouse:
+			get_viewport().set_input_as_handled()
+		return
 	if not Engine.is_editor_hint() and is_technique_open():
 		if event is InputEventKey and event.pressed and not event.echo:
 			if event.keycode == KEY_ESCAPE or event.is_action_pressed("map_techniques"):
@@ -634,6 +704,32 @@ func _setup_events() -> void:
 	add_child(dialogue)
 	dialogue.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	dialogue.advance_requested.connect(_advance_dialogue)
+	_chest_rng.randomize()
+	_gathering_rng.randomize()
+	if not defer_optional_views: _ensure_event_views()
+	startup_error = _configure_exits(definition.get("exits", []))
+	if not startup_error.is_empty():
+		push_error(startup_error)
+		return
+	if not exits_by_point.is_empty():
+		exit_dialog = MapExitDialog.new()
+		exit_dialog.use_map_exit_art()
+		add_child(exit_dialog)
+		exit_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		exit_dialog.cancelled.connect(_cancel_exit)
+		exit_dialog.confirmed.connect(_confirm_exit)
+	travel.node_arrived.connect(_on_node_arrived)
+	if definition.has("sign_motion"):
+		sign_motion = MapSignMotion.new()
+		add_child(sign_motion)
+		startup_error = sign_motion.configure(content.get_node("Points"), map_viewport, definition.sign_motion)
+		if not startup_error.is_empty():
+			push_error(startup_error)
+			return
+	_sync_completed_signs()
+
+func _ensure_event_views() -> void:
+	if reward_dialog != null: return
 	reward_dialog = MapRewardDialog.new()
 	reward_dialog.use_small_reward_art(MapExitDialog.DESIGN_SIZE.y)
 	add_child(reward_dialog)
@@ -649,8 +745,6 @@ func _setup_events() -> void:
 	chest_observation_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	chest_observation_dialog.open_requested.connect(_open_chest)
 	chest_observation_dialog.cancelled.connect(_cancel_chest)
-	_chest_rng.randomize()
-	_gathering_rng.randomize()
 	gathering_dialog = MapGatheringDialog.new()
 	add_child(gathering_dialog)
 	gathering_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -661,6 +755,10 @@ func _setup_events() -> void:
 	gathering_result.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	gathering_result.accept_requested.connect(_accept_gathering)
 	gathering_result.cancelled.connect(_cancel_gathering)
+	gathering_animation = MapGatheringAnimation.new()
+	add_child(gathering_animation)
+	gathering_animation.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	gathering_animation.finished.connect(_finish_gathering_animation)
 	rest_dialog = MapRestDialog.new()
 	add_child(rest_dialog)
 	rest_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -710,26 +808,6 @@ func _setup_events() -> void:
 	encounter_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	encounter_dialog.fight_requested.connect(_confirm_encounter)
 	encounter_dialog.retreat_requested.connect(_retreat_encounter)
-	startup_error = _configure_exits(definition.get("exits", []))
-	if not startup_error.is_empty():
-		push_error(startup_error)
-		return
-	if not exits_by_point.is_empty():
-		exit_dialog = MapExitDialog.new()
-		exit_dialog.use_map_exit_art()
-		add_child(exit_dialog)
-		exit_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		exit_dialog.cancelled.connect(_cancel_exit)
-		exit_dialog.confirmed.connect(_confirm_exit)
-	travel.node_arrived.connect(_on_node_arrived)
-	if definition.has("sign_motion"):
-		sign_motion = MapSignMotion.new()
-		add_child(sign_motion)
-		startup_error = sign_motion.configure(content.get_node("Points"), map_viewport, definition.sign_motion)
-		if not startup_error.is_empty():
-			push_error(startup_error)
-			return
-	_sync_completed_signs()
 
 func _configure_exits(configs: Variant) -> String:
 	if not configs is Array:
@@ -785,6 +863,7 @@ func _advance_dialogue() -> void:
 	_present_event_progress(completed_id)
 
 func _present_event_progress(completed_id: String = "") -> void:
+	_ensure_event_views()
 	if not completed_id.is_empty():
 		dialogue.hide()
 		reward_dialog.hide()
@@ -792,6 +871,8 @@ func _present_event_progress(completed_id: String = "") -> void:
 		chest_observation_dialog.hide()
 		gathering_dialog.hide()
 		gathering_result.hide()
+		gathering_animation.dismiss()
+		player.show()
 		rest_dialog.hide()
 		cultivation_dialog.hide()
 		cultivation_progress_dialog.hide()
@@ -824,8 +905,9 @@ func _present_event_progress(completed_id: String = "") -> void:
 		if not MapGatheringRewards.pending(loadout,event).is_empty():
 			_show_gathering_result()
 		else:
-			_set_gathering_profile(MapGatheringOptions.path_for_record(loadout.records[event.item_id]))
-			gathering_dialog.bind_herb(loadout.records[event.item_id],loadout)
+			var record := MapGatheringRewards.record_for(loadout.records, event.item_id)
+			_set_gathering_profile(MapGatheringOptions.path_for_record(record))
+			gathering_dialog.bind_herb(record,loadout,event.presentation)
 			gathering_dialog.present(event.title)
 	elif event_state.phase == "chest_observation":
 		dialogue.hide()
@@ -919,6 +1001,7 @@ func _open_home_warehouse() -> void:
 	if warehouse_id.is_empty(): return
 	warehouse_transfers.clear()
 	rest_dialog.hide()
+	_ensure_inventory_view()
 	inventory_screen.set_warehouse(warehouse_id)
 	inventory_screen.show()
 	status_header.map_title.hide()
@@ -1076,6 +1159,7 @@ func _open_cultivation_inventory() -> void:
 	cultivation_session.suspend("inventory",true,WorldCalendar.current_day(loadout.calendar))
 	_cultivation_adjusting=true
 	cultivation_progress_dialog.hide()
+	_ensure_inventory_view()
 	inventory_screen.set_warehouse()
 	inventory_screen.show()
 	status_header.map_title.hide()
@@ -1139,12 +1223,27 @@ func _set_gathering_profile(path: String) -> void:
 
 func _begin_gathering(forecast: Dictionary) -> void:
 	if event_state.phase != "gathering": return
+	var animation_error := gathering_animation.prepare(gathering_dialog.options, forecast.get("method_id", ""), player)
+	if not animation_error.is_empty():
+		gathering_dialog.error_label.text = animation_error
+		gathering_dialog.set_busy(false)
+		return
 	var error := MapGatheringRewards.prepare(loadout,event_state.active_event(),forecast.get("method_id",""),inventory_save_path,_gathering_rng)
 	if not error.is_empty():
 		gathering_dialog.error_label.text = error
 		gathering_dialog.set_busy(false)
 		return
 	_saved_loadout_revision = loadout.revision
+	event_state.phase = "gathering_animation"
+	gathering_dialog.hide()
+	# Resolve the arrived node before the overlay reads the player's transform.
+	player.present(travel)
+	player.hide()
+	gathering_animation.play_prepared()
+
+func _finish_gathering_animation() -> void:
+	if event_state.phase != "gathering_animation": return
+	player.show()
 	_show_gathering_result()
 
 func _show_gathering_result() -> void:
@@ -1152,7 +1251,7 @@ func _show_gathering_result() -> void:
 	if offer.is_empty(): return
 	event_state.phase = "gathering_reward"
 	gathering_dialog.hide()
-	var record: Dictionary = loadout.records[offer.item_id].duplicate(true)
+	var record := MapGatheringRewards.record_for(loadout.records, offer.item_id).duplicate(true)
 	record.quantity = offer.quantity
 	gathering_result.present_herb(record,loadout)
 

@@ -1,6 +1,15 @@
 class_name MapGatheringRewards
 extends RefCounted
 
+const SPIRIT_STONE_ID := "base.currency.spirit_stones"
+
+# A presentation record only: currency never enters the item registry or bag.
+static func record_for(records: Dictionary, id: String) -> Dictionary:
+	if id == SPIRIT_STONE_ID:
+		return {"id": id, "name": "灵石", "category": "mineral", "subcategory": "灵石",
+			"quality": "下品", "icon": "res://assets/player-status-coin.webp", "quantity": 1}
+	return records.get(id, {})
+
 # Pending rolls are saved before displaying loot; confirmation uses the existing
 # atomic reward receipt. Map completion stays session-only for test respawns.
 static func validate_offers(raw: Variant, records: Dictionary) -> bool:
@@ -11,8 +20,10 @@ static func validate_offers(raw: Variant, records: Dictionary) -> bool:
 		if not event_id is String or not event_id.begins_with("base.map_event."): return false
 		var offer: Variant = raw[event_id]
 		if not offer is Dictionary or not offer.get("id") is String or not offer.id.begins_with(event_id.replace("base.map_event.","base.map_reward.") + "."): return false
-		if not offer.get("item_id") is String or not records.has(offer.item_id) or records[offer.item_id].category not in ["plant", "mineral"]: return false
-		var profile := MapGatheringOptions.path_for_record(records[offer.item_id])
+		if not offer.get("item_id") is String: return false
+		var record := record_for(records, offer.item_id)
+		if record.get("category") not in ["plant", "mineral"]: return false
+		var profile := MapGatheringOptions.path_for_record(record)
 		if not profiles.has(profile):
 			var loaded := MapGatheringOptions.new()
 			if not loaded.load_options(profile).is_empty(): return false
@@ -33,10 +44,11 @@ static func pending(state: MapLoadoutState, event: Dictionary) -> Dictionary:
 	return offer.duplicate(true)
 
 static func prepare(state: MapLoadoutState, event: Dictionary, method_id: String, path: String, rng: RandomNumberGenerator) -> String:
-	if not state.records.has(event.get("item_id", "")) or state.records[event.item_id].category not in ["plant", "mineral"]: return "采集材料未配置。"
+	var record := record_for(state.records, event.get("item_id", ""))
+	if record.get("category") not in ["plant", "mineral"]: return "采集材料未配置。"
 	if not pending(state,event).is_empty(): return ""
 	var options := MapGatheringOptions.new()
-	var error := options.load_options(MapGatheringOptions.path_for_record(state.records[event.item_id]))
+	var error := options.load_options(MapGatheringOptions.path_for_record(record))
 	if not error.is_empty(): return error
 	var index := -1
 	for i in options.methods.size():

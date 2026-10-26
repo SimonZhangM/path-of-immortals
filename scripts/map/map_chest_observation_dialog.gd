@@ -146,8 +146,10 @@ func present(event: Dictionary) -> void:
 	location_description.text = copy.location_description
 	chest_name.text = copy.chest_name
 	chest_description.text = copy.description
-	location_illustration.texture = load(event.presentation.illustration)
-	chest_image.texture = load(event.presentation.chest_image)
+	var location_path: String = event.presentation.get("illustration", "")
+	var chest_path: String = event.presentation.get("chest_image", "")
+	location_illustration.texture = null if location_path.is_empty() else load(location_path)
+	chest_image.texture = null if chest_path.is_empty() else load(chest_path)
 	error_label.text = ""
 	set_busy(false)
 	show()

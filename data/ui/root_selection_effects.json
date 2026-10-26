@@ -1,0 +1,13 @@
+{
+  "source_size": [1226, 1400],
+  "padding": 38,
+  "elements": [
+    {"id": "metal", "center": [611, 316], "radii": [123, 124], "angle": -5, "color": "ffd47c"},
+    {"id": "wood", "center": [295, 506], "radii": [128, 127], "angle": -12, "color": "78f7a3"},
+    {"id": "water", "center": [923, 505], "radii": [132, 127], "angle": -14, "color": "6bd8ff"},
+    {"id": "fire", "center": [242, 821], "radii": [136, 133], "angle": -12, "color": "ff9161"},
+    {"id": "earth", "center": [974, 818], "radii": [132, 130], "angle": 8, "color": "ffc66e"},
+    {"id": "wind", "center": [424, 1078], "radii": [138, 131], "angle": -15, "color": "a6f2ff"},
+    {"id": "thunder", "center": [791, 1077], "radii": [128, 128], "angle": 12, "color": "d4a0ff"}
+  ]
+}

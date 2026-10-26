@@ -154,8 +154,9 @@ func _build_location_illustration() -> void:
 	# Overlay the transparent original border; no extra tint or image editing.
 	_place(location_frame, frame_rect)
 
-func bind_herb(record: Dictionary, model: MapLoadoutState) -> void:
-	_location = options.locations.get(record.id, {})
+func bind_herb(record: Dictionary, model: MapLoadoutState, presentation: Dictionary = {}) -> void:
+	_location = options.locations.get(record.id, {}).duplicate(true)
+	_location.merge(presentation, true)
 	if location_illustration != null:
 		var picture_path: String = _location.get("illustration", "")
 		location_illustration.texture = null if picture_path.is_empty() else load(picture_path)
@@ -163,7 +164,7 @@ func bind_herb(record: Dictionary, model: MapLoadoutState) -> void:
 		location_frame.visible = location_illustration.visible
 	location_description.text = _location.get("description", "")
 	_refresh_selection()
-	herb_slot.model = model
+	herb_slot.model = model if model.records.has(record.id) else null
 	herb_slot.item_id = record.id
 	herb_name.text = record.name
 	herb_grade.text = record.quality
@@ -289,7 +290,7 @@ func _build_method(index: int) -> void:
 func _style_mining_button(index: int) -> void:
 	var tint := Color(options.methods[index].color)
 	for state in ["normal", "hover", "pressed", "disabled"]:
-		var lit: bool = index == selected_index and state in ["hover", "pressed"]
+		var lit: bool = index == selected_index
 		var box := StyleBoxFlat.new()
 		box.bg_color = Color("12252a").lerp(tint, 0.22 if lit else 0.04)
 		box.border_color = tint if lit else tint.darkened(0.35)
@@ -323,14 +324,16 @@ func activate_method(index: int) -> void:
 func _refresh_selection() -> void:
 	for index in action_buttons.size():
 		selection_frames[index].visible = index == selected_index
-		# Selection alone keeps the idle art; only a hovered selected button lights up.
+		# Selection determines the art; pointer hover does not change it.
 		if options.text_buttons:
 			_style_mining_button(index)
 		else:
 			var action := action_buttons[index] as TextureButton
-			action.texture_normal = _idle_textures[index]
-			action.texture_hover = _selected_textures[index] if index == selected_index else _idle_textures[index]
-			action.texture_pressed = action.texture_hover
+			var texture := _selected_textures[index] if index == selected_index else _idle_textures[index]
+			action.texture_normal = texture
+			action.texture_hover = texture
+			action.texture_pressed = texture
+			action.texture_disabled = texture
 	var forecast := options.forecast(selected_index)
 	if forecast.is_empty():
 		for label in value_labels: label.text = "—"

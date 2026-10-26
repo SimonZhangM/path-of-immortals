@@ -49,6 +49,7 @@ func validate_music(definition: Dictionary) -> String:
 	return ""
 
 func enter_map(definition: Dictionary, seconds: float = MUSIC_FADE) -> void:
+	preload("res://scripts/entry/entry_music.gd").finish_for(get_tree(), seconds)
 	var next_id: String = definition.get("id", "")
 	var tracks: Array = definition.get("music", [])
 	if next_id == map_id and tracks == playlist and music_state in ["playing", "resuming"]:

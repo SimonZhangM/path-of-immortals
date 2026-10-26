@@ -34,7 +34,7 @@ func _init() -> void:
 	center.size_flags_vertical=SIZE_EXPAND_FILL
 	scroll.add_child(center)
 	grid=GridContainer.new()
-	grid.columns=5
+	grid.columns=4
 	grid.add_theme_constant_override("h_separation",8)
 	grid.add_theme_constant_override("v_separation",10)
 	center.add_child(grid)
@@ -60,7 +60,7 @@ func present_techniques(records: Array[Dictionary], current: String) -> void:
 		var card:=MapInventoryItemCard.new()
 		card.configure(record,"功法",true)
 		card.equipment_actions_enabled=false
-		card.set_card_width(84)
+		card.set_card_width(104)
 		grid.add_child(card)
 		card.set_selected(record.id==selected_id)
 		card.mouse_entered.connect(func(): card.modulate=Color(1.12,1.12,1.12,1))
@@ -83,7 +83,6 @@ func present_multiple(records: Array[Dictionary], current: Array[String], limit:
 	selection_limit=limit
 	present_techniques(records,current[0] if not current.is_empty() else "")
 	selected_ids=current.duplicate()
-	heading.text="功法选择（最多%d本）" % limit
 	_update_multiple()
 
 func _update_multiple() -> void:

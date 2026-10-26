@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.xiyuanyaopo.mining_n15",
+  "type": "gathering",
+  "point_id": "base.map.xiyuanyaopo.point.n15",
+  "trigger": "arrival",
+  "title": "南崖铁矿",
+  "item_id": "base.material.cutiekuang",
+  "reward_prefix": "base.map_reward.xiyuanyaopo.mining_n15",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-xyyp-wakuang-nanyacutiekuang.webp",
+    "description": "岩壁间露出铁矿矿脉，可沿石隙逐层开采。",
+    "notes": {
+      "base.gathering.mining_shallow": "敲取外露的铁矿，\n省时省力。",
+      "base.gathering.mining_vein": "循着矿脉走向，\n仔细开采铁矿。",
+      "base.gathering.mining_deep": "凿开深处岩层，\n搜寻更多铁矿。"
+    }
+  }
+}

@@ -54,7 +54,7 @@ func run() -> void:
 	check(view.technique_choice.visible and view.technique_choice.heading.text=="功法选择","plus opens technique picker")
 	check(view.technique_choice.empty_label.visible and view.technique_choice.empty_label.text=="当前没有功法可选","explicit empty state")
 	check(view.technique_choice.confirm_button.disabled and not view.technique_choice.cancel_button.disabled,"empty cannot confirm, cancel available")
-	check(view.technique_choice.grid.columns==5,"same five-column picker layout")
+	check(view.technique_choice.grid.columns==4,"four-column technique picker layout")
 	if render:
 		await shot(view,"picker")
 		view.technique_choice.close()

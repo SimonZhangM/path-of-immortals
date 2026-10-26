@@ -10,7 +10,9 @@ config_version=5
 
 [application]
 
-config/name="Path of Immortals"
+config/name="苍澜界"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Godot/app_userdata/Path of Immortals"
 run/main_scene="res://scenes/maps/session_start.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"

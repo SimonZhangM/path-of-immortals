@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.xiyuanyaopo.chest_n05",
+  "type": "chest",
+  "point_id": "base.map.xiyuanyaopo.point.n05",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.xiyuanyaopo.chest_n05",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-xxyp-baoxiang-xiyashuxi1.webp",
+    "chest_image": "res://assets/tanchuang-xxyp-baoxiang-xiyashuxi0.webp",
+    "result_illustration": "res://assets/tanchuang-xxyp-baoxiang-xiyashuxi2.webp"
+  },
+  "observation": {
+    "location_name": "西崖树隙",
+    "location_description": "老树倚着岩壁生长，粗壮的树根探入石缝。枝叶遮住了山径旁的一角，几块碎石之间，隐约露出一截陈旧的匣边。",
+    "chest_name": "石隙旧匣",
+    "description": "落叶与碎石堆在树根下，将岩壁间的空隙掩去了大半。拨开枝叶，移去松动的石块，也许能取出藏在深处的旧匣。",
+    "result_description": "打开机关，两格中各露出一件物品，可以选择一件收下。"
+  },
+  "respawn_days": 40
+}

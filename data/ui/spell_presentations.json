@@ -3,7 +3,7 @@
     "icon": "res://assets/UI-metal-xuangengjianjue-effect-01-gengfengjian.webp",
     "frame": "res://assets/UI-metal-xuangengjianjue-spellframe-1x1.webp",
     "book_name": "玄庚剑诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -33,7 +33,7 @@
     "icon": "res://assets/UI-metal-xuangengjianjue-effect-04-fenguangjianyu.webp",
     "frame": "res://assets/UI-metal-xuangengjianjue-spellframe-1x1.webp",
     "book_name": "玄庚剑诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -123,7 +123,7 @@
     "icon": "res://assets/UI-metal-baibingyulingjue-effect-01-fulingshu.webp",
     "frame": "res://assets/UI-metal-baibingyulingjue-spellframe-1x1.webp",
     "book_name": "百兵御灵诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -153,7 +153,7 @@
     "icon": "res://assets/UI-metal-baibingyulingjue-effect-04-yubingshu.webp",
     "frame": "res://assets/UI-metal-baibingyulingjue-spellframe-1x1.webp",
     "book_name": "百兵御灵诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -243,7 +243,7 @@
     "icon": "res://assets/UI-wood-wanmushengshajue-effect-01-qingmuci.webp",
     "frame": "res://assets/UI-wood-wanmushengshajue-spellframe-1x1.webp",
     "book_name": "万木生杀诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -273,7 +273,7 @@
     "icon": "res://assets/UI-wood-wanmushengshajue-effect-04-qingtengren.webp",
     "frame": "res://assets/UI-wood-wanmushengshajue-spellframe-1x1.webp",
     "book_name": "万木生杀诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -363,7 +363,7 @@
     "icon": "res://assets/UI-wood-qingluohuashengjue-effect-01-fulingteng.webp",
     "frame": "res://assets/UI-wood-qingluohuashengjue-spellframe-1x1.webp",
     "book_name": "青萝化生诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -393,7 +393,7 @@
     "icon": "res://assets/UI-wood-qingluohuashengjue-effect-04-shimaijing.webp",
     "frame": "res://assets/UI-wood-qingluohuashengjue-spellframe-1x1.webp",
     "book_name": "青萝化生诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -483,7 +483,7 @@
     "icon": "res://assets/UI-water-hanyueningbingjue-effect-01-hanyueren.webp",
     "frame": "res://assets/UI-water-hanyueningbingjue-spellframe-1x1.webp",
     "book_name": "寒月凝冰诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -513,7 +513,7 @@
     "icon": "res://assets/UI-water-hanyueningbingjue-effect-04-xuanbingqiang.webp",
     "frame": "res://assets/UI-water-hanyueningbingjue-spellframe-1x1.webp",
     "book_name": "寒月凝冰诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -603,7 +603,7 @@
     "icon": "res://assets/UI-water-canglanranlingjue-effect-01-ranlingzhi.webp",
     "frame": "res://assets/UI-water-canglanranlingjue-spellframe-1x1.webp",
     "book_name": "沧澜燃灵诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -633,7 +633,7 @@
     "icon": "res://assets/UI-water-canglanranlingjue-effect-04-duanmaiyin.webp",
     "frame": "res://assets/UI-water-canglanranlingjue-spellframe-1x1.webp",
     "book_name": "沧澜燃灵诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -723,7 +723,7 @@
     "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-01-chiyanren.webp",
     "frame": "res://assets/UI-fire-chiyangzhenhuojue-spellframe-1x1.webp",
     "book_name": "赤阳真火诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -753,7 +753,7 @@
     "icon": "res://assets/UI-fire-chiyangzhenhuojue-effect-04-yanlongqiang.webp",
     "frame": "res://assets/UI-fire-chiyangzhenhuojue-spellframe-1x1.webp",
     "book_name": "赤阳真火诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -843,7 +843,7 @@
     "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-01-yinyanjue.webp",
     "frame": "res://assets/UI-fire-lihuoliaoyuanjue-spellframe-1x1.webp",
     "book_name": "离火燎原诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -873,7 +873,7 @@
     "icon": "res://assets/UI-fire-lihuoliaoyuanjue-effect-04-rongjiayan.webp",
     "frame": "res://assets/UI-fire-lihuoliaoyuanjue-spellframe-1x1.webp",
     "book_name": "离火燎原诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -963,7 +963,7 @@
     "icon": "res://assets/UI-earth-hanyueliedijue-effect-01-yangangchui.webp",
     "frame": "res://assets/UI-earth-hanyueliedijue-spellframe-1x1.webp",
     "book_name": "撼岳裂地诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -993,7 +993,7 @@
     "icon": "res://assets/UI-earth-hanyueliedijue-effect-04-zhuiyueyin.webp",
     "frame": "res://assets/UI-earth-hanyueliedijue-spellframe-1x1.webp",
     "book_name": "撼岳裂地诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -1083,7 +1083,7 @@
     "icon": "res://assets/UI-earth-budongxuanyuejue-effect-01-shouyueshi.webp",
     "frame": "res://assets/UI-earth-budongxuanyuejue-spellframe-1x1.webp",
     "book_name": "不动玄岳诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -1113,7 +1113,7 @@
     "icon": "res://assets/UI-earth-budongxuanyuejue-effect-04-poyueshi.webp",
     "frame": "res://assets/UI-earth-budongxuanyuejue-spellframe-1x1.webp",
     "book_name": "不动玄岳诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -1203,7 +1203,7 @@
     "icon": "res://assets/UI-wind-qingmingpokongjue-effect-01-fengyushi.webp",
     "frame": "res://assets/UI-wind-qingmingpokongjue-spellframe-1x1.webp",
     "book_name": "青冥破空诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -1233,7 +1233,7 @@
     "icon": "res://assets/UI-wind-qingmingpokongjue-effect-04-chuanyunqiang.webp",
     "frame": "res://assets/UI-wind-qingmingpokongjue-spellframe-1x1.webp",
     "book_name": "青冥破空诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -1323,7 +1323,7 @@
     "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-01-tingfengbu.webp",
     "frame": "res://assets/UI-wind-tingfengwuyingjue-spellframe-1x1.webp",
     "book_name": "听风无影诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -1353,7 +1353,7 @@
     "icon": "res://assets/UI-wind-tingfengwuyingjue-effect-04-zhuifengshi.webp",
     "frame": "res://assets/UI-wind-tingfengwuyingjue-spellframe-1x1.webp",
     "book_name": "听风无影诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -1443,7 +1443,7 @@
     "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-01-leiguangzhi.webp",
     "frame": "res://assets/UI-thunder-jiuxiaotingguangjue-spellframe-1x1.webp",
     "book_name": "九霄霆光诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -1473,7 +1473,7 @@
     "icon": "res://assets/UI-thunder-jiuxiaotingguangjue-effect-04-xuantingqiang.webp",
     "frame": "res://assets/UI-thunder-jiuxiaotingguangjue-spellframe-1x1.webp",
     "book_name": "九霄霆光诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,
@@ -1563,7 +1563,7 @@
     "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-01-leiganghuti.webp",
     "frame": "res://assets/UI-thunder-leigangzhenyujue-spellframe-1x1.webp",
     "book_name": "雷罡镇狱诀",
-    "quality": "下品",
+    "quality": "凡品",
     "viewport": [
       0.0,
       0.0,
@@ -1593,7 +1593,7 @@
     "icon": "res://assets/UI-thunder-leigangzhenyujue-effect-04-yinleiyin.webp",
     "frame": "res://assets/UI-thunder-leigangzhenyujue-spellframe-1x1.webp",
     "book_name": "雷罡镇狱诀",
-    "quality": "凡品",
+    "quality": "良品",
     "viewport": [
       0.0,
       0.0,

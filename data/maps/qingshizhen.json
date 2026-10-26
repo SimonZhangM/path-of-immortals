@@ -22,6 +22,13 @@
       "title": "前往 青石河湾",
       "scene": "res://scenes/maps/qingshihewan.tscn",
       "target_point": "base.map.qingshihewan.point.east_exit"
+    },
+    {
+      "point_id": "base.map.qingshizhen.point.n04",
+      "title": "前往 西源药坡",
+      "scene": "res://scenes/maps/xiyuanyaopo.tscn",
+      "target_point": "base.map.xiyuanyaopo.point.n01",
+      "target_facing": "right"
     }
   ],
   "event_files": [

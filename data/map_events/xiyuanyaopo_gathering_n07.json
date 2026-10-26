@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.xiyuanyaopo.gathering_n07",
+  "type": "gathering",
+  "point_id": "base.map.xiyuanyaopo.point.n07",
+  "trigger": "arrival",
+  "title": "花坡艾丛",
+  "item_id": "base.material.kuaiye",
+  "reward_prefix": "base.map_reward.xiyuanyaopo.gathering_n07",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-xyyp-caiyao-huapoaicong.webp",
+    "description": "坡地草木繁茂，苦艾散生在岩石与花丛之间。",
+    "notes": {
+      "base.gathering.quick": "采下近处的苦艾叶，\n省时省力。",
+      "base.gathering.careful": "仔细查看石隙，\n采集成熟的苦艾叶。",
+      "base.gathering.deep": "沿着水岸与坡地，\n寻找更多苦艾叶。"
+    }
+  }
+}
