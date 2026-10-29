@@ -1,6 +1,7 @@
 extends Control
 ## List presentation only. Display entries never create accepted quests or save data.
 signal task_selected(task_id: String)
+signal entries_changed
 const Tag = preload("res://scripts/map/map_task_category_tag.gd")
 const HARMONY = preload("res://assets/fonts/HarmonyOS_Sans_SC_Regular.ttf")
 const SORT_KEYS := ["accepted_at", "accepted_location", "updated_at"]
@@ -25,11 +26,13 @@ func _init() -> void:
 	margins.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for edge in ["left", "right", "top", "bottom"]:
 		margins.add_theme_constant_override("margin_" + edge, 20)
+	margins.add_theme_constant_override("margin_top", 30)
 	add_child(margins)
 	margins.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var column := VBoxContainer.new()
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_theme_constant_override("separation", 16)
+	# Move only the heading down by 10px; retain the task rows' original position.
+	column.add_theme_constant_override("separation", 6)
 	margins.add_child(column)
 	var heading := HBoxContainer.new()
 	heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -41,7 +44,9 @@ func _init() -> void:
 	diamond.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	heading.add_child(diamond)
 	var outline := Line2D.new()
-	outline.points = PackedVector2Array([Vector2(8,13),Vector2(14,20),Vector2(8,27),Vector2(2,20),Vector2(8,13)])
+	# Equal diagonals and a closed path give four identical, sharp geometric corners.
+	outline.points = PackedVector2Array([Vector2(8,13),Vector2(15,20),Vector2(8,27),Vector2(1,20)])
+	outline.closed = true
 	outline.default_color = Color("e1bf77")
 	outline.width = 2
 	outline.antialiased = true
@@ -134,6 +139,7 @@ func _refresh_rows() -> void:
 		child.queue_free()
 	cards.clear()
 	for entry: Dictionary in ordered_entries(): _build_card(entry)
+	entries_changed.emit()
 
 func select_task(id: String) -> void:
 	if not cards.has(id): return

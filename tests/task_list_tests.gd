@@ -75,7 +75,7 @@ func run() -> void:
 		check(bg.size.x >= screen.middle_panel.size.x and bg.size.y >= screen.middle_panel.size.y and is_equal_approx(bg.size.aspect(), bg.texture.get_size().aspect()), "middle background covers proportionally")
 		check(Vector2(bg.material.get_shader_parameter("panel_size")).is_equal_approx(screen.middle_panel.size) and is_zero_approx(bg.material.get_shader_parameter("top_fade_fraction")), "middle image uses rounded panel clipping without fade")
 		var right_bg: TextureRect = screen.right_background_art
-		check(right_bg.self_modulate.is_equal_approx(Color(0.75,0.75,0.75,1.0)), "right background brightness is 75 percent with full opacity")
+		check(right_bg.self_modulate.is_equal_approx(Color.WHITE), "right background brightness is 100 percent with full opacity")
 		check(right_bg.texture.resource_path == "res://assets/UI-task-right-bg.webp" and right_bg.texture.get_image().has_mipmaps(), "right artwork and mipmaps")
 		check(Vector2(right_bg.material.get_shader_parameter("panel_size")).is_equal_approx(screen.right_panel.size) and is_equal_approx(right_bg.material.get_shader_parameter("corner_radius"),screen.Inventory.BOARD_PANEL_RADIUS), "right artwork clipped to current rounded boundary")
 		check(is_equal_approx(right_bg.size.aspect(),right_bg.texture.get_size().aspect()) and right_bg.size.x >= screen.right_panel.size.x - 0.01 and right_bg.size.y >= screen.right_panel.size.y - 0.01, "right artwork covers panel proportionally")

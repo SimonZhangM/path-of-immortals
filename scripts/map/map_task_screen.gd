@@ -5,6 +5,7 @@ const Inventory = preload("res://scripts/map/map_inventory_screen.gd")
 const Technique = preload("res://scripts/map/map_technique_screen.gd")
 const Sidebar = preload("res://scripts/map/map_task_sidebar.gd")
 const TaskList = preload("res://scripts/map/map_task_list.gd")
+const DetailHeader = preload("res://scripts/map/map_task_detail_header.gd")
 var stage: Control
 var body: Control
 var left_panel: PanelContainer
@@ -17,6 +18,7 @@ var right_background_art: TextureRect
 var stamina_bar: Control
 var sidebar: Control
 var task_list: Control
+var detail_header: Control
 
 func _has_point(point: Vector2) -> bool:
 	# The shared header is drawn above this screen and retains its task toggle.
@@ -55,9 +57,10 @@ func _init() -> void:
 	_build_sidebar_background()
 	middle_background_art = _build_column_background(middle_panel, "res://assets/UI-task-mid-bg.webp")
 	right_background_art = _build_column_background(right_panel, "res://assets/UI-task-right-bg.webp")
-	right_background_art.self_modulate = Color(0.75, 0.75, 0.75, 1.0)
+	right_background_art.self_modulate = Color.WHITE
 	_build_sidebar()
 	_build_task_list()
+	_build_task_detail()
 	resized.connect(_queue_layout)
 	visibility_changed.connect(_queue_layout)
 
@@ -148,6 +151,25 @@ func _build_task_list() -> void:
 
 func _queue_layout() -> void:
 	_layout.call_deferred()
+
+func _build_task_detail() -> void:
+	# Keep artwork above the column background but below the existing gold rim.
+	var layer := Node2D.new()
+	layer.name = "TaskDetailLayer"
+	right_panel.add_child(layer)
+	detail_header = DetailHeader.new()
+	layer.add_child(detail_header)
+	right_panel.resized.connect(func(): detail_header.size = right_panel.size)
+	task_list.task_selected.connect(func(_id: String): _refresh_task_detail())
+	task_list.entries_changed.connect(_refresh_task_detail)
+	_refresh_task_detail()
+
+func _refresh_task_detail() -> void:
+	for entry: Dictionary in task_list.ordered_entries():
+		if str(entry.id) == task_list.selected_task_id:
+			detail_header.show_entry(entry, sidebar.icons[entry.category].texture, task_list.definitions.category_tags)
+			return
+	detail_header.clear_entry()
 
 func _panel(node_name: String, radius: float) -> PanelContainer:
 	var panel := PanelContainer.new()

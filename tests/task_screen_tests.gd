@@ -38,7 +38,7 @@ func run() -> void:
 	check(map.status_header.visible and not map.status_header.map_title.visible and map.calendar_readout.visible,"shell keeps shared header/date and hides travel plaque")
 	check(not map.can_save_timed_checkpoint(),"task panel defers timed snapshot")
 	var screen: Control = map.task_screen
-	check(screen.find_child("ProgressDivider",true,false)==null and screen.task_list != null and screen.right_panel.find_children("*","Label",true,false).is_empty(),"task list in middle; no technique divider or right-side detail yet")
+	check(screen.find_child("ProgressDivider",true,false)==null and screen.task_list != null and screen.detail_header != null and not screen.detail_header.visible,"task list and detail header available; no unselected details or technique divider")
 	for resolution: Vector2i in [Vector2i(2560,1440),Vector2i(1920,1080),Vector2i(2560,1080)]:
 		root.size = resolution
 		await settle()

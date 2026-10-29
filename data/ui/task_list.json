@@ -6,6 +6,13 @@
       "title": "药香如常",
       "summary": "背上药篓去山脚，替叶伯采回铺里所需的草药。",
       "image": "res://assets/UI-task-mid-main-yaoxiangruchang.webp",
+      "detail_image": "res://assets/UI-task-right-main-yaoxiangruchang.webp",
+      "stage_id": "morning",
+      "introductions": {
+        "morning": "晨光落在窗边，街巷里渐渐有了人声。\n叶伯这会儿该在整理药柜了。\n去药材铺看看，帮他搭把手，开始新一天的活计。",
+        "gathering": "铺里的苦艾叶与溪露苔不多了，叶伯让你去山脚采些回来。瀑布旁的石径早已走熟，坡上有苦艾，溪边的石上也常能找到溪露苔。背好药篓，去溪源药坡走一趟。",
+        "returning": "苦艾叶与溪露苔都已收好，药篓里透着清新的草叶气息。回药材铺交给叶伯，再把新采的草药摊开晾好。"
+      },
       "accepted_at": null,
       "accepted_location": "",
       "updated_at": null
