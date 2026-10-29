@@ -19,7 +19,9 @@ var _mask: ShaderMaterial
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
 	music = AudioStreamPlayer.new()
+	music.bus = "Music"
 	music.name = "MapMusic"
 	add_child(music)
 	music.finished.connect(_next_track)

@@ -28,6 +28,8 @@ func _init() -> void:
 	warning.set_meta("source_font_size",18)
 	_place(warning,Rect2(941,685,471,32))
 	pick_sound=AudioStreamPlayer.new()
+	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
+	pick_sound.bus="Effects"
 	pick_sound.stream=GameAudio.STREAMS.pick
 	pick_sound.volume_db=-4
 	add_child(pick_sound)

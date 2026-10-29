@@ -64,6 +64,11 @@ var status_header: MapStatusHeader
 var calendar_readout: MapCalendarReadout
 var inventory_screen: MapInventoryScreen
 var technique_screen: Control
+var task_screen: Control
+var world_map: Control
+var save_browser_controller: Node
+var system_menu_controller: Node
+const Checkpoints = preload("res://scripts/entry/save_checkpoints.gd")
 var inventory_catalog: MapInventoryCatalog
 var _last_view_size := Vector2.ZERO
 @onready var map_viewport: Control = $MapViewport
@@ -96,6 +101,7 @@ func _ready() -> void:
 			_setup_exploration()
 		if startup_error.is_empty():
 			startup_error = MapPresentation.validate_music(definition)
+		if startup_error.is_empty(): _adopt_autosave()
 		if startup_error.is_empty():
 			if not defer_location_save: activate_location()
 			if not defer_map_music: MapPresentation.enter_map(definition)
@@ -124,11 +130,20 @@ func initialize_staged() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 	if startup_error.is_empty(): startup_error = MapPresentation.validate_music(definition)
+	if startup_error.is_empty(): _adopt_autosave()
 	if not startup_error.is_empty(): return
 	if not defer_location_save: activate_location()
 	if not defer_map_music: MapPresentation.enter_map(definition)
 	var remember_error := MapLoadoutStore.GameSaveSession.remember(inventory_save_path)
 	if remember_error != OK: push_warning("无法记录最后使用的存档：%s" % error_string(remember_error))
+
+func _adopt_autosave() -> void:
+	if not MapLoadoutStore.SaveSlots.is_snapshot(inventory_save_path): return
+	var target: String = MapLoadoutStore.SaveSlots.working_path()
+	startup_error = MapLoadoutStore.save(loadout,target,inventory_save_path)
+	if not startup_error.is_empty(): return
+	inventory_save_path = target
+	MapLoadoutStore.GameSaveSession.active_path = target
 
 func _restore_saved_location() -> void:
 	# Explicit transition/battle-return arrivals always take precedence.
@@ -147,6 +162,8 @@ func activate_location() -> void:
 	_location_active = true
 	loadout.set_map_location(definition.id, travel.current_node_id)
 	_save_location()
+	if not staged_startup and location_save_error.is_empty():
+		MapLoadoutStore.SaveMetadata.start(inventory_save_path)
 
 func deactivate_location() -> void:
 	_location_active = false
@@ -187,6 +204,13 @@ func _setup_status_header() -> void:
 	add_child(status_header)
 	status_header.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	status_header.map_title.visible = bool(definition.get("show_map_title", true))
+	status_header.settings_button.tooltip_text = "存储／读取存档"
+	status_header.settings_button.pressed.connect(_open_system_menu)
+	status_header.settings_button.tooltip_text = "系统菜单"
+	status_header.tasks_button.tooltip_text = preload("res://scripts/settings/settings_input.gd").caption("任务", "map_tasks")
+	status_header.tasks_button.pressed.connect(func(): set_task_open(not is_task_open()))
+	get_node("/root/GameSettings").settings_changed.connect(func():
+		status_header.tasks_button.tooltip_text = preload("res://scripts/settings/settings_input.gd").caption("任务", "map_tasks"))
 	if staged_startup: return
 	_setup_inventory(registry)
 	if startup_error.is_empty() and not defer_optional_views: _ensure_calendar_readout()
@@ -231,7 +255,8 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 			var base := CultivationGrowth.maxima(loadout.growth)
 			for key: String in base: loadout.growth.resources[key] = int(base[key])*100
 		loadout.growth.experience=player_status.experience
-		startup_error=MapLoadoutStore.save(loadout,inventory_save_path)
+		if not MapLoadoutStore.SaveSlots.is_snapshot(inventory_save_path):
+			startup_error=MapLoadoutStore.save(loadout,inventory_save_path)
 		if not startup_error.is_empty(): return
 	player_status._active_board_bonuses=loadout.board.resource_bonuses.duplicate()
 	player_status.character_definition.board_layout=loadout.board.id
@@ -344,7 +369,50 @@ func _ensure_technique_view() -> void:
 
 func _update_optional_view_visibility() -> void:
 	_update_calendar_visibility()
-	if sign_motion != null: sign_motion.set_suspended(is_inventory_open() or is_technique_open())
+	if sign_motion != null: sign_motion.set_suspended(is_task_open() or is_inventory_open() or is_technique_open() or is_world_map_open() or is_save_browser_open() or is_system_menu_open())
+
+func is_system_menu_open() -> bool:
+	return system_menu_controller!=null and system_menu_controller.is_open()
+
+func _open_system_menu() -> void:
+	if system_menu_controller==null:
+		system_menu_controller = preload("res://scripts/map/map_system_menu_controller.gd").new()
+		system_menu_controller.map = self
+		add_child(system_menu_controller)
+	system_menu_controller.open()
+
+func is_save_browser_open() -> bool:
+	return save_browser_controller!=null and save_browser_controller.is_open()
+
+func _open_save_browser() -> void:
+	if save_browser_controller==null:
+		save_browser_controller = preload("res://scripts/map/map_save_browser_controller.gd").new()
+		save_browser_controller.map = self
+		add_child(save_browser_controller)
+	save_browser_controller.open()
+
+func is_world_map_open() -> bool:
+	return world_map != null and world_map.visible
+
+func set_world_map_open(open: bool) -> void:
+	if open and (is_task_open() or is_save_browser_open() or is_system_menu_open()): return
+	if is_world_map_open() == open: return
+	if open and (not is_visible_in_tree() or player == null or not startup_error.is_empty() or MapPresentation.transitioning or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
+	if open and world_map == null:
+		world_map = preload("res://scripts/map/map_world_map.gd").new()
+		add_child(world_map)
+		world_map.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		world_map.visibility_changed.connect(_update_optional_view_visibility)
+	ItemTooltipHost.for_control(self).dismiss()
+	_end_drag()
+	_clear_hover()
+	if open:
+		world_map.present(definition.id,loadout.map_visited)
+		player.pause()
+	else:
+		world_map.hide()
+		player.play()
+	status_header.map_title.visible = not open and bool(definition.get("show_map_title", true))
 
 var warehouse_transfers := preload("res://scripts/map/map_warehouse_transfer.gd").new()
 
@@ -401,7 +469,7 @@ func _update_calendar_readout() -> void:
 
 func _update_calendar_visibility() -> void:
 	if calendar_readout == null: return
-	calendar_readout.visible = is_inventory_open() or is_technique_open()
+	calendar_readout.visible = is_task_open() or is_inventory_open() or is_technique_open()
 	if calendar_readout.visible: _layout_calendar.call_deferred()
 
 func _layout_calendar() -> void:
@@ -414,7 +482,30 @@ func is_inventory_open() -> bool:
 func is_technique_open() -> bool:
 	return technique_screen != null and technique_screen.visible
 
+func is_task_open() -> bool:
+	return task_screen != null and task_screen.visible
+
+func set_task_open(open: bool) -> void:
+	if is_task_open()==open: return
+	if open and (not is_visible_in_tree() or player==null or loadout==null or not startup_error.is_empty() or MapPresentation.transitioning): return
+	if open and (is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state!=null and event_state.is_active())): return
+	if task_screen==null:
+		_ensure_calendar_readout()
+		task_screen = preload("res://scripts/map/map_task_screen.gd").new()
+		add_child(task_screen)
+		task_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		task_screen.bind_header(status_header)
+		task_screen.visibility_changed.connect(_update_optional_view_visibility)
+	ItemTooltipHost.for_control(self).dismiss()
+	task_screen.visible = open
+	status_header.map_title.visible = not open and bool(definition.get("show_map_title",true))
+	_end_drag()
+	_clear_hover()
+	if open: player.pause()
+	else: player.play()
+
 func _open_book_details(book_id: String) -> void:
+	if is_task_open(): return
 	if not is_visible_in_tree() or not loadout.registry.library.books.has(book_id): return
 	if is_inventory_open():
 		if not _prepare_inventory_close(): return
@@ -430,8 +521,9 @@ func _open_book_details(book_id: String) -> void:
 	_clear_hover()
 
 func set_technique_open(open: bool) -> void:
+	if open and (is_task_open() or is_save_browser_open() or is_system_menu_open()): return
 	if is_technique_open() == open: return
-	if open and (is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
+	if open and (is_world_map_open() or is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
 	if open: _ensure_technique_view()
 	ItemTooltipHost.for_control(self).dismiss()
 	technique_screen.visible = open
@@ -490,10 +582,11 @@ func is_exit_open() -> bool:
 	return exit_dialog != null and exit_dialog.visible
 
 func set_inventory_open(open: bool) -> void:
+	if open and (is_task_open() or is_save_browser_open() or is_system_menu_open()): return
 	if not open and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
 		_close_home_warehouse()
 		return
-	if is_technique_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
+	if is_world_map_open() or is_technique_open() or is_task_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
 		return
 	if is_inventory_open() == open:
 		return
@@ -539,6 +632,42 @@ func _sync_player_name() -> void:
 		player_status.changed.emit()
 
 func _input(event: InputEvent) -> void:
+	if not Engine.is_editor_hint() and is_task_open():
+		if event is InputEventKey:
+			if event.pressed and not event.echo and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("map_tasks")):
+				set_task_open(false)
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo and event.is_action_pressed("map_tasks"):
+		var focus := get_viewport().gui_get_focus_owner()
+		if focus is LineEdit or focus is TextEdit: return
+		# Let other contexts use their own binding when task opening is blocked.
+		set_task_open(true)
+		if is_task_open():
+			get_viewport().set_input_as_handled()
+			return
+	if not Engine.is_editor_hint() and is_save_browser_open():
+		if event is InputEventKey:
+			if event.is_action_pressed("ui_cancel") and not event.echo: save_browser_controller.close()
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and is_system_menu_open():
+		if is_instance_valid(system_menu_controller.settings): return
+		if event is InputEventKey:
+			if event.is_action_pressed("ui_cancel") and not event.echo: system_menu_controller.close()
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and is_world_map_open():
+		if event is InputEventKey:
+			if event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or event.is_action_pressed("map_world_map")):
+				set_world_map_open(false)
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo and event.is_action_pressed("map_world_map") and not (event_state!=null and event_state.is_active()):
+		if get_viewport().gui_get_focus_owner() is LineEdit or get_viewport().gui_get_focus_owner() is TextEdit: return
+		set_world_map_open(true)
+		get_viewport().set_input_as_handled()
+		return
 	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo:
 		if _handle_fullscreen_switch(event):
 			get_viewport().set_input_as_handled()
@@ -654,8 +783,8 @@ func _input(event: InputEvent) -> void:
 				_retreat_encounter()
 			get_viewport().set_input_as_handled()
 			return
-		if (event.keycode == KEY_SPACE or event.physical_keycode == KEY_SPACE) and dialogue != null and dialogue.visible:
-			_advance_dialogue()
+		if event.is_action_pressed("dialogue_continue") and dialogue != null and dialogue.visible:
+			dialogue.request_advance()
 			get_viewport().set_input_as_handled()
 		return
 	if is_inventory_open() and inventory_screen.is_board_change_dialog_open():
@@ -679,6 +808,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("map_techniques") and not is_inventory_open():
 		set_technique_open(true)
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_ESCAPE:
+		_open_system_menu()
 		get_viewport().set_input_as_handled()
 
 func _setup_events() -> void:
@@ -959,7 +1091,10 @@ func _setup_exploration() -> void:
 		startup_error = "地图探索配置无效。"
 		push_error(startup_error)
 		return
-	if not settings.get("enabled", false): return
+	if not settings.get("enabled", false):
+		# Fully visible maps still record the player's actual arrival.
+		_visit_exploration(travel.current_node_id)
+		return
 	var hint: Variant = settings.get("hint_length", 72.0)
 	if not (hint is float or hint is int) or not is_finite(float(hint)) or float(hint) <= 0:
 		startup_error = "地图探索路线提示长度无效。"
@@ -970,17 +1105,18 @@ func _setup_exploration() -> void:
 	_visit_exploration(travel.current_node_id)
 
 func _visit_exploration(point_id: String) -> void:
-	if exploration == null or loadout == null: return
+	if loadout == null or travel == null or not travel.node_positions.has(point_id): return
 	var changed := loadout.visit_map_point(definition.id, point_id)
-	exploration.rebuild(travel.adjacency, loadout.map_visited.get(definition.id, []))
-	travel.revealed_points = exploration.revealed.duplicate()
-	travel.revealed_routes = exploration.full_routes.duplicate()
-	for point: MapRoutePoint in content.get_node("Points").get_children():
-		point.present_exploration(exploration.revealed.has(point.point_id), exploration.visited.has(point.point_id))
-	for route: MapRoute in content.get_node("Routes").get_children():
-		var first: String = route.get_node(route.start_point).point_id
-		var last: String = route.get_node(route.end_point).point_id
-		route.present_exploration(exploration.full_routes.has(route.route_id), exploration.revealed.has(first), exploration.revealed.has(last), float(definition.exploration.get("hint_length", 72.0)))
+	if exploration != null:
+		exploration.rebuild(travel.adjacency, loadout.map_visited.get(definition.id, []))
+		travel.revealed_points = exploration.revealed.duplicate()
+		travel.revealed_routes = exploration.full_routes.duplicate()
+		for point: MapRoutePoint in content.get_node("Points").get_children():
+			point.present_exploration(exploration.revealed.has(point.point_id), exploration.visited.has(point.point_id))
+		for route: MapRoute in content.get_node("Routes").get_children():
+			var first: String = route.get_node(route.start_point).point_id
+			var last: String = route.get_node(route.end_point).point_id
+			route.present_exploration(exploration.full_routes.has(route.route_id), exploration.revealed.has(first), exploration.revealed.has(last), float(definition.exploration.get("hint_length", 72.0)))
 	if changed or not exploration_save_error.is_empty():
 		exploration_save_error = _save_loadout()
 		if not exploration_save_error.is_empty(): push_warning("探索进度尚未保存：" + exploration_save_error)
@@ -1400,12 +1536,18 @@ func _start_encounter_battle() -> void:
 		MapPresentation.enter_map(definition)
 		return
 	# Keep PREPARATION until the player explicitly presses 战斗开始.
+	error = Checkpoints.write(loadout,inventory_save_path,"quick","before_battle")
+	if not error.is_empty():
+		battle.queue_free()
+		_encounter_error(error)
+		return
 	# Board artwork is initialized during binding/resizing, even while disabled.
 	encounter_dialog.hide()
 	await MapPresentation.change_battle_scene(self, battle, self, battle_ui, true, battle_ui.game_audio)
 	queue_free()
 
 func _try_open_exit(point_id: String) -> bool:
+	if is_world_map_open(): return false
 	if exit_dialog == null or is_exit_open() or is_inventory_open() or is_technique_open() or event_state.is_active() or travel.mode != "idle" or point_id != travel.current_node_id or not exits_by_point.has(point_id):
 		return false
 	_active_exit = exits_by_point[point_id].duplicate(true)
@@ -1471,6 +1613,14 @@ func _complete_exit() -> void:
 		exit_dialog.set_busy(false)
 		destination.queue_free()
 		return
+	# Snapshot only after the target map and arrival node are fully validated.
+	destination.loadout.set_map_location(destination.definition.id,destination.travel.current_node_id)
+	error = Checkpoints.write(destination.loadout,inventory_save_path,"quick","map_arrival")
+	if not error.is_empty():
+		destination.queue_free()
+		exit_dialog.error_label.text = error
+		exit_dialog.set_busy(false)
+		return
 	exit_dialog.hide()
 	var outgoing := MapPresentation.direction(travel.node_positions[_active_exit.point_id], _source_size(), false)
 	var incoming := MapPresentation.direction(destination.travel.node_positions[destination.arrival_point_id], destination._source_size(), true)
@@ -1478,6 +1628,7 @@ func _complete_exit() -> void:
 	queue_free()
 
 func _try_start_event(point_id: String, trigger: String, stationary: bool) -> bool:
+	if is_world_map_open(): return false
 	if event_state.try_start(point_id, travel.current_node_id, stationary, trigger):
 		travel.paused = true
 		_end_drag()
@@ -1528,16 +1679,25 @@ func _setup_player() -> void:
 	_clamp_position()
 
 func _process(delta: float) -> void:
+	if is_task_open() or is_save_browser_open() or is_system_menu_open(): return
 	if cultivation_session != null and not Engine.is_editor_hint(): cultivation_session.advance(delta)
-	if is_inventory_open() or is_technique_open() or is_exit_open():
+	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open():
 		return
 	if travel != null and player != null:
 		if event_state == null or not event_state.is_active():
 			travel.advance(delta)
 		player.present(travel)
 
+func can_save_timed_checkpoint() -> bool:
+	if Engine.is_editor_hint() or not _location_active or not startup_error.is_empty() or loadout==null: return false
+	if MapPresentation.transitioning or not is_visible_in_tree() or not can_process(): return false
+	if is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open(): return false
+	if event_state==null or event_state.is_active() or travel==null or travel.paused: return false
+	return true
+
 func _select_destination(pointer: Vector2) -> void:
-	if travel == null or is_inventory_open() or is_technique_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_task_open() or is_save_browser_open() or is_system_menu_open(): return
+	if travel == null or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		return
 	var closest_id := _node_at(pointer)
 	if not closest_id.is_empty():
@@ -1565,7 +1725,8 @@ func _node_at(pointer: Vector2) -> String:
 	return closest_id
 
 func _refresh_cursor() -> void:
-	if is_inventory_open() or is_technique_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_task_open() or is_save_browser_open() or is_system_menu_open(): return
+	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		mouse_default_cursor_shape = Control.CURSOR_ARROW
 	elif _dragging:
 		mouse_default_cursor_shape = Control.CURSOR_MOVE
@@ -1621,9 +1782,12 @@ func _zoom_at(factor: float, anchor: Vector2) -> void:
 	_clamp_position()
 
 func _gui_input(event: InputEvent) -> void:
+	if is_save_browser_open() or is_system_menu_open():
+		accept_event()
+		return
 	if Engine.is_editor_hint() or definition.is_empty():
 		return
-	if is_inventory_open() or is_technique_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		accept_event()
 		return
 	if event is InputEventMouse and not map_viewport.get_rect().has_point(event.position):
@@ -1648,7 +1812,7 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_UP]:
 			_suppress_click = true
-			var direction := 1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0
+			var direction := float(preload("res://scripts/settings/settings_input.gd").wheel_step(event.button_index))
 			_zoom_at(zoom_factor * pow(ZOOM_STEP, direction), event.position)
 			accept_event()
 	elif event is InputEventMouseMotion and _pointer_down:

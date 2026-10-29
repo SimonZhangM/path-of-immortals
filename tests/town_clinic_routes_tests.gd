@@ -16,7 +16,7 @@ func run() -> void:
 	if not map.startup_error.is_empty(): quit(1); return
 	var points: Node = map.content.get_node("Points")
 	var routes: Node = map.content.get_node("Routes")
-	check(points.get_child_count()==31 and routes.get_child_count()==42,"31 nodes with two added routes")
+	check(points.get_child_count()==30 and routes.get_child_count()==40,"town retains clinic connections after board removal")
 	check(points.get_node("N12").location_note=="炼丹房" and points.get_node("N12").position==Vector2(2804,792),"alchemy relocated to red-box N12")
 	check(points.get_node("N19").location_note=="医馆" and points.get_node("N19").position==Vector2(2489,1141),"blue-box N19 restored clinic")
 	check(map.event_registry.by_point.get(PREFIX+"n19")=="base.map_event.qingshizhen.clinic","clinic has its own event rather than alchemy")

@@ -19,8 +19,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+GameSettings="*res://scripts/settings/game_settings.gd"
 UiButtonAudio="*res://scripts/ui/ui_button_audio.gd"
 MapPresentation="*res://scripts/map/map_presentation.gd"
+SavePlaytime="*res://scripts/entry/save_playtime.gd"
 
 [display]
 
@@ -37,6 +39,16 @@ window/size/min_height=720
 
 [input]
 
+map_tasks={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":84)
+]
+}
+map_world_map={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":77)
+]
+}
 map_techniques={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":71)

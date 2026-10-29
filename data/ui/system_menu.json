@@ -1,0 +1,12 @@
+{
+  "texture": "res://assets/UI-game-systemmenu.webp",
+  "scale_at_1440": 0.7,
+  "buttons": [
+    {"id": "resume", "label": "返回游戏", "rect": [242, 406, 541, 104]},
+    {"id": "saves", "label": "存读档", "rect": [242, 544, 541, 104]},
+    {"id": "settings", "label": "系统设置", "rect": [242, 746, 541, 104], "enabled": true},
+    {"id": "help", "label": "操作说明", "rect": [242, 884, 541, 104], "enabled": false},
+    {"id": "main_menu", "label": "返回主菜单", "rect": [242, 1083, 541, 104]},
+    {"id": "quit", "label": "退出游戏", "rect": [242, 1219, 541, 104]}
+  ]
+}

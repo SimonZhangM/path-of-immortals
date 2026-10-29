@@ -57,14 +57,45 @@ func run() -> void:
 	map = current_scene
 	map.set_process(false)
 	check(map.definition.id == TOWN and disk().map_location.map_id == TOWN, "actual cross-map commit saves town")
+	check(disk().map_visited.get(TOWN, []) == [TOWN+".point.n25"], "town arrival records one visited node, not all visible nodes")
+	check(disk().map_visited[RIVER] == preserved.map_visited[RIVER], "town arrival preserves river visits")
+	check(map.exploration != null and map.travel.exploration_enabled, "town uses progressive exploration")
+	for point: MapRoutePoint in map.content.get_node("Points").get_children():
+		check(point.visible == map.exploration.revealed.has(point.point_id), "town visibility follows visited-node frontier")
+	check(map.exploration.revealed.size()<31, "unexplored town is not fully open")
 	check(not map.is_exit_open(), "transition arrival does not immediately reopen exit")
 	await dispose(map)
 	map = await boot()
 	check(map.definition.id == TOWN and map.travel.current_node_id == TOWN+".point.n25", "startup selects saved town, not fixed river scene")
-	var town_neighbor: String = map.travel.adjacency[map.travel.current_node_id][0].to
-	map.travel.request_destination(town_neighbor)
+	var town_neighbor := TOWN+".point.n24"
+	check(not map.travel.request_destination(town_neighbor), "hidden town node cannot be selected before frontier is reached")
+	check(map.travel.request_destination(TOWN+".point.n31"), "town frontier is reachable")
+	map.travel.advance(0.01)
+	check(disk().map_visited[TOWN] == [TOWN+".point.n25"], "mid-edge travel does not mark future nodes visited")
 	map.travel.advance(100)
-	check(disk().map_location.point_id == town_neighbor, "non-exploration map saves arrivals")
+	check(map.exploration.revealed.has(town_neighbor), "town arrival reveals next node")
+	check(map.travel.request_destination(town_neighbor), "newly revealed town node becomes reachable")
+	map.travel.advance(100)
+	check(disk().map_location.point_id == town_neighbor, "town saves each arrival")
+	check(disk().map_visited[TOWN] == [TOWN+".point.n25", TOWN+".point.n31", town_neighbor], "town records intermediate and destination nodes without completing events")
+	var town_visits: Dictionary = disk().map_visited.duplicate(true)
+	var town_revision: int = map.loadout.revision
+	map._visit_exploration(town_neighbor)
+	map._visit_exploration(TOWN+".point.removed")
+	check(map.loadout.revision == town_revision and disk().map_visited == town_visits, "duplicate and invalid visits do not change progress")
+	await dispose(map)
+	map = await boot()
+	check(map.travel.current_node_id == town_neighbor and disk().map_visited == town_visits, "town restart preserves all recorded visits")
+	# A legacy town checkpoint supplies the current arrival, not invented history.
+	var old_town: Dictionary = map.loadout.snapshot()
+	old_town.map_visited.erase(TOWN)
+	check(map.loadout.restore(old_town).is_empty(), "legacy town save has no visit ledger")
+	check(MapLoadoutStore.save(map.loadout,path).is_empty(), "write isolated legacy town save")
+	map.deactivate_location()
+	await dispose(map)
+	map = await boot()
+	check(disk().map_visited[TOWN] == [town_neighbor], "legacy town records restored checkpoint without granting default spawn or all nodes")
+	check(disk().map_visited[RIVER] == town_visits[RIVER], "legacy town migration preserves other maps")
 	var raw: Dictionary = map.loadout.snapshot()
 	var bad := raw.duplicate(true)
 	bad.map_location = {"map_id":TOWN,"point_id":RIVER+".point.n15"}
@@ -107,6 +138,8 @@ func run() -> void:
 	map.set_process(false)
 	# A save failure leaves the previous file intact; retry writes the new checkpoint.
 	map.inventory_save_path = "res://artifacts/no-such-location-dir/state.json"
+	map.travel.request_destination(TOWN+".point.n31")
+	map.travel.advance(100)
 	map.travel.request_destination(TOWN+".point.n25")
 	map.travel.advance(100)
 	check(not map.location_save_error.is_empty() and disk().map_location.point_id == town_neighbor, "save failure keeps previous file")

@@ -1,0 +1,24 @@
+{
+  "display_entries": [
+    {
+      "id": "quest.prologue.yaoxiangruchang",
+      "category": "main",
+      "title": "药香如常",
+      "summary": "背上药篓去山脚，替叶伯采回铺里所需的草药。",
+      "image": "res://assets/UI-task-mid-main-yaoxiangruchang.webp",
+      "accepted_at": null,
+      "accepted_location": "",
+      "updated_at": null
+    }
+  ],
+  "category_tags": {
+    "main": {"label": "主线", "color": "C66B5C", "fill": "492925", "text": "FFE3D9"},
+    "side": {"label": "支线", "color": "6298CF", "fill": "203850", "text": "DFEDFF"},
+    "character": {"label": "人物", "color": "D888AD", "fill": "482C3E", "text": "FFE3EF"},
+    "inheritance": {"label": "传承", "color": "A28AD4", "fill": "342D4C", "text": "ECE4FF"},
+    "commission": {"label": "委托", "color": "60BBC8", "fill": "1E3D43", "text": "D9F7FC"},
+    "sect": {"label": "宗门", "color": "78B382", "fill": "273F30", "text": "E1F5E3"},
+    "encounter": {"label": "奇遇", "color": "D4B064", "fill": "493D25", "text": "FFF0CE"},
+    "other": {"label": "其他", "color": "9DA9B8", "fill": "303843", "text": "E8EDF3"}
+  }
+}

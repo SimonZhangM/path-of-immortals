@@ -8,6 +8,8 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
+	# Keep this routing/layout regression independent of the configurable reveal.
+	root.get_node("GameSettings").apply_values({"dialogue_speed":"instant","dialogue_auto":false,"background_pause":false})
 	root.size = Vector2i(1920, 1080)
 	MapEventState.session_completed.clear()
 	await _load_map()

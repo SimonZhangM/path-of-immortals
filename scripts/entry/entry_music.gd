@@ -2,22 +2,36 @@ extends AudioStreamPlayer
 ## One player for the entire pre-game flow, independent of individual pages.
 const NODE_NAME := "EntryMusic"
 const CONFIG := "res://data/ui/start_menu.json"
+static var _pending_player: AudioStreamPlayer
 var _fade: Tween
 
 static func ensure_for(tree: SceneTree) -> AudioStreamPlayer:
 	var existing := tree.root.get_node_or_null(NODE_NAME)
-	if existing != null: return existing
+	if existing != null:
+		if not existing.playing: existing.play()
+		return existing
+	if is_instance_valid(_pending_player): return _pending_player
 	var player = load("res://scripts/entry/entry_music.gd").new()
 	player.name = NODE_NAME
-	tree.root.add_child(player)
+	_pending_player = player
+	# The root is locked while the initial scene enters the tree.
+	# Defer attachment and reuse the pending player if another page requests it.
+	tree.root.add_child.call_deferred(player)
 	return player
+
+static func stop_for_loading(tree: SceneTree) -> void:
+	var player := tree.root.get_node_or_null(NODE_NAME)
+	if player != null: player.stop()
 
 static func finish_for(tree: SceneTree, seconds: float) -> void:
 	var player := tree.root.get_node_or_null(NODE_NAME)
 	if player != null: player.fade_out(seconds)
 
 func _ready() -> void:
+	if _pending_player == self: _pending_player = null
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
+	bus = "Music"
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CONFIG)).music
 	var track := load(config.stream).duplicate() as AudioStreamMP3
 	track.loop = true

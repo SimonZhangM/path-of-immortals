@@ -31,6 +31,8 @@ var _tick := 0.0
 var _selection_pending := false
 var waiting_for_books := false
 
+var _completion_saved := false
+
 func begin(definition: Dictionary, mode: String, days: int, today: int) -> bool:
 	var matching: Array = definition.get("modes",[]).filter(func(entry): return entry.id==mode)
 	if matching.is_empty() or not definition.get("durations",[]).any(func(value): return int(value)==days): return false
@@ -43,6 +45,7 @@ func begin(definition: Dictionary, mode: String, days: int, today: int) -> bool:
 	paused=true
 	started=false
 	active=true
+	_completion_saved=false
 	suspensions.clear()
 	cultivation_progress.clear()
 	techniques.clear()
@@ -83,9 +86,15 @@ func suspend(reason: String, value: bool, today: int) -> void:
 func finish(today: int) -> void:
 	sync_calendar(today)
 	if loadout != null: advance(0.0, true)
+	_save_completion()
 	active=false
 	suspensions.clear()
 	changed.emit()
+
+func _save_completion() -> void:
+	if loadout==null or not started or _completion_saved or not error.is_empty(): return
+	preload("res://scripts/entry/save_checkpoints.gd").after_action(loadout,save_path,"cultivation_complete")
+	_completion_saved = true
 
 func set_cultivation_progress(current: float, target: float, caption: String) -> void:
 	cultivation_progress=_progress(current,target,caption)
@@ -243,6 +252,7 @@ func advance(delta: float, flush := false) -> void:
 		var duration := minf(minf(remaining,1.0),(60000000-int(loadout.growth.day_usec))/1000000.0)
 		if not _advance_chunk(duration): return
 		remaining -= duration
+	if elapsed_days>=duration_days: _save_completion()
 	changed.emit()
 
 func _advance_chunk(seconds: float) -> bool:
@@ -335,6 +345,8 @@ func breakthrough() -> bool:
 	loadout.restore(next.snapshot())
 	player.apply_growth(loadout.growth)
 	paused=true
+	preload("res://scripts/entry/save_checkpoints.gd").after_action(loadout,save_path,"breakthrough_complete")
+	_completion_saved = true
 	error="突破成功，已晋入"+player.rank_name if success else "突破未成，需补足准备修为。"
 	# A breakthrough ends the old training context; no old cooldown earns again.
 	simulation=null

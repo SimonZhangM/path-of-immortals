@@ -346,7 +346,7 @@ func _panel(parent: Node, node_name: String, radius: float, background_key: Stri
 	var panel := PanelContainer.new()
 	panel.name = node_name
 	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("0d1c26")
+	fill.bg_color = Inventory.MAIN_PANEL_BACKGROUND_COLOR
 	fill.set_corner_radius_all(int(radius))
 	fill.corner_detail = 16
 	fill.anti_aliasing = true

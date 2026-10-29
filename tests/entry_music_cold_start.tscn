@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/entry/start_menu.tscn" id="1_menu"]
+[ext_resource type="Script" path="res://tests/entry_music_cold_start_probe.gd" id="2_probe"]
+
+[node name="StartMenu" instance=ExtResource("1_menu")]
+
+[node name="ColdStartProbe" type="Node" parent="."]
+script = ExtResource("2_probe")

@@ -1,0 +1,24 @@
+{
+  "source_size": [1672, 941],
+  "viewport_fraction": [0.94, 0.84],
+  "frame": "res://assets/UI-game-systemsetup.webp",
+  "frame_offset_y": 20,
+  "heading_icon": "res://assets/UI-map-scrollstar.webp",
+  "button_normal": "res://assets/UI-start-button3.webp",
+  "button_hover": "res://assets/UI-start-button2.webp",
+  "dropdown_normal": "res://assets/UI-start-button1.webp",
+  "content_rect": [104, 190, 1464, 570],
+  "first_row_y": 90,
+  "tabs": [{"id":"game","label":"游戏"},{"id":"controls","label":"操作"},{"id":"display","label":"画面"},{"id":"audio","label":"声音"},{"id":"other","label":"其他"}],
+  "bindings": [
+    {"action":"map_inventory","label":"打开储物袋"},
+    {"action":"map_techniques","label":"打开功法"},
+    {"action":"map_tasks","label":"打开任务"},
+    {"action":"map_world_map","label":"打开世界地图"},
+    {"action":"dialogue_continue","label":"继续对话"},
+    {"action":"battle_pause","label":"战斗暂停／继续"},
+    {"action":"speed_half","label":"战斗0.5倍速"},
+    {"action":"speed_normal","label":"战斗1倍速"},
+    {"action":"speed_double","label":"战斗2倍速"}
+  ]
+}

@@ -62,6 +62,8 @@ func run() -> void:
 	page._request_menu(&"settings")
 	page._request_menu(&"load")
 	check(entry_music.playing, "settings and load entry keep music")
+	page._close_saves()
+	await settle()
 	page._begin_journey()
 	while is_instance_valid(page) or root.has_node("EntrySceneCrossfade"): await process_frame
 	check(current_scene.scene_file_path.ends_with("character_preparation.tscn") and is_instance_valid(entry_music)
@@ -74,13 +76,13 @@ func run() -> void:
 	root.size = Vector2i(1920,1080)
 	await settle()
 	await RenderingServer.frame_post_draw
-	var menu_image := root.get_texture().get_image()
+	var menu_background := page.background.texture
 	var started := Time.get_ticks_msec()
 	click(page.continue_button)
 	var overlay = root.get_node_or_null("GameLoadingOverlay")
 	check(overlay != null, "loading cover created immediately by real continue click")
-	check(overlay.caption.text + overlay.ellipsis.text == "正在进入苍澜界…" and overlay.backdrop != null, "retained menu cover and required caption")
-	check(overlay.cover_image.get_image().get_data() == menu_image.get_data(), "loading retains exact outgoing menu frame")
+	check(overlay.caption.text + overlay.ellipsis.text == "正在进入苍澜界…" and overlay.backdrop != null, "landscape cover and required caption")
+	check(overlay.cover_image == menu_background, "loading uses landscape without menu artwork or shade")
 	click(page.continue_button)
 	key(KEY_ESCAPE)
 	check(page._navigating and root.find_children("GameLoadingOverlay", "", false, false).size() == 1, "repeat click and Escape blocked")
@@ -91,11 +93,11 @@ func run() -> void:
 	var changed := false
 	var max_gap := 0.0
 	var ticks := 0
-	var music_continuous := true
+	var loading_music_stopped := true
 	var premature_map_music := false
 	while is_instance_valid(overlay):
 		if not overlay._fading:
-			music_continuous = music_continuous and is_instance_valid(entry_music) and entry_music.playing
+			loading_music_stopped = loading_music_stopped and (not is_instance_valid(entry_music) or not entry_music.playing)
 			premature_map_music = premature_map_music or root.get_node("MapPresentation").music.playing
 		changed = changed or absf(overlay.ellipsis.modulate.a-dot_alpha)>0.05
 		max_gap = overlay.max_frame_ms
@@ -105,7 +107,7 @@ func run() -> void:
 	print("LOADING_MS=", Time.get_ticks_msec()-started, " TICKS=", ticks, " MAX_FRAME_MS=", max_gap)
 	loading_image.save_png(DIR + "loading-1920.png")
 	check(changed and ticks > 5, "ellipsis animates while loading")
-	check(music_continuous and not premature_map_music, "entry music continues alone until map reveal")
+	check(loading_music_stopped and not premature_map_music, "loading stays silent until map reveal")
 	check(not is_instance_valid(entry_music) and root.get_node("MapPresentation").music.playing, "map reveal hands audio over to map music")
 	var map = current_scene
 	print("STARTUP_STAGES=",map.startup_timings)

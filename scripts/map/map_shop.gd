@@ -164,7 +164,9 @@ func sell(state: MapLoadoutState, item_id: String, quantity: int, save_path: Str
 	if not error.is_empty(): return error
 	# Removing concrete carried units cannot sell equipped/warehoused copies.
 	# Publish money and ownership together only after the atomic write succeeds.
-	return state.restore(candidate.snapshot())
+	error = state.restore(candidate.snapshot())
+	if error.is_empty(): preload("res://scripts/entry/save_checkpoints.gd").after_action(state,save_path,"trade_sell")
+	return error
 
 func purchase(state: MapLoadoutState, item_id: String, quantity: int, save_path: String) -> String:
 	# Price and item identity come from validated content, never from a UI total.
@@ -190,4 +192,6 @@ func purchase(state: MapLoadoutState, item_id: String, quantity: int, save_path:
 	if error.is_empty(): error = MapLoadoutStore.save(candidate,save_path)
 	if not error.is_empty(): return error
 	# Money and item ownership commit in one save; a failed write publishes neither.
-	return state.restore(candidate.snapshot())
+	error = state.restore(candidate.snapshot())
+	if error.is_empty(): preload("res://scripts/entry/save_checkpoints.gd").after_action(state,save_path,"trade_buy")
+	return error

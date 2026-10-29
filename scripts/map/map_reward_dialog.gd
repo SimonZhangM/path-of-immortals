@@ -62,6 +62,8 @@ func _init() -> void:
 	error_label = _label("", Rect2(50, 395, 440, 22), 17, Color("ffb9a8"))
 	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	pick_sound = AudioStreamPlayer.new()
+	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
+	pick_sound.bus = "Effects"
 	pick_sound.stream = GameAudio.STREAMS.pick
 	pick_sound.volume_db = -4
 	add_child(pick_sound)

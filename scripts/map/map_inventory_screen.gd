@@ -22,6 +22,7 @@ const WarehouseTransfer := preload("res://scripts/map/map_warehouse_transfer.gd"
 const MUTED := Color("85989f")
 const SECTION_TITLE_COLOR := Color("f9f8c8")
 const MAIN_PANEL_BORDER_COLOR := Color("d9bb72")
+const MAIN_PANEL_BACKGROUND_COLOR := Color("061725")
 const MAIN_PANEL_BORDER_WIDTH := 3.0
 const BOARD_PANEL_BORDER_WIDTH := 2.0
 const BODY_HEIGHT := 910.0
@@ -202,6 +203,8 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 		var sounds := {}
 		for kind in ["pick", "place", "invalid"]:
 			var player := AudioStreamPlayer.new()
+			preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
+			player.bus = "Effects"
 			player.stream = GameAudio.STREAMS[kind]
 			player.volume_db = -4
 			add_child(player)
@@ -434,7 +437,7 @@ func _style_category_tab(button: Button) -> void:
 func _panel(parent: Node, node_name: String) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.name = node_name
-	panel.add_theme_stylebox_override("panel", _box(Color("0d1c26"), Color("60716d"), 18, 22))
+	panel.add_theme_stylebox_override("panel", _box(MAIN_PANEL_BACKGROUND_COLOR, Color("60716d"), 18, 22))
 	parent.add_child(panel)
 	return panel
 

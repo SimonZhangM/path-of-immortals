@@ -14,6 +14,12 @@ const LoadingOverlay = preload("res://scripts/entry/game_loading_overlay.gd")
 var entrance: Entrance
 var music: AudioStreamPlayer
 const SaveSession = preload("res://scripts/entry/game_save_session.gd")
+const SaveBrowser = preload("res://scripts/entry/save_browser.gd")
+const SaveMetadata = preload("res://scripts/entry/save_metadata.gd")
+const SettingsPanel = preload("res://scripts/settings/settings_panel.gd")
+var save_browser: Control
+var settings_panel: Control
+var save_catalog_override: RefCounted
 const GAME_SCENE := "res://scenes/maps/session_start.tscn"
 var continue_fallback_path := MapLoadoutStore.DEFAULT_PATH
 var screen := 0
@@ -37,6 +43,7 @@ var _song := SystemFont.new()
 var _tagline_font := FontVariation.new()
 
 func _ready() -> void:
+	SaveMetadata.stop()
 	preview_save_path = MapLoadoutStore.session_path(PREVIEW_SAVE)
 	get_window().title = "苍澜界 · 测试开始界面"
 	_config = JSON.parse_string(FileAccess.get_file_as_string(CONFIG))
@@ -189,8 +196,55 @@ func _resize_content() -> void:
 
 func _request_menu(action: StringName) -> void:
 	if not _allows_menu_input(): return
-	# Save selection, settings and credits will attach here when their flows are designed.
+	if action == &"load": _open_saves()
+	elif action == &"settings": _open_settings()
 	menu_requested.emit(action)
+
+func _open_settings() -> void:
+	settings_panel = SettingsPanel.new()
+	_set_menu_visible(false)
+	add_child(settings_panel)
+	settings_panel.closed.connect(func():
+		settings_panel.queue_free()
+		settings_panel = null
+		_set_menu_visible(true))
+
+func _open_saves() -> void:
+	save_browser = SaveBrowser.new()
+	if save_catalog_override != null: save_browser.catalog = save_catalog_override
+	else: save_browser.catalog.last_path = SaveSession.resume_path(continue_fallback_path)
+	_set_menu_visible(false)
+	add_child(save_browser)
+	save_browser.closed.connect(_close_saves)
+	save_browser.slot_requested.connect(_load_slot)
+	save_browser.action_requested.connect(_delete_slot)
+
+func _delete_slot(path: String) -> void:
+	if _navigating or not is_instance_valid(save_browser) or save_browser.busy: return
+	var error: String = preload("res://scripts/entry/save_operations.gd").delete_slot(save_browser.catalog,path)
+	save_browser.refresh()
+	if not error.is_empty(): save_browser.show_error(error)
+
+func _set_menu_visible(shown: bool) -> void:
+	for item: CanvasItem in [logo,tagline,primary_button,version_label]: item.visible = shown
+	for button in menu_buttons: button.visible = shown
+	continue_button.visible = shown and not SaveSession.resume_path(continue_fallback_path).is_empty()
+	error_label.hide()
+
+func _close_saves() -> void:
+	if _navigating: return
+	if is_instance_valid(save_browser):
+		save_browser.queue_free()
+	save_browser = null
+	_set_menu_visible(true)
+	music = EntryMusic.ensure_for(get_tree())
+
+func _load_slot(path: String) -> void:
+	if _navigating: return
+	_navigating = true
+	save_browser.busy = true
+	save_browser.hide()
+	await _load_game(path)
 
 func _begin_journey() -> void:
 	if not _allows_menu_input(): return
@@ -202,7 +256,7 @@ func _begin_journey() -> void:
 	transition.begin(PREPARATION_SCENE, self)
 
 func _allows_menu_input() -> bool:
-	return not _navigating and (entrance == null or entrance.allows_input())
+	return not _navigating and not is_instance_valid(save_browser) and not is_instance_valid(settings_panel) and (entrance == null or entrance.allows_input())
 
 func _exit_game() -> void:
 	if _allows_menu_input(): get_tree().quit()
@@ -210,13 +264,20 @@ func _exit_game() -> void:
 func _continue_game() -> void:
 	if not _allows_menu_input(): return
 	_navigating = true
-	var cover_image := ImageTexture.create_from_image(get_viewport().get_texture().get_image())
-	var loading := LoadingOverlay.show_for(get_tree(), cover_image)
+	await _load_game(SaveSession.resume_path(continue_fallback_path))
+
+func _show_loading_cover() -> CanvasLayer:
+	# Retain only the current landscape, excluding menu artwork and its shade.
+	return LoadingOverlay.show_for(get_tree(), background.texture)
+
+func _load_game(path: String) -> void:
+	EntryMusic.stop_for_loading(get_tree())
+	var loading := _show_loading_cover()
 	await RenderingServer.frame_post_draw
-	var path := SaveSession.resume_path(continue_fallback_path)
 	if not SaveSession.begin_resume(path):
 		loading.queue_free()
 		_navigating = false
+		_close_saves()
 		continue_button.hide()
 		error_label.text = "暂无可继续的存档。"
 		error_label.show()
@@ -225,6 +286,7 @@ func _continue_game() -> void:
 	if result != OK:
 		loading.queue_free()
 		_navigating = false
+		_close_saves()
 		SaveSession.clear_selection()
 		error_label.text = "页面打开失败，请检查场景文件。"
 		error_label.show()

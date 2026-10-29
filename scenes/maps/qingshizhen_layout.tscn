@@ -1,4 +1,4 @@
-[gd_scene load_steps=89 format=3]
+[gd_scene load_steps=85 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/map-qingshizhen.webp" id="1_bg"]
 [ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="2_dot"]
@@ -16,7 +16,6 @@
 [ext_resource type="Texture2D" path="res://assets/map-xianmenshangpu.webp" id="13_sect_shop"]
 [ext_resource type="Texture2D" path="res://assets/map-xiuliansuo.webp" id="14_training"]
 [ext_resource type="Texture2D" path="res://assets/map-home.webp" id="15_home"]
-[ext_resource type="Texture2D" path="res://assets/map-xuanshanglan.webp" id="17_bounty_board"]
 [ext_resource type="Texture2D" path="res://assets/map-gonggaolan.webp" id="18_notice_board"]
 [ext_resource type="Texture2D" path="res://assets/map-tudici.webp" id="19_shrine"]
 [ext_resource type="Texture2D" path="res://assets/mapdot2.webp" id="20_hex_sign"]
@@ -74,10 +73,6 @@ region = Rect2(10, 20, 278, 274)
 atlas = ExtResource("15_home")
 region = Rect2(15, 31, 272, 242)
 
-[sub_resource type="AtlasTexture" id="Atlas_bounty_board_icon"]
-atlas = ExtResource("17_bounty_board")
-region = Rect2(21, 16, 260, 267)
-
 [sub_resource type="AtlasTexture" id="Atlas_notice_board_icon"]
 atlas = ExtResource("18_notice_board")
 region = Rect2(18, 20, 265, 259)
@@ -113,294 +108,280 @@ region = Rect2(17, 20, 266, 262)
 [sub_resource type="Curve2D" id="Curve_1"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 4.32, 7.38, 1323, 148, 16.74, -13.5, -16.74, 13.5, 1347, 189, 36.36, -11.88, -36.36, 11.88, 1230, 223, 25.2, -19.26, -25.2, 19.26, 1145, 255, 15.84, -27, -15.84, 27, 1090, 330, 5.94, -13.5, 0, 0, 1057, 405)
+"points": PackedVector2Array(0, 0, 4.32521, 7.387914, 1324.595418, 148.158713, 16.760187, -13.514477, -16.760187, 13.514477, 1348.624359, 189.202681, 36.403847, -11.89274, -36.403847, 11.89274, 1231.483268, 223.239142, 25.230389, -19.280654, -25.230389, 19.280654, 1146.380766, 255.273458, 15.859102, -27.028954, -15.859102, 27.028954, 1091.314441, 330.353887, 5.947163, -13.514477, 0, 0, 1058.274646, 405.434316)
 }
 point_count = 6
 
 [sub_resource type="Curve2D" id="Curve_2"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -11.7, 13.14, 1695, 207, 15.3, -20.88, -15.3, 20.88, 1630, 280, -1.8, -22.5, 1.8, 22.5, 1610, 323, -12.06, -27.18, 12.06, 27.18, 1640, 405, -6.66, -12.42, 0, 0, 1677, 474)
+"points": PackedVector2Array(0, 0, -11.714109, 13.154091, 1697.044016, 207.221984, 15.31845, -20.902391, -15.31845, 20.902391, 1631.965632, 280.300268, -1.802171, -22.524129, 1.802171, 22.524129, 1611.941513, 323.346381, -12.074543, -27.209147, 12.074543, 27.209147, 1641.977691, 405.434316, -6.668031, -12.433319, 0, 0, 1679.022309, 474.508311)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_3"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 1.62, 7.74, 2591, 317, -7.56, -18.9, 7.56, 18.9, 2600, 360, -13.14, -20.34, 13.14, 20.34, 2633, 422, -7.2, -9.18, 0, 0, 2673, 473)
+"points": PackedVector2Array(0, 0, 1.621954, 7.7483, 2594.12451, 317.339946, -7.569117, -18.920268, 7.569117, 18.920268, 2603.135363, 360.386059, -13.155846, -20.361812, 13.155846, 20.361812, 2636.175158, 422.452547, -7.208683, -9.189845, 0, 0, 2676.223395, 473.507239)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_4"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -19.26, 0.9, 2992, 393, 38.16, -4.86, -38.16, 4.86, 2885, 398, 38.16, -13.5, -38.16, 13.5, 2780, 420, 19.26, -9.54, 0, 0, 2673, 473)
+"points": PackedVector2Array(0, 0, -19.283226, 0.900965, 2995.60808, 393.421448, 38.206017, -4.865212, -38.206017, 4.865212, 2888.479047, 398.42681, 38.206017, -13.514477, -38.206017, 13.514477, 2783.352427, 420.450402, 19.283226, -9.550231, 0, 0, 2676.223395, 473.507239)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_5"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 14.04, -1.8, 1057, 405, -29.34, -10.98, 29.34, 10.98, 1135, 395, -27, -35.1, 27, 35.1, 1220, 466, -29.34, -46.26, 29.34, 46.26, 1285, 590, -17.64, -23.94, 0, 0, 1383, 723)
+"points": PackedVector2Array(0, 0, 14.056931, -1.80193, 1058.274646, 405.434316, -29.375381, -10.991775, 29.375381, 10.991775, 1136.368707, 395.423592, -27.03256, -35.137641, 27.03256, 35.137641, 1221.471209, 466.499732, -29.375381, -46.309609, 29.375381, 46.309609, 1286.549593, 590.632708, -17.661272, -23.965673, 0, 0, 1384.667772, 723.775335)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_6"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 10.98, 18.9, 1057, 405, -13.5, -32.4, 13.5, 32.4, 1118, 510, 10.44, -25.56, -10.44, 25.56, 1132, 585, 41.76, -18.9, -41.76, 18.9, 1060, 652, 53.64, -17.64, -53.64, 17.64, 900, 690, 21.6, -25.2, -21.6, 25.2, 762, 750, -34.74, -24.12, 34.74, 24.12, 780, 830, -31.5, -9.72, 0, 0, 955, 884)
+"points": PackedVector2Array(0, 0, 10.993241, 18.920268, 1058.274646, 405.434316, -13.51628, -32.434745, 13.51628, 32.434745, 1119.348206, 510.546917, 10.45259, -25.58741, -10.45259, 25.58741, 1133.365089, 585.627346, 41.810359, -18.920268, -41.810359, 18.920268, 1061.278263, 652.699196, 53.704685, -17.658917, -53.704685, 17.658917, 901.085318, 690.739946, 21.626048, -25.227024, -21.626048, 25.227024, 762.918903, 750.80429, -34.781893, -24.145866, 34.781893, 24.145866, 780.940609, 830.89008, -31.537986, -9.730424, 0, 0, 956.151643, 884.947989)
 }
 point_count = 8
 
 [sub_resource type="Curve2D" id="Curve_7"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -22.14, 7.92, 2673, 473, 52.74, -14.76, -52.74, 14.76, 2550, 517, 48.6, -7.56, -48.6, 7.56, 2380, 555, 42.66, 10.44, -42.66, -10.44, 2280, 559, 24.66, 11.16, 0, 0, 2143, 497)
+"points": PackedVector2Array(0, 0, -22.166699, 7.928493, 2676.223395, 473.507239, 52.8036, -14.775828, -52.8036, 14.775828, 2553.075068, 517.554424, 48.658607, -7.568107, -48.658607, 7.568107, 2382.870063, 555.595174, 42.711444, 10.451196, -42.711444, -10.451196, 2282.749472, 559.599464, 24.689738, 11.171968, 0, 0, 2145.584263, 497.532976)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_8"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -1.44, 18.36, 2673, 473, -4.86, -37.26, 4.86, 37.26, 2665, 575, -25.02, -39.06, 25.02, 39.06, 2700, 680, -18.72, -20.16, 0, 0, 2804, 792)
+"points": PackedVector2Array(0, 0, -1.441737, 18.379689, 2676.223395, 473.507239, -4.865861, -37.299957, 4.865861, 37.299957, 2668.213747, 575.616622, -25.050172, -39.101887, 25.050172, 39.101887, 2703.255954, 680.729223, -18.742575, -20.181619, 0, 0, 2807.381369, 792.84933)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_9"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -5.94, 22.86, 2673, 473, 14.94, -32.76, -14.94, 32.76, 2640, 600, 30.6, -18, -30.6, 18, 2590, 655, 36, -20.7, -36, 20.7, 2470, 700, 27.9, -27, -27.9, 27, 2390, 770, 30.6, -34.2, -30.6, 34.2, 2315, 850, 46.62, -39.42, -46.62, 39.42, 2220, 960, 29.52, -19.62, 0, 0, 2056, 1069)
+"points": PackedVector2Array(0, 0, -5.947163, 22.884515, 2676.223395, 473.507239, 14.958016, -32.795131, -14.958016, 32.795131, 2643.1836, 600.643432, 30.636901, -18.019303, -30.636901, 18.019303, 2593.123304, 655.702413, 36.043413, -20.722198, -36.043413, 20.722198, 2472.978595, 700.75067, 27.933645, -27.028954, -27.933645, 27.028954, 2392.882122, 770.825737, 30.636901, -34.236676, -30.636901, 34.236676, 2317.791679, 850.911528, 46.676219, -39.462273, -46.676219, 39.462273, 2222.677118, 961.029491, 29.555598, -19.64104, 0, 0, 2058.479349, 1070.146381)
 }
 point_count = 8
 
 [sub_resource type="Curve2D" id="Curve_10"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 1.44, 17.28, 1677, 474, -2.34, -32.58, 2.34, 32.58, 1685, 570, -3.6, -28.8, 3.6, 28.8, 1690, 655, -2.7, -13.5, 0, 0, 1705, 730)
+"points": PackedVector2Array(0, 0, 1.441737, 17.298531, 1679.022309, 474.508311, -2.342822, -32.614938, 2.342822, 32.614938, 1687.031957, 570.61126, -3.604341, -28.830885, 3.604341, 28.830885, 1692.037986, 655.702413, -2.703256, -13.514477, 0, 0, 1707.056075, 730.782842)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_11"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -23.94, 10.44, 2143, 497, 50.94, -24.84, -50.94, 24.84, 2010, 555, 39.6, -20.7, -39.6, 20.7, 1860, 635, 27.9, -17.1, -27.9, 17.1, 1790, 670, 15.3, -10.8, 0, 0, 1705, 730)
+"points": PackedVector2Array(0, 0, -23.968869, 10.451196, 2145.584263, 497.532976, 51.001429, -24.866638, -51.001429, 24.866638, 2012.423877, 555.595174, 39.647754, -20.722198, -39.647754, 20.722198, 1862.242991, 635.680965, 27.933645, -17.118338, -27.933645, 17.118338, 1792.158577, 670.718499, 15.31845, -10.811582, 0, 0, 1707.056075, 730.782842)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_12"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 19.26, -8.1, 2143, 497, -42.66, 17.46, 42.66, -17.46, 2250, 452, -43.2, 19.26, 43.2, -19.26, 2380, 400, -37.98, 14.94, 37.98, -14.94, 2490, 345, -18.18, 5.04, 0, 0, 2591, 317)
+"points": PackedVector2Array(0, 0, 19.283226, -8.108686, 2145.584263, 497.532976, -42.711444, 17.478724, 42.711444, -17.478724, 2252.713295, 452.484718, -43.252095, 19.280654, 43.252095, -19.280654, 2382.870063, 400.428954, -38.0258, 14.956021, 38.0258, -14.956021, 2493.002713, 345.369973, -18.201923, 5.045405, 0, 0, 2594.12451, 317.339946)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_13"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 19.26, 0.54, 1383, 723, -39.06, -2.88, 39.06, 2.88, 1490, 726, -38.7, -0.72, 38.7, 0.72, 1600, 739, -18.9, 1.62, 0, 0, 1705, 730)
+"points": PackedVector2Array(0, 0, 19.283226, 0.540579, 1384.667772, 723.775335, -39.107103, -2.883088, 39.107103, 2.883088, 1491.796804, 726.778552, -38.746669, -0.720772, 38.746669, 0.720772, 1601.929454, 739.792493, -18.922792, 1.621737, 0, 0, 1707.056075, 730.782842)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_14"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -9.54, 8.46, 1383, 723, 25.74, -19.98, -25.74, 19.98, 1330, 770, 35.1, -18.72, -35.1, 18.72, 1240, 834, 51.3, -9, -51.3, 9, 1135, 874, 32.4, -1.8, 0, 0, 955, 884)
+"points": PackedVector2Array(0, 0, -9.551504, 8.469072, 1384.667772, 723.775335, 25.77104, -20.001426, -25.77104, 20.001426, 1331.603859, 770.825737, 35.142327, -18.740075, -35.142327, 18.740075, 1241.495327, 834.89437, 51.361863, -9.009651, -51.361863, 9.009651, 1136.368707, 874.937265, 32.439071, -1.80193, 0, 0, 956.151643, 884.947989)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_15"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 11.7, 5.4, 1705, 730, -24.84, -9, 24.84, 9, 1770, 760, -13.14, -3.6, 0, 0, 1870, 790)
+"points": PackedVector2Array(0, 0, 11.714109, 5.405791, 1707.056075, 730.782842, -24.869955, -9.009651, 24.869955, 9.009651, 1772.134459, 760.815013, -13.155846, -3.603861, 0, 0, 1872.25505, 790.847185)
 }
 point_count = 3
 
 [sub_resource type="Curve2D" id="Curve_16"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 2.7, 19.8, 1705, 730, -13.5, -30.6, 13.5, 30.6, 1720, 840, -28.8, -21.6, 28.8, 21.6, 1780, 900, -37.8, -23.4, 37.8, 23.4, 1880, 960, -31.68, -19.62, 31.68, 19.62, 1990, 1030, -11.88, -7.02, 0, 0, 2056, 1069)
+"points": PackedVector2Array(0, 0, 2.703256, 19.821233, 1707.056075, 730.782842, -13.51628, -30.632815, 13.51628, 30.632815, 1722.074163, 840.900804, -28.83473, -21.623164, 28.83473, 21.623164, 1782.146518, 900.965147, -37.845583, -23.425094, 37.845583, 23.425094, 1882.267109, 961.029491, -31.718203, -19.64104, 31.718203, 19.64104, 1992.399759, 1031.104558, -11.894326, -7.027528, 0, 0, 2058.479349, 1070.146381)
 }
 point_count = 6
 
 [sub_resource type="Curve2D" id="Curve_17"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -18.72, 4.14, 2804, 792, 45.72, -10.44, -45.72, 10.44, 2700, 815, 37.8, -15.3, -37.8, 15.3, 2550, 850, 23.4, -16.74, -23.4, 16.74, 2490, 900, 12.6, -7.74, 0, 0, 2420, 943)
+"points": PackedVector2Array(0, 0, -18.742575, 4.14444, 2807.381369, 792.84933, 45.775134, -10.451196, -45.775134, 10.451196, 2703.255954, 815.873995, 37.845583, -15.316408, -37.845583, 15.316408, 2553.075068, 850.911528, 23.428218, -16.757952, -23.428218, 16.757952, 2493.002713, 900.965147, 12.615194, -7.7483, 0, 0, 2422.9183, 944.01126)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_18"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 15.48, 18.54, 2804, 792, -35.28, -30.24, 35.28, 30.24, 2890, 895, -30.6, -33.3, 30.6, 33.3, 3000, 960, -13.14, -45, 13.14, 45, 3060, 1080, -2.34, -23.4, 0, 0, 3073, 1210)
+"points": PackedVector2Array(0, 0, 15.498667, 18.559882, 2807.381369, 792.84933, -35.322544, -30.272429, 35.322544, 30.272429, 2893.485077, 895.959786, -30.636901, -33.33571, 30.636901, 33.33571, 3003.617727, 961.029491, -13.155846, -45.048257, 13.155846, 45.048257, 3063.690081, 1081.158177, -2.342822, -23.425094, 0, 0, 3076.705758, 1211.297587)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_19"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -19.8, 10.08, 955, 884, 38.7, -17.28, -38.7, 17.28, 845, 940, 33.12, -15.48, -33.12, 15.48, 740, 980, 14.22, -8.28, 0, 0, 661, 1026)
+"points": PackedVector2Array(0, 0, -19.823877, 10.09081, 956.151643, 884.947989, 38.746669, -17.298531, -38.746669, 17.298531, 846.018993, 941.008043, 33.15994, -15.496601, -33.15994, 15.496601, 740.892373, 981.050938, 14.237148, -8.288879, 0, 0, 661.797106, 1027.100268)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_20"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 0.54, 24.48, 955, 884, -2.7, -40.68, 2.7, 40.68, 958, 1020, -12.96, -32.4, 12.96, 32.4, 970, 1110, -27, -39.6, 27, 39.6, 1030, 1200, -38.16, -46.44, 38.16, 46.44, 1120, 1330, -21.96, -23.04, 0, 0, 1242, 1458)
+"points": PackedVector2Array(0, 0, 0.540651, 24.506252, 956.151643, 884.947989, -2.703256, -40.723625, 2.703256, 40.723625, 959.155261, 1021.093834, -12.975629, -32.434745, 12.975629, 32.434745, 971.169732, 1111.190349, -27.03256, -39.642466, 27.03256, 39.642466, 1031.242086, 1201.286863, -38.206017, -46.489802, 38.206017, 46.489802, 1121.350618, 1331.426273, -21.986482, -23.064708, 0, 0, 1243.497739, 1459.563539)
 }
 point_count = 6
 
 [sub_resource type="Curve2D" id="Curve_21"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -21.6, 7.38, 2420, 943, 46.8, -17.46, -46.8, 17.46, 2300, 984, 43.92, -15.3, -43.92, 15.3, 2160, 1040, 18.72, -5.22, 0, 0, 2056, 1069)
+"points": PackedVector2Array(0, 0, -21.626048, 7.387914, 2422.9183, 944.01126, 46.856437, -17.478724, -46.856437, 17.478724, 2302.773591, 985.055228, 43.972964, -15.316408, -43.972964, 15.316408, 2162.604763, 1041.115282, 18.742575, -5.225598, 0, 0, 2058.479349, 1070.146381)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_22"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 12.06, 3.96, 123, 965, -26.46, -21.6, 26.46, 21.6, 190, 987, -34.2, -22.14, 34.2, 22.14, 270, 1085, -47.16, -10.26, 47.16, 10.26, 380, 1110, -27.36, -5.76, 0, 0, 532, 1142)
+"points": PackedVector2Array(0, 0, 12.074543, 3.964247, 123.148327, 966.034853, -26.491908, -21.623164, 26.491908, 21.623164, 190.229123, 988.058445, -34.241242, -22.163743, 34.241242, 22.163743, 270.325595, 1086.163539, -47.216871, -10.271003, 47.216871, 10.271003, 380.458245, 1111.190349, -27.392994, -5.766177, 0, 0, 532.641544, 1143.224665)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_23"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -12.78, 4.32, 661, 1026, 19.98, -11.52, -19.98, 11.52, 590, 1050, 10.44, -16.56, -10.44, 16.56, 550, 1090, 3.24, -9.36, 0, 0, 532, 1142)
+"points": PackedVector2Array(0, 0, -12.795412, 4.324633, 661.797106, 1027.100268, 20.004094, -11.532354, -20.004094, 11.532354, 590.711486, 1051.126005, 10.45259, -16.577759, -10.45259, 16.577759, 550.66325, 1091.168901, 3.243907, -9.370038, 0, 0, 532.641544, 1143.224665)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_24"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -19.08, 4.14, 2056, 1069, 37.08, -10.08, -37.08, 10.08, 1950, 1092, 32.58, -4.32, -32.58, 4.32, 1850, 1125, 14.58, 1.62, 0, 0, 1769, 1116)
+"points": PackedVector2Array(0, 0, -19.103009, 4.14444, 2058.479349, 1070.146381, 37.124715, -10.09081, -37.124715, 10.09081, 1952.351522, 1093.171046, 32.619289, -4.324633, -32.619289, 4.324633, 1852.230932, 1126.206434, 14.597582, 1.621737, 0, 0, 1771.133253, 1117.196783)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_25"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 25.92, -2.7, 2056, 1069, -51.12, -1.08, 51.12, 1.08, 2200, 1054, -52.02, -15.66, 52.02, 15.66, 2340, 1075, -26.82, -11.88, 0, 0, 2489, 1141)
-}
-point_count = 4
-
-[sub_resource type="Curve2D" id="Curve_26"]
-bake_interval = 4.0
-_data = {
-"points": PackedVector2Array(0, 0, -15.12, 8.82, 1769, 1116, 26.82, -10.62, -26.82, 10.62, 1685, 1165, 21.78, -0.18, -21.78, 0.18, 1620, 1175, 10.08, 1.62, 0, 0, 1564, 1166)
+"points": PackedVector2Array(0, 0, 25.951257, -2.702895, 2058.479349, 1070.146381, -51.181646, -1.081158, 51.181646, 1.081158, 2202.653, 1055.130295, -52.082731, -15.676794, 52.082731, 15.676794, 2342.821827, 1076.152815, -26.852342, -11.89274, 0, 0, 2492.001507, 1142.223592)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_27"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -8.82, 18.72, 1769, 1116, 17.82, -42.12, -17.82, 42.12, 1720, 1220, 11.88, -54.18, -11.88, 54.18, 1670, 1350, 2.88, -30.78, 0, 0, 1654, 1521)
+"points": PackedVector2Array(0, 0, -8.830636, 18.740075, 1771.133253, 1117.196783, 17.841489, -42.165169, -17.841489, 42.165169, 1722.074163, 1221.308311, 11.894326, -54.238102, -11.894326, 54.238102, 1672.013868, 1351.447721, 2.883473, -30.813008, 0, 0, 1655.994573, 1522.631099)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_28"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 9.18, 10.62, 2489, 1141, -21.78, -21.42, 21.78, 21.42, 2540, 1200, -54, -16.2, 54, 16.2, 2610, 1260, -64.8, -3.6, 64.8, 3.6, 2840, 1290, -41.94, 14.4, 41.94, -14.4, 2970, 1280, -18.54, 12.6, 0, 0, 3073, 1210)
+"points": PackedVector2Array(0, 0, 9.19107, 10.631389, 2492.001507, 1142.223592, -21.806265, -21.442971, 21.806265, 21.442971, 2543.063009, 1201.286863, -54.065119, -16.217373, 54.065119, 16.217373, 2613.147422, 1261.351206, -64.878143, -3.603861, 64.878143, 3.603861, 2843.424781, 1291.383378, -41.990576, 14.415442, 41.990576, -14.415442, 2973.58155, 1281.372654, -18.562358, 12.613512, 0, 0, 3076.705758, 1211.297587)
 }
 point_count = 6
 
 [sub_resource type="Curve2D" id="Curve_29"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -11.16, 17.64, 532, 1142, 30.96, -37.44, -30.96, 37.44, 470, 1240, 50.94, -41.22, -50.94, 41.22, 360, 1350, 31.14, -21.42, 0, 0, 187, 1469)
-}
-point_count = 4
-
-[sub_resource type="Curve2D" id="Curve_30"]
-bake_interval = 4.0
-_data = {
-"points": PackedVector2Array(0, 0, 10.08, 15.12, 1564, 1166, -15.48, -34.92, 15.48, 34.92, 1620, 1250, -6.12, -48.78, 6.12, 48.78, 1650, 1360, -0.72, -28.98, 0, 0, 1654, 1521)
+"points": PackedVector2Array(0, 0, -11.173458, 17.658917, 532.641544, 1143.224665, 30.997335, -37.48015, -30.997335, 37.48015, 470.566777, 1241.329759, 51.001429, -41.264204, -51.001429, 41.264204, 360.434127, 1351.447721, 31.177552, -21.442971, 0, 0, 187.225505, 1470.575335)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_31"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 3.42, 25.2, 3073, 1210, -3.96, -43.2, 3.96, 43.2, 3092, 1350, -2.16, -41.94, 2.16, 41.94, 3095, 1450, -1.62, -23.94, 0, 0, 3104, 1583)
+"points": PackedVector2Array(0, 0, 3.424124, 25.227024, 3076.705758, 1211.297587, -3.964775, -43.246327, 3.964775, 43.246327, 3095.72867, 1351.447721, -2.162605, -41.984976, 2.162605, 41.984976, 3098.732288, 1451.55496, -1.621954, -23.965673, 0, 0, 3107.743141, 1584.697587)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_32"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -34.38, 12.42, 2281, 1351, 72.18, -15.48, -72.18, 15.48, 2090, 1420, 70.2, -11.7, -70.2, 11.7, 1880, 1437, 40.68, -15.12, -40.68, 15.12, 1700, 1485, 8.28, -6.48, 0, 0, 1654, 1521)
+"points": PackedVector2Array(0, 0, -34.421459, 12.433319, 2283.750678, 1352.448794, 72.267043, -15.496601, -72.267043, 15.496601, 2092.52035, 1421.522788, 70.284655, -11.712547, -70.284655, 11.712547, 1882.267109, 1438.541019, 40.729056, -15.136214, -40.729056, 15.136214, 1702.050045, 1486.592493, 8.289985, -6.486949, 0, 0, 1655.994573, 1522.631099)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_33"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -52.56, 3.96, 1242, 1458, 86.76, 4.14, -57.933355, -2.764455, 950, 1480, 37.085979, 12.427298, 0, 0, 821, 1450.486575)
+"points": PackedVector2Array(0, 0, -52.623383, 3.964247, 1243.497739, 1459.563539, 86.864625, 4.14444, -58.003217, -2.76742, 951.145614, 1481.587131, 37.130701, 12.440625, 0, 0, 821.990051, 1452.042057)
 }
 point_count = 3
 
 [sub_resource type="Curve2D" id="Curve_40"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -18.453348, -6.183611, 821, 1450.486575, 23.324464, 3.588379, -70.2, -10.8, 760, 1435, 66.6, 0.9, -66.6, -0.9, 560, 1420, 67.14, -8.82, -67.14, 8.82, 390, 1430, 36.54, -7.02, 0, 0, 187, 1469)
+"points": PackedVector2Array(0, 0, -18.475601, -6.190242, 821.990051, 1452.042057, 23.352591, 3.592227, -70.284655, -10.811582, 760.916491, 1436.538874, 66.680314, 0.900965, -66.680314, -0.900965, 560.675309, 1421.522788, 67.220965, -8.829458, -67.220965, 8.829458, 390.470304, 1431.533512, 36.584064, -7.027528, 0, 0, 187.225505, 1470.575335)
 }
 point_count = 5
 
 [sub_resource type="Curve2D" id="Curve_34"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 32.04, 0.36, 1242, 1458, -57.24, -2.16, 57.24, 2.16, 1420, 1460, -42.12, -10.98, 42.12, 10.98, 1560, 1470, -16.92, -9.18, 0, 0, 1654, 1521)
+"points": PackedVector2Array(0, 0, 32.078637, 0.360386, 1243.497739, 1459.563539, -57.309026, -2.162316, 57.309026, 2.162316, 1421.712391, 1461.565684, -42.170793, -10.991775, 42.170793, 10.991775, 1561.881218, 1471.576408, -16.940404, -9.189845, 0, 0, 1655.994573, 1522.631099)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_35"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -72, 24.12, 1242, 1458, 79.56, -27.36, -79.56, 27.36, 842, 1592, 46.98, -10.26, -46.98, 10.26, 800, 1610, 39.42, -7.02, 0, 0, 581, 1649)
+"points": PackedVector2Array(0, 0, -72.086825, 24.145866, 1243.497739, 1459.563539, 79.655942, -27.38934, -79.655942, 27.38934, 843.015375, 1593.707239, 47.036654, -10.271003, -47.036654, 10.271003, 800.964727, 1611.726542, 39.467537, -7.027528, 0, 0, 581.700633, 1650.768365)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_36"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 23.94, 16.38, 187, 1469, -47.34, -27.18, 47.34, 27.18, 320, 1560, -46.98, -16.02, 46.98, 16.02, 450, 1620, -23.58, -5.22, 0, 0, 581, 1649)
+"points": PackedVector2Array(0, 0, 23.968869, 16.397566, 187.225505, 1470.575335, -47.397088, -27.209147, 47.397088, 27.209147, 320.385891, 1561.672922, -47.036654, -16.03718, 47.036654, 16.03718, 450.542659, 1621.737265, -23.608435, -5.225598, 0, 0, 581.700633, 1650.768365)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_37"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, 1.44, 21.42, 1654, 1521, 0.72, -39.42, -0.72, 39.42, 1662, 1640, 6.84, -28.8, -6.84, 28.8, 1650, 1740, 4.68, -10.8, 0, 0, 1624, 1800)
+"points": PackedVector2Array(0, 0, 1.441737, 21.442971, 1655.994573, 1522.631099, 0.720868, -39.462273, -0.720868, 39.462273, 1664.004221, 1641.758713, 6.848248, -28.830885, -6.848248, 28.830885, 1651.98975, 1741.865952, 4.685644, -10.811582, 0, 0, 1625.958396, 1801.930295)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_38"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -18.72, 10.26, 3104, 1583, 51.12, -13.86, -51.12, 13.86, 3000, 1640, 69.48, -8.1, -69.48, 8.1, 2820, 1660, 37.08, -4.5, 0, 0, 2614, 1685)
+"points": PackedVector2Array(0, 0, -18.742575, 10.271003, 3107.743141, 1584.697587, 51.181646, -13.874863, -51.181646, 13.874863, 3003.617727, 1641.758713, 69.563787, -8.108686, -69.563787, 8.108686, 2823.400663, 1661.780161, 37.124715, -4.504826, 0, 0, 2617.152246, 1686.806971)
 }
 point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_39"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -36.72, 13.5, 2614, 1685, 74.52, -20.7, -74.52, 20.7, 2410, 1760, 82.8, -10.8, -82.8, 10.8, 2200, 1800, 75.6, 5.4, -75.6, -5.4, 1950, 1820, 58.68, 3.6, -58.68, -3.6, 1780, 1770, 28.08, -5.4, 0, 0, 1624, 1800)
+"points": PackedVector2Array(0, 0, -36.764281, 13.514477, 2617.152246, 1686.806971, 74.609864, -20.722198, -74.609864, 20.722198, 2412.906241, 1761.887399, 82.899849, -10.811582, -82.899849, 10.811582, 2202.653, 1801.930295, 75.691167, 5.405791, -75.691167, -5.405791, 1952.351522, 1821.951743, 58.750763, 3.603861, -58.750763, -3.603861, 1782.146518, 1771.898123, 28.113862, -5.405791, 0, 0, 1625.958396, 1801.930295)
 }
 point_count = 6
 
 [sub_resource type="Curve2D" id="Curve_41"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -12, 26, 2420, 943, 0, -32, 0, 38, 2412, 1030, -28, -28, 0, 0, 2489, 1141)
+"points": PackedVector2Array(0, 0, -12.014471, 26.027882, 2422.9183, 944.01126, 0, -32.034316, 0, 38.040751, 2414.908652, 1031.104558, -28.033765, -28.030027, 0, 0, 2492.001507, 1142.223592)
 }
 point_count = 3
 
 [sub_resource type="Curve2D" id="Curve_42"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -2, 24, 2489, 1141, 22, -28, -20, 28, 2428, 1225, 12, -28, -14, 26, 2398, 1305, 38, -14, 0, 0, 2281, 1351)
+"points": PackedVector2Array(0, 0, -2.002412, 24.025737, 2492.001507, 1142.223592, 22.02653, -28.030027, -20.024118, 28.030027, 2430.927947, 1226.313673, 12.014471, -28.030027, -14.016883, 26.027882, 2400.89177, 1306.399464, 38.045825, -14.015013, 0, 0, 2283.750678, 1352.448794)
 }
 point_count = 4
 
@@ -588,13 +569,6 @@ route_id = "base.map.qingshizhen.route.r25"
 start_point = NodePath("../../Points/N17")
 end_point = NodePath("../../Points/N19")
 
-[node name="R26_N18_N21" type="Path2D" parent="Routes"]
-curve = SubResource("Curve_26")
-script = ExtResource("4_route")
-route_id = "base.map.qingshizhen.route.r26"
-start_point = NodePath("../../Points/N18")
-end_point = NodePath("../../Points/N21")
-
 [node name="R27_N18_N26" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_27")
 script = ExtResource("4_route")
@@ -615,13 +589,6 @@ script = ExtResource("4_route")
 route_id = "base.map.qingshizhen.route.r29"
 start_point = NodePath("../../Points/N20")
 end_point = NodePath("../../Points/N25")
-
-[node name="R30_N21_N26" type="Path2D" parent="Routes"]
-curve = SubResource("Curve_30")
-script = ExtResource("4_route")
-route_id = "base.map.qingshizhen.route.r30"
-start_point = NodePath("../../Points/N21")
-end_point = NodePath("../../Points/N26")
 
 [node name="R31_N22_N27" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_31")
@@ -711,7 +678,7 @@ end_point = NodePath("../../Points/N23")
 z_index = 2
 
 [node name="N01" type="Sprite2D" parent="Points"]
-position = Vector2(1323, 148)
+position = Vector2(1324.595418, 148.158713)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -719,7 +686,7 @@ point_id = "base.map.qingshizhen.point.n01"
 location_note = "宗门商铺"
 
 [node name="N02" type="Sprite2D" parent="Points"]
-position = Vector2(1695, 207)
+position = Vector2(1697.044016, 207.221984)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -727,7 +694,7 @@ point_id = "base.map.qingshizhen.point.n02"
 location_note = "北侧出口"
 
 [node name="N03" type="Sprite2D" parent="Points"]
-position = Vector2(2591, 317)
+position = Vector2(2594.124510, 317.339946)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -735,7 +702,7 @@ point_id = "base.map.qingshizhen.point.n03"
 location_note = "自己家"
 
 [node name="N04" type="Sprite2D" parent="Points"]
-position = Vector2(2992, 393)
+position = Vector2(2995.608080, 393.421448)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -743,7 +710,7 @@ point_id = "base.map.qingshizhen.point.n04"
 location_note = "东北出口"
 
 [node name="N05" type="Sprite2D" parent="Points"]
-position = Vector2(1057, 405)
+position = Vector2(1058.274646, 405.434316)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -751,35 +718,35 @@ point_id = "base.map.qingshizhen.point.n05"
 location_note = "修炼所"
 
 [node name="N06" type="Sprite2D" parent="Points"]
-position = Vector2(2673, 473)
+position = Vector2(2676.223395, 473.507239)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n06"
 
 [node name="N07" type="Sprite2D" parent="Points"]
-position = Vector2(1677, 474)
+position = Vector2(1679.022309, 474.508311)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n07"
 
 [node name="N08" type="Sprite2D" parent="Points"]
-position = Vector2(2143, 497)
+position = Vector2(2145.584263, 497.532976)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n08"
 
 [node name="N09" type="Sprite2D" parent="Points"]
-position = Vector2(1383, 723)
+position = Vector2(1384.667772, 723.775335)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n09"
 
 [node name="N10" type="Sprite2D" parent="Points"]
-position = Vector2(1705, 730)
+position = Vector2(1707.056075, 730.782842)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -787,7 +754,7 @@ point_id = "base.map.qingshizhen.point.n10"
 location_note = "水井"
 
 [node name="N11" type="Sprite2D" parent="Points"]
-position = Vector2(1870, 790)
+position = Vector2(1872.255050, 790.847185)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -795,7 +762,7 @@ point_id = "base.map.qingshizhen.point.n11"
 location_note = "许愿树"
 
 [node name="N12" type="Sprite2D" parent="Points"]
-position = Vector2(2804, 792)
+position = Vector2(2807.381369, 792.849330)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -803,7 +770,7 @@ point_id = "base.map.qingshizhen.point.n12"
 location_note = "炼丹房"
 
 [node name="N13" type="Sprite2D" parent="Points"]
-position = Vector2(955, 884)
+position = Vector2(956.151643, 884.947989)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -811,7 +778,7 @@ point_id = "base.map.qingshizhen.point.n13"
 location_note = "客栈"
 
 [node name="N14" type="Sprite2D" parent="Points"]
-position = Vector2(2420, 943)
+position = Vector2(2422.918300, 944.011260)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -819,7 +786,7 @@ point_id = "base.map.qingshizhen.point.n14"
 location_note = "药材铺"
 
 [node name="N15" type="Sprite2D" parent="Points"]
-position = Vector2(123, 965)
+position = Vector2(123.148327, 966.034853)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -827,7 +794,7 @@ point_id = "base.map.qingshizhen.point.n15"
 location_note = "西侧桥头出口"
 
 [node name="N16" type="Sprite2D" parent="Points"]
-position = Vector2(661, 1026)
+position = Vector2(661.797106, 1027.100268)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -835,14 +802,14 @@ point_id = "base.map.qingshizhen.point.n16"
 location_note = "商铺"
 
 [node name="N17" type="Sprite2D" parent="Points"]
-position = Vector2(2056, 1069)
+position = Vector2(2058.479349, 1070.146381)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n17"
 
 [node name="N18" type="Sprite2D" parent="Points"]
-position = Vector2(1769, 1116)
+position = Vector2(1771.133253, 1117.196783)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -850,7 +817,7 @@ point_id = "base.map.qingshizhen.point.n18"
 location_note = "公告栏"
 
 [node name="N19" type="Sprite2D" parent="Points"]
-position = Vector2(2489, 1141)
+position = Vector2(2492.001507, 1142.223592)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -858,22 +825,14 @@ point_id = "base.map.qingshizhen.point.n19"
 location_note = "医馆"
 
 [node name="N20" type="Sprite2D" parent="Points"]
-position = Vector2(532, 1142)
+position = Vector2(532.641544, 1143.224665)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n20"
 
-[node name="N21" type="Sprite2D" parent="Points"]
-position = Vector2(1564, 1166)
-scale = Vector2(0.224, 0.224)
-texture = ExtResource("2_dot")
-script = ExtResource("3_point")
-point_id = "base.map.qingshizhen.point.n21"
-location_note = "悬赏栏"
-
 [node name="N22" type="Sprite2D" parent="Points"]
-position = Vector2(3073, 1210)
+position = Vector2(3076.705758, 1211.297587)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -881,7 +840,7 @@ point_id = "base.map.qingshizhen.point.n22"
 location_note = "植物"
 
 [node name="N23" type="Sprite2D" parent="Points"]
-position = Vector2(2281, 1351)
+position = Vector2(2283.750678, 1352.448794)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -889,7 +848,7 @@ point_id = "base.map.qingshizhen.point.n23"
 location_note = "铁匠铺"
 
 [node name="N24" type="Sprite2D" parent="Points"]
-position = Vector2(1242, 1458)
+position = Vector2(1243.497739, 1459.563539)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -897,7 +856,7 @@ point_id = "base.map.qingshizhen.point.n24"
 location_note = "驿站"
 
 [node name="N25" type="Sprite2D" parent="Points"]
-position = Vector2(187, 1469)
+position = Vector2(187.225505, 1470.575335)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -905,21 +864,21 @@ point_id = "base.map.qingshizhen.point.n25"
 location_note = "西南出口"
 
 [node name="N31" type="Sprite2D" parent="Points"]
-position = Vector2(821, 1450.486575)
+position = Vector2(821.990051, 1452.042057)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n31"
 
 [node name="N26" type="Sprite2D" parent="Points"]
-position = Vector2(1654, 1521)
+position = Vector2(1655.994573, 1522.631099)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n26"
 
 [node name="N27" type="Sprite2D" parent="Points"]
-position = Vector2(3104, 1583)
+position = Vector2(3107.743141, 1584.697587)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -927,21 +886,21 @@ point_id = "base.map.qingshizhen.point.n27"
 location_note = "土地祠"
 
 [node name="N28" type="Sprite2D" parent="Points"]
-position = Vector2(581, 1649)
+position = Vector2(581.700633, 1650.768365)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n28"
 
 [node name="N29" type="Sprite2D" parent="Points"]
-position = Vector2(2614, 1685)
+position = Vector2(2617.152246, 1686.806971)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
 point_id = "base.map.qingshizhen.point.n29"
 
 [node name="N30" type="Sprite2D" parent="Points"]
-position = Vector2(1624, 1800)
+position = Vector2(1625.958396, 1801.930295)
 scale = Vector2(0.224, 0.224)
 texture = ExtResource("2_dot")
 script = ExtResource("3_point")
@@ -1037,15 +996,6 @@ texture = SubResource("Atlas_round_sign")
 [node name="RestIcon" type="Sprite2D" parent="Points/N03/Sign"]
 scale = Vector2(0.772, 0.772)
 texture = SubResource("Atlas_home_icon")
-
-[node name="Sign" type="Sprite2D" parent="Points/N21"]
-position = Vector2(0, -223.928571)
-scale = Vector2(0.95663265, 0.95663265)
-texture = SubResource("Atlas_forge_sign")
-
-[node name="LocationIcon" type="Sprite2D" parent="Points/N21/Sign"]
-scale = Vector2(0.787, 0.787)
-texture = SubResource("Atlas_bounty_board_icon")
 
 [node name="Sign" type="Sprite2D" parent="Points/N18"]
 position = Vector2(0, -223.928571)

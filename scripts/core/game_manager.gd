@@ -13,6 +13,7 @@ signal battle_review_requested
 signal battle_exit_requested
 
 const ITEM_ID := "base.test.fire_sword"
+const Settings = preload("res://scripts/settings/game_settings.gd")
 const ENEMY_ID := "base.enemy.wild_dog"
 const CLAW_ID := "base.weapon.dog_claw"
 const ARMOR_ID := "base.armor.iron_armor"
@@ -207,6 +208,8 @@ func restart() -> void:
 	adjustment_open = false
 	interaction_epoch += 1
 	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense)
+	# A new encounter takes the preference once; in-battle commands stay local.
+	simulation.clock.set_speed(float(Settings.value("battle_speed", 1.0)))
 	if not player_snapshot.is_empty():
 		for resource: String in player_snapshot.get("resources", {}):
 			if resource in ["hp", "stamina", "spirit"]:

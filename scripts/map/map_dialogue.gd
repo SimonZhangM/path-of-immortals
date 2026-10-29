@@ -4,7 +4,11 @@ extends Control
 signal advance_requested
 
 const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
+const Settings = preload("res://scripts/settings/game_settings.gd")
+const Playback = preload("res://scripts/dialogue/dialogue_playback.gd")
 var player_status: MapPlayerStatus
+var playback := Playback.new()
+var _phase := ""
 
 var background: TextureRect
 var portrait: TextureRect
@@ -112,6 +116,7 @@ func prepare(registry: MapEventRegistry) -> String:
 	return ""
 
 func present(event: Dictionary, line: String, speaker_id: String = "", phase: String = "dialogue") -> void:
+	_phase = phase
 	_art = event.presentation
 	background.texture = _textures[event.id].background
 	portrait.texture = _textures[event.id].speakers.get(speaker_id, _textures[event.id].portrait)
@@ -124,6 +129,7 @@ func present(event: Dictionary, line: String, speaker_id: String = "", phase: St
 		speaker_name.text = speaker.get("name", event.get("speaker_name", ""))
 	next_marker.texture = _textures[event.id].get("next_marker")
 	text_label.text = line
+	playback.begin([text_label],str(Settings.value("dialogue_speed","medium")),phase=="dialogue")
 	background.visible = phase == "dialogue"
 	portrait.visible = phase == "dialogue"
 	text_label.visible = phase == "dialogue"
@@ -135,6 +141,19 @@ func present(event: Dictionary, line: String, speaker_id: String = "", phase: St
 	show()
 	_layout()
 
+func _process(delta: float) -> void:
+	if not is_visible_in_tree() or _phase!="dialogue" or get_tree().paused:
+		playback.suspend()
+		return
+	if playback.advance(delta,str(Settings.value("dialogue_speed","medium")),bool(Settings.value("dialogue_auto",false))):
+		advance_requested.emit()
+
+func request_advance() -> void:
+	if not is_visible_in_tree(): return
+	if _phase=="dialogue" and playback.finish_reveal(): return
+	playback.suspend()
+	advance_requested.emit()
+
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -145,7 +164,7 @@ func _gui_input(event: InputEvent) -> void:
 			var clicked: bool = _pressed and not _dragged and event.position.distance_to(_press_position) <= 6.0
 			_pressed = false
 			if clicked:
-				advance_requested.emit()
+				request_advance()
 	elif event is InputEventMouseMotion and _pressed:
 		_dragged = _dragged or event.position.distance_to(_press_position) > 6.0
 	accept_event()
@@ -154,6 +173,7 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT or what == NOTIFICATION_VISIBILITY_CHANGED:
 		_pressed = false
 		_dragged = false
+		playback.suspend()
 
 func _layout() -> void:
 	if _art.is_empty() or size.x <= 0 or size.y <= 0:

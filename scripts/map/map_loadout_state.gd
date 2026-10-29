@@ -58,6 +58,13 @@ static func valid_map_location(value: Variant) -> bool:
 	if value.is_empty(): return true
 	return value.size() == 2 and value.get("map_id") is String and value.get("point_id") is String and value.map_id.begins_with("base.map.") and value.map_id.length() <= 128 and value.point_id.begins_with(value.map_id + ".point.") and value.point_id.length() > value.map_id.length() + 7 and value.point_id.length() <= 256
 
+static func normalized_map_location(value: Dictionary) -> Dictionary:
+	var location := value.duplicate()
+	# The removed riverside board now resumes at the neighbouring surviving board.
+	if location.get("map_id") == "base.map.qingshizhen" and location.get("point_id") == "base.map.qingshizhen.point.n21":
+		location.point_id = "base.map.qingshizhen.point.n18"
+	return location
+
 func set_map_location(map_id: String, point_id: String) -> bool:
 	var value := {"map_id": map_id, "point_id": point_id}
 	if not valid_map_location(value) or map_location == value: return false
@@ -716,7 +723,7 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 		offer.quantity = int(offer.quantity)
 		offer.days = int(offer.days)
 	map_visited = explored.duplicate(true)
-	map_location = location.duplicate()
+	map_location = normalized_map_location(location)
 	for grant: Dictionary in granted_rewards.values():
 		grant.quantity = int(grant.quantity)
 	formations = restored_formations

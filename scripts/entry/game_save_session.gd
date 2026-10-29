@@ -2,6 +2,8 @@ extends RefCounted
 ## Only remembers which save was last played; game saves remain authoritative.
 const INDEX_PATH := "user://last_game_session.json"
 const PREVIEW_PATH := "user://entry_flow_preview.json"
+const Slots = preload("res://scripts/entry/save_slot_policy.gd")
+const Files = preload("res://scripts/entry/save_file.gd")
 static var index_path := INDEX_PATH
 static var active_path := ""
 static var resume_requested := false
@@ -25,6 +27,20 @@ static func has_save(path: String) -> bool:
 		and (raw.version == 1 or raw.get("owned_units") is Dictionary)
 
 static func resume_path(legacy_path: String) -> String:
+	# The two shared checkpoint kinds are ordered by their actual save time.
+	var latest := ""
+	var latest_time := -1
+	if not legacy_path.is_empty():
+		for candidate in [legacy_path.get_base_dir().path_join("quick_save.json"),legacy_path]:
+			if not has_save(candidate): continue
+			var source_file: String = candidate if FileAccess.file_exists(candidate) else candidate+".bak"
+			var metadata: Variant = Files.read(source_file).get("save_info",{})
+			var info: Dictionary = metadata if metadata is Dictionary else {}
+			var timestamp := int(info.get("saved_at_unix_ms",int(info.get("saved_at_unix",FileAccess.get_modified_time(source_file)))*1000))
+			if timestamp>latest_time:
+				latest = candidate
+				latest_time = timestamp
+	if not latest.is_empty(): return latest
 	var source := index_path if FileAccess.file_exists(index_path) else index_path + ".bak"
 	if not FileAccess.file_exists(source):
 		# One-time compatibility for the existing single-save installation.
@@ -38,10 +54,10 @@ static func resume_path(legacy_path: String) -> String:
 	var path: Variant = parser.data.get("path", "")
 	if not path is String or parser.data.get("version", 0) != 1: return ""
 	# A missing/damaged last-used save never silently selects another character.
-	return path if has_save(path) else ""
+	return path if not Slots.is_working(path) and has_save(path) else ""
 
 static func remember(path: String) -> Error:
-	if path.is_empty() or path == PREVIEW_PATH: return OK
+	if path.is_empty() or path == PREVIEW_PATH or Slots.is_working(path): return OK
 	if not has_save(path): return ERR_INVALID_DATA
 	if index_path == INDEX_PATH:
 		var absolute := ProjectSettings.globalize_path(path).replace("\\", "/")

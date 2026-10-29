@@ -17,8 +17,8 @@ func click_at(point: Vector2) -> void:
 
 func space(echo := false, physical := false) -> void:
 	var event := InputEventKey.new()
-	if physical: event.physical_keycode = KEY_SPACE
-	else: event.keycode = KEY_SPACE
+	event.physical_keycode = KEY_SPACE
+	if not physical: event.keycode = KEY_SPACE
 	event.pressed = true
 	event.echo = echo
 	root.push_input(event,true)
@@ -37,6 +37,9 @@ func seen(map: Node) -> int:
 	return int(map.loadout.narrative.npcs[NPC].seen[WELCOME])
 
 func run() -> void:
+	# This suite exercises one-click routing; reveal-first behavior is covered
+	# separately by settings_gameplay_tests with the normal medium setting.
+	root.get_node("GameSettings").apply_values({"dialogue_speed":"instant","dialogue_auto":false,"background_pause":false})
 	AudioServer.set_bus_mute(0,true)
 	root.content_scale_size = Vector2i.ZERO
 	root.size = Vector2i(2560,1440)
@@ -51,7 +54,10 @@ func run() -> void:
 	map.travel.current_node_id = CLINIC_POINT
 	map.travel.map_position = map.travel.node_positions[CLINIC_POINT]
 	map.travel.stop_at_current_node()
+	# Match an actual arrival so the exploration layer reveals the clinic.
+	map.travel.node_arrived.emit(CLINIC_POINT)
 	await open_clinic(map)
+	if not map.clinic_dialog.visible: quit(1); return
 	var dialog: MapClinicDialog = map.clinic_dialog
 	for surface in ["scene","bubble","blank","continue"]:
 		await reset_greeting(map)

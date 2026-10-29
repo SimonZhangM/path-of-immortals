@@ -1,0 +1,16 @@
+{
+  "title_texture": "res://assets/UI-task-left-title.webp",
+  "selected_texture": "res://assets/UI-task-left-selected.webp",
+  "selected_border_y": [98, 638],
+  "categories": [
+    {"id": "all", "label": "全部任务", "icon": "res://assets/UI-task-left-total.webp"},
+    {"id": "main", "label": "主线任务", "icon": "res://assets/UI-task-left-zhu.webp"},
+    {"id": "side", "label": "支线任务", "icon": "res://assets/UI-task-left-zhi.webp"},
+    {"id": "character", "label": "人物任务", "icon": "res://assets/UI-task-left-renwu.webp"},
+    {"id": "inheritance", "label": "传承任务", "icon": "res://assets/UI-task-left-chuancheng.webp"},
+    {"id": "commission", "label": "委托任务", "icon": "res://assets/UI-task-left-weituo.webp"},
+    {"id": "sect", "label": "宗门任务", "icon": "res://assets/UI-task-left-zongmen.webp"},
+    {"id": "encounter", "label": "奇遇任务", "icon": "res://assets/UI-task-left-qiyu.webp"},
+    {"id": "other", "label": "其他任务", "icon": "res://assets/UI-task-left-qita.webp"}
+  ]
+}

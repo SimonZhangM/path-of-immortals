@@ -2,6 +2,7 @@ class_name MapGatheringRewards
 extends RefCounted
 
 const SPIRIT_STONE_ID := "base.currency.spirit_stones"
+const Checkpoints = preload("res://scripts/entry/save_checkpoints.gd")
 
 # A presentation record only: currency never enters the item registry or bag.
 static func record_for(records: Dictionary, id: String) -> Dictionary:
@@ -82,4 +83,8 @@ static func prepare(state: MapLoadoutState, event: Dictionary, method_id: String
 static func claim(state: MapLoadoutState, event: Dictionary, path: String) -> String:
 	var offer: Dictionary = state.gathering_offers.get(event.id,{})
 	if offer.is_empty() or offer.item_id != event.item_id: return "尚未产生采集结果。"
-	return MapLoadoutStore.claim_reward(state,offer,path)
+	var already_claimed := state.has_reward(offer.id)
+	var error := MapLoadoutStore.claim_reward(state,offer,path)
+	if error.is_empty() and not already_claimed:
+		Checkpoints.after_action(state,path,"gathering_complete")
+	return error

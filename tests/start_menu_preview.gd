@@ -76,7 +76,11 @@ func run() -> void:
 		quit(1 if failures else 0)
 		return
 	page.menu_requested.connect(func(action: StringName): actions.append(action))
-	for index in 3: await click(page.menu_buttons[index])
+	for index in 3:
+		await click(page.menu_buttons[index])
+		if index == 0:
+			await click(page.save_browser.menu_back_button)
+			await settle()
 	check(actions == [&"load", &"settings", &"credits"], "three independent menu hooks route exactly once")
 	check(current_scene == page, "reserved menu actions do not create or load a character")
 	await click(page.primary_button)

@@ -3,12 +3,17 @@ extends RefCounted
 
 const DEFAULT_PATH := "user://inventory_loadout.json"
 const GameSaveSession = preload("res://scripts/entry/game_save_session.gd")
+const SaveMetadata = preload("res://scripts/entry/save_metadata.gd")
+const SaveSlots = preload("res://scripts/entry/save_slot_policy.gd")
 
 static func session_path(configured: String) -> String:
 	if not GameSaveSession.active_path.is_empty(): return GameSaveSession.active_path
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--loadout-save="):
 			return argument.trim_prefix("--loadout-save=")
+	if configured==DEFAULT_PATH:
+		var latest := GameSaveSession.resume_path(configured)
+		if not latest.is_empty(): return latest
 	return configured
 
 static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dictionary:
@@ -67,6 +72,7 @@ static func _load_inventory(state: MapLoadoutState, path: String) -> String:
 		if not FileAccess.file_exists(path + ".bak"):
 			if GameSaveSession.resume_requested:
 				return "最后使用的存档已不存在，无法继续修行。"
+			if SaveSlots.is_system(path): return ""
 			return save(state, path)
 		path += ".bak"
 	var file := FileAccess.open(path, FileAccess.READ)
@@ -88,7 +94,7 @@ static func _load_inventory(state: MapLoadoutState, path: String) -> String:
 		var item := state.registry.get_item(str(placement.get("item_id", "")))
 		if item != null and item.category == "book": removed_book = true
 	if removed_book or parser.data.get("formations", []) != state.formations or path != target_path or not parser.data.has("calendar") or not parser.data.has("bag_capacity") or parser.data.get("respawn_rules_version",0)!=MapLoadoutState.RESPAWN_RULES.VERSION or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants:
-		error = save(state, target_path)
+		if not SaveSlots.is_snapshot(target_path): error = save(state, target_path)
 	return error
 
 static func candidate(state: MapLoadoutState) -> Dictionary:
@@ -102,13 +108,14 @@ static func candidate(state: MapLoadoutState) -> Dictionary:
 	copy.knowledge.restore(state.knowledge.snapshot(), state.registry.library, int(state.registry.get_cultivation(state.cultivation_rank_id).order))
 	return {"state":copy,"error":copy.restore(state.snapshot())}
 
-static func save(state: MapLoadoutState, path: String) -> String:
+static func save(state: MapLoadoutState, path: String, metadata_source := "") -> String:
 	if path.is_empty():
 		return ""
+	if SaveSlots.is_snapshot(path): return "可读取的存档为独立快照，即时结算不能覆盖。"
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		return "无法保存行囊，请检查本地目录的写入权限。"
-	file.store_string(JSON.stringify(state.snapshot(), "\t"))
+	file.store_string(JSON.stringify(SaveMetadata.stamp(state.snapshot(), path, metadata_source), "\t"))
 	file.flush()
 	var error := file.get_error()
 	file.close()

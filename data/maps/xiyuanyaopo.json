@@ -17,7 +17,8 @@
   "layout_scene": "res://scenes/maps/xiyuanyaopo_layout.tscn",
   "sign_motion": "res://data/ui/map_sign_motion.json",
   "start_point": "base.map.xiyuanyaopo.point.n01",
-  "show_map_title": false,
+  "show_map_title": true,
+  "title_image": "res://assets/map-title-xiyuanyaopo.webp",
   "exits": [
     {
       "point_id": "base.map.xiyuanyaopo.point.n01",

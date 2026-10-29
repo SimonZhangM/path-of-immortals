@@ -1,0 +1,48 @@
+{
+  "source_size": [3156, 2412],
+  "locations": {
+    "base.world_location.wumingjiuci": {
+      "name": "无名旧祠", "map_id": "", "position": [2000, 1728], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "region_id": "base.world_region.qinglanshanlu",
+      "picture": "res://assets/map-worldmap-wumingjiuci.webp",
+      "title_image": "res://assets/map-worldmap-title-wumingjiuci.webp",
+      "phrase": "苔深掩径 · 古祠生寒",
+      "description": "荒草侵阶，残瓦积尘，久无人续的香火只余一庭寂静。风过朽梁，暗处窸窣作响，似有旧事尚未随岁月散尽。"
+    },
+    "base.world_location.qingshihewan": {
+      "name": "青石河湾", "map_id": "base.map.qingshihewan", "position": [2047, 1751], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "map_definition": "res://data/maps/qingshihewan.json",
+      "region_id": "base.world_region.qinglanshanlu",
+      "picture": "res://assets/map-worldmap-qingshihewan.webp",
+      "title_image": "res://assets/map-worldmap-title-qingshihewan.webp",
+      "phrase": "碧水回环 · 林深藏机",
+      "description": "溪水绕过青石，林影落入浅湾，岸畔药草随风轻摇。过了桥，旧径渐入山深处，草木间的兽迹与遗落之物，正等来人细察。"
+    },
+    "base.world_location.qingshizhen": {
+      "name": "青石镇", "map_id": "base.map.qingshizhen", "position": [2381, 1776], "marker_texture": "res://assets/UI-map-size1.webp", "marker_width": 40,
+      "map_definition": "res://data/maps/qingshizhen.json",
+      "region_id": "base.world_region.qinglanshanlu",
+      "picture": "res://assets/map-worldmap-qingshizhen.webp",
+      "title_image": "res://assets/map-worldmap-title-qingshizhen.webp",
+      "phrase": "石桥烟火 · 山外仙缘",
+      "description": "青石铺街，溪水绕屋，炉火与药香伴着市声悠悠散开。有人在此安居，也有人自此辞家，循着山路去寻仙缘。"
+    },
+    "base.world_location.xiyuanyaopo": {
+      "name": "溪源药坡", "map_id": "base.map.xiyuanyaopo", "position": [2569, 1746], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "map_definition": "res://data/maps/xiyuanyaopo.json",
+      "region_id": "base.world_region.qinglanshanlu",
+      "picture": "res://assets/map-worldmap-xiyuanyaopo.webp",
+      "title_image": "res://assets/map-worldmap-title-xiyuanyaopo.webp",
+      "phrase": "溪声引路 · 草木含灵",
+      "description": "细溪穿石而下，草木逐坡而生，晨露润着药叶，崖隙偶露矿光。采药人沿溪寻香，也在层岩之间寻觅山野的馈赠。"
+    }
+  },
+  "regions": {
+    "base.world_region.qinglanshanlu": {
+      "name": "青岚山麓",
+      "connected_regions": ["天河商域", "万灵南域"],
+      "compact_description": "清溪绕镇，药草与矿脉散落林坡。山下炊烟未歇，山中旧迹犹存；循径入山，便由烟火走入未识天地。",
+      "description": "青岚山势渐缓，清溪绕过村镇，药草与矿脉散落于林坡之间。山下炊烟未歇，山中旧迹犹存；行过石桥，循径入山，便从熟悉的烟火，走入未识的天地。"
+    }
+  }
+}

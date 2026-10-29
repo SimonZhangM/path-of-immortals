@@ -1,0 +1,27 @@
+{
+  "dialogue_speed": "medium",
+  "dialogue_auto": false,
+  "battle_speed": 1.0,
+  "background_pause": true,
+  "auto_save": true,
+  "auto_save_minutes": 10,
+  "quick_save": true,
+  "invert_zoom": false,
+  "shortcut_hints": true,
+  "fps_limit": 60,
+  "volume_master": 1.0,
+  "volume_music": 1.0,
+  "volume_effects": 1.0,
+  "background_mute": true,
+  "bindings": {
+    "map_tasks": 84,
+    "map_inventory": 73,
+    "map_techniques": 71,
+    "map_world_map": 77,
+    "dialogue_continue": 32,
+    "battle_pause": 32,
+    "speed_half": 4194332,
+    "speed_normal": 4194333,
+    "speed_double": 4194334
+  }
+}

@@ -7,7 +7,9 @@ var player: AudioStreamPlayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
 	player = AudioStreamPlayer.new()
+	player.bus = "Effects"
 	player.stream = load("res://assets/click.ogg")
 	player.volume_db = -4.0
 	player.max_polyphony = 8

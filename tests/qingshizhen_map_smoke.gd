@@ -21,13 +21,13 @@ func _run() -> void:
 	var points: Node2D = screen.content.get_node("Points")
 	var routes: Node2D = screen.content.get_node("Routes")
 	_check(screen.definition.id == "base.map.qingshizhen", "town definition loads")
-	_check(points.get_child_count() == 31, "thirty existing nodes plus new road node")
-	_check(routes.get_child_count() == 42, "town includes two new clinic connections")
+	_check(points.get_child_count() == 30, "removed riverside board is excluded")
+	_check(routes.get_child_count() == 40, "board branches removed; clinic connections retained")
 	_check(screen.content.get_node("Background").texture.resource_path == "res://assets/map-qingshizhen.webp", "plain town artwork is used instead of marked reference")
-	_check(screen.content.get_node("Background").texture.get_size() == Vector2(3317, 1865), "town artwork retains original dimensions")
+	_check(screen.content.get_node("Background").texture.get_size() == Vector2(3321, 1867), "town artwork uses updated dimensions")
 	_check(screen.travel.current_node_id == "base.map.qingshizhen.point.n25", "player starts at southwest bridge node")
-	_check(screen.player.position.distance_to(Vector2(187, 1469)) < 1.0, "player stands at current southwest bridge entry")
-	_check(points.get_node("N31").position.distance_to(Vector2(821,1450.486575)) < .01, "new node at marked roadside house")
+	_check(screen.player.position.distance_to(Vector2(187, 1469)*Vector2(3321.0/3317.0,1867.0/1865.0)) < 1.0, "player stands at rescaled southwest bridge entry")
+	_check(points.get_node("N31").position.distance_to(Vector2(821,1450.486575)*Vector2(3321.0/3317.0,1867.0/1865.0)) < .01, "roadside house node follows updated artwork")
 	_check(screen.travel.adjacency["base.map.qingshizhen.point.n31"].size() == 2, "new node joins both halves of original road")
 	_check(screen.event_registry.events.size() == 7, "five shops, home rest and clinic registered")
 	_check(not screen.status_header.map_title.visible, "river-bay title artwork is hidden in town")
@@ -46,7 +46,6 @@ func _run() -> void:
 		"N16": "res://assets/map-shangpu.webp",
 		"N18": "res://assets/map-gonggaolan.webp",
 		"N19": "res://assets/map-yiguan.webp",
-		"N21": "res://assets/map-xuanshanglan.webp",
 		"N22": "res://assets/map-zhiwu.webp",
 		"N23": "res://assets/map-tiejiangpu.webp",
 		"N24": "res://assets/map-yizhan.webp",
@@ -93,7 +92,7 @@ func _run() -> void:
 		await RenderingServer.frame_post_draw
 		_check(root.get_texture().get_image().save_png("res://artifacts/qingshizhen_start.png") == OK, "town starting view renders")
 		screen._zoom_at(1.0, Vector2(960, 540))
-		screen.content.position = screen.map_viewport.size * 0.5 - Vector2(3317, 1865) * screen.content.scale * 0.5
+		screen.content.position = screen.map_viewport.size * 0.5 - Vector2(3321, 1867) * screen.content.scale * 0.5
 		await RenderingServer.frame_post_draw
 		_check(root.get_texture().get_image().save_png("res://artifacts/qingshizhen_overview.png") == OK, "town overview renders")
 	screen.queue_free()

@@ -1,5 +1,35 @@
 # 苍澜界
 
+任务页视觉补充（2026-10-29）：两态任务框上边裁切已修复；小图在框上方，贴左并等比铺满条目高度，75%不透明度，左5%／上下5%渐隐，右侧从中心开始先快后慢淡至全透明。两行文字从图右缘＋10px开始，提要改华为；右栏底图亮度75%。中右底图仍按圆角边框裁切，排序框宽174设计px。重启按T查看。[最新效果](docs/task-panel-design.md)。纯视觉检查直接运行task_list_tests.gd并传用户参数`-- --visual-only`，不运行鼠标检查。
+
+任务中栏（2026-10-29最新）：重启按T查看第一张《药香如常》任务卡；点击加亮，“全部／主线”可见，其他类别目前为空。标题右侧可切换接收时间／接收地点／更新时间排序，目前只有一项，顺序不会变化。[布局及八类标签色卡](docs/task-panel-design.md)。本轮是列表展示，任务接取／进度／奖励与右栏尚未接入，覆盖下方旧中栏空白说明。直接专项：`./tests/run_t01.ps1 -Script res://tests/task_list_tests.gd -Render`。
+
+**序章任务资料：**先读[总览与接续指南](docs/序章任务/00_总览与接续指南.md)，完整任务与对白见[九项任务正文](docs/序章任务/01_序章任务正文.md)。日常探索、候选、编写规范与实施待办均在同目录；设计文稿与游戏实装分别记录。
+
+任务页（2026-10-28）：重启游戏，在游历地图按T或点右上任务按钮查看；再次按T、Esc或任务按钮返回。左栏已加入新title及全部／主线／支线／人物／传承／委托／宗门／奇遇／其他九个入口，每行使用对应图标，点击切换UI-task-left-selected高亮。最新title基于中心缩至80%，分类文字恢复常规字重，行分隔线贴合高亮框，三栏共用#061725底色；左栏叠加UI-task-left-bg，等比适宽、贴底后下移30设计px，图片顶部20%向上渐隐并按圆角边框裁切，中右栏保持纯色。中右任务内容尚未接入。T可在系统设置→操作改绑。[布局与验证范围](docs/task-panel-design.md)；完整分类专项 `./tests/run_t01.ps1 -Script res://tests/task_sidebar_tests.gd -Render`，纯视觉改动直接运行该Godot脚本并传用户参数 `-- --visual-only`。
+
+采集与界面补充（2026-10-28）：采药／采矿收下物品或灵石后自动生成快速档（需开启快速存档），修复仅保存内部状态而01不更新的问题。画面三下拉框从左向右收窄三分之一；两入口存读档背景下移20源px，去掉时长悬浮说明。关闭旧游戏重启生效；直接功能专项 `./tests/run_t01.ps1 -Script res://tests/gathering_checkpoint_tests.gd`，实际结果及环境日志区分见PROJECT_PROGRESS。
+
+菜单与存档页最新（2026-10-28）：系统菜单／存读档／设置打开时保留游戏抬头及地图吊牌，统一置于蒙版下。游戏存档页去掉左上返回区，底部改“取消／存储／读取”，默认button3；取消回到系统菜单。01快速档尚未生成时显示占位，产生有效快照后可读。设置背景单独下移20源px，内容位置不变。关闭旧游戏重启查看；[当前布局与直接专项](docs/game-entry-points.md#读取存档界面2026-10-27)。
+
+系统设置（2026-10-28最新）：关闭旧游戏并重启后，从开始菜单“游戏设置”，或地图Esc／左上齿轮→“系统设置”进入游戏／操作／画面／声音／其他五页。全部列入设置已接到实际效果，包括对话速度与自动播放、战斗默认倍速、自动／快速档开关及定时间隔、单键改键、滚轮反向、显示／帧率、音量与后台策略。设置页与存读档同中心，各页首行同起点；开关为大胶囊内嵌短轨道，圆钮关闭左／开启右并滑动。修改后点“应用并关闭”；取消放弃修改，恢复默认仅重置当前页草稿。设置在本次运行中保持，重启恢复默认，不写偏好文件。完整默认值、边界与实际验证见[系统设置实现](docs/game-entry-points.md#系统设置2026-10-28)，覆盖下方历史“设置暂未开放”说明。
+
+存档最新规则（2026-10-28）：01快速、02自动、03起手动，所有角色共用。交易成功／修炼结束／切图完成及战斗前更新快速档；每10分钟自动保存，到点在剧情、对话、战斗、交易或其他弹窗中则等回到自由移动后保存，系统／存档菜单暂停计时。两系统档可读、不可手动存储，原手动档内容保持。重启应用生效，首次触发快速保存才出现01；继续修行取两系统档最新快照。打造／炼丹已预留结算后接口，制作流程尚未开发。[现行实现及退出边界](docs/game-entry-points.md#快速与定时存档2026-10-28)覆盖下方历史编号／即时自动写入说明。隔离专项：`./tests/run_t01.ps1 -Script res://tests/checkpoint_policy_tests.gd -Render`、`./tests/run_t01.ps1 -Script res://tests/checkpoint_completion_tests.gd`；自动档实际读取用`auto_save_selection_tests.gd -Render`。旧单自动档套件的历史槽位假设不作为现行验收。
+
+游戏内系统菜单（2026-10-28）：地图按Esc或点左上齿轮打开，2K按UI-game-systemmenu原图70%居中。返回游戏／系统设置／存读档／返回主菜单／退出游戏已接；操作说明仍未开放。子页返回系统菜单，返回主菜单／退出先保存内部会话进度。详见[入口、比例与专项验证](docs/game-entry-points.md#游戏内系统菜单2026-10-28)，覆盖下方旧齿轮直达存读档／占位说明。
+
+存储／读取／删除（2026-10-27最新）：游戏地图左上齿轮打开“存储／读取”，01自动档可选择读取，选中时存储灰色禁用，手动档可覆盖，空白手动档位可新建。开始菜单存档页为“删除／读取”。两种页面均通过左上返回；确认弹窗后续接入，当前点击即执行。专项`./tests/run_t01.ps1 -Script res://tests/save_actions_tests.gd -Render`只操作隔离副本。此更新覆盖下方旧“尚无手动新建／覆盖／删除入口”说明。
+
+开场音乐（2026-10-27最新）：已修复直接启动开始页时root忙碌导致音乐节点未创建的问题；关闭原游戏窗口后重启“测试开始界面”。game-start自动单曲循环，菜单／读档浏览／创角期间连续，进入加载游戏阶段停止，加载失败返回后恢复。冷启动检查用Godot直接运行`res://tests/entry_music_cold_start.tscn`（正常音频驱动、不静音）；生命周期检查`./tests/run_t01.ps1 -Script res://tests/entry_music_lifecycle_tests.gd -Render`。此规则覆盖下方旧的加载期间持续播放描述。
+
+自动／手动存档（2026-10-27最新）：01固定自动档，当前状态已复制为02手动档。读取02后，继续游玩的自动保存进入01，02保持原快照。标题旁显示对应标识；右下详情改华为Regular，游戏时长只显示时分秒。当前尚无手动新建／覆盖按钮。[说明](docs/game-entry-points.md#读取存档界面2026-10-27)，专项`./tests/run_t01.ps1 -Script res://tests/manual_save_slot_tests.gd -Render`使用隔离副本。
+
+读取存档（2026-10-27）：从“测试开始界面”点击读取存档，可选择真实档并进入游戏；当前测试档为01，列表最多同时展示6行，超出滚动。返回／读取期间开场音乐连续，进入角色后才开始累计在线时长；旧档此前时长未记录。已有自动保存会记录交易、消耗与地图落点，未按手动存档也能续玩。[布局与存档边界](docs/game-entry-points.md#读取存档界面2026-10-27)，专项`./tests/run_t01.ps1 -Script res://tests/save_browser_tests.gd -Render`，实际档只读画面`./tests/run_t01.ps1 -Script res://tests/save_browser_preview.gd -Render`。新建／覆盖／删除留待后续。
+
+青石镇逐步探索（2026-10-27）：重启游戏后，镇内按实际到访逐步展开节点、路径和路牌，与河湾／药坡保持同一模式。旧档从本次落脚点开始；已记录进度保留，新到访继续累计并保存。地图底图保持可见。[规则与兼容](docs/map-interaction-design.md#青石镇逐点到访记录2026-10-26)，存档专项`./tests/run_t01.ps1 -Script res://tests/map_location_resume_tests.gd`，双入口静态`./tests/run_t01.ps1 -Script res://tests/town_exploration_preview.gd -Render`。
+
+世界地图（2026-10-26最新）：游历中按M查看，M／Esc返回。左栏点击四地点切换右侧图文与区域信息，按住拖拽／滚轮缩放；星标可拖动，加／减号直达最大／最小。每次打开默认实际当前地点并刷新到访进度，查看其他地点不移动玩家。区域当前有效节点合计90、旧祠不计入。2026-10-27已按新版底图重排中栏，四地点均已接金色图片标题，场景左右各10%渐隐。地点短语华为Regular22，描述华为Regular22且行距＋3，区域信息宋体加粗，标签与内容统一华为Regular22；进度不显示节点计数小字。右下栏已接八项独立图例，图例开关尚未接入。缩放仍为最大减两档起、53.04%到150%共20滚。详见[当前布局](docs/map-interaction-design.md#世界地图右栏与地点选择2026-10-26最新)，专项`./tests/run_t01.ps1 -Script res://tests/world_map_tests.gd`，`-Render`只输出1080p／2K四地点静态画面。
+
 西源药坡（2026-10-25）：从青石镇最右上N04出入口前往，新地图左下N01可返回。已接19节点／18路线、四处采药、三处采矿和两处宝箱；灵石矿三档产量直接入余额。7处采集左图、两宝箱两页左图及第一页右侧独立宝箱图均已接。[节点与规则](docs/map-interaction-design.md#西源药坡地图接入2026-10-25)、[采集配图](docs/map-interaction-design.md#溪源药坡采集场景图2026-10-25)、[宝箱配图](docs/map-interaction-design.md#溪源药坡宝箱配图2026-10-25)，直接运行场景为`scenes/maps/xiyuanyaopo.tscn`，正常继续修行仍恢复实际存档原落点。
 
 继续修行加载页（2026-10-25）：等待时保留当前完整开始封面，居中提示“正在进入苍澜界…”，地图就绪后淡入。开场音乐在菜单、创角往返及加载期间持续播放，正式进入地图时才淡出并接上地图音乐。重启“测试开始界面”查看。[实现与验证](docs/game-entry-points.md#开始页面2026-10-24)。
@@ -426,6 +456,19 @@ JSON → ContentRegistry → SharedStorage / InventoryState / PartyMemberState /
 地图玩家最新参数：行走200、跑步360原图像素/秒，显示尺寸为最初的2倍。新版idle为4帧/3fps；run为7个源姿势，按4→5→6→7→6→5→4→3→2→1→2→3组成12步循环，16fps（每轮0.75秒）；walk为5个源姿势组成8步循环，8fps。walk/run均按独立区域切分不等距图片；鼠标平时为箭头，悬停节点为链接手形，仅拖图时为移动光标。支持各动作不同的素材分辨率，切换时保持脚底对齐。
 
 ## 验证
+
+菜单叠层及存档三按钮：`./tests/run_t01.ps1 -Script res://tests/menu_overlay_tests.gd`；设置`MENU_OVERLAY_RENDER=1`并加`-Render`可检查2K／1080p实际蒙版像素、输出三页面截图。只写隔离目录，包含取消返回／手动保存、空01到可读01及开始菜单布局边界；最新结果见PROJECT_PROGRESS。
+
+系统设置直接专项：
+
+```powershell
+./tests/run_t01.ps1 -Script res://tests/system_settings_tests.gd
+./tests/run_t01.ps1 -Script res://tests/settings_runtime_tests.gd
+./tests/run_t01.ps1 -Script res://tests/settings_gameplay_tests.gd
+./tests/run_t01.ps1 -Script res://tests/settings_battle_input_tests.gd
+```
+
+五页2K／1080p渲染：设置`$env:SYSTEM_SETTINGS_RENDER='1'`后运行`system_settings_tests.gd -Render`，结束移除该环境变量；截图在`artifacts/system-settings/render/`。实际窗口／无边框切换：设置`$env:SETTINGS_DISPLAY_TEST='1'`后运行`settings_runtime_tests.gd -Render`，结束移除该环境变量。均使用隔离存档；最新开关微调的纯渲染另在`artifacts/system-settings/toggle-refinement/`。包装脚本会将环境证书库／GLES缓存ERROR也判为失败，需区分日志中的脚本错误、断言失败和本机环境告警；本轮实际结果与限制查PROJECT_PROGRESS，不复用旧计数。
 
 入战等待与数值对齐：`./tests/run_t01.ps1 -Script res://tests/battle_entry_values_tests.gd`，可加`-Render`查看artifacts/battle-entry-values.png；验证禁用处理时的阵盘初始化、地图实际转场不自动开始、开始／暂停文案、分隔轴及灵材说明。使用隔离空存档路径，不操作系统鼠标。当前入战须点击“战斗开始”，覆盖早期自动开战说明。
 

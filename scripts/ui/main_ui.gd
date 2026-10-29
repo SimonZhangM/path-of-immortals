@@ -9,6 +9,7 @@ const PLAYBACK_SIDE := 48.0 * 0.7071067811865476
 const PLAYBACK_GAP := 8
 const FixedSeparatorValue := preload("res://scripts/ui/fixed_separator_value.gd")
 const RestoreFlight := preload("res://scripts/ui/restore_flight.gd")
+const SettingsInput = preload("res://scripts/settings/settings_input.gd")
 var _restore_flights: Array = []
 @export var preview_all_status_icons := true
 @export_file("*.webp", "*.png") var battle_background_path := ""
@@ -60,6 +61,9 @@ func _ready() -> void:
 	_fit_native_layout()
 	get_viewport().size_changed.connect(_fit_native_layout)
 	_build_ui()
+	var settings := get_node_or_null("/root/GameSettings")
+	if settings != null: settings.settings_changed.connect(_refresh_shortcut_hints)
+	_refresh_shortcut_hints()
 	if not manager.startup_error.is_empty():
 		_status.text = "内容加载失败"
 		_log_label.text = manager.startup_error
@@ -413,6 +417,13 @@ func _playback_button(parent: Node, symbol: String, caption: String, action: Cal
 	parent.add_child(button)
 	return button
 
+func _refresh_shortcut_hints() -> void:
+	if is_instance_valid(_pause_button): _pause_button.tooltip_text = SettingsInput.caption("暂停", "battle_pause")
+	var actions := {0.5: ["半速", "speed_half"], 1.0: ["正常播放", "speed_normal"], 2.0: ["2倍速", "speed_double"]}
+	for speed in _speed_buttons:
+		_speed_buttons[speed].tooltip_text = SettingsInput.caption(actions[speed][0], actions[speed][1])
+	if is_instance_valid(_bag_button): _bag_button.tooltip_text = SettingsInput.caption("储物袋", "map_inventory")
+
 func _build_retreat_dialog() -> void:
 	_retreat_dialog = Control.new()
 	_retreat_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -613,6 +624,7 @@ func _refresh() -> void:
 			board.show_cooldown_badges = not reviewing
 	_battle_button.disabled = state.is_finished() and not reviewing
 	_battle_button.caption = "离开战场" if reviewing else ("战斗开始" if preparing else ("战斗结束" if state.is_finished() else ("战斗继续" if sim.clock.paused else "战斗暂停")))
+	_battle_button.tooltip_text = SettingsInput.caption(_battle_button.caption, "battle_pause") if preparing or fighting else _battle_button.caption
 	_battle_button.action_icon = null if reviewing else (_wait_icon if fighting and not sim.clock.paused else _battle_icon)
 	_battle_button.icon_reference = null if reviewing else _battle_icon
 	_battle_button.caption_reference = "离开战场" if reviewing else "战斗继续"

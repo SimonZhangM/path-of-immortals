@@ -18,7 +18,7 @@ static func saved_location(path: String) -> Dictionary:
 	file.close()
 	if not raw is Dictionary: return {}
 	var location: Variant = raw.get("map_location", {})
-	return location if MapLoadoutState.valid_map_location(location) else {}
+	return MapLoadoutState.normalized_map_location(location) if MapLoadoutState.valid_map_location(location) else {}
 
 func start() -> void:
 	if _started: return
@@ -72,6 +72,7 @@ func _load_map_scene(path: String) -> PackedScene:
 	return null
 
 func _start_with_loading() -> void:
+	preload("res://scripts/entry/entry_music.gd").stop_for_loading(get_tree())
 	var overlay := LoadingOverlay.show_for(get_tree())
 	# Ensure the loading UI is rendered before any synchronous metadata work.
 	await RenderingServer.frame_post_draw
@@ -101,7 +102,7 @@ func _start_with_loading() -> void:
 			destination = scene.instantiate()
 			push_warning("存档落点已失效，使用默认地图起点。")
 	destination.inventory_save_path = path
-	# Keep entry music until the complete map is ready to be revealed.
+	# Keep map music silent until the complete map is ready to be revealed.
 	destination.defer_map_music = true
 	destination.staged_startup = true
 	destination.defer_optional_views = true
@@ -123,6 +124,7 @@ func _start_with_loading() -> void:
 		preload("res://scripts/entry/entry_music.gd").finish_for(get_tree(), LoadingOverlay.FADE_SECONDS)
 	await overlay.reveal()
 	destination.process_mode = Node.PROCESS_MODE_INHERIT
+	MapLoadoutStore.SaveMetadata.start(destination.inventory_save_path)
 	get_tree().current_scene = destination
 	queue_free()
 

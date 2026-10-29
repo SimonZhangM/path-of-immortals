@@ -8,6 +8,8 @@ signal treatment_requested
 # Clinic uses the shop-sized authored canvas, without a trading catalog or wallet.
 const FRAME := Rect2(32,32,1474,840)
 const METRICS = preload("res://scripts/map/map_texture_metrics.gd")
+const Settings = preload("res://scripts/settings/game_settings.gd")
+const Playback = preload("res://scripts/dialogue/dialogue_playback.gd")
 # Preserve the three topic slots when the baked-in frames leave the background.
 const TOPIC_ROW_RECT := Rect2(624,745,806,44)
 const TOPIC_SEPARATION := 29
@@ -46,6 +48,9 @@ var _continue_press_position := Vector2.ZERO
 # Presentation only: reading the last greeting line does not reveal topic cards.
 var _greeting_id := ""
 var _topics_opened := false
+var playback := Playback.new()
+var _displayed_speeches: Dictionary = {}
+var _latest_row_counts: Dictionary = {}
 
 func _init() -> void:
 	name = "MapClinicDialog"
@@ -243,6 +248,7 @@ func present(event: Dictionary, loadout: MapLoadoutState = null, status: MapPlay
 func set_mode(value: String) -> void:
 	if value not in ["conversation","treatment"]: return
 	_continue_pointer_down = false
+	playback.suspend()
 	mode = value
 	treatment_content.visible = mode=="treatment"
 	if mode=="treatment": treatment_content.refresh()
@@ -281,12 +287,27 @@ func refresh_dialogue(error := "") -> void:
 	if greeting_id!=_greeting_id or _view.can_continue: _topics_opened = false
 	_greeting_id = greeting_id
 	for child: Node in dialogue_rows.get_children(): child.free()
-	for row: Dictionary in _view.rows:
+	var latest_labels: Array[Label] = []
+	for row_index in _view.rows.size():
+		var row: Dictionary = _view.rows[row_index]
 		var lines := DialogueBubble.wrap(row.text)
 		for start in range(0,lines.size(),3):
 			var bubble := DialogueBubble.new()
 			bubble.configure(row.speaker,lines.slice(start,start+3),library,_status,DialogueJournal.full_name(_loadout.narrative))
 			dialogue_rows.add_child(bubble)
+			if row_index==_view.rows.size()-1: latest_labels.append(bubble.text_label)
+	var context_key := "%s|%s" % [library.definition.id,_view.selected]
+	var speech_key := "%s|%d" % [context_key,_view.rows.size()]
+	if not _view.rows.is_empty(): speech_key += "|"+str(_view.rows[-1])
+	var history := false
+	for topic: Dictionary in _view.topics:
+		if topic.id==_view.selected: history = bool(topic.get("history",false))
+	# The journal marks the final line seen before it is drawn. It can already
+	# call the topic history, but that newly appended speech must still reveal.
+	var appended: bool = _latest_row_counts.has(context_key) and _view.rows.size()>int(_latest_row_counts[context_key])
+	playback.begin(latest_labels,str(Settings.value("dialogue_speed","medium")),(not history or appended) and not _displayed_speeches.has(speech_key))
+	_displayed_speeches[speech_key] = true
+	_latest_row_counts[context_key] = _view.rows.size()
 	for index: int in topic_buttons:
 		var button: Button = topic_buttons[index]
 		button.visible = index<_view.topics.size() and not _waiting_to_open_topics()
@@ -335,13 +356,13 @@ func _scroll_to_latest(version: int) -> void:
 func _refresh_continue_hint() -> void:
 	var reading: bool = _view.get("can_continue",false)
 	var opening := _waiting_to_open_topics()
-	continue_button.text = "点击开启话题" if opening else "点击继续 ▸"
-	continue_button.visible = mode=="conversation" and (reading or opening)
+	continue_button.text = "点击显示全文" if playback.is_revealing() else ("点击开启话题" if opening else "点击继续 ▸")
+	continue_button.visible = mode=="conversation" and (reading or opening or playback.is_revealing())
 	var pending_topic := false
 	for topic: Dictionary in _view.get("topics",[]):
 		if topic.id==_view.get("selected","") and not topic.get("history",true):
 			pending_topic = true
-	topic_continue_hint.visible = mode=="conversation" and not reading and not opening and pending_topic
+	topic_continue_hint.visible = mode=="conversation" and not reading and not opening and not playback.is_revealing() and pending_topic
 
 func _waiting_to_open_topics() -> bool:
 	return not _greeting_id.is_empty() and not _topics_opened and not _view.get("can_continue",false) and not _view.get("topics",[]).is_empty()
@@ -357,25 +378,47 @@ func _gui_input(_event: InputEvent) -> void:
 
 func request_continue() -> void:
 	if not is_visible_in_tree() or mode!="conversation": return
+	if playback.finish_reveal():
+		_refresh_continue_hint()
+		return
+	playback.suspend()
 	if _waiting_to_open_topics():
 		_topics_opened = true
 		refresh_dialogue()
 	elif _view.get("can_continue",false):
 		dialogue_requested.emit("advance","")
 
+func _process(delta: float) -> void:
+	if not is_visible_in_tree() or mode!="conversation" or get_tree().paused:
+		playback.suspend()
+		return
+	var was_revealing := playback.is_revealing()
+	var automatic := bool(Settings.value("dialogue_auto",false)) and bool(_view.get("can_continue",false))
+	if playback.advance(delta,str(Settings.value("dialogue_speed","medium")),automatic):
+		# A continuous speech may progress; opening/selecting a topic, treatment
+		# and other player choices never use this automated path.
+		dialogue_requested.emit("advance","")
+	elif was_revealing and not playback.is_revealing():
+		_refresh_continue_hint()
+
+func _notification(what: int) -> void:
+	if what==NOTIFICATION_WM_WINDOW_FOCUS_OUT or what==NOTIFICATION_VISIBILITY_CHANGED:
+		_continue_pointer_down = false
+		playback.suspend()
+
 # Called by the modal controller before GUI delivery, so even the scroll area
 # and illustrations can advance. Native buttons retain their own input path.
 func handle_continue_input(event: InputEvent) -> bool:
 	if not is_visible_in_tree() or mode!="conversation": return false
 	if event is InputEventKey:
-		if event.pressed and not event.echo and (event.keycode==KEY_SPACE or event.physical_keycode==KEY_SPACE):
+		if event.pressed and not event.echo and event.is_action_pressed("dialogue_continue"):
 			request_continue()
 			return true
 		return false
 	if not event is InputEventMouseButton or event.button_index!=MOUSE_BUTTON_LEFT: return false
 	var eligible := canvas.get_global_rect().has_point(event.position) and not _over_button(canvas,event.position)
 	if event.pressed:
-		_continue_pointer_down = eligible and (_view.get("can_continue",false) or _waiting_to_open_topics())
+		_continue_pointer_down = eligible and (playback.is_revealing() or _view.get("can_continue",false) or _waiting_to_open_topics())
 		_continue_press_position = event.position
 		return _continue_pointer_down
 	var was_down := _continue_pointer_down

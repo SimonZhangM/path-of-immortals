@@ -1,0 +1,177 @@
+{
+  "source_size": [
+    2560,
+    1440
+  ],
+  "source_frame_sha256": "965c851acaa19a3e3f60b8d599ffa32168501f585e9edd35c2a8e113f4404ccd",
+  "heading": "图例标识",
+  "heading_rect": [
+    1934,
+    1082,
+    390,
+    52
+  ],
+  "entries": [
+    {
+      "id": "major_location",
+      "name": "主要地点",
+      "icon_center": [
+        1983.5,
+        1172.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2014,
+        1154.5,
+        120,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-size1.webp",
+      "icon_width": 40
+    },
+    {
+      "id": "minor_location",
+      "name": "一般地点",
+      "icon_center": [
+        2153.5,
+        1172.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2184,
+        1154.5,
+        140,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-size0.webp",
+      "icon_backdrop_region": [2080, 1152, 40, 40],
+      "icon_width": 28
+    },
+    {
+      "id": "major_sect",
+      "name": "大宗门",
+      "icon_center": [
+        1983.5,
+        1221.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2014,
+        1203.5,
+        120,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-dazongmen.webp",
+      "icon_width": 40
+    },
+    {
+      "id": "minor_sect",
+      "name": "小宗门",
+      "icon_center": [
+        2153.5,
+        1221.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2184,
+        1203.5,
+        140,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-xiaozongmen.webp",
+      "icon_width": 40
+    },
+    {
+      "id": "village",
+      "name": "村庄",
+      "icon_center": [
+        1984.5,
+        1270.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2015,
+        1252.5,
+        120,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-cunzhuang.webp",
+      "icon_width": 40
+    },
+    {
+      "id": "ruins",
+      "name": "遗迹",
+      "icon_center": [
+        2154.5,
+        1270.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2185,
+        1252.5,
+        140,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-yiji.webp",
+      "icon_width": 40
+    },
+    {
+      "id": "cave",
+      "name": "洞穴",
+      "icon_center": [
+        1984.5,
+        1319.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2015,
+        1301.5,
+        120,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-dongxue.webp",
+      "icon_width": 40
+    },
+    {
+      "id": "secret_realm",
+      "name": "秘境",
+      "icon_center": [
+        2154.5,
+        1319.5
+      ],
+      "icon_slot_size": [
+        40,
+        40
+      ],
+      "label_rect": [
+        2185,
+        1301.5,
+        140,
+        36
+      ],
+      "icon_texture": "res://assets/UI-map-mijing.webp",
+      "icon_width": 40
+    }
+  ]
+}

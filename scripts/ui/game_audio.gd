@@ -20,8 +20,10 @@ var music: AudioStreamPlayer
 var _victory_started := false
 
 func configure(manager: GameManager, defer_music: bool = false) -> void:
+	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
 	for kind in STREAMS:
 		var player := AudioStreamPlayer.new()
+		player.bus = "Effects"
 		player.stream = STREAMS[kind]
 		player.volume_db = -8 if kind in ["hit", "pierce", "throwable", "blunt", "magic", "restore"] else -4
 		player.max_polyphony = 8 if kind in ["hit", "pierce", "throwable", "blunt", "magic", "restore"] else 3
@@ -29,6 +31,7 @@ func configure(manager: GameManager, defer_music: bool = false) -> void:
 		players[kind] = player
 	manager.inventory_interaction.connect(play)
 	music = AudioStreamPlayer.new()
+	music.bus = "Music"
 	music.name = "BattleMusic"
 	music.volume_db = -6
 	music.process_mode = Node.PROCESS_MODE_ALWAYS
