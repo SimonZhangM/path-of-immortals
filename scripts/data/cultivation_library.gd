@@ -56,6 +56,17 @@ func load_catalog(registry: ContentRegistry) -> bool:
 		record.combat.presentation = presentation.duplicate(true)
 		if not registry.register_item(record): return false
 		spell_items[spell.id] = registry.get_item(spell.id)
+	# Reading volumes have a physical identity, but no invented cultivation rules.
+	var reading: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/reading_books.json"))
+	if not reading is Dictionary or reading.get("version")!=1 or not reading.get("items") is Array:
+		error = "Invalid reading book catalog"
+		return false
+	for record: Dictionary in reading.items:
+		if record.get("category")!="book" or not record.get("combat",{}).get("reading_only",false) or not record.get("effects",[]).is_empty() or record.get("cooldown",0)!=0 or record.get("combat",{}).get("description","").is_empty():
+			error = "Invalid reading book definition"
+			return false
+		if not registry.register_item(record): return false
+		book_items[record.id] = registry.get_item(record.id)
 	return true
 
 static func _valid_presentation(book: Dictionary, presentation: Variant, icon: Variant) -> bool:
@@ -82,6 +93,8 @@ func inventory_records() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for item: ItemData in book_items.values():
 		result.append({"id": item.id, "name": item.display_name, "category": "book", "quality": item.quality,
+			"reading_only": item.combat.get("reading_only",false),
+			"quest_item": item.combat.get("quest_item",false),
 			"element": item.element, "tags": item.tags.duplicate(), "icon": item.icon_path,
 			"card_frame": "",
 			"footprint_columns": item.grid_size.x, "footprint_rows": item.grid_size.y,

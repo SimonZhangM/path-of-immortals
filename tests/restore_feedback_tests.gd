@@ -59,7 +59,7 @@ func run() -> void:
 	var flight = ui._restore_flights[0]
 	var origin: Vector2 = ui.get_global_transform_with_canvas().affine_inverse() * bag.recovery_origin(recovery)
 	check(flight.origin.is_equal_approx(origin), "origin is source board footprint center")
-	check(flight.texture == card.stat_icons.stamina.texture and flight.destination == card.stat_bars.stamina, "matching icon and resource bar")
+	check(flight.texture.resource_path == "res://assets/player-status-stamina.webp" and flight.destination == card.stat_bars.stamina, "specified stamina artwork and resource bar")
 	sim.clock.speed_multiplier = 5
 	sim.clock.paused = true
 	ui._advance_restore_flights(0.75)
@@ -126,15 +126,48 @@ func run() -> void:
 	owner.spirit -= 5
 	owner.stamina -= 5
 	sim.t01.apply_status(owner, "润脉", 2, owner, 3, false, -1, source)
+	ui.ally_panel.status_icons.refresh(owner)
+	await settle()
 	var pool: Dictionary = owner.combat_statuses["润脉"]
 	sim.cultivation.resource_tick(owner, "润脉", pool, 2, owner, 1000003)
 	var status_events := sim.drain_events().filter(func(e): return e.kind == "restore")
 	check(status_events.size() == 2 and status_events.all(func(e): return e.value > 0 and e.instance_id == "restore.heart"), "status resource ticks publish exact source and gains")
+	check(status_events.all(func(e): return e.recovery_status == "润脉") and not source.has("recovery_status"), "buff metadata retains item source without mutating it")
 	game.presentation_events.emit(status_events)
+	var buff_icon: Control = ui.ally_panel.status_icons.slots["润脉"].get_node("Icon")
+	var buff_origin: Vector2 = ui.get_global_transform_with_canvas().affine_inverse() * (buff_icon.get_global_transform_with_canvas() * (buff_icon.size * 0.5))
+	check(ui._restore_flights.size() == 2, "one flight for each actually restored resource")
+	for fx in ui._restore_flights:
+		check(fx.origin.is_equal_approx(buff_origin), "resource tick starts at recipient buff icon")
+		var resource: String = "spirit" if fx.destination == card.stat_bars.spirit else "stamina"
+		check(fx.texture.resource_path == "res://assets/player-status-%s.webp" % resource, "specified buff recovery artwork")
+	if DisplayServer.get_name() != "headless":
+		ui._advance_restore_flights(0.35)
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://artifacts/restore-buff-flight.png")
 	ui.victory_view = ui.VictoryView.REVIEW
 	ui._advance_restore_flights(0)
 	check(ui._restore_flights.is_empty(), "review clears flights")
 	ui.victory_view = ui.VictoryView.NONE
+	# Final life tick uses the recipient's last visible icon even when its layer vanishes.
+	owner.combat_statuses.clear()
+	owner.hp -= 5
+	enemy.definition.status_capacity = 10
+	sim.t01.apply_status(owner, "生机", 1, enemy, 4, false, -1, source)
+	ui.ally_panel.status_icons.show_all_for_testing = false
+	ui.ally_panel.status_icons.refresh(owner)
+	await settle()
+	buff_icon = ui.ally_panel.status_icons.slots["生机"].get_node("Icon")
+	buff_origin = ui.get_global_transform_with_canvas().affine_inverse() * (buff_icon.get_global_transform_with_canvas() * (buff_icon.size * 0.5))
+	sim.drain_events()
+	sim.cultivation.status_tick(owner, "生机", owner.combat_statuses["生机"], 1, enemy, 1000004)
+	status_events = sim.drain_events().filter(func(e): return e.kind == "restore")
+	check(status_events.size() == 1 and status_events[0].recovery_status == "生机", "life tick identifies its buff")
+	ui.ally_panel.status_icons.refresh(owner)
+	game.presentation_events.emit(status_events)
+	check(ui._restore_flights.size() == 1 and ui._restore_flights[0].origin.is_equal_approx(buff_origin), "last layer still flies from recipient life icon")
+	check(ui._restore_flights[0].texture.resource_path == "res://assets/player-status-health.webp" and ui._restore_flights[0].destination == card.stat_bars.hp, "health icon lands in recipient health bar")
+	ui._clear_restore_flights()
 	game.presentation_events.emit(status_events)
 	game.restart()
 	check(ui._restore_flights.is_empty(), "restart clears flights")

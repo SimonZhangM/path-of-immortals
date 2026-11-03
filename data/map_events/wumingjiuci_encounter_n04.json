@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n04",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n04",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-02-N04.webp"
+  },
+  "title": "香台前阶",
+  "description": "香台下的残门塌落半边，断瓦与石阶间绷着粗厚蛛丝。一只岩腹毒蛛从瓦隙中挤出，抬起灰黑腹甲，螯牙渗出毒液，挡住了通往供台的路。",
+  "enemy_id": "base.enemy.yanfu_duzhu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

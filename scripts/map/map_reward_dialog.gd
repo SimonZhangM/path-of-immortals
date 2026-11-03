@@ -8,22 +8,25 @@ const FRAME_REGION := Rect2(25, 12, 894, 894)
 const CONTENT_WIDTH := 480.0
 const ACTION_SIZE := Vector2(CONTENT_WIDTH / 3.0, 57.6)
 const ACTION_BOTTOM_GAP := 64.2
+const RewardTile = preload("res://scripts/map/map_reward_item_tile.gd")
 var canvas: Control
 var backing: TextureRect
+var shade: ColorRect
 var _display_height := DESIGN_SIZE.y
 var heading: Label
-var card: MapInventoryItemCard
+var card: VBoxContainer
 var accept_button: TextureButton
 var error_label: Label
 var pick_sound: AudioStreamPlayer
 
 func _init() -> void:
 	name = "MapRewardDialog"
-	z_index = 30
+	# Place the full-screen shade above the map header/plaque (30) and tracker (19).
+	z_index = 44
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	hide()
-	var shade := ColorRect.new()
+	shade = ColorRect.new()
 	shade.color = Color(0.01, 0.02, 0.03, 0.65)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
@@ -68,9 +71,10 @@ func _init() -> void:
 	pick_sound.volume_db = -4
 	add_child(pick_sound)
 	resized.connect(_layout)
+	use_small_reward_art(MapExitDialog.DESIGN_SIZE.y)
 
 func use_small_reward_art(display_height: float) -> void:
-	# Story and battle rewards opt in; gathering keeps its original presentation.
+	# Shared default for received-item interactions, including gathered materials.
 	_display_height = display_height
 	var source: Texture2D = load("res://assets/UI-jiaohu-size-s.webp")
 	var atlas := AtlasTexture.new()
@@ -82,7 +86,7 @@ func use_small_reward_art(display_height: float) -> void:
 	backing.position = (DESIGN_SIZE - backing.size) * 0.5
 	# Center the retained heading between the new top inner edge and divider.
 	var title_center := backing.position.y + ((48.0 + 162.0) * 0.5 - atlas.region.position.y) * factor
-	heading.position.y = title_center - heading.size.y * 0.5
+	heading.position.y = title_center - heading.size.y * 0.5 + 5.0
 	_layout()
 
 func _label(text: String, rect: Rect2, font_size: int, color: Color, parent: Control = null) -> Label:
@@ -101,19 +105,19 @@ func _label(text: String, rect: Rect2, font_size: int, color: Color, parent: Con
 	(canvas if parent == null else parent).add_child(label)
 	return label
 
-func present(record: Dictionary, category_name: String) -> void:
+func present(record: Dictionary, _category_name: String, handover := false, dim_background := true) -> void:
+	shade.visible = dim_background
+	heading.text = "交出" if handover else "获得物品"
+	accept_button.get_node("AcceptCaption").text = "确认" if handover else "收下"
 	if card != null:
 		canvas.remove_child(card)
 		card.queue_free()
-	card = MapInventoryItemCard.new()
-	card.configure(record, category_name)
-	card.tooltip_text = ""
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.set_card_width(152)
-	card.size = card.custom_minimum_size
+	card = RewardTile.new()
+	card.configure(record,152.0)
+	if handover: card.quantity_label.text = "−%d" % int(record.get("quantity",1))
+	card.size = card.get_combined_minimum_size()
 	card.position = Vector2((DESIGN_SIZE.x - card.size.x) * 0.5, 171)
 	canvas.add_child(card)
-	card._layout()
 	error_label.text = ""
 	accept_button.disabled = false
 	show()

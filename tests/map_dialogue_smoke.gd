@@ -23,7 +23,7 @@ func _run() -> void:
 	screen.player.present(screen.travel)
 	_check(screen.travel.current_node_id == point.point_id and screen.travel.mode == "idle" and screen.dialogue.visible, "arrival automatically triggers dialogue")
 	_check(screen.event_state.is_active() and screen.travel.paused, "arrival locks movement without another click")
-	_check(screen.event_state.line_index == 0 and screen.dialogue.text_label.text == "河水最近又浅了不少。", "opening click does not skip first line")
+	_check(screen.event_state.line_index == 0 and screen.dialogue.text_label.get_parsed_text() == "河水最近又浅了不少。", "opening click does not skip first line")
 	_check(sign.is_visible_in_tree(), "sign remains until completion")
 	var overlay: MapDialogue = screen.dialogue
 	var camera: Vector2 = screen.content.position
@@ -67,15 +67,15 @@ func _run() -> void:
 	_button(MOUSE_BUTTON_LEFT, false, outside)
 	_check(screen.event_state.line_index == 0, "focus loss cancels pending click")
 	_key(KEY_SPACE)
-	_check(screen.event_state.line_index == 1 and overlay.text_label.text == "以前这几块石头应该都在水下面。", "space advances active dialogue exactly like a left click")
+	_check(screen.event_state.line_index == 1 and overlay.text_label.get_parsed_text() == "以前这几块石头应该都在水下面。", "space advances active dialogue exactly like a left click")
 	_key(KEY_SPACE, true)
 	_check(screen.event_state.line_index == 1, "held-space echo cannot skip dialogue")
 	_click(_point("N15"))
 	_check(screen.event_state.line_index == 2 and screen.travel.destination_id == destination, "clicking another node advances text without movement")
 	_click(overlay.portrait.get_rect().get_center())
-	_check(screen.event_state.line_index == 3 and overlay.text_label.text == "难道最近山里的野兽确实都往外面来了？", "portrait click advances exactly once")
+	_check(screen.event_state.line_index == 3 and overlay.text_label.get_parsed_text() == "难道最近山里的野兽确实都往外面来了？", "portrait click advances exactly once")
 	_click(overlay.text_label.get_rect().get_center())
-	_check(screen.event_state.line_index == 4 and overlay.text_label.text == "不好！有血……" and sign.visible, "text click reaches the final paragraph without closing it")
+	_check(screen.event_state.line_index == 4 and overlay.text_label.get_parsed_text() == "不好！有血……" and sign.visible, "text click reaches the final paragraph without closing it")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		_check(root.get_texture().get_image().save_png("res://artifacts/map_dialogue_last.png") == OK, "last paragraph render")

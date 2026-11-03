@@ -33,18 +33,20 @@ func _init() -> void:
 	scroll.position = Vector2(66, 155)
 	scroll.size = Vector2(408, 244)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	canvas.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_theme_constant_override("margin_top", 16)
-	margin.add_theme_constant_override("margin_bottom", 24)
+	# Offset the extra name gap so a single row keeps its artwork position.
+	margin.add_theme_constant_override("margin_bottom", 14)
 	scroll.add_child(margin)
 	var center := CenterContainer.new()
 	center.name = "LootCenter"
 	margin.add_child(center)
 	grid = GridContainer.new()
-	grid.columns = 3
+	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 16)
 	grid.add_theme_constant_override("v_separation", 28)
 	center.add_child(grid)
@@ -52,17 +54,14 @@ func _init() -> void:
 	error_label.position = Vector2(50, 388)
 	error_label.add_theme_font_size_override("font_size", 13)
 
-func present_loot(records: Array[Dictionary], categories: Dictionary, error: String = "") -> void:
-	grid.columns = clampi(records.size(), 1, 3)
+func present_loot(records: Array[Dictionary], _categories: Dictionary, error: String = "") -> void:
+	grid.columns = clampi(records.size(), 1, 2)
 	for child in grid.get_children():
 		grid.remove_child(child)
 		child.queue_free()
 	for record in records:
-		var item_card := MapInventoryItemCard.new()
-		item_card.configure(record, categories.get(record.category, record.category))
-		item_card.set_card_width(152 if records.size() < 3 else 120)
-		item_card.tooltip_text = ""
-		item_card.mouse_filter = MOUSE_FILTER_IGNORE
+		var item_card := RewardTile.new()
+		item_card.configure(record, 152.0)
 		grid.add_child(item_card)
 	empty_label.visible = records.is_empty()
 	empty_label.text = "物品结算未完成" if not error.is_empty() else "本次未获得物品"

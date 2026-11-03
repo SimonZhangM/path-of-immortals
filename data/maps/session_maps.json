@@ -3,6 +3,8 @@
   "scenes": {
     "base.map.qingshihewan": "res://scenes/maps/qingshihewan.tscn",
     "base.map.qingshizhen": "res://scenes/maps/qingshizhen.tscn",
-    "base.map.xiyuanyaopo": "res://scenes/maps/xiyuanyaopo.tscn"
+    "base.map.xiyuanyaopo": "res://scenes/maps/xiyuanyaopo.tscn",
+    "base.map.wumingjiuci": "res://scenes/maps/wumingjiuci.tscn",
+    "base.map.baishacun": "res://scenes/maps/baishacun.tscn"
   }
 }

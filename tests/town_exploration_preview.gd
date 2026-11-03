@@ -32,7 +32,7 @@ func run() -> void:
 		check(map.travel.current_node_id == map.arrival_point_id,"entry point preserved")
 		check(map.loadout.map_visited[TOWN] == [map.arrival_point_id],"old empty ledger records only actual entry")
 		check(map.exploration != null and map.travel.exploration_enabled,"progressive mode enabled")
-		check(map.exploration.revealed.size()<30,"only initial frontier revealed")
+		check(map.exploration.revealed.size()<31,"only initial frontier revealed")
 		for point: MapRoutePoint in map.content.get_node("Points").get_children():
 			check(point.visible == map.exploration.revealed.has(point.point_id),"nodes outside frontier hidden")
 			if point.visible: check((point.material==null)==map.exploration.visited.has(point.point_id),"visited color and frontier grayscale match ledger")

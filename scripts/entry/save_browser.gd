@@ -60,10 +60,10 @@ func _ready() -> void:
 	picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	picture_frame = _image(_texture(_config.picture_frame),_rect(_config.picture_frame_rect),canvas)
 	picture_frame.name = "SavePictureFrame"
-	chapter_label = _label("",_rect(_config.chapter_rect),int(_config.chapter_font_size),true,canvas)
-	calendar_label = _label("",_rect(_config.calendar_rect),int(_config.calendar_font_size),true,canvas)
+	chapter_label = _label("",_detail_rect(_config.chapter_rect),int(_config.chapter_font_size),true,canvas)
+	calendar_label = _label("",_detail_rect(_config.calendar_rect),int(_config.calendar_font_size),true,canvas)
 	for index in _config.detail_labels.size():
-		var y := float(_config.detail_centers_y[index])-22
+		var y := float(_config.detail_centers_y[index])+float(_config.frame_offset_y)-22
 		var field := _label(_config.detail_labels[index],Rect2(_config.detail_label_x,y,125,44),25,false,canvas)
 		field.name = "DetailLabel%d" % index
 		field.add_theme_font_override("font",_detail_font)
@@ -110,6 +110,12 @@ func _build_menu_back() -> void:
 
 func _rect(value: Array) -> Rect2:
 	return Rect2(value[0],value[1],value[2],value[3])
+
+func _detail_rect(value: Array) -> Rect2:
+	# These captions align with ornaments/icons baked into the shifted main frame.
+	var rect := _rect(value)
+	rect.position.y += float(_config.frame_offset_y)
+	return rect
 
 func _image(texture: Texture2D, rect: Rect2, parent: Node) -> TextureRect:
 	var image := TextureRect.new()

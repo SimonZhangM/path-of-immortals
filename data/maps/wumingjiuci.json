@@ -1,0 +1,49 @@
+{
+  "id": "base.map.wumingjiuci",
+  "name": "无名旧祠",
+  "exploration": {
+    "enabled": true,
+    "hint_length": 72.0
+  },
+  "music": [
+    "res://assets/bgm-wumingguci1.mp3"
+  ],
+  "background": "res://assets/map-wumingjiuci.webp",
+  "marker": "res://assets/mapdot.webp",
+  "source_size": [
+    2780,
+    1575
+  ],
+  "layout_scene": "res://scenes/maps/wumingjiuci_layout.tscn",
+  "sign_motion": "res://data/ui/map_sign_motion.json",
+  "start_point": "base.map.wumingjiuci.point.n01",
+  "show_map_title": true,
+  "title_image": "res://assets/map-title-wumingjiuci.webp",
+  "exits": [
+    {
+      "point_id": "base.map.wumingjiuci.point.n01",
+      "title": "前往 青石河湾",
+      "scene": "res://scenes/maps/qingshihewan.tscn",
+      "target_point": "base.map.qingshihewan.point.n02",
+      "target_facing": "right"
+    }
+  ],
+  "event_files": [
+    "res://data/map_events/wumingjiuci_encounter_n03.json",
+    "res://data/map_events/wumingjiuci_encounter_n04.json",
+    "res://data/map_events/wumingjiuci_encounter_n08.json",
+    "res://data/map_events/wumingjiuci_encounter_n10.json",
+    "res://data/map_events/wumingjiuci_chest_n11.json",
+    "res://data/map_events/wumingjiuci_rest_n15.json",
+    "res://data/map_events/wumingjiuci_encounter_n16.json",
+    "res://data/map_events/wumingjiuci_encounter_n18.json",
+    "res://data/map_events/wumingjiuci_encounter_n20.json",
+    "res://data/map_events/wumingjiuci_encounter_n23.json",
+    "res://data/map_events/wumingjiuci_rest_n24.json",
+    "res://data/map_events/wumingjiuci_encounter_n26.json",
+    "res://data/map_events/wumingjiuci_chest_n27.json",
+    "res://data/map_events/wumingjiuci_encounter_n28.json",
+    "res://data/map_events/wumingjiuci_encounter_n30.json",
+    "res://data/map_events/wumingjiuci_gathering_n31.json"
+  ]
+}

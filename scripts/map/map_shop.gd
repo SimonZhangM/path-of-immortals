@@ -107,8 +107,8 @@ func buy_quote(item_id: String, quantity := 1) -> Dictionary:
 		"unit_price":MapTradePricing._round_ratio(original*factor,MapTradePricing.BPS,true),
 		"total":MapTradePricing._round_ratio(original*quantity*factor,MapTradePricing.BPS,true)}
 
-func products(category := "all") -> Array:
-	return definition.get("products",[]).filter(func(row): return category=="all" or row.category==category).duplicate(true)
+func products(category := "all", state: MapLoadoutState = null) -> Array:
+	return definition.get("products",[]).filter(func(row): return (category=="all" or row.category==category) and (state==null or state.ordinary_acquisition_allowed(row.item_id))).duplicate(true)
 
 func product(item_id: String) -> Dictionary:
 	for row: Dictionary in definition.get("products",[]):
@@ -169,6 +169,7 @@ func sell(state: MapLoadoutState, item_id: String, quantity: int, save_path: Str
 	return error
 
 func purchase(state: MapLoadoutState, item_id: String, quantity: int, save_path: String) -> String:
+	if not state.ordinary_acquisition_allowed(item_id): return "此任务物品当前无法购买。"
 	# Price and item identity come from validated content, never from a UI total.
 	var row := product(item_id)
 	if row.is_empty() or quantity<1 or quantity>MAX_QUANTITY: return "商品或购买数量无效。"

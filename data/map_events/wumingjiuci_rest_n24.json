@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.wumingjiuci.rest_n24",
+  "type": "rest",
+  "point_id": "base.map.wumingjiuci.point.n24",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-huifu-wumingjiuci-shimenjingtai.webp",
+    "background": "res://assets/tanchuang-huifu-linjiangouhuo1.webp"
+  },
+  "rest_kind": "outdoor",
+  "title": "石门静台",
+  "description": "石门旁灯火微暖，靠墙的石台上铺着坐垫，身侧留着一张木凳。此处背风清静，可倚枕暂坐，在山间静意中调匀气息。",
+  "note": "倚枕静坐，\n安神调息。",
+  "action_label": "稍作歇脚",
+  "recovery_percent": 30,
+  "duration_days": 1,
+  "allow_food": true
+}

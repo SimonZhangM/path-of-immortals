@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n10",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n10",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-04-N10.webp"
+  },
+  "title": "供室残阶",
+  "description": "供室前的石阶散着香灰与碎瓦，倾斜木架的底部传来啃咬声。一只黑尾祠鼠钻出架底，长尾扫落一片碎瓦，露着门齿朝你窜来。",
+  "enemy_id": "base.enemy.heiwei_cishu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

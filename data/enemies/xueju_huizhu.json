@@ -1,0 +1,88 @@
+{
+  "id": "base.enemy.xueju_huizhu",
+  "name": "穴居灰蛛",
+  "art_profile": "base.enemy.xueju_huizhu",
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 57,
+  "innate_armor_type": "轻甲",
+  "initial_armor": 0,
+  "max_stamina": 61,
+  "max_spirit": 0,
+  "innate_armor_capacity": 0,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 3,
+    "experience": 1
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.huizhu_shell",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.huizhu_fang",
+      "cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.huizhu_foreleg",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.huizhu_silk_sac",
+      "cell": [
+        1,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.huizhu_silk",
+      "cell": [
+        2,
+        2
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.huizhu_shell",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.huizhu_fang",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.huizhu_silk_sac",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.huizhu_silk",
+      "chance": 0.25
+    }
+  ],
+  "encounter_descriptions": [
+    "断墙之间挂着密密的灰白蛛丝，地上还残留着被缠住的虫壳。你刚拨开一束蛛网，一只穴居灰蛛便从墙缝里钻出，八足迅速展开。",
+    "偏殿的角落堆积着厚厚的尘土，一张灰白蛛网几乎遮住半扇破门。你刚碰到丝线，阴影中便传来连续的爬行声，一只灰蛛沿墙疾下。",
+    "潮湿的石壁上布满细小裂缝，裂缝旁散落着几块灰色硬壳。你正查看痕迹，脚边忽然粘住一束蛛丝，前方洞口随即探出一对螯牙。"
+  ],
+  "presentation": {
+    "rank_label": "凡人级",
+    "category_label": "虫豸类",
+    "description": "栖于旧祠残屋与柱石缝隙，灰质甲壳可逐渐恢复防护。善用粘丝拖慢对手，再以螯牙和前足近身撕咬。",
+    "traits": [
+      "护甲恢复",
+      "粘丝迟滞"
+    ],
+    "battle_background": "res://assets/battle-wumingjiuci-xuejuhuizhu.webp",
+    "summary": []
+  }
+}

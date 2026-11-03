@@ -3,6 +3,24 @@ extends RefCounted
 
 var events: Dictionary = {}
 var by_point: Dictionary = {}
+static var encounter_catalog: Dictionary = {}
+
+static func encounter_at(point_id: String) -> Dictionary:
+	if encounter_catalog.is_empty():
+		var world: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/world_map_locations.json"))
+		for location: Dictionary in world.locations.values():
+			var map_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(location.map_definition))
+			for path: String in map_definition.get("event_files",[]):
+				var event: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
+				if event.get("type")=="encounter":
+					encounter_catalog[event.point_id] = event
+	return encounter_catalog.get(point_id,{})
+
+static func story_allowed(state: MapLoadoutState, point_id: String) -> bool:
+	var encounter := encounter_at(point_id)
+	if encounter.is_empty() or not encounter.get("enabled",true): return true
+	if encounter.get("trigger_order","encounter_first")=="story_first": return true
+	return int(state.encounter_cooldowns.get(encounter.id,0))>WorldCalendar.current_day(state.calendar)
 
 func load_files(paths: Array, point_ids: Array) -> String:
 	var definitions: Array = []
@@ -264,6 +282,19 @@ func _validate_cultivation(raw: Dictionary) -> String:
 	return ""
 
 func _validate_encounter(raw: Dictionary) -> String:
+	if raw.get("trigger_order","encounter_first") not in ["encounter_first","story_first"]:
+		return "遭遇与剧情触发顺序无效。"
+	# An authored encounter can open before its enemy is assigned, but may not
+	# carry executable combat data until that assignment is complete.
+	if not raw.get("pending_enemy", false) is bool: return "遭遇待配置开关无效。"
+	if raw.get("pending_enemy", false):
+		for key in ["enemy_id", "enemy_sequence", "battle_scene", "respawn_days"]:
+			if raw.has(key): return "待配置遭遇不可携带战斗数据：" + key
+		for key in ["title", "description"]:
+			if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "待配置遭遇文案无效。"
+		if not raw.presentation is Dictionary or not raw.presentation.get("illustration") is String or not ResourceLoader.exists(raw.presentation.illustration, "Texture2D"):
+			return "待配置遭遇图片不存在。"
+		return ""
 	if raw.has("enemy_sequence"):
 		if not raw.enemy_sequence is Array or raw.enemy_sequence.is_empty(): return "遭遇轮换列表不能为空。"
 		for id: Variant in raw.enemy_sequence:

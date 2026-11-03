@@ -1,0 +1,39 @@
+{
+  "id": "base.organ.yanfu_poison_sac",
+  "name": "腐毒囊",
+  "quality": "下品",
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-yanfuduzhu-fudunang.webp",
+  "cooldown": 6,
+  "stamina_cost": 3,
+  "armor_capacity": 0,
+  "type": "item",
+  "category": "item",
+  "tags": [
+    "器官"
+  ],
+  "rule_version": 1,
+  "element": "base.element.none",
+  "combat": {
+    "source_location": "用户确认：旧祠四怪器官2026-10-08；奖励与毒蚀容量2026-10-31",
+    "hit_chance": 0.9,
+    "waste_on_insufficient": true,
+    "art_outline_px": 1,
+    "status_capacity_bonuses": {
+      "毒蚀": 1
+    }
+  },
+  "effects": [
+    {
+      "effect": "apply_status",
+      "trigger": "on_activate",
+      "status": "毒蚀",
+      "value": 1,
+      "target": "enemy",
+      "gate": "always"
+    }
+  ]
+}

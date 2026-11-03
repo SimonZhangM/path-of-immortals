@@ -39,6 +39,12 @@ window/size/min_height=720
 
 [input]
 
+map_task_tracker={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":70)
+]
+}
+
 map_tasks={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":84)

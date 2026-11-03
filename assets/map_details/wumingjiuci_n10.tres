@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/map-wumingjiuci.webp" id="1"]
+
+[resource]
+atlas = ExtResource("1")
+region = Rect2(2099.70, 700.04, 500.00, 680.00)

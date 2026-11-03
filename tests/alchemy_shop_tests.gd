@@ -1,7 +1,7 @@
 extends "res://tests/map_shop_tests.gd"
 
 const ALCHEMY := "base.map_event.qingshizhen.alchemy"
-const ALCHEMY_POINT := "base.map.qingshizhen.point.n12"
+const ALCHEMY_POINT := "base.map.qingshizhen.point.n19"
 const PILL := "base.map_item.hemostatic_pill"
 
 func open_store(map: Node, point: String) -> void:
@@ -34,7 +34,7 @@ func run() -> void:
 	check(map.startup_error.is_empty(),"town startup: "+map.startup_error)
 	if not map.startup_error.is_empty(): quit(1); return
 	check(map.shops.size()==5,"five trading places registered")
-	var point = map.find_child("N12",true,false)
+	var point = map.find_child("N19",true,false)
 	check(point.location_note=="炼丹房" and point.position==Vector2(2804,792),"red-box node is alchemy room")
 	check(map.find_child("N14",true,false).location_note=="药材铺","red-box node remains herbalist")
 	var fixture: Dictionary = map.loadout.snapshot()

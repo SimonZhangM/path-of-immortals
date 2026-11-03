@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n16",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n16",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-05-N16.webp"
+  },
+  "title": "蛛网破屋",
+  "description": "破屋里梁木横倒，层层蛛网从残墙垂到木架之间。你刚踏过碎砖，一只穴居灰蛛便从倒梁下钻出，八足牵动网丝，封住了狭窄的落脚处。",
+  "enemy_id": "base.enemy.xueju_huizhu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

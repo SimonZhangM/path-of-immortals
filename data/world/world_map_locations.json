@@ -1,8 +1,17 @@
 {
   "source_size": [3156, 2412],
   "locations": {
+    "base.world_location.baishacun": {
+      "name": "白沙村", "map_id": "base.map.baishacun", "position": [2511, 2061], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "map_definition": "res://data/maps/baishacun.json",
+      "region_id": "base.world_region.qinglanshanlu",
+      "picture": "res://assets/map-baishacun.webp",
+      "phrase": "白沙映潮 · 渔火归家",
+      "description": "村舍依着海崖与白沙而建，竹篱间晒着鱼干，渔人沿木栈桥归家。潮声穿过小路，炊烟从屋瓦间缓缓升起。"
+    },
     "base.world_location.wumingjiuci": {
-      "name": "无名旧祠", "map_id": "", "position": [2000, 1728], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "name": "无名旧祠", "map_id": "base.map.wumingjiuci", "position": [2000, 1728], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "map_definition": "res://data/maps/wumingjiuci.json",
       "region_id": "base.world_region.qinglanshanlu",
       "picture": "res://assets/map-worldmap-wumingjiuci.webp",
       "title_image": "res://assets/map-worldmap-title-wumingjiuci.webp",

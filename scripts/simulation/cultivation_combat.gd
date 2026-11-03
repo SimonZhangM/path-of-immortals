@@ -489,7 +489,9 @@ func status_tick(member: PartyMemberState, status: String, pool: Dictionary, n: 
 			var value := n*(status_strength(source,status)+healing_bonus(source,"wood"))
 			var missing := member.maximum("hp")-member.hp
 			var prevented := minf(value,rules.active_injury(member,at)*injury_strength(member))
-			var actual := rules.restore(member,"hp",value,at,-1.0,pool.get("feedback_source",{}))
+			var feedback: Dictionary = pool.get("feedback_source",{}).duplicate(true)
+			feedback.recovery_status = status
+			var actual := rules.restore(member,"hp",value,at,-1.0,feedback)
 			if missing>0 and spec(source,"wood",5,"生生不息"): add_barrier(member,maxf(0,value-prevented-actual)*.5,"status.life")
 		"润脉","枯脉": resource_tick(member,status,pool,n,source,at)
 		"重伤":
@@ -518,8 +520,10 @@ func resource_tick(member: PartyMemberState, status: String, pool: Dictionary, n
 	member.spirit=rules.resource_q(member,old.x+delta.x*(1 if gain else -1))
 	member.stamina=rules.resource_q(member,old.y+delta.y*(1 if gain else -1))
 	if gain:
-		rules.emit_restore(member,"spirit",member.spirit-old.x,at,pool.get("feedback_source",{}))
-		rules.emit_restore(member,"stamina",member.stamina-old.y,at,pool.get("feedback_source",{}))
+		var feedback: Dictionary = pool.get("feedback_source",{}).duplicate(true)
+		feedback.recovery_status = status
+		rules.emit_restore(member,"spirit",member.spirit-old.x,at,feedback)
+		rules.emit_restore(member,"stamina",member.stamina-old.y,at,feedback)
 	if gain and spec(source,"water",3,"盈流成护"):
 		var leftover := overflow.x+overflow.y if room.x==0 and room.y==0 else transfer.x+transfer.y-second.x-second.y
 		add_barrier(member,leftover*.5,"status.resources")

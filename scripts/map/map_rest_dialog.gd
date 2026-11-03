@@ -101,11 +101,11 @@ func _init() -> void:
 	percentage=_label("",Rect2(1287,464,104,60),38)
 	percentage.add_theme_font_override("font",_bold_kai)
 	percentage.add_theme_color_override("font_color",GOLD)
-	duration_caption=_label("耗时",Rect2(1119,530,54,27),15,true)
+	duration_caption=_label("耗时",Rect2(1119,533,54,27),15,true)
 	days=_label("",Rect2(1121,554,31,33),23,true)
 	days.add_theme_color_override("font_color",GOLD)
 	_label("天",Rect2(1142,555,25,32),20,true)
-	note=_label("",Rect2(1246,532,129,57),16)
+	note=_label("",Rect2(1251,532,129,57),16)
 	note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	warning=_label("状态不满可以休息，但恢复不会超过各上限值。",Rect2(984,622,440,36),18)
 	var button_rect:=Rect2(944,684,376,127)

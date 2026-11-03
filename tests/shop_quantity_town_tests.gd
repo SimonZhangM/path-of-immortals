@@ -11,6 +11,9 @@ func town_interactions(map: Node) -> void:
 		check(map.travel.request_destination(point),"can walk to location")
 		map.travel.advance(1000)
 		await settle()
+		if event.type=="rest" and map.event_state.phase=="rest":
+			check(map.rest_dialog.visible and map.travel.paused,"first visit introduces rest location")
+			map._cancel_rest()
 		check(map.travel.current_node_id==point and not map.travel.paused and not map.event_state.is_active(),"arrival finishes without opening or pausing")
 		check(not map.shop_dialog.visible and not map.rest_dialog.visible and not map.clinic_dialog.visible,"location dialogs remain closed")
 		map.travel.node_arrived.emit(point)

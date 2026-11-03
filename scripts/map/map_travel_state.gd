@@ -6,6 +6,8 @@ var paused := false
 var exploration_enabled := false
 var revealed_points: Dictionary = {}
 var revealed_routes: Dictionary = {}
+var blocked_routes: Dictionary = {}
+var hidden_points: Dictionary = {}
 
 # Curves and coordinates are detached content data. No Nodes or wall-clock access.
 var node_positions: Dictionary = {}
@@ -70,6 +72,7 @@ func configure(points: Dictionary, edges: Array[Dictionary], start_id: String, w
 	return ""
 
 func shortest_path(start_id: String, target_id: String) -> Array[Dictionary]:
+	if hidden_points.has(target_id): return []
 	if not node_positions.has(start_id) or not node_positions.has(target_id) or start_id == target_id:
 		return []
 	var distances := {start_id: 0.0}
@@ -91,6 +94,7 @@ func shortest_path(start_id: String, target_id: String) -> Array[Dictionary]:
 		if node == target_id:
 			break
 		for edge: Dictionary in adjacency[node]:
+			if not edge_allowed(edge): continue
 			if exploration_enabled and not revealed_routes.has(edge.id): continue
 			var candidate: float = best + edge.length
 			if candidate < float(distances.get(edge.to, INF)):
@@ -107,6 +111,7 @@ func shortest_path(start_id: String, target_id: String) -> Array[Dictionary]:
 	return result
 
 func request_destination(target_id: String) -> bool:
+	if hidden_points.has(target_id): return false
 	if not node_positions.has(target_id):
 		return false
 	if exploration_enabled and not revealed_points.has(target_id): return false
@@ -116,6 +121,19 @@ func request_destination(target_id: String) -> bool:
 		pending_destination_id = "" if target_id == destination_id else target_id
 		return true
 	return _plan(target_id)
+
+func edge_allowed(edge: Dictionary) -> bool:
+	# A legacy save at a newly hidden point may walk outward, never back into it.
+	if hidden_points.has(edge.to): return false
+	return not blocked_routes.has(edge.id) or hidden_points.has(edge.from) and edge.from==current_node_id
+
+func accessible_graph() -> Dictionary:
+	var result := {}
+	for id: String in adjacency:
+		result[id] = []
+		for edge: Dictionary in adjacency[id]:
+			if edge_allowed(edge): result[id].append(edge)
+	return result
 
 func stop_at_current_node() -> bool:
 	# Only valid at an arrival boundary; never teleport back along an edge.
@@ -145,6 +163,9 @@ func advance(delta: float) -> void:
 	var remaining := maxf(delta, 0.0)
 	while remaining > 0 and mode != "idle" and not paused:
 		var edge := _path[_edge_index]
+		if not edge_allowed(edge) and is_zero_approx(_edge_distance):
+			stop_at_current_node()
+			return
 		var speed := run_speed if mode == "run" else walk_speed
 		var time_to_node: float = (edge.length - _edge_distance) / speed
 		if remaining + 0.000000001 < time_to_node:

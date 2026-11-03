@@ -10,7 +10,7 @@
   "marker": "res://assets/mapdot.webp",
   "source_size": [
     3321,
-    1867
+    1862
   ],
   "layout_scene": "res://scenes/maps/qingshizhen_layout.tscn",
   "sign_motion": "res://data/ui/map_sign_motion.json",
@@ -18,6 +18,15 @@
   "show_map_title": true,
   "title_image": "res://assets/map-title-qingshizhen.webp",
   "exits": [
+    {
+      "point_id": "base.map.qingshizhen.point.n30",
+      "title": "前往 白沙村",
+      "scene": "res://scenes/maps/baishacun.tscn",
+      "target_point": "base.map.baishacun.point.n01",
+      "target_facing": "right",
+      "required_story_flag": "base.story.chaoshengguichu.accepted",
+      "locked_hint": "开启主线「潮声归处」后可前往白沙村。"
+    },
     {
       "point_id": "base.map.qingshizhen.point.n25",
       "title": "前往 青石河湾",

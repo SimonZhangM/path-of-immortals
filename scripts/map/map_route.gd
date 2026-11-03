@@ -40,11 +40,16 @@ var exploration_hint_end := false
 var exploration_hint_length := 72.0
 
 func present_exploration(full: bool, from_start: bool, from_end: bool, hint_length: float) -> void:
+	var hint_start := from_start and not full
+	var hint_end := from_end and not full
+	var shown := full or from_start or from_end
+	if exploration_full==full and exploration_hint_start==hint_start and exploration_hint_end==hint_end and is_equal_approx(exploration_hint_length,hint_length) and visible==shown:
+		return
 	exploration_full = full
-	exploration_hint_start = from_start and not full
-	exploration_hint_end = from_end and not full
+	exploration_hint_start = hint_start
+	exploration_hint_end = hint_end
 	exploration_hint_length = hint_length
-	visible = full or from_start or from_end
+	visible = shown
 	queue_redraw()
 
 func display_spans() -> Array[Vector2]:

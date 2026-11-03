@@ -60,7 +60,7 @@ func rebuild() -> void:
 	main_column.add_theme_constant_override("separation", 4)
 	actor_row.add_child(main_column)
 	var card := PartyMemberCard.new()
-	# Both portrait centers and plaques share the existing enemy baseline.
+	# Plaques and the unscaled portrait geometry share the existing enemy baseline.
 	# Resource bars keep their fixed origin independently of portrait geometry.
 	card.portrait_vertical_offset = 236.0 * (0.076470588 + 0.847058824) - 7.0 - 200.0
 	var actor_slot := Control.new()

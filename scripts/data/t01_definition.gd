@@ -50,6 +50,11 @@ static func runtime_error(raw: Dictionary) -> String:
 			return "T01 flag must be boolean: " + flag
 	if not combat.get("waste_on_insufficient", false) is bool:
 		return "waste_on_insufficient must be boolean"
+	if combat.has("status_capacity_bonuses"):
+		if not combat.status_capacity_bonuses is Dictionary: return "status capacity bonuses must be an object"
+		for status: Variant in combat.status_capacity_bonuses:
+			if not status is String or status_element(status).is_empty() or not ContentRegistry._positive_integer(combat.status_capacity_bonuses[status]):
+				return "invalid item status capacity bonus"
 	if combat.has("link_reward"):
 		var reward: Variant = combat.link_reward
 		if raw.get("category") != "armor" or raw.get("armor_slot") != "身甲" or String(combat.get("lineage", "")).is_empty() or not reward is Dictionary:
@@ -65,7 +70,7 @@ static func runtime_error(raw: Dictionary) -> String:
 		if not ContentRegistry._positive_integer(threshold.get("numerator")) or not ContentRegistry._positive_integer(threshold.get("denominator")) or threshold.numerator > threshold.denominator:
 			return "invalid resource threshold fraction"
 	for effect: Dictionary in raw.effects:
-		if effect.get("effect") not in ["damage", "apply_status", "restore_capped", "restore_ticks", "restore_instant", "restore_armor", "cleanse_toxin", "barrier", "resistance", "cast_spell", "prime_item_attack"]:
+		if effect.get("effect") not in ["damage", "apply_status", "restore_capped", "restore_ticks", "restore_instant", "restore_armor", "cleanse_toxin", "barrier", "resistance", "cast_spell", "prime_item_attack", "delay_cooldown"]:
 			return "T01 effect is not implemented: " + str(effect.get("effect"))
 		if effect.get("effect") == "damage":
 			var chance: Variant = combat.get("hit_chance")
@@ -79,6 +84,8 @@ static func valid_effect(e: Dictionary) -> bool:
 	if e.get("trigger") == "on_attacked" and (e.get("effect") != "apply_status" or not ContentRegistry._positive_number(e.get("cooldown"))):
 		return false
 	match e.get("effect"):
+		"delay_cooldown":
+			return e.get("trigger") == "on_activate" and e.get("target") == "enemy" and e.get("item_scope") in ["attack_items", "all_items"] and e.get("selection") in ["earliest_ready_one", "all"] and ContentRegistry._positive_number(e.get("seconds")) and e.seconds <= 86400
 		"prime_item_attack":
 			return e.get("trigger") == "on_activate" and e.get("target_item") is String and e.target_item.begins_with("base.") and e.get("target_name") is String and ContentRegistry._positive_number(e.get("value"))
 		"cast_spell":

@@ -46,9 +46,9 @@ func _init() -> void:
 	for column in [{"name":"当前气血","x":743},{"name":"诊后气血","x":953},{"name":"预计恢复","x":1160}]:
 		var heading := _label(column.name,Rect2(column.x,368,160,32),23,_kai)
 		heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	current_label = _value(Rect2(743,471,160,37))
+	current_label = _value(Rect2(723,471,200,37))
 	after_label = _value(Rect2(953,471,160,37))
-	gain_label = _label("",Rect2(1160,418,160,52),39,_kai)
+	gain_label = _label("",Rect2(1160,408,160,52),38,_kai)
 	gain_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	gain_label.add_theme_color_override("font_color",RECOVERY)
 	_label("诊治费用",Rect2(703,653,160,34),24,_hei)
@@ -176,7 +176,7 @@ func _value(rect: Rect2) -> RichTextLabel:
 	label.scroll_active = false
 	label.mouse_filter = MOUSE_FILTER_IGNORE
 	label.add_theme_font_override("normal_font",_kai)
-	label.add_theme_font_size_override("normal_font_size",29)
+	label.add_theme_font_size_override("normal_font_size",28)
 	label.add_theme_color_override("default_color",INK)
 	_place(label,rect)
 	return label

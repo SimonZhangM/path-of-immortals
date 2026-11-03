@@ -1,0 +1,17 @@
+{
+  "id": "base.map_event.baishacun.chest_n10",
+  "type": "chest",
+  "point_id": "base.map.baishacun.point.n10",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.baishacun.chest_n10",
+  "respawn_days": 40,
+  "presentation": {},
+  "observation": {
+    "location_name": "海隅古树",
+    "location_description": "村南古树的根须绕过岩石，白花沿着沙地生长，近岸潮声从礁隙间传来。",
+    "chest_name": "树根旧匣",
+    "description": "一只小木匣半掩在树根与落叶之间，铜扣上沾着细沙，木盖被海风吹得泛白。",
+    "result_description": "你拨开木箱的锁扣，掀起箱盖。两格中各放着一件物品，可以择一收下。"
+  }
+}

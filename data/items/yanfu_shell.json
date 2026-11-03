@@ -1,0 +1,33 @@
+{
+  "id": "base.organ.yanfu_shell",
+  "name": "岩腹甲片",
+  "quality": "下品",
+  "size": [
+    2,
+    2
+  ],
+  "icon": "res://assets/item-enemy-yanfuduzhu-yanfujiake.webp",
+  "cooldown": 6.5,
+  "stamina_cost": 0,
+  "armor_capacity": 9,
+  "type": "item",
+  "category": "item",
+  "tags": [
+    "器官"
+  ],
+  "rule_version": 1,
+  "element": "base.element.none",
+  "combat": {
+    "source_location": "用户确认：旧祠四怪器官2026-10-08；奖励与毒蚀容量2026-10-31",
+    "hit_chance": 0.9,
+    "waste_on_insufficient": true,
+    "art_outline_px": 1
+  },
+  "effects": [
+    {
+      "effect": "restore_armor",
+      "value": 3,
+      "trigger": "on_activate"
+    }
+  ]
+}

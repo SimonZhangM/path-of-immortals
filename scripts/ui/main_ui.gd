@@ -546,16 +546,20 @@ func _show_restore(event: Dictionary) -> void:
 				icon = row.icon
 			if bar == null or icon == null or not bar.is_visible_in_tree(): return
 			var origin := Vector2.INF
-			for source_panel: TeamPanel in [ally_panel, enemy_panel]:
-				for source_index in source_panel.members.size():
-					if source_panel.members[source_index].id == event.get("owner_id", ""):
-						origin = source_panel.bags[source_index].recovery_origin(event)
+			var status: String = event.get("recovery_status", "")
+			if not status.is_empty() and panel.status_icons.member == panel.members[index]:
+				origin = panel.status_icons.recovery_origin(status)
+			if not origin.is_finite():
+				for source_panel: TeamPanel in [ally_panel, enemy_panel]:
+					for source_index in source_panel.members.size():
+						if source_panel.members[source_index].id == event.get("owner_id", ""):
+							origin = source_panel.bags[source_index].recovery_origin(event)
 			# Passive recovery with no item attribution originates at its resource icon.
 			if not origin.is_finite():
 				origin = icon.get_global_transform_with_canvas() * (icon.size * 0.5)
 			var flight := RestoreFlight.new()
 			add_child(flight)
-			flight.configure(icon.texture, get_global_transform_with_canvas().affine_inverse() * origin, bar)
+			flight.configure(RestoreFlight.RESOURCE_ICONS.get(resource, icon.texture), get_global_transform_with_canvas().affine_inverse() * origin, bar)
 			_restore_flights.append(flight)
 			return
 

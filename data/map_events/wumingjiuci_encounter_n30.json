@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n30",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n30",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-11-N30.webp"
+  },
+  "title": "断木荒院",
+  "description": "东侧荒院堆着断木、碎石与破罐，倒下的梁木间传来细密啃咬声。一只黑尾祠鼠撞开松动木片，贴着石堆窜出，长尾在积尘中拖出一道细痕。",
+  "enemy_id": "base.enemy.heiwei_cishu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

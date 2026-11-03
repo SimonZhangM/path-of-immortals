@@ -50,11 +50,11 @@ func _run() -> void:
 	await _settle()
 	var modal: MapRewardDialog = screen.reward_dialog
 	_check(modal.visible and not screen.dialogue.visible and screen.event_state.phase == "reward", "reward modal replaces story presentation")
-	_check(modal.heading.text == "获得物品" and modal.card.entry.id == JADE and not modal.card.canvas.has_node("Quantity"), "correct heading and single jade card without quantity")
-	_check(modal.card.canvas.scale.x > 0 and modal.card.canvas.get_node("ItemName").text == "温玉佩", "reward card foreground has visible scale and name")
+	_check(modal.heading.text == "获得物品" and modal.card.entry.id == JADE and modal.card.quantity_label.text == "+1", "correct heading and single jade quantity badge")
+	_check(modal.card.square.size.x > 0 and modal.card.name_label.text == "温玉佩", "reward square and name visible")
 	_check(modal.accept_button.texture_normal.resource_path == "res://assets/button-queren.webp" and modal.pick_sound.stream == GameAudio.STREAMS.pick, "authored button and requested sound")
 	_check(modal.accept_button.get_node("AcceptCaption").text == "收下" and modal.accept_button.get_node("AcceptCaption").get_theme_color("font_color") == Color.WHITE, "white accept caption")
-	_check(is_equal_approx(modal.card.size.x / modal.card.size.y, 0.75) and modal.card.quality_badge.get_rect().get_center().is_equal_approx(Vector2(modal.card.size.x * 0.5, modal.card.size.y)), "reward card uses3:4 geometry with its quality badge centered on the lower border")
+	_check(is_equal_approx(modal.card.square.size.x,modal.card.square.size.y) and modal.card.square.get_global_rect().encloses(modal.card.quantity_label.get_global_rect()), "reward square contains quantity badge")
 	for dimensions in [Vector2i(1920, 1080), Vector2i(1280, 720)]:
 		root.size = dimensions
 		await _settle()

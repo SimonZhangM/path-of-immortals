@@ -43,7 +43,7 @@ static func candidates(state: MapLoadoutState, event: Dictionary, pool: Dictiona
 		var ids: Array[String] = []
 		for id: String in state.records:
 			var record: Dictionary = state.records[id]
-			if record.quality == event.quality and record.category in categories: ids.append(id)
+			if record.quality == event.quality and record.category in categories and state.ordinary_acquisition_allowed(id): ids.append(id)
 		ids.sort()
 		result.append(ids)
 	return result
@@ -112,7 +112,7 @@ static func validate_cooldowns(raw: Variant, grants: Variant) -> bool:
 
 static func _current_offer(state: MapLoadoutState, event: Dictionary) -> bool:
 	var offer: Variant = state.chest_offers.get(event.reward_id)
-	return offer is Dictionary and offer.get("version")==2 and validate_offers({event.reward_id:offer},state.records) and state.records[offer.items[0]].quality==event.quality
+	return offer is Dictionary and offer.get("version")==2 and validate_offers({event.reward_id:offer},state.records) and state.records[offer.items[0]].quality==event.quality and offer.items.all(func(id): return state.ordinary_acquisition_allowed(id))
 
 static func _candidate(state: MapLoadoutState) -> Dictionary:
 	var candidate := MapLoadoutState.new()
@@ -133,11 +133,17 @@ static func ensure_offer(state: MapLoadoutState, event: Dictionary, path: String
 	var total := 0
 	for pool: Dictionary in _rules.pools: total += int(pool.weight)
 	var pool := pool_for_roll(rng.randi_range(0,total-1))
+	var previous: Variant = state.chest_offers.get(event.reward_id,{})
+	var retained: Array = []
+	if previous is Dictionary and previous.get("version")==2 and validate_offers({event.reward_id:previous},state.records):
+		pool = pool_definition(previous.pool_id)
+		retained = previous.items
 	var slots := candidates(state,event,pool)
 	var choices: Array[String] = []
 	for slot: Array in slots:
 		var available := slot.filter(func(id): return id not in choices)
-		choices.append(available[rng.randi_range(0,available.size()-1)])
+		var index := choices.size()
+		choices.append(retained[index] if retained.size()==2 and retained[index] in available else available[rng.randi_range(0,available.size()-1)])
 	var prepared := _candidate(state)
 	if not prepared.error.is_empty(): return prepared.error
 	var candidate: MapLoadoutState = prepared.state

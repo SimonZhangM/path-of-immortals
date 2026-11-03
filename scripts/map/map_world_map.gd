@@ -51,6 +51,7 @@ var selected_location_id := ""
 var _visited: Dictionary = {}
 var sidebar: Control
 var selection_ring: TextureRect
+var quest_markers: Dictionary = {}
 
 func _init() -> void:
 	name = "WorldMap"
@@ -87,6 +88,7 @@ func _init() -> void:
 		var location: Dictionary = locations[location_id]
 		var marker := _trimmed_image(location.marker_texture,map_window,float(location.marker_width))
 		marker.name = location.name
+		marker.hide()
 		landmark_markers[location_id] = marker
 	selection_ring = _trimmed_image("res://assets/UI-map-selected.webp",map_window,SELECTION_MARKER_WIDTH)
 	selection_ring.name = "SelectedLocation"
@@ -231,30 +233,44 @@ func present(map_id: String = "", visited: Dictionary = {}) -> void:
 	_end_drag()
 	_refresh_shortcut_hints()
 	_visited = visited.duplicate(true)
+	player_world_position = world_position_for(map_id)
+	player_location_id = catalog.location_for_map(map_id)
+	for location_id: String in landmark_markers:
+		landmark_markers[location_id].visible = is_location_discovered(location_id)
+	selected_location_id = ""
+	selection_ring.hide()
+	sidebar.hide()
 	show()
 	_layout()
 	_apply_zoom(map_window.size*0.5,maxi(0,zoom_levels.size()-3))
-	player_world_position = world_position_for(map_id)
-	player_location_id = catalog.location_for_map(map_id)
-	location_marker.hide()
-	for location: Dictionary in locations.values():
-		if not map_id.is_empty() and location.map_id == map_id:
-			location_marker.show()
-			break
+	location_marker.visible = is_location_discovered(player_location_id)
 	map_image.position = map_window.size*0.5-player_world_position*zoom_levels[zoom_index]
-	var current_location: String = catalog.location_for_map(map_id)
-	select_location(current_location if not current_location.is_empty() else str(locations.keys()[0]))
+	if not player_location_id.is_empty():
+		select_location(player_location_id)
+	else:
+		for location_id: String in locations:
+			if is_location_discovered(location_id):
+				select_location(location_id)
+				break
 	_clamp_map()
 
+func is_location_discovered(location_id: String) -> bool:
+	if not locations.has(location_id): return false
+	# Arrival is already persisted in map_visited; the current map also covers old
+	# saves without a ledger. Never infer entry from a revealed neighbor or quest.
+	var map_id: String = locations[location_id].map_id
+	return location_id == player_location_id or not _visited.get(map_id, []).is_empty()
+
 func select_location(location_id: String) -> void:
-	if not locations.has(location_id): return
+	if not is_location_discovered(location_id): return
 	selected_location_id = location_id
 	var location: Dictionary = locations[location_id]
+	sidebar.show()
 	sidebar.display(location,catalog.regions[location.region_id],catalog.region_progress(location.region_id,_visited))
 	_sync_selection()
 
 func _sync_selection() -> void:
-	selection_ring.visible = landmark_markers.has(selected_location_id)
+	selection_ring.visible = landmark_markers.has(selected_location_id) and landmark_markers[selected_location_id].visible
 	if selection_ring.visible:
 		selection_ring.position = landmark_markers[selected_location_id].get_rect().get_center()-selection_ring.size*0.5+Vector2(0.5,0.5)
 
@@ -264,6 +280,7 @@ func location_at(point: Vector2) -> String:
 	var distance := INF
 	for location_id: String in landmark_markers:
 		var marker: TextureRect = landmark_markers[location_id]
+		if not marker.visible: continue
 		var delta := point.distance_to(marker.get_rect().get_center())
 		if delta <= maxf(24,marker.size.x*0.5) and delta < distance:
 			closest = location_id
@@ -334,6 +351,34 @@ func _clamp_map() -> void:
 		var current_marker: TextureRect = landmark_markers[player_location_id]
 		location_marker.position = Vector2(current_marker.get_rect().get_center().x-location_marker.size.x*0.5+0.5,current_marker.position.y-LOCATION_MARKER_GAP-location_marker.size.y)
 	_sync_selection()
+	_sync_quest_markers()
+
+func show_quest_targets(targets: Array, focus := true) -> void:
+	for marker: TextureRect in quest_markers.values():
+		map_window.remove_child(marker)
+		marker.queue_free()
+	quest_markers.clear()
+	for target: Dictionary in targets:
+		var id: String = target.get("world_location_id",catalog.location_for_map(target.get("map_id","")))
+		if not is_location_discovered(id) or quest_markers.has(id): continue
+		var marker := _trimmed_image("res://assets/UI-task-right-map-location.webp",map_window,52)
+		marker.name = "QuestTarget_"+id.replace(".","_")
+		quest_markers[id] = marker
+	if focus and not quest_markers.is_empty():
+		var id: String = quest_markers.keys()[0]
+		var point := Vector2(locations[id].position[0],locations[id].position[1])
+		map_image.position = map_window.size*0.5-point*zoom_levels[zoom_index]
+		select_location(id)
+	_clamp_map()
+
+func _sync_quest_markers() -> void:
+	# Task hints cannot reveal a scene before its first actual entry.
+	for id: String in quest_markers:
+		var marker: TextureRect = quest_markers[id]
+		marker.visible = is_location_discovered(id)
+		var location: Dictionary = locations[id]
+		var point := Vector2(location.position[0],location.position[1])
+		marker.position = map_image.position+point*zoom_levels[zoom_index]-Vector2(marker.size.x*0.5,marker.size.y+float(location.marker_width)*0.5+4)
 
 func _map_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:

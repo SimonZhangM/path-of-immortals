@@ -1,0 +1,70 @@
+{
+  "id": "base.enemy.heiwei_cishu",
+  "name": "黑尾祠鼠",
+  "art_profile": "base.enemy.heiwei_cishu",
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 39,
+  "innate_armor_type": "无甲",
+  "initial_armor": 0,
+  "max_stamina": 36,
+  "max_spirit": 0,
+  "innate_armor_capacity": 0,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 3,
+    "experience": 1
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.cishu_tooth",
+      "cell": [
+        1,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.cishu_claw",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.cishu_tail",
+      "cell": [
+        2,
+        0
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.cishu_tooth",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.cishu_claw",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.cishu_tail",
+      "chance": 0.25
+    }
+  ],
+  "encounter_descriptions": [
+    "破旧供桌下传来细碎的抓挠声，地面散落着被啃破的木屑。你刚俯身查看，一只黑尾祠鼠便从桌脚后窜出，露出尖长的门齿。",
+    "旧祠石阶旁有几个新挖出的鼠洞，洞口残留着零碎食物。忽然一阵急促的窸窣声响起，一只黑尾祠鼠贴着断墙疾跑，猛地向你扑来。",
+    "昏暗回廊里传来断断续续的啃咬声，墙角一块破木板微微晃动。你正要靠近，木板突然被撞开，一条细长黑尾从阴影中甩出。"
+  ],
+  "presentation": {
+    "rank_label": "凡人级",
+    "category_label": "啮兽类",
+    "description": "藏身于旧祠墙洞与朽木间，身形瘦小，经不起重创。善以门齿穿刺、前爪撕抓和长尾横扫，从不同角度发动攻势。",
+    "traits": [
+      "脆弱",
+      "多样攻击"
+    ],
+    "battle_background": "res://assets/battle-wumingjiuci-heiweicishu.webp",
+    "summary": []
+  }
+}

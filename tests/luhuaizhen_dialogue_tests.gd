@@ -2,7 +2,7 @@ extends "res://tests/npc_topic_gate_tests.gd"
 
 const LU := "base.npc.luhuaizhen"
 const P := "base.dialogue.luhuaizhen."
-const ALCHEMY := "base.map.qingshizhen.point.n12"
+const ALCHEMY := "base.map.qingshizhen.point.n19"
 const START := "base.story.cultivation.started"
 const JOIN := "base.story.qinglan.joined"
 const TASK := "base.story.tianhe.material_inquiry_assigned"
@@ -180,7 +180,7 @@ func run() -> void:
 	check(map.startup_error.is_empty(),"town with Lu starts")
 	if not map.startup_error.is_empty(): quit(1); return
 	var dialog := await open_person(map,ALCHEMY)
-	check(dialog.library!=null and dialog.library.definition.id==LU,"N12 binds Lu")
+	check(dialog.library!=null and dialog.library.definition.id==LU,"N19 binds Lu")
 	if DisplayServer.get_name()=="headless": model_checks(map,dialog.library)
 	await finish_greeting(dialog)
 	check_closed(dialog)

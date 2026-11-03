@@ -10,8 +10,52 @@
       "stage_id": "morning",
       "introductions": {
         "morning": "晨光落在窗边，街巷里渐渐有了人声。\n叶伯这会儿该在整理药柜了。\n去药材铺看看，帮他搭把手，开始新一天的活计。",
-        "gathering": "铺里的苦艾叶与溪露苔不多了，叶伯让你去山脚采些回来。瀑布旁的石径早已走熟，坡上有苦艾，溪边的石上也常能找到溪露苔。背好药篓，去溪源药坡走一趟。",
-        "returning": "苦艾叶与溪露苔都已收好，药篓里透着清新的草叶气息。回药材铺交给叶伯，再把新采的草药摊开晾好。"
+        "gathering": "已来到溪源药坡。沿熟悉的石径找一找，采些坡上的苦艾叶，再去溪边收集溪露苔。两样分开包好，记着叶伯的叮嘱，只取岸边够得着的。",
+        "returning": "苦艾叶与溪露苔都已收好，药篓里透着清新的草叶气息。回药材铺交给叶伯，再把新采的草药摊开晾好。",
+        "completed": "草药已经交给叶伯，采药的工钱也已收好。叶伯转告清禾有事找你，得空去趟医馆吧。",
+        "travel": "铺里的苦艾叶与溪露苔不多了，叶伯让你去山脚采些回来。瀑布旁的石径早已走熟，坡上有苦艾，溪边的石上也常能找到溪露苔。背好药篓，去溪源药坡走一趟。"
+      },
+      "accepted_at": null,
+      "accepted_location": "",
+      "updated_at": null
+    },
+    {
+      "id": "quest.prologue.hewanfengxian",
+      "category": "main",
+      "title": "河湾逢险",
+      "summary": "河湾有人负伤，寻药相助，再请清禾一同救人回镇。",
+      "image": "res://assets/UI-task-mid-main-hewanfengxian.webp",
+      "detail_image": "res://assets/UI-task-right-main-hewanfengxian.webp",
+      "stage_id": "traces",
+      "introductions": {
+        "traces": "草叶上沾着血，石边还有几道凌乱的脚印。痕迹一直延向林间小庙，庙前散着断枝和碎瓦，四周却静悄悄的。走近看看，或许有人需要帮忙。",
+        "medicine": "沈砚舟暂时走不远，伤口还需要处理。草坡能找到止血草，青藤则多长在背阴潮湿的地方。先沿附近的石壁找找，把两样药备齐。",
+        "shrine": "坡下的兽声还没停，先在旧祠里避一阵。这里背阴潮湿，墙缝间或许能找到青藤。趁这会儿找找，待外面安静了再回去。",
+        "returning": "药材已经收好，包里的残镜却让人心里发沉。方才一闪而过的画面究竟是什么，眼下无从分辨。先回河湾，把药送到沈砚舟手里。",
+        "doctor": "外伤暂时稳住，温玉佩也已归还，沈砚舟仍无法自行走动。回镇去医馆，请清禾带人来看看。",
+        "pickup": "清禾已备好药箱，并叫来两位帮工带上担架。沿来时的路带他们去小庙旁，接沈砚舟回镇。",
+        "clinic": "沈砚舟已安置在担架上，先送到青石镇医馆，让清禾照看。到了镇口还不能停，得把人妥善安置下来。",
+        "settling": "清禾已安排报信，沈砚舟可以安心养伤。收好他赠予的《引气诀》，再与两人道别。",
+        "completed": "沈砚舟已在医馆安置。他赠了你一本《引气诀》，让你先读，不必急着练。清禾留在医馆照看，你可以放心回去休息。",
+        "detour": "前方林中有野兽出没，瀑布旁一条陌生的石径通向山上的旧祠。先到那里避一避，再找机会继续寻药。",
+        "return_jade": "沈砚舟的外伤暂时稳住了。把借来的温玉佩还给他，再回青石镇医馆请清禾来看看。"
+      },
+      "accepted_at": null,
+      "accepted_location": "",
+      "updated_at": null
+    },
+    {
+      "id": "quest.prologue.yiguanbeiyao",
+      "category": "side",
+      "title": "医馆备药",
+      "summary": "替清禾备些止血草，带到医馆交给她。",
+      "image": "res://assets/UI-task-mid-main-yiguanbeiyao.webp",
+      "detail_image": "res://assets/UI-task-right-main-yiguanbeiyao.webp",
+      "stage_id": "gathering",
+      "introductions": {
+        "gathering": "清禾在医馆托你补些止血草，青石河湾的林间草坡上就能找到。眼下还够用，不必赶路；采到合适的草药后，带回医馆交给她。",
+        "returning": "止血草已经备好，带回青石镇医馆，交给清禾吧。",
+        "completed": "止血草已交给清禾，医馆添好了备用草药，药钱也已收妥。"
       },
       "accepted_at": null,
       "accepted_location": "",
@@ -19,13 +63,53 @@
     }
   ],
   "category_tags": {
-    "main": {"label": "主线", "color": "C66B5C", "fill": "492925", "text": "FFE3D9"},
-    "side": {"label": "支线", "color": "6298CF", "fill": "203850", "text": "DFEDFF"},
-    "character": {"label": "人物", "color": "D888AD", "fill": "482C3E", "text": "FFE3EF"},
-    "inheritance": {"label": "传承", "color": "A28AD4", "fill": "342D4C", "text": "ECE4FF"},
-    "commission": {"label": "委托", "color": "60BBC8", "fill": "1E3D43", "text": "D9F7FC"},
-    "sect": {"label": "宗门", "color": "78B382", "fill": "273F30", "text": "E1F5E3"},
-    "encounter": {"label": "奇遇", "color": "D4B064", "fill": "493D25", "text": "FFF0CE"},
-    "other": {"label": "其他", "color": "9DA9B8", "fill": "303843", "text": "E8EDF3"}
+    "main": {
+      "label": "主线",
+      "color": "C66B5C",
+      "fill": "492925",
+      "text": "FFE3D9"
+    },
+    "side": {
+      "label": "支线",
+      "color": "6298CF",
+      "fill": "203850",
+      "text": "DFEDFF"
+    },
+    "character": {
+      "label": "人物",
+      "color": "D888AD",
+      "fill": "482C3E",
+      "text": "FFE3EF"
+    },
+    "inheritance": {
+      "label": "传承",
+      "color": "A28AD4",
+      "fill": "342D4C",
+      "text": "ECE4FF"
+    },
+    "commission": {
+      "label": "委托",
+      "color": "60BBC8",
+      "fill": "1E3D43",
+      "text": "D9F7FC"
+    },
+    "sect": {
+      "label": "宗门",
+      "color": "78B382",
+      "fill": "273F30",
+      "text": "E1F5E3"
+    },
+    "encounter": {
+      "label": "奇遇",
+      "color": "D4B064",
+      "fill": "493D25",
+      "text": "FFF0CE"
+    },
+    "other": {
+      "label": "其他",
+      "color": "9DA9B8",
+      "fill": "303843",
+      "text": "E8EDF3"
+    }
   }
 }

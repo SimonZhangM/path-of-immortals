@@ -29,6 +29,13 @@ static func index(quality: String) -> int:
 static func background_path(quality: String) -> String:
 	return "res://assets/level-%d.webp" % BACKGROUND_LEVELS[index(quality)]
 
+static func small_background_path(record: Dictionary) -> String:
+	# Small square art follows the explicit 0..7 order, unlike the old tall cards.
+	# Physical technique books have no item quality, even when already studied.
+	var ungraded: bool = record.get("category","")=="book" or str(record.get("id","")).begins_with("base.currency.")
+	var grade := 0 if ungraded else level(str(record.get("quality","")))
+	return "res://assets/UI-inv-smallbg%d.webp" % grade
+
 # Enemy realm starts at mortal (order 0), which maps to 下品, not 凡品.
 # An authored quality is an explicit exception to the source-based default.
 static func material_record(raw: Dictionary, registry: ContentRegistry) -> Dictionary:

@@ -1,6 +1,6 @@
 extends "res://tests/map_shop_tests.gd"
 
-const ALCHEMY_POINT := "base.map.qingshizhen.point.n12"
+const ALCHEMY_POINT := "base.map.qingshizhen.point.n19"
 
 func capture(name: String) -> void:
 	await settle()
@@ -24,7 +24,7 @@ func run() -> void:
 	map.travel.current_node_id = ALCHEMY_POINT
 	map.travel.mode = "idle"
 	map.loadout.spirit_stones = 1000
-	check(map._try_start_event(ALCHEMY_POINT,"click",true),"N12 opens alchemy")
+	check(map._try_start_event(ALCHEMY_POINT,"click",true),"N19 opens alchemy")
 	var dialog: MapShopDialog = map.shop_dialog
 	var talk: MapClinicDialog = dialog.conversation_view
 	var before: Dictionary = map.loadout.snapshot()

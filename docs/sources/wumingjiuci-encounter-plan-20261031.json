@@ -1,0 +1,205 @@
+{
+  "catalog_type": "encounter_authoring_plan",
+  "date": "2026-10-31",
+  "runtime_applied": true,
+  "distribution_status": "user_confirmed",
+  "location_copy_status": "updated_2026-10-31",
+  "traits_status": "updated_2026-10-31",
+  "events": [
+    {
+      "point_id": "base.map.wumingjiuci.point.n03",
+      "event_id": "base.map_event.wumingjiuci.encounter_n03",
+      "color": "白",
+      "enemy_id": "base.enemy.huiyi_fu",
+      "location": "南门左侧、西庭入口",
+      "title": "西庭断檐",
+      "description": "西庭入口的残檐下落着碎瓦，梁间忽然传来急促振翅声。一只灰翼蝠从断梁背后翻身掠出，擦过翘起的瓦角，尖鸣着扑向阶前。",
+      "illustration": "res://assets/battle-wumingjiuci-01-N03.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n04",
+      "event_id": "base.map_event.wumingjiuci.encounter_n04",
+      "color": "红",
+      "enemy_id": "base.enemy.yanfu_duzhu",
+      "location": "中央供台下方",
+      "title": "香台前阶",
+      "description": "香台下的残门塌落半边，断瓦与石阶间绷着粗厚蛛丝。一只岩腹毒蛛从瓦隙中挤出，抬起灰黑腹甲，螯牙渗出毒液，挡住了通往供台的路。",
+      "illustration": "res://assets/battle-wumingjiuci-02-N04.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n08",
+      "event_id": "base.map_event.wumingjiuci.encounter_n08",
+      "color": "黄",
+      "enemy_id": "base.enemy.xueju_huizhu",
+      "location": "神像右侧、东廊岔口",
+      "title": "东廊石阶",
+      "description": "神像东侧的石阶在廊柱旁分岔，柱脚与阶缝之间牵着灰白蛛丝。你刚绕过石灯，一只穴居灰蛛便从柱后爬出，沿着贴地的丝束逼近。",
+      "illustration": "res://assets/battle-wumingjiuci-03-N08.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n10",
+      "event_id": "base.map_event.wumingjiuci.encounter_n10",
+      "color": "蓝",
+      "enemy_id": "base.enemy.heiwei_cishu",
+      "location": "右侧供室下方",
+      "title": "供室残阶",
+      "description": "供室前的石阶散着香灰与碎瓦，倾斜木架的底部传来啃咬声。一只黑尾祠鼠钻出架底，长尾扫落一片碎瓦，露着门齿朝你窜来。",
+      "illustration": "res://assets/battle-wumingjiuci-04-N10.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n16",
+      "event_id": "base.map_event.wumingjiuci.encounter_n16",
+      "color": "黄",
+      "enemy_id": "base.enemy.xueju_huizhu",
+      "location": "左侧蛛网破屋内",
+      "title": "蛛网破屋",
+      "description": "破屋里梁木横倒，层层蛛网从残墙垂到木架之间。你刚踏过碎砖，一只穴居灰蛛便从倒梁下钻出，八足牵动网丝，封住了狭窄的落脚处。",
+      "illustration": "res://assets/battle-wumingjiuci-05-N16.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n18",
+      "event_id": "base.map_event.wumingjiuci.encounter_n18",
+      "color": "蓝",
+      "enemy_id": "base.enemy.heiwei_cishu",
+      "location": "中央神像左侧、小石像旁",
+      "title": "石像西廊",
+      "description": "中央神像西侧的小石像立在廊柱旁，座下堆着落叶与木屑。细碎抓挠声忽然停住，一只黑尾祠鼠从石座后窜出，贴着柱脚绕到你身前。",
+      "illustration": "res://assets/battle-wumingjiuci-06-N18.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n20",
+      "event_id": "base.map_event.wumingjiuci.encounter_n20",
+      "color": "白",
+      "enemy_id": "base.enemy.huiyi_fu",
+      "location": "上殿长阶下端、双狮之间",
+      "title": "双狮长阶",
+      "description": "两侧石狮守着通往上殿的长阶，阶下檐影里传来轻微振翅声。一只灰翼蝠突然从侧檐掠下，绕过廊柱，尖锐鸣声沿着石阶回荡。",
+      "illustration": "res://assets/battle-wumingjiuci-07-N20.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n23",
+      "event_id": "base.map_event.wumingjiuci.encounter_n23",
+      "color": "红",
+      "enemy_id": "base.enemy.yanfu_duzhu",
+      "location": "最上方封闭石门前",
+      "title": "封门石台",
+      "description": "雕纹石门紧闭，门前石台与两侧基座之间横着粗厚蛛丝。一只岩腹毒蛛从门侧阴影中爬出，厚硬腹甲擦过石面，带着毒液的螯牙缓缓张开。",
+      "illustration": "res://assets/battle-wumingjiuci-08-N23.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n26",
+      "event_id": "base.map_event.wumingjiuci.encounter_n26",
+      "color": "黄",
+      "enemy_id": "base.enemy.xueju_huizhu",
+      "location": "左上六柱圆阵",
+      "title": "六柱旧阵",
+      "description": "六根石柱围着斑驳圆阵，灰白蛛丝缠在柱基与地面刻纹之间。你刚走近阵心，一只穴居灰蛛便从石柱后探出，踏过刻纹，张开螯牙逼近。",
+      "illustration": "res://assets/battle-wumingjiuci-09-N26.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n28",
+      "event_id": "base.map_event.wumingjiuci.encounter_n28",
+      "color": "白",
+      "enemy_id": "base.enemy.huiyi_fu",
+      "location": "上层平台右侧",
+      "title": "上殿东廊",
+      "description": "上殿东侧的平台沿石灯通向破院，灯座后方的檐下藏着一团灰影。脚步声刚响，一只灰翼蝠便展开双翼，从石灯旁疾掠而出，扑向狭窄的廊道。",
+      "illustration": "res://assets/battle-wumingjiuci-10-N28.webp"
+    },
+    {
+      "point_id": "base.map.wumingjiuci.point.n30",
+      "event_id": "base.map_event.wumingjiuci.encounter_n30",
+      "color": "蓝",
+      "enemy_id": "base.enemy.heiwei_cishu",
+      "location": "右上断木废院",
+      "title": "断木荒院",
+      "description": "东侧荒院堆着断木、碎石与破罐，倒下的梁木间传来细密啃咬声。一只黑尾祠鼠撞开松动木片，贴着石堆窜出，长尾在积尘中拖出一道细痕。",
+      "illustration": "res://assets/battle-wumingjiuci-11-N30.webp"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "base.enemy.heiwei_cishu",
+      "name": "黑尾祠鼠",
+      "rank_label": "凡人级",
+      "category_label": "啮兽类",
+      "existing_description": "藏身于旧祠墙洞与腐朽梁木间，身形瘦小，行动敏捷。善于利用牙齿、前爪和长尾攻击。",
+      "historical_features": "脆弱·多段攻击",
+      "description": "藏身于旧祠墙洞与朽木间，身形瘦小，经不起重创。善以门齿穿刺、前爪撕抓和长尾横扫，从不同角度发动攻势。",
+      "traits": [
+        "脆弱",
+        "多样攻击"
+      ],
+      "progression_rewards": {
+        "cultivation": 3,
+        "experience": 1
+      }
+    },
+    {
+      "id": "base.enemy.huiyi_fu",
+      "name": "灰翼蝠",
+      "rank_label": "凡人级",
+      "category_label": "飞兽类",
+      "existing_description": "盘踞于旧祠屋梁和阴暗洞穴，依靠尖齿和翼爪捕食。能发出尖锐震鸣，干扰敌人的攻击节奏。",
+      "historical_features": "高速·震鸣干扰",
+      "description": "倒悬于旧祠阴暗檐梁，尖齿利爪出手迅疾。常以刺耳震鸣扰乱对手，使其攻击节奏迟缓。",
+      "traits": [
+        "快攻",
+        "震鸣干扰"
+      ],
+      "progression_rewards": {
+        "cultivation": 3,
+        "experience": 1
+      }
+    },
+    {
+      "id": "base.enemy.xueju_huizhu",
+      "name": "穴居灰蛛",
+      "rank_label": "凡人级",
+      "category_label": "虫豸类",
+      "existing_description": "栖息在旧祠阴湿角落，甲壳坚韧，螯牙锋利。擅长利用粘丝牵制对手，伺机近身撕咬。",
+      "historical_features": "产甲·粘丝迟滞",
+      "description": "栖于旧祠残屋与柱石缝隙，灰质甲壳可逐渐恢复防护。善用粘丝拖慢对手，再以螯牙和前足近身撕咬。",
+      "traits": [
+        "护甲恢复",
+        "粘丝迟滞"
+      ],
+      "progression_rewards": {
+        "cultivation": 3,
+        "experience": 1
+      }
+    },
+    {
+      "id": "base.enemy.yanfu_duzhu",
+      "name": "岩腹毒蛛",
+      "rank_label": "凡人级·首领",
+      "category_label": "虫豸类",
+      "existing_description": "盘踞于旧祠深处的巨型毒蛛，腹甲厚硬，毒液猛烈。擅长吐丝牵制猎物，再以腐毒慢慢消耗对手。",
+      "historical_features": "中毒·迟滞·回体",
+      "description": "盘踞于旧祠残门与封门石台，腹甲厚硬。以蛛丝迟滞猎物、腐毒持续侵蚀，体力衰减时还能自行恢复。",
+      "traits": [
+        "毒蚀",
+        "吐丝迟滞"
+      ],
+      "progression_rewards": {
+        "cultivation": 5,
+        "experience": 2
+      }
+    }
+  ],
+  "location_copy_runtime_applied": true,
+  "enemy_presentation_runtime_applied": true,
+  "document": "output/imagegen/战斗用图/地图怪物遭遇战总表.md",
+  "battle_runtime_applied": true,
+  "confirmed_runtime_rules": {
+    "ordinary_material_chance": 0.25,
+    "ordinary_quantity": 1,
+    "poison_capacity_bonus": 1,
+    "respawn_days": 20,
+    "poison_first_tick_seconds": 1,
+    "heart_first_victory_guaranteed": true,
+    "heart_repeat_chance": 0.1
+  },
+  "illustration_runtime_applied": true,
+  "illustration_updated_date": "2026-11-01"
+}

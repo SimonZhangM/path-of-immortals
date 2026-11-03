@@ -9,6 +9,7 @@ var fade_seconds := 0.3
 var _viewport: Control
 var _last_tick_usec := 0
 var _split_textures: Dictionary = {}
+var _story_profile: Dictionary = {}
 
 func _init() -> void:
 	set_process(false)
@@ -54,16 +55,9 @@ func configure(points: Node, viewport: Control, config_path: String) -> String:
 			var region := _source_region(icon.texture)
 			if profile.split_source_y <= region.position.y or profile.split_source_y >= region.end.y or not region.has_point(Vector2(profile.pivot_source[0], profile.pivot_source[1])):
 				return "剧情路标分区超出贴图：" + point.point_id
-		var phase_rng := RandomNumberGenerator.new()
-		phase_rng.seed = point.point_id.hash()
-		checked[point.point_id] = {
-			"sign": sign, "icon": icon, "profile": profile, "category": category,
-			"position": sign.position, "tint": icon.self_modulate, "modulate": sign.modulate,
-			"scale": sign.scale, "frame_tint": sign.self_modulate,
-			"phase": phase_rng.randf() * float(profile.period),
-			"finished": false, "fading": false, "fade_elapsed": 0.0
-		}
+		checked[point.point_id] = _make_entry(point.point_id, sign, icon, profile, category)
 	signs = checked
+	_story_profile = config.profiles.get("story", {})
 	for entry: Dictionary in signs.values():
 		# Mipmaps prefilter minified artwork so subpixel motion does not shimmer.
 		entry.sign.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -75,6 +69,31 @@ func configure(points: Node, viewport: Control, config_path: String) -> String:
 	set_process(true)
 	advance_visuals(0.0)
 	return ""
+
+func _make_entry(point_id: String, sign: Sprite2D, icon: Sprite2D, profile: Dictionary, category: String) -> Dictionary:
+	var phase_rng := RandomNumberGenerator.new()
+	phase_rng.seed = point_id.hash()
+	return {
+		"sign": sign, "icon": icon, "profile": profile, "category": category,
+		"position": sign.position, "tint": icon.self_modulate, "modulate": sign.modulate,
+		"scale": sign.scale, "frame_tint": sign.self_modulate,
+		"phase": phase_rng.randf() * float(profile.period),
+		"finished": false, "fading": false, "fade_elapsed": 0.0
+	}
+
+func register_story_sign(point_id: String, sign: Sprite2D) -> void:
+	# Runtime quest overlays share the same clock, pivot, pause and visibility rules.
+	# Keep the authored sign's entry intact so retiring it cannot hide its overlay.
+	var key := "%s:quest:%d" % [point_id, sign.get_instance_id()]
+	if signs.has(key):
+		return
+	var icon := sign.get_node(NodePath(_story_profile.icon)) as Sprite2D
+	var entry := _make_entry(point_id, sign, icon, _story_profile, "story")
+	entry.symbol = _split_story_icon(icon, _story_profile)
+	signs[key] = entry
+
+func unregister_story_sign(point_id: String, sign: Sprite2D) -> void:
+	signs.erase("%s:quest:%d" % [point_id,sign.get_instance_id()])
 
 static func _source_region(texture: Texture2D) -> Rect2:
 	return texture.region if texture is AtlasTexture else Rect2(Vector2.ZERO, texture.get_size())

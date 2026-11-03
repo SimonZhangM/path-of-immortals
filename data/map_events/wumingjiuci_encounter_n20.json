@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n20",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n20",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-07-N20.webp"
+  },
+  "title": "双狮长阶",
+  "description": "两侧石狮守着通往上殿的长阶，阶下檐影里传来轻微振翅声。一只灰翼蝠突然从侧檐掠下，绕过廊柱，尖锐鸣声沿着石阶回荡。",
+  "enemy_id": "base.enemy.huiyi_fu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

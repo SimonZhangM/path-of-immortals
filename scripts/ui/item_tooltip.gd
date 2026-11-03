@@ -226,11 +226,13 @@ static func effect_text(item: ItemData) -> String:
 	if item.category == "board" or item.training: return item.combat.get("description", "")
 	if item.category == "beast": return item.combat.get("description", "兽材，仅作材料，不能放入战斗阵盘。")
 	if item.category == "book":
-		return item.combat.get("description", CultivationDescription.book(item.combat))
+		return item.combat.description if item.combat.has("description") else CultivationDescription.book(item.combat)
 	if item.category == "spell": return CultivationDescription.spell(item.combat)
 	var lines: PackedStringArray = []
 	if item.armor_capacity > 0:
 		lines.append("上限：护甲+%d。" % item.armor_capacity)
+	for status: String in item.combat.get("status_capacity_bonuses", {}):
+		lines.append("上限：%s施加容量+%d层。" % [status, item.combat.status_capacity_bonuses[status]])
 	if item.defense > 0:
 		lines.append("基础属性：防御 +%d。" % item.defense)
 	var active: PackedStringArray = []
@@ -241,6 +243,10 @@ static func effect_text(item: ItemData) -> String:
 		lines.append("同一具体物品仅一叠，每叠最多10份。" + ("首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。" if item.category == "pill" else "暗器首轮从完整CD开始，发动后消耗一件。"))
 	for effect: Dictionary in item.effects:
 		match effect.effect:
+			"delay_cooldown":
+				var scope := "攻击器具" if effect.item_scope == "attack_items" else "器具"
+				var selection := "最早就绪的1件" if effect.selection == "earliest_ready_one" else "全部"
+				active.append("耗体%s，使敌方%s%s的当前冷却延长%s秒。" % [EffectSystem.number_text(item.stamina_cost), selection, scope, EffectSystem.number_text(effect.seconds)])
 			"prime_item_attack":
 				active.append("竖鬃蓄势：耗体%s，使下次%s的基础伤害增加%s，最多保留1次强化。" % [EffectSystem.number_text(item.stamina_cost), effect.target_name, EffectSystem.number_text(effect.value)])
 			"apply_status":
@@ -450,11 +456,14 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	slot.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	slot.add_theme_stylebox_override("panel", _box(Color("171e29"), Color("4b5260"), _px(10), 0))
 	header.add_child(slot)
+	var portrait := MapItemArtwork.item_record(item)
+	var background_record := portrait.duplicate()
+	if not identified: background_record.quality = ""
+	preload("res://scripts/map/map_item_small_background.gd").create(slot, background_record, Color("4b5260"), _px(10))
 	var canvas := Control.new()
 	slot.add_child(canvas)
 	var art := MapItemArtwork.new()
 	art.name = "PortraitArtwork"
-	var portrait := MapItemArtwork.item_record(item)
 	portrait.name = item.display_name if identified else "？"
 	portrait.art_outline_px = 1
 	art.configure(portrait, true)
@@ -519,7 +528,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	chips.add_theme_constant_override("v_separation", _px(5))
 	heading.add_child(chips)
 	var tags := classification_tags(item,_entry.get("vertical_book",false))
-	if item.category == "book": tags.append(CultivationDescription.mastery_caption(int(_entry.get("book_level", 0))))
+	if item.category == "book" and not item.combat.get("reading_only",false): tags.append(CultivationDescription.mastery_caption(int(_entry.get("book_level", 0))))
 	if not identified:
 		tags = ["？"]
 	for tag: String in tags:
@@ -535,7 +544,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 		flavor_line.add_theme_font_size_override("font_size", _px(15))
 		flavor_line.add_theme_color_override("font_color", Color("a7b8c5"))
 		flavor_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		if item.category == "book":
+		if item.category == "book" and not item.combat.get("reading_only",false):
 			var flavor_row := HBoxContainer.new()
 			flavor_row.add_theme_constant_override("separation", _px(10))
 			heading.add_child(flavor_row)
@@ -559,7 +568,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	line.thickness = 1
 	divider.add_theme_stylebox_override("separator", line)
 	content.add_child(divider)
-	if item.category == "book" and identified:
+	if item.category == "book" and identified and not item.combat.get("reading_only",false):
 		_add_book_practice(content, item, _entry)
 		var lower_divider := HSeparator.new()
 		lower_divider.name = "BookPracticeDivider"

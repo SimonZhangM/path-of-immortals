@@ -18,6 +18,8 @@
       ],
       "revisits": [],
       "story": [
+        "base.dialogue.yesongnian.quest.morning",
+        "base.dialogue.yesongnian.quest.returning",
         "base.dialogue.yesongnian.shop.water",
         "base.dialogue.yesongnian.shop.merge"
       ]
@@ -1166,6 +1168,122 @@
           "speaker": "npc",
           "text": "你能把账弄明白，我就少操一份心。🙂"
         }
+      ]
+    },
+    "base.dialogue.yesongnian.quest.morning": {
+      "topic": "shop",
+      "label": "药铺晨事",
+      "requires_flags": [
+        "base.story.quest.yaoxiangruchang.morning"
+      ],
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "（正从药柜里取药，将碎叶拢进柜台上的纸包。听见你进门，抬头看了一眼。）"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯，我来了。今天有什么要我帮忙的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "来得正好。铺里的苦艾叶快用完了，替我去山脚采三株回来。"
+        },
+        {
+          "speaker": "player",
+          "text": "好的，叶伯。还是去瀑布旁边那片吧？前些日子看着长得挺好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，再去溪边采三株溪露苔。两样分开放，别让湿苔沾着叶子。"
+        },
+        {
+          "speaker": "player",
+          "text": "好的，我记着了。我带了块干净的布，会分开包好的。"
+        },
+        {
+          "speaker": "npc",
+          "text": "溪边石头滑，够不着的就别采，不差那几株。"
+        },
+        {
+          "speaker": "player",
+          "text": "好的，叶伯，我知道了。我就在岸边找，不往水里去，您放心。"
+        },
+        {
+          "speaker": "npc",
+          "text": "行，去吧。"
+        },
+        {
+          "speaker": "player",
+          "text": "（将干净的包药布放进药篓，背好后出了门。）"
+        }
+      ],
+      "retire_flags": [
+        "base.story.quest.yaoxiangruchang.map_dialogue"
+      ]
+    },
+    "base.dialogue.yesongnian.quest.returning": {
+      "topic": "shop",
+      "label": "药篓归来",
+      "requires_flags": [
+        "base.story.quest.yaoxiangruchang.ready"
+      ],
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "（将药篓放到柜台旁，掀开包药的布。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "（放下手里的活，过来翻看采回的草药。）"
+        },
+        {
+          "speaker": "player",
+          "text": "叶伯，药采回来了。溪露苔只取了岸边的，您看看够不够。"
+        },
+        {
+          "speaker": "npc",
+          "text": "够了。这些挑得不错，没混进枯叶。"
+        },
+        {
+          "speaker": "player",
+          "text": "按您叮嘱的，两样都分开包好了，苦艾叶没沾水。"
+        },
+        {
+          "speaker": "npc",
+          "text": "那就好。先放着，坐下歇会儿。"
+        },
+        {
+          "speaker": "player",
+          "text": "谢谢叶伯。我先把苦艾叶摊开，免得一直闷在篓里。"
+        },
+        {
+          "speaker": "npc",
+          "text": "旁边那只竹筛空着，用那个吧。"
+        },
+        {
+          "speaker": "player",
+          "text": "（将苦艾叶摊进竹筛，再把包好的溪露苔放到一旁。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "这是这趟采药的工钱，收着吧。"
+        },
+        {
+          "speaker": "player",
+          "text": "好的，谢谢叶伯。我先把药篓放回去。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，桌上有水，自己倒。"
+        },
+        {
+          "speaker": "player",
+          "text": "（将空篓放回门边，在桌旁坐下，揉了揉肩膀。）"
+        }
+      ],
+      "retire_flags": [
+        "base.story.quest.yaoxiangruchang.map_dialogue"
       ]
     }
   },

@@ -98,12 +98,12 @@ func run() -> void:
 		check(map.gathering_result.visible, "animation then opens actual result")
 		var offer: Dictionary = map.loadout.gathering_offers[event.id].duplicate(true)
 		check(offer.quantity in [index+1,index+2] and offer.days == index+1, "actual quantity in confirmed bounds")
-		check(map.gathering_result.heading.text == "获得"+map.loadout.records[event.item_id].name and map.gathering_result.quantity_label.text == "数量：%d株" % offer.quantity, "reward title/explicit quantity")
+		check(map.gathering_result.heading.text == "获得"+map.loadout.records[event.item_id].name and map.gathering_result.card.quantity_label.text == "+%d" % offer.quantity, "reward title/quantity badge")
 		check(not map.loadout.has_reward(offer.id), "display before receipt")
 		await capture("res://artifacts/gathering-loot-%s.png" % row[0])
 		if index == 0:
-			await click(map.gathering_result.accept_button,MOUSE_BUTTON_RIGHT)
-			check(not map.event_state.is_active() and not map.loadout.has_reward(offer.id), "cancel result leaves pending reward")
+			# Simulate interruption before acknowledgement; dismissing normally now claims.
+			check(not map.loadout.has_reward(offer.id), "unacknowledged result remains pending")
 			map.queue_free()
 			await settle()
 			map = await new_map()

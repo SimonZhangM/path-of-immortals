@@ -28,11 +28,14 @@ var chest_cooldowns: Dictionary = {}
 var gathering_offers: Dictionary = {}
 var map_visited: Dictionary = {}
 var map_location: Dictionary = {}
+var map_previous_location: Dictionary = {}
 var content_grants: Dictionary = {"t01.115.v1": true, "qinglan.boards.v1": true, "starter.bag.v1": true}
 var calendar: Dictionary = {}
 var lodging_bonus: Dictionary = {}
 var food_bonus: Dictionary = {}
 var narrative: Dictionary = DialogueJournal.initial()
+var quests: Dictionary = QuestState.initial(0)
+var quest_tracking: Dictionary = QuestTracking.initial()
 var encounter_cooldowns: Dictionary = {}
 var storage_capacity_rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/storage_capacity.json"))
 var bag_capacity: int = int(storage_capacity_rules.starting_capacity)
@@ -63,13 +66,22 @@ static func normalized_map_location(value: Dictionary) -> Dictionary:
 	# The removed riverside board now resumes at the neighbouring surviving board.
 	if location.get("map_id") == "base.map.qingshizhen" and location.get("point_id") == "base.map.qingshizhen.point.n21":
 		location.point_id = "base.map.qingshizhen.point.n18"
+	# The old alchemy courtyard was removed; resume at its new service location.
+	if location.get("map_id") == "base.map.qingshizhen" and location.get("point_id") == "base.map.qingshizhen.point.n12":
+		location.point_id = "base.map.qingshizhen.point.n19"
 	return location
 
 func set_map_location(map_id: String, point_id: String) -> bool:
 	var value := {"map_id": map_id, "point_id": point_id}
 	if not valid_map_location(value) or map_location == value: return false
+	map_previous_location = map_location.duplicate() if map_location.get("map_id","")==map_id else {}
 	map_location = value
+	var previous_revision := revision
+	QuestState.arrived(self,map_id)
+	var quest_updated := revision!=previous_revision
 	revision += 1
+	# Ordinary path movement need not rebuild UI; a revealed quest stage does.
+	if quest_updated: changed.emit()
 	return true
 
 func visit_map_point(map_id: String, point_id: String) -> bool:
@@ -86,6 +98,8 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 	var calendar_error := WorldCalendar.configuration_error()
 	if not calendar_error.is_empty(): return calendar_error
 	calendar = WorldCalendar.initial()
+	quests = QuestState.initial(WorldCalendar.current_day(calendar))
+	quest_tracking = QuestTracking.initial()
 	registry = content
 	cultivation_rank_id = registry.get_character("base.character.chen_yu").get("cultivation_rank", "base.cultivation.mortal")
 	board = layout
@@ -127,6 +141,7 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 		else:
 			raw.effects = record.effects.duplicate(true)
 			raw.uses_per_unit = record.get("uses_per_unit", 0)
+		if record.get("quest_item",false): raw.tags.append("任务物品")
 		if record.category == "food":
 			if not MapFood.valid_definition(record.get("food")): return "食品效果无效。"
 			raw.combat = {"description": MapFood.effect_text(record), "flavor_description": record.get("description", "")}
@@ -241,6 +256,7 @@ func storage_records() -> Array:
 
 func apply_book_presentation(record: Dictionary) -> void:
 	if record.category != "book": return
+	if record.get("reading_only",false): return
 	var stage := knowledge.level(record.id)
 	var quality := MapItemQuality.book_background_quality(int(registry.library.books[record.id].max_level), stage)
 	record.book_level = stage
@@ -279,6 +295,10 @@ func carried_owned() -> Dictionary:
 	for units: Dictionary in warehouses.values():
 		for unit_id: String in units: result.erase(unit_id)
 	return result
+
+func ordinary_acquisition_allowed(item_id: String) -> bool:
+	var flag: String = records.get(item_id,{}).get("acquisition_flag","")
+	return flag.is_empty() or narrative.flags.get(flag,false)
 
 func transfer_warehouse(id: String, item_id: String, withdraw: bool, all_items: bool = false, quantity: int = -1) -> String:
 	if not warehouse_rules.has(id) or (not all_items and not records.has(item_id)): return "仓库或物品无效。"
@@ -502,6 +522,9 @@ func snapshot() -> Dictionary:
 	if not lodging_bonus.is_empty(): result.lodging_bonus = lodging_bonus.duplicate(true)
 	if not food_bonus.is_empty(): result.food_bonus = food_bonus.duplicate(true)
 	result.narrative = narrative.duplicate(true)
+	result.quests = quests.duplicate(true)
+	result.quest_tracking = quest_tracking.duplicate(true)
+	if not map_previous_location.is_empty(): result.map_previous_location = map_previous_location.duplicate()
 	if not encounter_cooldowns.is_empty(): result.encounter_cooldowns = encounter_cooldowns.duplicate(true)
 	result.owned_units = {}
 	if not warehouses.is_empty(): result.warehouses = warehouses.duplicate(true)
@@ -586,6 +609,14 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	if not MapInnLodging.valid_bonus(saved_lodging): return "住宿加成存档无效。"
 	var saved_food: Variant = raw.get("food_bonus",{})
 	if not MapFood.valid_bonus(saved_food,records): return "进食加成存档无效。"
+	var location: Variant = raw.get("map_location", {})
+	if not valid_map_location(location): return "地图落点存档无效。"
+	var previous_location: Variant = raw.get("map_previous_location", {})
+	if not valid_map_location(previous_location): return "地图来路存档无效。"
+	var saved_quests: Variant = raw.get("quests",QuestState.initial(WorldCalendar.current_day(saved_calendar),str(location.get("map_id",""))))
+	if not QuestState.valid(saved_quests): return "任务进度存档无效。"
+	var saved_tracking: Variant = raw.get("quest_tracking",QuestTracking.initial())
+	if not QuestTracking.valid(saved_tracking,true): return "任务追踪存档无效。"
 	var saved_narrative: Variant = raw.get("narrative",DialogueJournal.initial())
 	if not DialogueJournal.valid_record(saved_narrative): return "人物姓名或对话存档无效。"
 	var enemy_waiting: Variant = raw.get("encounter_cooldowns",{})
@@ -605,8 +636,6 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	if not MapGatheringRewards.validate_offers(gathered, records): return "采集结果存档无效。"
 	var explored: Variant = raw.get("map_visited", {})
 	if not MapExplorationState.valid_record(explored): return "地图探索存档无效。"
-	var location: Variant = raw.get("map_location", {})
-	if not valid_map_location(location): return "地图落点存档无效。"
 	if not MapChestRewards.validate_offers(offers,records): return "宝箱选项存档无效。"
 	if not BattleLoot.validate_receipts(battle_receipts, records, registry):
 		return "战斗掉落凭证无效。"
@@ -707,6 +736,10 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	if not lodging_bonus.is_empty():
 		for key in ["percent","start_day","expires_day"]: lodging_bonus[key] = int(lodging_bonus[key])
 	narrative = DialogueJournal.normalized(saved_narrative)
+	quests = QuestState.normalized(saved_quests)
+	RiverQuest.migrate_root_discovery(quests[RiverQuest.ID],granted_rewards)
+	quest_tracking = saved_tracking.duplicate(true)
+	if quests[QuestState.ID].counts.deliver>0: quest_tracking.ids.erase(QuestState.ID)
 	bag_capacity = int(saved_capacity)
 	spirit_stones = int(saved_stones)
 	purchase_serial = int(saved_serial)
@@ -724,11 +757,14 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 		offer.days = int(offer.days)
 	map_visited = explored.duplicate(true)
 	map_location = normalized_map_location(location)
+	map_previous_location = normalized_map_location(previous_location)
 	for grant: Dictionary in granted_rewards.values():
 		grant.quantity = int(grant.quantity)
 	formations = restored_formations
 	board = selected
+	quest_tracking = QuestTracking.normalized(quest_tracking,QuestTracking.entries(self))
 	_apply_checked_layout(checked)
+	QuestState.sync_flags(self)
 	formations_changed.emit()
 	return ""
 

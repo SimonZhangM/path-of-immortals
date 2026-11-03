@@ -12,8 +12,10 @@ var events: MapEventState
 var event_id := ""
 var map_scene_path := ""
 var point_id := ""
+var retreat_point_id := ""
 var facing := ""
 var save_path := ""
+var retained_map: Control
 var _recorded := false
 var _returning := false
 var _battle_id := Crypto.new().generate_random_bytes(16).hex_encode()
@@ -107,28 +109,49 @@ func return_to_map() -> String:
 	if not reward_error.is_empty(): return reward_error
 	if not manager.persist_consumption():
 		return "消耗记录保存失败，请重试。"
-	if manager.simulation.state.result!="victory" and player_status!=null and not manager._durable_snapshot.get("growth",{}).is_empty():
+	var landing_point := point_id
+	if manager.simulation.state.result!="victory" and not retreat_point_id.is_empty():
+		landing_point = retreat_point_id
+	if manager._durable_loadout!=null:
 		var prepared:=MapLoadoutStore.candidate(manager._durable_loadout)
 		if not prepared.error.is_empty(): return prepared.error
 		var next: MapLoadoutState=prepared.state
 		var restore_error:=next.restore(manager._durable_snapshot)
 		if not restore_error.is_empty(): return restore_error
-		for key: String in player_status.resources: next.growth.resources[key]=CultivationGrowth.cents(player_status.resources[key])
+		if manager.simulation.state.result!="victory" and player_status!=null and not next.growth.is_empty():
+			for key: String in player_status.resources: next.growth.resources[key]=CultivationGrowth.cents(player_status.resources[key])
+		next.set_map_location(point_id.get_slice(".point.",0),landing_point)
+		next.visit_map_point(point_id.get_slice(".point.",0),landing_point)
+		if landing_point!=point_id: next.map_previous_location.clear()
 		var save_error:=MapLoadoutStore.save(next,save_path)
 		if not save_error.is_empty(): return save_error
 		manager._durable_snapshot=next.snapshot()
+		preload("res://scripts/entry/save_checkpoints.gd").after_action(next,save_path,"battle_return")
+	if is_instance_valid(retained_map):
+		var restore_error: String = retained_map.resume_after_battle(manager._durable_snapshot)
+		if not restore_error.is_empty(): return restore_error
+		_returning = true
+		var battle := get_parent()
+		var ui := battle.get_node("MainUI")
+		await MapPresentation.change_battle_scene(battle, retained_map, ui, retained_map, false, ui.game_audio)
+		retained_map = null
+		battle.queue_free()
+		return ""
 	var scene := load(map_scene_path) as PackedScene
 	if scene == null:
 		return "原地图暂时无法载入，请重试。"
 	_returning = true
 	var destination = scene.instantiate()
 	destination.player_status = player_status
+	# Rebuild authoritative map state now; unopened inventory/technique/event
+	# views use the same on-demand construction as a normal saved-game entry.
+	destination.defer_optional_views = true
 	destination.defer_map_music = true
 	destination.defer_location_save = true
 	destination.hide()
 	destination.process_mode = Node.PROCESS_MODE_DISABLED
 	destination.inventory_save_path = save_path
-	destination.arrival_point_id = point_id
+	destination.arrival_point_id = landing_point
 	destination.arrival_facing = facing
 	get_tree().root.add_child(destination)
 	if not destination.startup_error.is_empty():
@@ -140,3 +163,10 @@ func return_to_map() -> String:
 	await MapPresentation.change_battle_scene(battle, destination, ui, destination, false, ui.game_audio)
 	get_parent().queue_free()
 	return ""
+
+func _exit_tree() -> void:
+	# If the battle is abandoned by a scene replacement, its hidden map has no
+	# future owner. Never delete the map that has just become current again.
+	if is_instance_valid(retained_map) and get_tree().current_scene != retained_map:
+		retained_map.queue_free()
+	retained_map = null

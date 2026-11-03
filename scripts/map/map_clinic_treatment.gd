@@ -17,6 +17,7 @@ static func configuration_error(config: Variant) -> String:
 	return ""
 
 static func preview(state: MapLoadoutState, status: MapPlayerStatus, config: Dictionary) -> Dictionary:
+	if RiverQuest.doctor_away(state): return {"error":"清禾正在出诊，暂时不在医馆。"}
 	var error := configuration_error(config)
 	if not error.is_empty(): return {"error":error}
 	var maximum := float(status.maxima.get("hp",0))

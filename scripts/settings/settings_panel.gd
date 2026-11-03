@@ -177,14 +177,14 @@ func _build_controls() -> void:
 	_hint(page,"点击键位后按下新按键，Esc取消",Vector2(840,54))
 	for index in _config.bindings.size():
 		var spec: Dictionary = _config.bindings[index]
-		var row := _row(page,spec.label,90+index*46,44,1380)
-		row.size.y = 44
-		(row.get_child(0) as Control).custom_minimum_size.y = 44
+		var row := _row(page,spec.label,90+index*42,40,1380)
+		row.size.y = 40
+		(row.get_child(0) as Control).custom_minimum_size.y = 40
 		# Keep the original key column and row centers; shrink its artwork and
 		# lettering together instead of moving the whole column to the right.
 		var holder := Control.new()
 		holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		holder.custom_minimum_size = Vector2(190,44)
+		holder.custom_minimum_size = Vector2(190,40)
 		row.add_child(holder)
 		var button := _button(holder,"",Rect2(0,0,190,48))
 		button.custom_minimum_size = Vector2(190,48)
@@ -197,7 +197,9 @@ func _build_controls() -> void:
 		_center_key_button(button,holder)
 		button.pressed.connect(_capture_key.bind(String(spec.action)))
 		_key_buttons[spec.action] = button
-		_line(page,Vector2(44,135+index*46),1380,0.16)
+		# _row initially clamps to its 60px label minimum; re-fit after reducing it.
+		row.set_deferred("size",Vector2(1380,40))
+		_line(page,Vector2(44,131+index*42),1380,0.16)
 	_toggle(_row(page,"地图缩放滚轮反向",524,44,650),"invert_zoom")
 	_toggle(_row(page,"快捷键提示",524,824,600),"shortcut_hints")
 

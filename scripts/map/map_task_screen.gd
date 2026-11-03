@@ -6,6 +6,9 @@ const Technique = preload("res://scripts/map/map_technique_screen.gd")
 const Sidebar = preload("res://scripts/map/map_task_sidebar.gd")
 const TaskList = preload("res://scripts/map/map_task_list.gd")
 const DetailHeader = preload("res://scripts/map/map_task_detail_header.gd")
+const ViewMemory = preload("res://scripts/map/map_task_view_memory.gd")
+var _memory_path := ""
+var _last_selection: Dictionary = {}
 var stage: Control
 var body: Control
 var left_panel: PanelContainer
@@ -19,6 +22,8 @@ var stamina_bar: Control
 var sidebar: Control
 var task_list: Control
 var detail_header: Control
+var detail_body: Control
+var loadout: MapLoadoutState
 
 func _has_point(point: Vector2) -> bool:
 	# The shared header is drawn above this screen and retains its task toggle.
@@ -159,17 +164,46 @@ func _build_task_detail() -> void:
 	right_panel.add_child(layer)
 	detail_header = DetailHeader.new()
 	layer.add_child(detail_header)
+	detail_body = preload("res://scripts/map/map_task_detail_body.gd").new()
+	layer.add_child(detail_body)
+	right_panel.resized.connect(func(): detail_body.size = right_panel.size)
 	right_panel.resized.connect(func(): detail_header.size = right_panel.size)
-	task_list.task_selected.connect(func(_id: String): _refresh_task_detail())
+	task_list.task_selected.connect(_remember_task)
 	task_list.entries_changed.connect(_refresh_task_detail)
+	_refresh_task_detail()
+
+func bind_memory(save_path: String) -> void:
+	_memory_path = save_path
+	_last_selection = ViewMemory.read_selection(save_path)
+	_restore_selection()
+
+func _remember_task(id: String) -> void:
+	_last_selection = {"id":id,"category":task_list.category_id}
+	if ViewMemory.save_selection(_memory_path,_last_selection)!=OK:
+		push_warning("任务浏览记录保存失败，本次选择仍保留，重启后可能无法恢复。")
+	_refresh_task_detail()
+
+func _restore_selection() -> void:
+	var id: String = _last_selection.get("id",task_list.selected_task_id)
+	for entry: Dictionary in task_list.entries:
+		if entry.id!=id: continue
+		var category: String = _last_selection.get("category","all")
+		if category!="all" and category!=entry.category: category = entry.category
+		sidebar.select_category(category)
+		task_list.select_task(id)
+		return
+	# An unavailable/removed task must not leave a stale highlight or detail.
+	task_list.selected_task_id = ""
 	_refresh_task_detail()
 
 func _refresh_task_detail() -> void:
 	for entry: Dictionary in task_list.ordered_entries():
 		if str(entry.id) == task_list.selected_task_id:
+			detail_body.show_entry(entry)
 			detail_header.show_entry(entry, sidebar.icons[entry.category].texture, task_list.definitions.category_tags)
 			return
 	detail_header.clear_entry()
+	detail_body.clear_entry()
 
 func _panel(node_name: String, radius: float) -> PanelContainer:
 	var panel := PanelContainer.new()
@@ -220,3 +254,17 @@ func _layout() -> void:
 	middle_panel.offset_right = midpoint.x
 	right_panel.offset_left = midpoint.x+Inventory.BODY_COLUMN_GAP
 	right_panel.offset_right = 0
+
+func bind_loadout(model: MapLoadoutState) -> void:
+	loadout = model
+	detail_body.state = model
+	loadout.changed.connect(_refresh_quests)
+	visibility_changed.connect(func():
+		if not is_visible_in_tree(): return
+		_refresh_quests()
+		_restore_selection())
+	_refresh_quests()
+
+func _refresh_quests() -> void:
+	if loadout==null: return
+	task_list.set_entries(QuestTracking.entries(loadout))

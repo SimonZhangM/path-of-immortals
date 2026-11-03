@@ -3,16 +3,16 @@ extends RefCounted
 ## allowed; this helper never selects choices, grants rewards or changes story.
 const RATES := {"slow":15.0,"medium":30.0,"fast":60.0}
 const AUTO_WAIT := 2.0
-var labels: Array[Label] = []
+var labels: Array = []
 var character_count := 0
 var revealed := 0.0
 var dwell := 0.0
 var fired := false
 
-func begin(targets: Array[Label], speed: String, animate := true) -> void:
+func begin(targets: Array, speed: String, animate := true) -> void:
 	labels = targets
 	character_count = 0
-	for label in labels: character_count += label.text.length()
+	for label in labels: character_count += _length(label)
 	revealed = 0.0 if animate and speed!="instant" else float(character_count)
 	dwell = 0.0
 	fired = false
@@ -56,6 +56,9 @@ func _sync_labels() -> void:
 	var available := int(floor(revealed))
 	for label in labels:
 		if not is_instance_valid(label): continue
-		var length := label.text.length()
+		var length := _length(label)
 		label.visible_characters = -1 if available>=length else maxi(0,available)
 		available -= length
+
+func _length(label: Control) -> int:
+	return label.get_total_character_count() if label is RichTextLabel else label.text.length()

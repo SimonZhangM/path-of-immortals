@@ -1,0 +1,104 @@
+{
+  "id": "base.enemy.yanfu_duzhu",
+  "name": "岩腹毒蛛",
+  "art_profile": "base.enemy.yanfu_duzhu",
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 102,
+  "innate_armor_type": "重甲",
+  "initial_armor": 0,
+  "max_stamina": 105,
+  "max_spirit": 0,
+  "innate_armor_capacity": 0,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 5,
+    "experience": 2
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.yanfu_shell",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.yanfu_fang",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.yanfu_poison_sac",
+      "cell": [
+        2,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.yanfu_silk_sac",
+      "cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.yanfu_silk",
+      "cell": [
+        1,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.yanfu_heart",
+      "cell": [
+        2,
+        2
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.yanfu_shell",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanfu_fang",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanfu_poison_sac",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanfu_silk_sac",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanfu_silk",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanfu_heart",
+      "chance": 0.1,
+      "first_victory_guaranteed": true
+    }
+  ],
+  "encounter_descriptions": [
+    "狭窄的石洞中遍布粗大的蛛丝，地上散落着被腐蚀的兽骨。你刚踏进洞口，前方巨大的灰黑腹甲便缓缓挪动，一只岩腹毒蛛从阴影中现身。",
+    "旧祠深处飘着一股刺鼻气味，石壁上留着暗绿色的腐蚀痕迹。前方蛛网突然剧烈颤动，一只腹部坚硬如岩的巨蛛沿着石壁迅速爬来。",
+    "破败神像背后，一团厚重蛛网几乎封住整条通道。你正寻找绕行的空隙，脚下突然传来震动，一只岩腹毒蛛破网而出，螯牙滴落毒液。"
+  ],
+  "presentation": {
+    "rank_label": "凡人级·首领",
+    "category_label": "虫豸类",
+    "description": "盘踞于旧祠残门与封门石台，腹甲厚硬。以蛛丝迟滞猎物、腐毒持续侵蚀，体力衰减时还能自行恢复。",
+    "traits": [
+      "毒蚀",
+      "吐丝迟滞"
+    ],
+    "battle_background": "res://assets/battle-wumingjiuci-yanfuduzhu.webp",
+    "summary": []
+  }
+}

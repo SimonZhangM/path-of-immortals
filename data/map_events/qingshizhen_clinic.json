@@ -1,7 +1,7 @@
 {
   "id": "base.map_event.qingshizhen.clinic",
   "type": "clinic",
-  "point_id": "base.map.qingshizhen.point.n19",
+  "point_id": "base.map.qingshizhen.point.n32",
   "trigger": "click",
   "title": "青石医馆",
   "description": "悬壶济世，仁心为怀。青石医馆诊治镇中百姓，也因此听闻不少江湖乡野之事。",

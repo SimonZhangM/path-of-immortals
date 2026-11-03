@@ -1,0 +1,100 @@
+{
+  "source_width": 1285,
+  "frames": {
+    "objectives": {
+      "image": "UI-task-right-frame1",
+      "rect": [
+        29,
+        370,
+        696,
+        396
+      ],
+      "title": "任务目标"
+    },
+    "locations": {
+      "image": "UI-task-right-frame2",
+      "rect": [
+        746,
+        370,
+        513,
+        396
+      ],
+      "title": "相关地点"
+    },
+    "rewards": {
+      "image": "UI-task-right-frame3",
+      "rect": [
+        489,
+        780,
+        770,
+        276
+      ],
+      "original_rect": [
+        29,
+        780,
+        770,
+        276
+      ],
+      "title": "任务奖励",
+      "slot_origin": [
+        40,
+        81
+      ],
+      "slot_step": [
+        137,
+        0
+      ],
+      "slot_size": [
+        118,
+        118
+      ],
+      "slots": 5
+    },
+    "people": {
+      "image": "UI-task-right-frame4",
+      "rect": [
+        29,
+        780,
+        440,
+        276
+      ],
+      "original_rect": [
+        819,
+        780,
+        440,
+        276
+      ],
+      "title": "关联人物",
+      "slot_origin": [
+        25,
+        81
+      ],
+      "slot_step": [
+        137,
+        0
+      ],
+      "slot_size": [
+        118,
+        118
+      ],
+      "slots": 3,
+      "alignment": "center"
+    }
+  },
+  "resource_icons": {
+    "cultivation": "res://assets/player-status-level.webp",
+    "spirit_stones": "res://assets/player-status-coin.webp",
+    "experience": "res://assets/player-status-exp.webp"
+  },
+  "footer_buttons": {
+    "width": 400,
+    "height": 134.8148148148148,
+    "gap": 40,
+    "normal": "res://assets/UI-gongfa-right-blackbtn.webp",
+    "hover": "res://assets/UI-gongfa-right-goldbtn.webp",
+    "labels": [
+      "追踪任务",
+      "查看地图"
+    ]
+  }
+}

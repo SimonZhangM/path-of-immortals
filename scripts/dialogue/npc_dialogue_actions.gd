@@ -2,6 +2,7 @@ class_name NpcDialogueActions
 extends RefCounted
 
 static func command(state: MapLoadoutState, library: NpcDialogueLibrary, action: String, path: String, topic := "", context: Dictionary = {}) -> String:
+	if library.definition.id=="base.npc.suqinghe" and RiverQuest.doctor_away(state): return "清禾正在出诊，暂时不在医馆。"
 	var prepared := MapLoadoutStore.candidate(state)
 	if not prepared.error.is_empty(): return prepared.error
 	var candidate: MapLoadoutState = prepared.state
@@ -13,6 +14,7 @@ static func command(state: MapLoadoutState, library: NpcDialogueLibrary, action:
 		if not error.is_empty(): return error
 		error = library.journal_error(candidate.narrative.npcs[library.definition.id])
 		if not error.is_empty(): return error
+	QuestState.sync_flags(candidate)
 	match action:
 		"visit":
 			error = DialogueJournal.visit(candidate.narrative,library,day)
@@ -22,8 +24,14 @@ static func command(state: MapLoadoutState, library: NpcDialogueLibrary, action:
 		"after_treatment": DialogueGreetings.after_treatment(candidate.narrative,library)
 		_: return "未知对话指令。"
 	if not error.is_empty(): return error
-	if candidate.narrative==state.narrative: return ""
-	return _publish(state,candidate,path)
+	error = QuestState.after_dialogue(candidate,state.narrative,library.definition.id)
+	if not error.is_empty(): return error
+	if candidate.narrative==state.narrative and candidate.quests==state.quests: return ""
+	var quest_changed := candidate.quests!=state.quests
+	error = _publish(state,candidate,path)
+	if error.is_empty() and quest_changed:
+		preload("res://scripts/entry/save_checkpoints.gd").after_action(state,path,"quest_progress")
+	return error
 
 # Creation screen will pass the two fields directly; never guess surname length.
 static func set_player_name(state: MapLoadoutState, surname: String, given_name: String, path: String) -> String:

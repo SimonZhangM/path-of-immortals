@@ -14,13 +14,13 @@ const PAGE_KEYS := {
 	"other": []
 }
 const BINDING_CONTEXTS := [
-	["map_inventory", "map_techniques", "map_world_map", "map_tasks"],
+	["map_inventory", "map_techniques", "map_world_map", "map_tasks", "map_task_tracker"],
 	["dialogue_continue"],
 	# The inventory shortcut is also handled before battle pause/speed input.
 	["map_inventory", "battle_pause", "speed_half", "speed_normal", "speed_double"]
 ]
 const ACTION_NAMES := {
-	"map_tasks": "打开任务",
+	"map_tasks": "打开任务", "map_task_tracker": "开关任务追踪",
 	"map_inventory": "打开储物袋", "map_techniques": "打开功法", "map_world_map": "打开世界地图",
 	"dialogue_continue": "继续对话", "battle_pause": "战斗暂停／继续", "speed_half": "战斗0.5倍速",
 	"speed_normal": "战斗1倍速", "speed_double": "战斗2倍速"

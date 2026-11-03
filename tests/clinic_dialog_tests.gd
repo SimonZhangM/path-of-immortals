@@ -1,6 +1,6 @@
 extends "res://tests/map_shop_tests.gd"
 
-const CLINIC_POINT := "base.map.qingshizhen.point.n19"
+const CLINIC_POINT := "base.map.qingshizhen.point.n32"
 const CLINIC_EVENT := "base.map_event.qingshizhen.clinic"
 
 func open_clinic(map: Node) -> void:
@@ -23,7 +23,7 @@ func run() -> void:
 	check(map.startup_error.is_empty(),"town startup: "+map.startup_error)
 	if not map.startup_error.is_empty(): quit(1); return
 	var event: Dictionary = map.event_registry.events[CLINIC_EVENT]
-	check(event.point_id==CLINIC_POINT and event.trigger=="click","clinic bound to N19 manual entry")
+	check(event.point_id==CLINIC_POINT and event.trigger=="click","clinic bound to N32 manual entry")
 	check(map.shops.size()==5 and not map.shops.has(CLINIC_EVENT),"clinic is not a trading shop")
 	map.travel.current_node_id = CLINIC_POINT
 	map.travel.map_position = map.travel.node_positions[CLINIC_POINT]

@@ -1,0 +1,914 @@
+{
+  "quest_id": "quest.prologue.hewanfengxian",
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.qinglan.outer_disciple": {
+      "name": "青岚宗弟子",
+      "portrait": "res://assets/ui-portrait-shenyanzhou.webp",
+      "portrait_region": [
+        0,
+        0,
+        411,
+        411
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    },
+    "base.npc.shenyanzhou": {
+      "name": "沈砚舟",
+      "portrait": "res://assets/ui-portrait-shenyanzhou.webp",
+      "portrait_region": [
+        0,
+        0,
+        411,
+        411
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    },
+    "base.npc.suqinghe": {
+      "name": "苏清禾",
+      "portrait": "res://assets/UI-portrait-suqinghe.webp",
+      "portrait_region": [
+        0,
+        0,
+        354,
+        354
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "traces": {
+      "lines": [
+        "（路边几片草叶上沾着血，凌乱的脚印一直延向林间小庙。沿路草丛被踩倒，断枝和碎瓦散在石阶附近。）",
+        "这儿怎么有血……"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n40",
+      "requires": []
+    },
+    "injured": {
+      "lines": [
+        "（走近才看清，小庙一侧的木门裂开了，檐角缺了几片瓦，墙边石砖也崩了一角。一名年轻人正靠在石边，衣袖破了，手按着渗血的包扎处。）",
+        "先别往林子里走，附近还有山兽。",
+        "是你受伤了？这身衣服……你是青岚宗的？",
+        "外门弟子，沈砚舟。你是镇上的人？",
+        "我叫{player.full_name}，在青石镇药铺帮工。你先别动，我看看伤口。",
+        "我伤了经脉，凡药恐怕……",
+        "经脉我不会治。可这血总得先止住。",
+        "……也是。那就劳烦了。",
+        "（你取出干净的包药布，替他暂时按住伤口，再扶他靠稳。血渗得慢了些，他仍使不上力。）",
+        "怎么弄成这样的？",
+        "宗里让我来查山兽往外跑的事。在林子里碰上的那只，气息很不对，绝不是普通野兽。我不是它的对手。",
+        "它还在附近？",
+        "已经走了。奇怪的是，它将我打伤后，忽然停了手，也没再追来……我到现在也没想明白。",
+        "你别往林子深处找它。和路边那些狼猪不是一回事。",
+        "先顾伤吧。草坡有止血草，我再去找些青藤根回来。青藤常长在背阴潮湿的地方，附近的石壁下兴许有。",
+        "你一个人去？",
+        "我先沿附近的石壁找找，避着那些野兽。你眼下也动不了，我总不能把你留在这里。",
+        "（从怀中取出一枚温玉佩，递到你面前。）",
+        "这个先借你。里面存着灵力，没修炼过也能用，遇上山兽能多些照应。",
+        "给了我，你自己怎么办？",
+        "它缓不了经脉的伤。我还能在这里调息，你找药时更用得上。",
+        "好。我回来找你，你别自己往外走。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.qinglan.outer_disciple",
+        "base.map_player.chen_yu",
+        "base.npc.qinglan.outer_disciple",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n20",
+      "requires": [
+        "traces"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-1.webp",
+        "start_line": 1
+      },
+      "reward": {
+        "id": "base.map_reward.quest.hewanfengxian.borrowed_jade",
+        "item_id": "base.map_item.warm_jade",
+        "quantity": 1
+      },
+      "reward_after_line": 18
+    },
+    "entrance": {
+      "lines": [
+        "（走进旧祠，身后又传来一阵杂乱的兽蹄声。你回头望去，几道兽影已绕到坡下，正沿着来时的路往这边走。）",
+        "怎么一下来了这么多……",
+        "（你退到门内的石柱后。外面的动静停了停，又传来低吼和刨地的声音。）",
+        "这里背阴，墙脚也湿，说不定有青藤。先在里面找找，等外面安静了再走。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n01",
+      "requires": [
+        "injured"
+      ],
+      "any_point": true
+    },
+    "blocked_exit": {
+      "lines": [
+        "（探头向石阶下看去，林边还有兽影。你收回脚步，仍留在门内。）",
+        "还没走远，现在出去不妥。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n01",
+      "requires": [
+        "entrance"
+      ],
+      "repeat": true
+    },
+    "courtyard_check": {
+      "lines": [
+        "（探头向石阶下看去，林边还有兽影。你收回脚步，仍留在门内。）",
+        "还没走远，现在出去不妥。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n01",
+      "requires": ["root"],
+      "skip_after": ["mirror", "beasts_gone"]
+    },
+    "root_discovery": {
+      "lines": [
+        "（断墙下，青藤沿石缝攀生，几截粗根露在潮湿的泥土里。）",
+        "是青藤根。先看看怎么把根采出来。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n31",
+      "requires": [
+        "entrance"
+      ]
+    },
+    "root": {
+      "lines": [
+        "（青藤沿着墙缝攀上石壁，几截根茎露在潮湿的泥土里。你拨开碎叶，挑出所需的一份，另用布包好。）",
+        "够用了。回前面看看，那些山兽走了没有。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n31",
+      "requires": [
+        "entrance"
+      ],
+      "reward": {
+        "id": "base.map_reward.quest.hewanfengxian.qingtenggen",
+        "item_id": "base.material.qingtenggen",
+        "quantity": 1
+      },
+      "reward_after_line": 0
+    },
+    "mirror": {
+      "lines": [
+        "（走到供案旁，鞋边碰到一只半埋在枯叶里的扁木匣。匣盖已经裂开，露出一点暗淡的金属光。）",
+        "什么东西？",
+        "（你拂开叶子，从匣里拿起一面缺了边的旧镜。镜面蒙着灰，却映出了一点与四周不同的光。）",
+        "这镜子……",
+        "（镜面里出现一段浸着水的石阶。水中有一截白色圆弧，四周却看不见能照出它的东西。）",
+        "这是……哪儿？",
+        "（一只裹着布的手压在石环边。石缝里有光，旁边的灯却是暗的。）",
+        "那只手……在做什么？",
+        "（一枚铜铃映在暗处，石壁上的影子像少了一截。你还想细看，下一眼却只看见镜面上的灰。）",
+        "怎么又没了……",
+        "（你翻过镜子，又换了个角度。镜面里只剩自己的衣襟和沾灰的手，方才那些景象再也找不到了。）",
+        "不是这祠里的东西……可怎么会在镜子里？",
+        "（你用布包住旧镜，收在身边，又摸了摸装药的布包。）",
+        "先把药送回去，这事以后再想。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n05",
+      "requires": [
+        "root",
+        "courtyard_check"
+      ],
+      "illustration": {
+        "page_text": "（你通过古镜看到了一些奇怪的场景。）",
+        "pages": [
+          {
+            "line": 4,
+            "image": "res://assets/map-event-2-3.webp"
+          },
+          {
+            "line": 6,
+            "image": "res://assets/map-event-2-4.webp"
+          },
+          {
+            "line": 8,
+            "image": "res://assets/map-event-2-5.webp"
+          }
+        ],
+        "resume_line": 9
+      }
+    },
+    "beasts_gone": {
+      "lines": [
+        "（外面的刨地声已经停了。你隔着门柱望向坡下，最后几道兽影正隐进远处的树林。）",
+        "总算走远了。现在回去。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n01",
+      "requires": [
+        "mirror"
+      ]
+    },
+    "fox_notice": {
+      "lines": [
+        "（蛛网下的碎木间，有一团小小的身影动了动。你停下脚步，听见一声细弱的呜咽。）",
+        "里面有东西？",
+        "（拨开遮住视线的枯叶，才看清是一只小狐狸。它的后腿缠在蛛丝里，见你靠近，立刻缩起身子。）",
+        "别怕，我不是来抓你的。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n17",
+      "requires": [],
+      "optional": true,
+      "next_scene": "fox_choice",
+      "illustration": {
+        "image": "res://assets/map-event-2-2a.webp"
+      }
+    },
+    "fox_choice": {
+      "lines": [
+        "小狐狸蜷在蛛网下，后腿仍被细丝缠住。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n17",
+      "requires": [
+        "fox_notice"
+      ],
+      "optional": true,
+      "repeat": true,
+      "choices": [
+        {
+          "id": "rescue",
+          "text": "靠近救它",
+          "next_scene": "fox_rescue"
+        },
+        {
+          "id": "leave",
+          "text": "先离开这里",
+          "next_scene": "fox_leave"
+        }
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-2a.webp"
+      }
+    },
+    "fox_rescue": {
+      "lines": [
+        "（来路上的灰蛛已不再挡路。你蹲在碎木旁，用枯枝挑开外围的蛛丝，小狐狸却又往后缩了缩。）",
+        "再退，腿就缠得更紧了。让我看看，好不好？",
+        "（小狐狸盯着你的手，耳朵压得很低。你停了一会儿，等它不再挣扎，才一点点拨开缠住后腿的细丝。）",
+        "好了，松开了。慢些，先别急着跑。",
+        "（它试着撑起身子，后腿刚落地便又伏了下去。腿上有些擦伤，呼吸仍然很急。）",
+        "还走不稳啊……这里也不是歇脚的地方。",
+        "（你把一块干净的布铺在药篓空着的一侧，轻轻托起它。它僵了一下，前爪紧紧抵着布边，却没有再挣扎。）",
+        "先带你出去。外面找个安全些的地方，再放你走。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n17",
+      "requires": [
+        "fox_notice"
+      ],
+      "optional": true
+    },
+    "fox_leave": {
+      "lines": [
+        "这边的蛛网太密，得先看清周围。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n17",
+      "requires": [
+        "fox_notice"
+      ],
+      "optional": true,
+      "repeat": true
+    },
+    "fox_release": {
+      "lines": [
+        "（你在远离兽迹的树丛边停下，把药篓放稳，将小狐狸轻轻抱到地上。）",
+        "这里没蛛网了。试试看，能走吗？",
+        "（小狐狸站了一会儿，试探着迈出几步。这回没有再趴下，却也没往林里跑。）",
+        "走吧，别再往那祠里钻了。",
+        "（它站在草边，抬头望着你。你理好篓里的布，背起药篓，它仍没有挪开目光。）",
+        "怎么，还舍不得走？",
+        "（小狐狸又看了你很久，才慢慢退进树影。它在低草后又停了片刻，最后转身隐入林中。）",
+        "……小家伙。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n02",
+      "requires": [
+        "fox_rescue"
+      ],
+      "optional": true,
+      "illustration": {
+        "image": "res://assets/map-event-2-2b.webp",
+        "start_line": 1
+      }
+    },
+    "array": {
+      "lines": [
+        "（石台上的刻痕一圈套着一圈，几道细槽连向四周的小石柱。槽里积了灰土，边角还长着青苔。）",
+        "这些纹路倒刻得齐整……不像只是摆着好看的。",
+        "（你绕着石台看了看，没有找到能读懂的字，也看不出它原来是做什么用的。）",
+        "先记着这里。以后碰到懂行的人，再问问。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n26",
+      "requires": [],
+      "optional": true
+    },
+    "array_again": {
+      "lines": [
+        "还是看不明白。先别乱动。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n26",
+      "requires": [
+        "array"
+      ],
+      "optional": true,
+      "repeat": true,
+      "manual": true
+    },
+    "wood_door": {
+      "lines": [
+        "（木门上缠着粗重的锁链。你碰了碰锁头，指腹沾上一层锈粉，锁扣却纹丝不动。）",
+        "锁得真紧。",
+        "（门缝里透着风，隐约能看见门后还有石阶，往更深的树影里延伸。）",
+        "后头似乎还有路。眼下过不去，只能以后再说了。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n33",
+      "requires": [],
+      "optional": true
+    },
+    "wood_door_again": {
+      "lines": [
+        "锁还在，打不开。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n33",
+      "requires": [
+        "wood_door"
+      ],
+      "optional": true,
+      "repeat": true,
+      "manual": true
+    },
+    "stone_door": {
+      "lines": [
+        "（石门几乎与两侧墙壁连在一起，门上的纹饰一直延到中央的圆形刻痕。门缝很窄，看不见里面。）",
+        "这么厚的石门，里面原先放的是什么？",
+        "（你试着推了推，门扉没有动。沿边摸了一圈，也没找到门闩或把手。）",
+        "打不开。先别在这里耽搁了。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n23",
+      "requires": [],
+      "optional": true
+    },
+    "stone_door_again": {
+      "lines": [
+        "门还是关着的，里面也听不见动静。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.wumingjiuci",
+      "point_id": "base.map.wumingjiuci.point.n23",
+      "requires": [
+        "stone_door"
+      ],
+      "optional": true,
+      "repeat": true,
+      "manual": true
+    },
+    "blood_herb": {
+      "lines": [
+        "止血的药有了，再去找些青藤根。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n04",
+      "any_point": true,
+      "requires": [
+        "injured"
+      ]
+    },
+    "medicine": {
+      "lines": [
+        "（回到小庙旁，沈砚舟仍靠在石边。听见脚步，他抬头看向你手里的药包。）",
+        "回来了。路上还顺利？",
+        "药找齐了。路上有群山兽，躲了一会儿才出来。",
+        "你没伤着吧？",
+        "没有。先看你的伤。",
+        "（你按平时学过的办法处理止血草，替他重新包扎，又将备好的青藤根用于调养。过了一阵，伤口不再渗血，他的脸色也缓和了些。）",
+        "血没有再往外渗了。你试着挪一点，疼就停。",
+        "（扶着石壁试着起身，刚挪了半步便停下来，缓缓坐回原处。）",
+        "腿使不上力，胸口也还闷。我得再调息。",
+        "那就别硬走。我回镇找清禾姐，她在医馆。得让她看过，再想办法接你回去。",
+        "又要劳你往返。",
+        "镇子近些，我去请她来。你这样也不能一直留在山里。",
+        "你先坐稳，别自己往外走。",
+        "好，我就在这里等。",
+        "（你把剩下的净布和水放在他伸手能拿到的地方，确认他坐稳，才起身收拾药篓。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n20",
+      "requires": [
+        "beasts_gone"
+      ],
+      "consume": [
+        {
+          "item_id": "base.material.zhixuecao",
+          "quantity": 1
+        },
+        {
+          "item_id": "base.material.qingtenggen",
+          "quantity": 1
+        }
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-6.webp",
+        "start_line": 6
+      }
+    },
+    "medicine_missing": {
+      "lines": [
+        "（止血草和青藤根还没备齐。先各准备一份，再替沈砚舟处理伤口。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n20",
+      "requires": [
+        "beasts_gone"
+      ],
+      "repeat": true
+    },
+    "invite_doctor": {
+      "lines": [
+        "（见你匆匆进门，放下手里的药包，转身迎过来。）",
+        "怎么这么急？出什么事了？",
+        "河湾有个青岚宗弟子受伤了，叫沈砚舟。我给他处理了外伤，可他站不起来。",
+        "人还清醒吗？血止住没有？",
+        "清醒，能说话。血暂时止住了，他说经脉也伤了，一动就疼。",
+        "好，别让他硬撑着走。你先把他在哪儿、哪条路好走告诉我，我收拾药箱。",
+        "小庙旁的石壁下面。我回来走的那条路能通。",
+        "那你带路。我叫两个人一起，带上担架，免得到时搬不动他。",
+        "（打开药箱，检查药包和净布，随后叫来两位帮工，请他们准备担架，并向留守的人交代医馆的事。）",
+        "我能帮你拿什么？",
+        "这包净布给你。拿稳些呀，别和你那一篓草叶挤在一起。",
+        "分开放着，我记得。",
+        "嗯，走吧。"
+      ],
+      "line_speakers": [
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "medicine"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-7.webp"
+      }
+    },
+    "pickup": {
+      "lines": [
+        "（你领着清禾和两位帮工来到小庙旁。沈砚舟抬起头，清禾已经放下药箱，在他身边蹲下。）",
+        "沈公子，我是青石镇医馆的苏清禾。先别起身，我看看。",
+        "有劳苏姑娘。我这经脉……",
+        "经脉的伤，我还治不了。先处理外伤，看看能不能搬动，回镇以后再联系你宗里。",
+        "（仔细查看伤处和包扎，换好药，重新固定，才示意帮工将担架放到近处。）",
+        "你先前处理得及时。现在搬动得慢些，别牵着伤口。",
+        "我扶住这边？",
+        "对，等我数到三，再一起抬。到了窄处就停一下，慢慢来。",
+        "我原是来查山兽的，如今倒让镇上的人来抬我。",
+        "先回去。山兽的事，等你能下床再说。",
+        "就是。眼下先把自己顾好，别急着办差。",
+        "（你和帮工依着清禾的指示扶稳沈砚舟，将他安置在担架上，随后沿来时的路往镇子走。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.shenyanzhou",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n20",
+      "requires": [
+        "invite_doctor"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-8.webp"
+      }
+    },
+    "clinic_arrival": {
+      "lines": [
+        "（担架在医馆内放稳。你和帮工将沈砚舟扶上床，清禾随即俯身，检查一路上有没有牵动伤口。）",
+        "还好，包扎没松。先躺着，别急着起来。",
+        "（替沈砚舟掖好被角，走到门边叫住一位帮工。）",
+        "劳烦你去青岚宗山下驻点报个信。外门弟子沈砚舟在河湾受了伤，已经接到医馆，请他们派人来看看。",
+        "（又托留守的人将河湾伤人的情况报给周镇长，顺便给药铺捎句话，告诉叶伯人已经接回来了。）",
+        "有劳苏姑娘了。还有{player.familiar_name}，来回跑了几趟，我都记着。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.shenyanzhou"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "pickup"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-9.webp"
+      }
+    },
+    "return_jade": {
+      "lines": [
+        "还有，你的玉佩。这一路多亏它照应。",
+        "（取出温玉佩，交还给沈砚舟。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n20",
+      "requires": [
+        "medicine"
+      ],
+      "handover": {
+        "item_id": "base.map_item.warm_jade",
+        "quantity": 1
+      },
+      "skip_after": [
+        "invite_doctor"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-2-6.webp"
+      }
+    },
+    "jade_missing": {
+      "lines": [
+        "（该把温玉佩还给沈砚舟了。先将玉佩从阵盘或仓库收回行囊；若还包在行李里，就腾出一个空位再来。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n20",
+      "requires": [
+        "medicine"
+      ],
+      "repeat": true,
+      "skip_after": [
+        "invite_doctor"
+      ]
+    },
+    "gift_book": {
+      "lines": [
+        "（从随身包裹中取出一本薄册，递到你手边。）",
+        "这本《引气诀》是入门的吐纳法。你若有心，拿去看看。",
+        "给我？我还没正经学过。",
+        "先读，不急着练。有不明白的，等我缓过这阵再问。以后若想去宗里求学，我也能替你引见；该过的考察，还是得自己过。",
+        "好，那我收下了。你先歇着。"
+      ],
+      "line_speakers": [
+        "base.npc.shenyanzhou",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "clinic_arrival"
+      ],
+      "reward": {
+        "id": "base.map_reward.quest.hewanfengxian.yinqijue",
+        "item_id": "base.book.yinqijue",
+        "quantity": 1
+      },
+      "reward_after_line": 3,
+      "illustration": {
+        "image": "res://assets/map-event-2-9.webp"
+      }
+    },
+    "closing": {
+      "lines": [
+        "（看了一眼沈砚舟的脸色，轻轻按住他还想撑起的肩膀。）",
+        "先别聊了，躺好歇一歇。",
+        "（转向你，压低了声音。）",
+        "这边有我照看。你也跑了好几趟，回去歇歇吧。",
+        "嗯，有事让人叫我。",
+        "好。回去慢些呀。",
+        "（你收好薄册走到门边。回头时，清禾已重新坐在床旁，轻声询问沈砚舟哪里还疼。）"
+      ],
+      "line_speakers": [
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "gift_book"
+      ],
+      "requires_receipt": "base.map_reward.quest.hewanfengxian.yinqijue",
+      "illustration": {
+        "image": "res://assets/map-event-2-9.webp"
+      }
+    },
+    "doctor_away": {
+      "lines": [
+        "（清禾和两位帮工已带好药箱、担架，等着我领路去河湾。先去小庙旁接沈砚舟。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "invite_doctor"
+      ],
+      "repeat": true
+    },
+    "bringing_back": {
+      "lines": [
+        "（沈砚舟已安置在担架上。先和清禾一起送他回镇里的医馆。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "pickup"
+      ],
+      "repeat": true
+    },
+    "detour": {
+      "lines": [
+        "（林子里传来几声低吼，枝叶接连晃动。你停下脚步，往树后退了退。）",
+        "前面有野兽……先绕开。",
+        "（瀑布旁有条被草木遮着的石径，斜斜通向上方。你探头望去，树影后露出一角破旧的屋檐。）",
+        "这条路倒没走过。上面那座……像是间旧祠。",
+        "先去那儿避一避，等它们走远再找药。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshihewan",
+      "point_id": "base.map.qingshihewan.point.n03",
+      "requires": [
+        "injured"
+      ],
+      "skip_after": [
+        "entrance"
+      ],
+      "recovery_points": [
+        "base.map.qingshihewan.point.n02"
+      ]
+    }
+  },
+  "river_gate_routes": [
+    "base.map.qingshihewan.route.r14",
+    "base.map.qingshihewan.route.r15"
+  ],
+  "shrine_hidden_point": "base.map.wumingjiuci.point.n04",
+  "shrine_hidden_routes": [
+    "base.map.wumingjiuci.route.r03",
+    "base.map.wumingjiuci.route.r05",
+    "base.map.wumingjiuci.route.r06",
+    "base.map.wumingjiuci.route.r07"
+  ]
+}

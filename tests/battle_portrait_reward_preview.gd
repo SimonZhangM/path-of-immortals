@@ -4,6 +4,7 @@ const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames
 const ENEMY_FRAMES = preload("res://scripts/presentation/enemy_portrait_frames.gd")
 var checks := 0
 var failures := 0
+var portraits_only := "--portraits-only" in OS.get_cmdline_user_args()
 
 func _initialize() -> void: run.call_deferred()
 func check(ok: bool, message: String) -> void:
@@ -42,8 +43,9 @@ func run() -> void:
 			var copy := raw.duplicate(true)
 			copy.quantity = 1
 			records.append(copy)
-	check(records.size() == 1, "wolf claw reward fixture from actual catalog")
-	check(GameAudio.STREAMS.magic.resource_path == "res://assets/sfx-magic.ogg" and GameAudio.STREAMS.magic.get_length() > 0, "replacement magic Ogg decodes at current path")
+	if not portraits_only:
+		check(records.size() == 1, "wolf claw reward fixture from actual catalog")
+		check(GameAudio.STREAMS.magic.resource_path == "res://assets/sfx-magic.ogg" and GameAudio.STREAMS.magic.get_length() > 0, "replacement magic Ogg decodes at current path")
 	for dimensions in [Vector2i(1920,1080),Vector2i(2560,1440)]:
 		root.size = dimensions
 		story._layout()
@@ -56,17 +58,24 @@ func run() -> void:
 			player.refresh(game.party[0])
 			await settle()
 			var player_rect := player.portrait.get_global_rect()
-			check(is_equal_approx(player_rect.size.x,enemy_visible_diameter),rank+" portrait circle matches enemy")
-			check(is_equal_approx(player_rect.get_center().y,enemy_rect.get_center().y),rank+" centers share horizontal baseline")
+			check(is_equal_approx(player_rect.size.x,enemy_visible_diameter*1.1),rank+" portrait circle enlarged ten percent")
+			var base_scale: float = enemy_visible_diameter / PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE
+			var old_bottom: float = enemy_rect.get_center().y + (PLAYER_FRAMES.SOURCE_SIZE.y-PLAYER_FRAMES.SOURCE_CENTER.y)*base_scale
+			check(is_equal_approx(player.portrait_frame.get_global_rect().end.y,old_bottom),rank+" original frame bottom stays fixed")
+			check(is_equal_approx(player_rect.get_center().x,player._portrait_slot.get_global_rect().get_center().x),rank+" horizontal center retained")
 			check(is_equal_approx(player.nameplate.get_global_rect().get_center().y,enemy.nameplate.get_global_rect().get_center().y),rank+" nameplates aligned")
 			check(player.name_label.text == game.party[0].definition.name,rank+" name without realm suffix")
 			var source_scale: float = player.portrait.size.x / PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE
 			check(player.portrait_frame.size.is_equal_approx(PLAYER_FRAMES.SOURCE_SIZE*source_scale),rank+" frame scales with portrait")
 			check((player.portrait_frame.position+PLAYER_FRAMES.SOURCE_CENTER*source_scale).is_equal_approx(player.portrait.get_rect().get_center()),rank+" frame circle centered")
 			check(enemy.portrait.get_global_rect().is_equal_approx(enemy_rect) and enemy.portrait_frame.get_global_rect().is_equal_approx(enemy_frame_rect),rank+" enemy geometry unchanged")
+			if rank=="golden_core" and DisplayServer.get_name()!="headless":
+				await RenderingServer.frame_post_draw
+				root.get_texture().get_image().save_png("res://artifacts/battle-portraits-enlarged-golden-%d.png" % dimensions.x)
 		if DisplayServer.get_name() != "headless":
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png("res://artifacts/battle-portraits-aligned-%d.png" % dimensions.x)
+		if portraits_only: continue
 		for count in [0,1,2,5]:
 			var batch: Array[Dictionary] = []
 			for i in count: batch.append(records[0].duplicate(true))
@@ -82,7 +91,7 @@ func run() -> void:
 				var item = rewards.grid.get_child(0)
 				check(is_equal_approx(item.size.x,152),"single card matches warm jade size")
 				check(rewards.scroll.get_global_rect().encloses(item.get_global_rect()),"single card fits without clipping")
-				check(item.quality_badge.get_global_rect().end.y < rewards.scroll.get_global_rect().end.y,"quality badge fully visible")
+				check(item.quantity_label.get_global_rect().end.y < rewards.scroll.get_global_rect().end.y,"quantity badge fully visible")
 			if DisplayServer.get_name() != "headless":
 				await RenderingServer.frame_post_draw
 				root.get_texture().get_image().save_png("res://artifacts/battle-reward-small-%d-%d.png" % [dimensions.x,count])

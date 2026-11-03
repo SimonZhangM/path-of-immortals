@@ -160,22 +160,22 @@ func sidebar_checks() -> void:
 		"obsolete.map":["old"],"": ["planned.shrine.point"]
 	}
 	var progress: Dictionary = view.catalog.region_progress(region,fixture)
-	check(progress.total==89 and progress.visited==4,"unique valid nodes only: three developed maps, shrine excluded")
-	check(view.catalog._points_by_map["base.map.qingshihewan"].size()==40,"river includes east exit")
-	check(view.catalog._points_by_map["base.map.qingshizhen"].size()==30,"all surviving town nodes in denominator")
+	check(progress.total==144 and progress.visited==4,"unique valid nodes only: five developed maps")
+	check(view.catalog._points_by_map["base.map.qingshihewan"].size()==41,"river includes east exit")
+	check(view.catalog._points_by_map["base.map.qingshizhen"].size()==31,"all surviving town nodes in denominator")
 	check(view.catalog._points_by_map["base.map.xiyuanyaopo"].size()==19,"all slope nodes in denominator")
 	check(view.catalog.region_progress(region,{}).visited==0,"empty ledger does not imply revealed nodes are visited")
 	var complete: Dictionary = {}
 	for map_id: String in view.catalog._points_by_map:
 		complete[map_id] = view.catalog._points_by_map[map_id].keys()
-	check(view.catalog.region_progress(region,complete).ratio==1.0,"all 89 nodes reach 100 percent")
+	check(view.catalog.region_progress(region,complete).ratio==1.0,"all 122 nodes reach 100 percent")
 	var saved_ledger: Dictionary = map.loadout.map_visited.duplicate(true)
 	map.set_world_map_open(false)
 	map.loadout.map_visited = fixture.duplicate(true)
 	map.set_world_map_open(true)
 	await settle()
 	check(view._visited==fixture,"MapScreen reads current visit ledger on open")
-	check(view.sidebar.percentage.text=="4.5%" and is_equal_approx(view.sidebar.progress.value,4.0/89.0),"bar uses exact ratio; displayed percent one decimal")
+	check(view.sidebar.percentage.text=="3.3%" and is_equal_approx(view.sidebar.progress.value,4.0/122.0),"bar uses exact ratio; displayed percent one decimal")
 	var actual_position: Vector2 = view.player_world_position
 	var actual_node: String = map.travel.current_node_id
 	for zoom in [0,view.zoom_levels.size()-3,view.zoom_levels.size()-1]:
@@ -189,7 +189,7 @@ func sidebar_checks() -> void:
 			check(view.sidebar.location_name.text==view.locations[location_id].name,"name changes with selected marker")
 			check(view.sidebar.picture.texture.resource_path==view.locations[location_id].picture,"matching location illustration")
 			check(view.sidebar.description.text==view.locations[location_id].description,"matching location description")
-			check(is_equal_approx(view.sidebar.progress.value,4.0/89.0),"shared region progress for all locations including shrine")
+			check(is_equal_approx(view.sidebar.progress.value,4.0/122.0),"shared region progress for all locations including shrine")
 		check(view.player_world_position==actual_position and map.travel.current_node_id==actual_node,"browsing never changes actual player position")
 	view.present(map.definition.id,fixture)
 	var point: Vector2 = view.landmark_markers[town].get_global_rect().get_center()

@@ -226,6 +226,7 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 	if entry.category == "weapon" and entry.has("damage_type"):
 		categories.append(entry.damage_type)
 	if entry.category == "book": categories.assign(entry.get("tags", []))
+	if entry.get("quest_item",false) and "任务物品" not in categories: categories.append("任务物品")
 	if entry.has("armor_type"):
 		categories.append(entry.armor_type)
 	var seen_tags := {}

@@ -2,6 +2,11 @@ extends TextureRect
 
 # Presentation seconds, independent of the deterministic battle clock.
 const DURATION := 1.5
+const RESOURCE_ICONS := {
+	"hp": preload("res://assets/player-status-health.webp"),
+	"spirit": preload("res://assets/player-status-spirit.webp"),
+	"stamina": preload("res://assets/player-status-stamina.webp")
+}
 var elapsed := 0.0
 var origin := Vector2.ZERO
 var destination: Control

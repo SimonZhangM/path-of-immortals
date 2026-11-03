@@ -62,7 +62,7 @@ func _run() -> void:
 	await _settle()
 	for i in 20:
 		await _settle()
-		_check(dialogue.text_label.text == event.lines[i] and screen.event_state.line_index == i, "paragraph text %d" % (i+1))
+		_check(dialogue.text_label.get_parsed_text() == event.lines[i] and screen.event_state.line_index == i, "paragraph text %d" % (i+1))
 		var portrait_texture := dialogue.portrait.texture as AtlasTexture
 		var expected_path := "res://assets/npc-qlzdz-1.webp" if i % 2 == 0 else "res://assets/player-1-1.webp"
 		_check(portrait_texture.atlas.resource_path == expected_path, "matching speaker portrait %d" % (i+1))
@@ -71,7 +71,7 @@ func _run() -> void:
 			_check(dialogue.portrait.get_index() < dialogue.background.get_index() and dialogue.portrait.material is ShaderMaterial, "portrait is circle masked beneath the decorative rim")
 		var panel := dialogue.background.get_rect()
 		_check(panel.encloses(dialogue.text_label.get_rect()) and dialogue.text_label.size.y >= dialogue.text_label.get_minimum_size().y, "whole paragraph fits at preserved font size %d" % (i+1))
-		_check(dialogue.text_label.get_theme_font_size("font_size") == 31, "1080p text reduced by one to 31")
+		_check(dialogue.text_label.get_theme_font_size("normal_font_size") == 31, "1080p text reduced by one to 31")
 		var factor := panel.size.x/1807.0
 		var slot := Rect2(panel.position+Vector2(62,20.5)*factor,Vector2(368,368)*factor)
 		_check(slot.grow(0.01).encloses(dialogue.portrait.get_rect()) and dialogue.portrait.get_rect().get_center().is_equal_approx(slot.get_center()), "changing portraits remain centered inside circular aperture")

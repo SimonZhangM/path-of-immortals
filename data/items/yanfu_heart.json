@@ -1,0 +1,39 @@
+{
+  "id": "base.organ.yanfu_heart",
+  "name": "岩腹心囊",
+  "quality": "下品",
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-yanfuduzhu-yanfuxinnang.webp",
+  "cooldown": 2,
+  "stamina_cost": 0,
+  "armor_capacity": 0,
+  "type": "item",
+  "category": "item",
+  "tags": [
+    "器官"
+  ],
+  "rule_version": 1,
+  "element": "base.element.none",
+  "combat": {
+    "source_location": "用户确认：旧祠四怪器官2026-10-08；奖励与毒蚀容量2026-10-31",
+    "hit_chance": 0.9,
+    "waste_on_insufficient": true,
+    "art_outline_px": 1,
+    "resource_threshold": {
+      "resource": "stamina",
+      "numerator": 2,
+      "denominator": 3
+    }
+  },
+  "effects": [
+    {
+      "effect": "restore_instant",
+      "resource": "stamina",
+      "value": 2,
+      "trigger": "on_activate"
+    }
+  ]
+}

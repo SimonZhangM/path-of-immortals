@@ -35,28 +35,32 @@
     "id": "base.enemy.heiwei_cishu",
     "name": "黑尾祠鼠",
     "portrait": "res://assets/portrait-enemy-heiweicishu.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.heiwei_cishu"
   },
   {
     "id": "base.enemy.huiyi_fu",
     "name": "灰翼蝠",
     "portrait": "res://assets/portrait-enemy-huiyifu.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.huiyi_fu"
   },
   {
     "id": "base.enemy.xueju_huizhu",
     "name": "穴居灰蛛",
     "portrait": "res://assets/portrait-enemy-xuejuhuizhu.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.xueju_huizhu"
   },
   {
     "id": "base.enemy.yanfu_duzhu",
     "name": "岩腹毒蛛",
     "portrait": "res://assets/portrait-enemy-yanfuduzhu.webp",
-    "portrait_includes_frame": true,
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.yanfu_duzhu"
   }
 ]

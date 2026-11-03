@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.wumingjiuci.chest_n11",
+  "type": "chest",
+  "point_id": "base.map.wumingjiuci.point.n11",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-wumingjiuci-canjieshixi1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-wumingjiuci-canjieshixi0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-wumingjiuci-canjieshixi2.webp"
+  },
+  "quality": "下品",
+  "reward_id": "base.map_reward.wumingjiuci.chest_n11",
+  "respawn_days": 40,
+  "observation": {
+    "location_name": "残阶石隙",
+    "location_description": "残阶下岩石交错，断木斜倚墙根。藤叶从石缝间探出，掩着散落的旧陶碎片。",
+    "chest_name": "石隙遗匣",
+    "description": "一只铁箍木匣藏在岩石之间，弧形匣盖覆着薄尘，边角留有苔痕。正面的锁扣尚能开启。",
+    "result_description": "你拂去匣盖上的积尘，拨开锁扣。木盖缓缓掀起，两格中各藏着一件物品，可择一收下。"
+  }
+}

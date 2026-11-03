@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n08",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n08",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-03-N08.webp"
+  },
+  "title": "东廊石阶",
+  "description": "神像东侧的石阶在廊柱旁分岔，柱脚与阶缝之间牵着灰白蛛丝。你刚绕过石灯，一只穴居灰蛛便从柱后爬出，沿着贴地的丝束逼近。",
+  "enemy_id": "base.enemy.xueju_huizhu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

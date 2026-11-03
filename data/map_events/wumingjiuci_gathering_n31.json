@@ -1,0 +1,13 @@
+{
+  "id": "base.map_event.wumingjiuci.gathering_n31",
+  "type": "gathering",
+  "point_id": "base.map.wumingjiuci.point.n31",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-caiyao-wumingjiuci-duanyuantengxi.webp",
+    "description": "断墙下青藤攀石而生，粗根半露，深扎石缝。"
+  },
+  "title": "断垣藤隙",
+  "item_id": "base.material.qingtenggen",
+  "reward_prefix": "base.map_reward.wumingjiuci.gathering_n31"
+}

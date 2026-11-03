@@ -10,7 +10,32 @@ static func create(parent: Node, record: Dictionary, edge: float, height: float 
 	inset.set_content_margin_all(4)
 	panel.add_theme_stylebox_override("panel",inset)
 	parent.add_child(panel)
-	# Use the card's authored quality texture and rounded-border shader, not a flat substitute.
+	if height<=0 or is_equal_approx(edge,height):
+		preload("res://scripts/map/map_item_small_background.gd").create(panel,record,
+			Color.from_string(record.get("card_border_color",""),MapItemQuality.color(record.get("quality","下品"))))
+	else:
+		_rectangular_background(panel,record)
+	var art := MapItemArtwork.new()
+	art.configure(record)
+	if is_equal_approx(artwork_scale,1.0):
+		panel.add_child(art)
+	else:
+		# Inset only the item body; the quality backing and its border stay fixed.
+		var area := Control.new()
+		area.name = "ItemBodyArea"
+		area.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		panel.add_child(area)
+		area.add_child(art)
+		art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		var inset_ratio := (1.0-artwork_scale)*0.5
+		art.anchor_left = inset_ratio
+		art.anchor_top = inset_ratio
+		art.anchor_right = 1.0-inset_ratio
+		art.anchor_bottom = 1.0-inset_ratio
+	return panel
+
+static func _rectangular_background(panel: PanelContainer, record: Dictionary) -> void:
+	# Rectangular previews retain their previous tall-card artwork and crop.
 	var layer := Node2D.new()
 	panel.add_child(layer)
 	var backing := TextureRect.new()
@@ -38,21 +63,3 @@ static func create(parent: Node, record: Dictionary, edge: float, height: float 
 		paint.set_shader_parameter("source_region",Vector4(region.position.x/backing.texture.get_width(),region.position.y/backing.texture.get_height(),region.size.x/backing.texture.get_width(),region.size.y/backing.texture.get_height()))
 	panel.resized.connect(layout_backing)
 	layout_backing.call_deferred()
-	var art := MapItemArtwork.new()
-	art.configure(record)
-	if is_equal_approx(artwork_scale,1.0):
-		panel.add_child(art)
-	else:
-		# Inset only the item body; the quality backing and its border stay fixed.
-		var area := Control.new()
-		area.name = "ItemBodyArea"
-		area.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		panel.add_child(area)
-		area.add_child(art)
-		art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		var inset_ratio := (1.0-artwork_scale)*0.5
-		art.anchor_left = inset_ratio
-		art.anchor_top = inset_ratio
-		art.anchor_right = 1.0-inset_ratio
-		art.anchor_bottom = 1.0-inset_ratio
-	return panel

@@ -1,5 +1,8 @@
 # 怪物头像本体与独立边框
 
+2026-10-31旧祠四怪追加：用户指定截图中的岩腹毒蛛、灰翼蝠、穴居灰蛛、黑尾祠鼠四个无框形象，采用assets/portrait-enemy-{yanfuduzhu,huiyifu,xuejuhuizhu,heiweicishu}.webp，源图不改。enemy_art这四档已设portrait_includes_frame=false并绑定UI-monster-fanren-portraitframe.webp，与河湾四怪共用独立框及几何。四档静态套框与圆心检查通过，[预览](../output/imagegen/wuming-battle-redesign-20261031/portrait-frame-preview.png)。目前八个美术档案均为独立框，但旧祠四怪尚未注册为运行敌人；下文“另四档保持原状”仅为10月22日历史状态。本次渲染无脚本错误，环境有日志写入／根证书提示，未做玩法或鼠标测试。
+
+
 2026-10-22补充：战斗主角现已按敌人可见圆径等大显示，两侧圆心及名字牌统一水平基准；敌人本体与框原尺寸／位置保持。[主角战斗调整](player-portrait-fit.md#战斗双方头像对齐2026-10-22)覆盖本次初始接入时“主角框流程保持”的旧展示尺寸。
 
 2026-10-22。青石河湾当前四怪（赤鬃獠猪、灰脊山狼、青壳河鼋、青翎岩雉）在遭遇弹窗和战斗状态栏均使用无框头像＋独立凡人框。用户已将统一尺寸后的WebP放入assets；本轮不重绘、裁切或修改源图像素，也不改变怪物境界、战斗与存档。

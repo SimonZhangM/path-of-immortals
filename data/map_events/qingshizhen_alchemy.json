@@ -1,7 +1,7 @@
 {
   "id": "base.map_event.qingshizhen.alchemy",
   "type": "shop",
-  "point_id": "base.map.qingshizhen.point.n12",
+  "point_id": "base.map.qingshizhen.point.n19",
   "trigger": "click",
   "catalog": "res://data/shops/qingshizhen_alchemy.json",
   "presentation": {

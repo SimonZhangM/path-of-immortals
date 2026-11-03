@@ -115,10 +115,10 @@ func run() -> void:
 		check(map.gathering_result.visible, "playback then shows saved result")
 		var offer: Dictionary = map.loadout.gathering_offers[event.id].duplicate(true)
 		check(offer.quantity in [method_index+1,method_index+2] and offer.days == method_index+1, "actual bounded roll")
-		check(map.gathering_result.quantity_label.text == "数量：%d块" % offer.quantity, "reward unit")
+		check(map.gathering_result.card.quantity_label.text == "+%d" % offer.quantity, "reward quantity badge")
 		check(not map.loadout.has_reward(offer.id), "not granted before confirmation")
 		if index == 0:
-			await click(map.gathering_result.accept_button,MOUSE_BUTTON_RIGHT)
+			# Interruption preserves unacknowledged loot; normal dismissal claims it.
 			await dispose_map(map)
 			map = await new_map()
 			await arrive(map,point)
@@ -142,7 +142,7 @@ func run() -> void:
 	await click(map.gathering_dialog.action_buttons[1])
 	await click(map.gathering_dialog.action_buttons[1])
 	await wait_for_gathering(map)
-	check(map.gathering_result.quantity_label.text.ends_with("株"), "herb reward compatibility")
+	check(map.gathering_result.card.quantity_label.text == "+%d" % int(map.gathering_result.card.entry.quantity), "herb reward badge compatibility")
 	await click(map.gathering_result.accept_button)
 	await dispose_map(map)
 	MapEventState.session_completed.clear()

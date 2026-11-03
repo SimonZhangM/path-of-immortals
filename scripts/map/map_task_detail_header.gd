@@ -12,6 +12,7 @@ var tag_slot: VBoxContainer
 var category_tag: Control
 var task_id := ""
 var stage_id := ""
+var completed_stamp: TextureRect
 
 func _init() -> void:
 	name = "TaskDetailHeader"
@@ -60,6 +61,15 @@ func _init() -> void:
 	introduction.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	introduction.add_theme_constant_override("line_spacing", 8)
 	column.add_child(introduction)
+	completed_stamp = TextureRect.new()
+	completed_stamp.name = "TaskCompletedStamp"
+	completed_stamp.texture = load("res://assets/UI-task-right-finished2.webp")
+	completed_stamp.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	completed_stamp.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	completed_stamp.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	completed_stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	completed_stamp.hide()
+	add_child(completed_stamp)
 	resized.connect(_layout)
 	hide()
 
@@ -69,6 +79,7 @@ func show_entry(entry: Dictionary, category_texture: Texture2D, tags: Dictionary
 		return
 	task_id = str(entry.id)
 	stage_id = str(entry.get("stage_id", ""))
+	completed_stamp.visible = stage_id == "completed"
 	var introductions: Dictionary = entry.get("introductions", {})
 	introduction.text = str(introductions.get(stage_id, ""))
 	title_label.text = str(entry.title)
@@ -91,6 +102,7 @@ func clear_entry() -> void:
 	task_id = ""
 	stage_id = ""
 	introduction.text = ""
+	completed_stamp.hide()
 	hide()
 
 func _layout() -> void:
@@ -101,6 +113,9 @@ func _layout() -> void:
 	mask.set_shader_parameter("panel_size", size)
 	mask.set_shader_parameter("art_size", artwork.size)
 	content.size = Vector2(size.x * 0.69, 0)
+	# The authored seal already contains its tilt and transparent margin.
+	completed_stamp.size = Vector2.ONE * size.x * 0.17
+	completed_stamp.position = Vector2(size.x - completed_stamp.size.x - 12.0, 12.0)
 
 func _label(node_name: String, font_size: int, color: Color) -> Label:
 	var label := Label.new()

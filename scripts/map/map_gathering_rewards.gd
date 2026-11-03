@@ -21,6 +21,7 @@ static func validate_offers(raw: Variant, records: Dictionary) -> bool:
 		if not event_id is String or not event_id.begins_with("base.map_event."): return false
 		var offer: Variant = raw[event_id]
 		if not offer is Dictionary or not offer.get("id") is String or not offer.id.begins_with(event_id.replace("base.map_event.","base.map_reward.") + "."): return false
+		if offer.has("quest_id") and offer.quest_id!=QuestState.ID: return false
 		if not offer.get("item_id") is String: return false
 		var record := record_for(records, offer.item_id)
 		if record.get("category") not in ["plant", "mineral"]: return false
@@ -61,6 +62,7 @@ static func prepare(state: MapLoadoutState, event: Dictionary, method_id: String
 	var offer := {"id": "%s.%d" % [event.reward_prefix,number], "item_id": event.item_id,
 		"quantity": forecast.base + rng.randi_range(forecast.extra_min,forecast.extra_max),
 		"method_id": method_id, "days": forecast.days}
+	if QuestState.stage(state.quests)=="gathering": offer.quest_id = QuestState.ID
 	var candidate := MapLoadoutState.new()
 	candidate.registry = state.registry
 	candidate.board = state.board
@@ -84,7 +86,13 @@ static func claim(state: MapLoadoutState, event: Dictionary, path: String) -> St
 	var offer: Dictionary = state.gathering_offers.get(event.id,{})
 	if offer.is_empty() or offer.item_id != event.item_id: return "尚未产生采集结果。"
 	var already_claimed := state.has_reward(offer.id)
-	var error := MapLoadoutStore.claim_reward(state,offer,path)
-	if error.is_empty() and not already_claimed:
-		Checkpoints.after_action(state,path,"gathering_complete")
+	if already_claimed: return ""
+	var prepared := state.reward_candidate(offer)
+	if not prepared.error.is_empty(): return prepared.error
+	var candidate: MapLoadoutState = prepared.state
+	QuestState.gathered(candidate,offer)
+	RiverQuest.gathered(candidate,event)
+	var error := MapLoadoutStore.save(candidate,path)
+	if error.is_empty(): error = state.restore(candidate.snapshot())
+	if error.is_empty(): Checkpoints.after_action(state,path,"gathering_complete")
 	return error

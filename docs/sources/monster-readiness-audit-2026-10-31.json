@@ -1,0 +1,604 @@
+{
+  "as_of": "2026-10-31",
+  "method": "Read-only JSON/source/file inspection; image decode and geometry checks; no Godot runtime test",
+  "enemies": [
+    {
+      "id": "base.enemy.heiwei_cishu",
+      "name": "黑尾祠鼠",
+      "runtime_registered": false,
+      "portrait_includes_frame_config": true,
+      "board_definition": "data/boards/heiwei_cishu.json",
+      "occupied_cells": 5,
+      "drop_eligible": 3,
+      "runtime_organs": 0,
+      "runtime_materials": 0,
+      "assets": [
+        {
+          "kind": "portrait",
+          "name": "黑尾祠鼠",
+          "path": "assets/portrait-enemy-heiweicishu.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "9f2dd83913c5abb8e15a2f6da1212cc98909c40a1ed1a643099c14b85a1a237b",
+          "mipmaps": true
+        },
+        {
+          "kind": "board",
+          "name": "黑尾祠鼠",
+          "path": "assets/zhenpan-enemy-heiweicishu.webp",
+          "size": [
+            1254,
+            1254
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "6994079d8d946f08bb00c145ba61bf265cfdd876e4c9b5b79194d6be3618a2f7",
+          "mipmaps": true
+        },
+        {
+          "kind": "organ",
+          "name": "祠鼠门齿",
+          "path": "assets/item-enemy-heiweicishu-yingmenchi.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "b9cc06dc58fe6d1bd177ba0ce364bca25cb0c7512489912de3648e159d678fe6",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "祠鼠前爪",
+          "path": "assets/item-enemy-heiweicishu-qianzhua.webp",
+          "size": [
+            443,
+            887
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "286ee89fa5050c9644f847e3805067960c05cf0f2802b0a1de90b0601a2f862d",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "祠鼠尾骨",
+          "path": "assets/item-enemy-heiweicishu-cuweihengsao.webp",
+          "size": [
+            443,
+            887
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "f7625ee27664f8b5f8b7cd2866b2eb01db74c9ea448fecf4f2d7a8e43fea2a16",
+          "mipmaps": false
+        }
+      ],
+      "normalized_portrait": {
+        "kind": "normalized_portrait",
+        "name": "黑尾祠鼠",
+        "path": "output/imagegen/portrait-size-standard-20261022/portraits/portrait-enemy-heiweicishu.png",
+        "size": [
+          627,
+          627
+        ],
+        "mode": "RGBA",
+        "alpha_range": [
+          0,
+          255
+        ],
+        "sha256": "1fe1f26ac6b50ee096f46d9bcfe2d5886c1947b8fada96774211df439a63b422",
+        "mipmaps": false
+      }
+    },
+    {
+      "id": "base.enemy.huiyi_fu",
+      "name": "灰翼蝠",
+      "runtime_registered": false,
+      "portrait_includes_frame_config": true,
+      "board_definition": "data/boards/huiyi_fu.json",
+      "occupied_cells": 5,
+      "drop_eligible": 3,
+      "runtime_organs": 0,
+      "runtime_materials": 0,
+      "assets": [
+        {
+          "kind": "portrait",
+          "name": "灰翼蝠",
+          "path": "assets/portrait-enemy-huiyifu.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "eb38a361dae1106b0fe96c7e8d429db7d3fc5c88fd12daa7d3097813b8db90a6",
+          "mipmaps": true
+        },
+        {
+          "kind": "board",
+          "name": "灰翼蝠",
+          "path": "assets/zhenpan-enemy-huiyifu.webp",
+          "size": [
+            1254,
+            1254
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "42ec65418e8fc7cc124c05264fcfde2b2ee5311552e868a7a17b03ad93c53eb2",
+          "mipmaps": true
+        },
+        {
+          "kind": "organ",
+          "name": "蝠齿",
+          "path": "assets/item-enemy-huiyifu-fuchi.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "9ecb69eb581d6b2aaf64b39443413f677c10461a0c960dbe7153cc61dfd457cd",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "灰蝠翼爪",
+          "path": "assets/item-enemy-huiyifu-huifuyizhua.webp",
+          "size": [
+            443,
+            887
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "e0ed1389d6a19078efa69759a95fd0a7bec8604d3fd517aac01fcd5cf9b79eee",
+          "mipmaps": true
+        },
+        {
+          "kind": "organ",
+          "name": "震鸣囊",
+          "path": "assets/item-enemy-huiyifu-zhenmingnang.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "590473e335475996384eb0e9a9b2cdcb5e1550292109ae973402e82dccc9c659",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "蝠翼膜",
+          "path": "assets/item-enemy-huiyifu-fuyimo.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            254
+          ],
+          "sha256": "7c07e74325d32e4142d5c8d4c80becefad7f4e8f7f6238ebbdcb0ccb7545f089",
+          "mipmaps": true
+        }
+      ],
+      "normalized_portrait": {
+        "kind": "normalized_portrait",
+        "name": "灰翼蝠",
+        "path": "output/imagegen/portrait-size-standard-20261022/portraits/portrait-enemy-huiyifu.png",
+        "size": [
+          627,
+          627
+        ],
+        "mode": "RGBA",
+        "alpha_range": [
+          0,
+          255
+        ],
+        "sha256": "6f7126d7e2d8abbde43cc0da68390f0eef0e3895b43ef7303a6d8f6674c85b20",
+        "mipmaps": false
+      }
+    },
+    {
+      "id": "base.enemy.xueju_huizhu",
+      "name": "穴居灰蛛",
+      "runtime_registered": false,
+      "portrait_includes_frame_config": true,
+      "board_definition": "data/boards/xueju_huizhu.json",
+      "occupied_cells": 9,
+      "drop_eligible": 4,
+      "runtime_organs": 0,
+      "runtime_materials": 0,
+      "assets": [
+        {
+          "kind": "portrait",
+          "name": "穴居灰蛛",
+          "path": "assets/portrait-enemy-xuejuhuizhu.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "ee2eb4cfe531ded9d47788811f2ca418037bdfe52a9404e59e1ac1c9bfdc48ca",
+          "mipmaps": true
+        },
+        {
+          "kind": "board",
+          "name": "穴居灰蛛",
+          "path": "assets/zhenpan-enemy-xuejuhuizhu.webp",
+          "size": [
+            1254,
+            1254
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "27692c770c2cd55f78a526b2c011d1b96c16811eddb0dcb671e68f69bc940fa9",
+          "mipmaps": true
+        },
+        {
+          "kind": "organ",
+          "name": "灰质甲片",
+          "path": "assets/item-enemy-xuejuhuizhu-huizhijiake.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "92a96d0017998b75ca6e9e7b70bcc1d23e17cb5fa69f9a9c92f283389344c613",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "灰蛛螯牙",
+          "path": "assets/item-enemy-xuejuhuizhu-huizhuaoya.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "b9aad89d7edbe171327fdf5b81ac3f4cd989f9e2238326e66abc085428e094ae",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "灰蛛前足",
+          "path": "assets/item-enemy-xuejuhuizhu-qianzusiche.webp",
+          "size": [
+            443,
+            887
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "9ebbca8de236d78ecddba8ff9dc18d8966cd5b2e5f5bb1e9f67e845f096d045e",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "粘丝囊",
+          "path": "assets/item-enemy-xuejuhuizhu-niansinang.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "1afd7b9055827e5f5fce6c0a899b98aae39a369750cb5466c7ab94e327a69622",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "灰蛛丝",
+          "path": "assets/item-enemy-xuejuhuizhu-huizhusi.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "07336496434d9c2bc879786d87d4fd3fa31dd9537e843f44248441d67b1eab46",
+          "mipmaps": false
+        }
+      ],
+      "normalized_portrait": {
+        "kind": "normalized_portrait",
+        "name": "穴居灰蛛",
+        "path": "output/imagegen/portrait-size-standard-20261022/portraits/portrait-enemy-xuejuhuizhu.png",
+        "size": [
+          627,
+          627
+        ],
+        "mode": "RGBA",
+        "alpha_range": [
+          0,
+          255
+        ],
+        "sha256": "0a0dabb2a587441dd8249bc8cd2e72131e62caabf1ea8e1aefacd0f3bbf6082d",
+        "mipmaps": false
+      }
+    },
+    {
+      "id": "base.enemy.yanfu_duzhu",
+      "name": "岩腹毒蛛",
+      "runtime_registered": false,
+      "portrait_includes_frame_config": true,
+      "board_definition": "data/boards/yanfu_duzhu.json",
+      "occupied_cells": 9,
+      "drop_eligible": 6,
+      "runtime_organs": 0,
+      "runtime_materials": 0,
+      "assets": [
+        {
+          "kind": "portrait",
+          "name": "岩腹毒蛛",
+          "path": "assets/portrait-enemy-yanfuduzhu.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "eeba7653c0bb02bb8e73e915586989e7527d66eaa859e6dca69e837f7576a6cd",
+          "mipmaps": true
+        },
+        {
+          "kind": "board",
+          "name": "岩腹毒蛛",
+          "path": "assets/zhenpan-enemy-yanfuduzhu.webp",
+          "size": [
+            1254,
+            1254
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "dd5bc357841e93984502ba86f043d1f653ac5a96c10877169c122d1e3ddc9f94",
+          "mipmaps": true
+        },
+        {
+          "kind": "organ",
+          "name": "岩腹甲片",
+          "path": "assets/item-enemy-yanfuduzhu-yanfujiake.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "4c4f89002e89ee466b54a12add2fa0ff1a890cc983d8a8c14e16a3531ea807f6",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "岩腹螯牙",
+          "path": "assets/item-enemy-yanfuduzhu-yanfuaoya.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "c9408488cd61324f868e9cc6760e501b070f421e9b0e72edeed712082eb51a8b",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "腐毒囊",
+          "path": "assets/item-enemy-yanfuduzhu-fudunang.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "6867cd062bfac33f2f7f55f1f1bcd7ed5a1215fea6a2a2c609ae37c655a5c5a5",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "大蛛丝囊",
+          "path": "assets/item-enemy-yanfuduzhu-dazhusinang.webp",
+          "size": [
+            443,
+            887
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "48b75940e17bea8d74c10688a144233ef7b2b333a99c8cdf8baf037e446f1be4",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "岩腹蛛丝",
+          "path": "assets/item-enemy-yanfuduzhu-yanfuzhusi.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "7b14bbccaca97251ea24876165028f4e4e03bd50a7ce4426550b8630127a7bb4",
+          "mipmaps": false
+        },
+        {
+          "kind": "organ",
+          "name": "岩腹心囊",
+          "path": "assets/item-enemy-yanfuduzhu-yanfuxinnang.webp",
+          "size": [
+            627,
+            627
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "sha256": "c609d0f9d1fca869d178437d26ea9f60ce65a62d9e5b060196777346a5dadd3e",
+          "mipmaps": false
+        }
+      ],
+      "normalized_portrait": {
+        "kind": "normalized_portrait",
+        "name": "岩腹毒蛛",
+        "path": "output/imagegen/portrait-size-standard-20261022/portraits/portrait-enemy-yanfuduzhu.png",
+        "size": [
+          627,
+          627
+        ],
+        "mode": "RGBA",
+        "alpha_range": [
+          0,
+          255
+        ],
+        "sha256": "d73e82b62a22833e9c688f543ae068879789bb2e735ce1ecb6a370568c9c07d4",
+        "mipmaps": false
+      }
+    }
+  ],
+  "shared": [
+    {
+      "kind": "shared_frame",
+      "name": "凡人框",
+      "path": "assets/UI-monster-fanren-portraitframe.webp",
+      "size": [
+        627,
+        627
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "sha256": "7c7d037d4efb7a1af9e773022a16e79dbc8c5a8bceeb89f8d440b5ad361da73c",
+      "mipmaps": true
+    },
+    {
+      "kind": "world_map_picture",
+      "name": "世界地图旧祠插图",
+      "path": "assets/map-worldmap-wumingjiuci.webp",
+      "size": [
+        836,
+        471
+      ],
+      "mode": "RGB",
+      "alpha_range": [
+        255,
+        255
+      ],
+      "sha256": "844a34940e04cdfc9c03a1b6e20d1f8c017029c9e21ce42eb18815e0ed19765b",
+      "mipmaps": true
+    },
+    {
+      "kind": "world_map_title",
+      "name": "世界地图旧祠标题",
+      "path": "assets/map-worldmap-title-wumingjiuci.webp",
+      "size": [
+        868,
+        289
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        254
+      ],
+      "sha256": "610feb48f67e900ad4717aa8a177c742df6cb68ff65173ba1f34e96bbe980dc1",
+      "mipmaps": true
+    },
+    {
+      "kind": "layout_reference",
+      "name": "用户旧祠用途参考图",
+      "path": "docs/sources/wuming-jiuci-layout-reference-2026-10-29.png",
+      "size": [
+        2221,
+        1245
+      ],
+      "mode": "RGB",
+      "alpha_range": [
+        255,
+        255
+      ],
+      "sha256": "bee486baf53d65566d853a55e5d9f4e260aebb4d9ae56adae2d554081fcbf225",
+      "mipmaps": false
+    }
+  ]
+}

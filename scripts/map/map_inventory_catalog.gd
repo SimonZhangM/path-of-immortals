@@ -54,7 +54,7 @@ func replace_entries(records: Array) -> String:
 			return "物品ID重复或类别无效。"
 		if not raw.get("quality") is String or (MapItemQuality.level(raw.quality) == 0 and not (raw.category == "book" and raw.quality.is_empty())):
 			return "物品品级须为下品、凡品、良品、上品、灵品、玄品或仙品。"
-		if raw.category == "book" and (not raw.get("element") is String or raw.element.trim_prefix("base.element.") not in book_elements):
+		if raw.category == "book" and (not raw.get("element") is String or (raw.element.trim_prefix("base.element.") not in book_elements and not (raw.get("reading_only",false) and raw.element=="base.element.none"))):
 			return "功法所属元素系无效。"
 		if raw.has("subcategory"):
 			if not raw.subcategory is String or raw.subcategory.strip_edges().is_empty():
@@ -212,6 +212,7 @@ func _in_collection(entry: Dictionary, key: String) -> bool:
 		return true
 	if key == "favorite":
 		return entry.get("favorite", false)
+	if key == "key": return entry.category=="key" or entry.get("quest_item",false)
 	if key in ["key", "misc", "book", "spell"]:
 		return entry.category == key
 	return entry.category in category_groups.get(key, [])

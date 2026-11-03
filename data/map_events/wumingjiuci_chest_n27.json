@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.wumingjiuci.chest_n27",
+  "type": "chest",
+  "point_id": "base.map.wumingjiuci.point.n27",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-wumingjiuci-jiuzhencanyuan1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-wumingjiuci-jiuzhencanyuan0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-wumingjiuci-jiuzhencanyuan2.webp"
+  },
+  "quality": "下品",
+  "reward_id": "base.map_reward.wumingjiuci.chest_n27",
+  "respawn_days": 40,
+  "observation": {
+    "location_name": "旧阵残垣",
+    "location_description": "旧阵西侧藤蔓垂墙，蛛网缠着朽木与陶罐。阶前石纹已旧，仍可辨出环绕阵心的刻痕。",
+    "chest_name": "旧阵藏匣",
+    "description": "一只平盖木匣倚在残墙边，铜制包角颜色黯淡，木纹间积着细尘。圆形锁扣仍保存完整。",
+    "result_description": "你拨开匣旁的蛛网，解开圆扣。平盖应声抬起，两格中的物品显露出来，等待你的选择。"
+  }
+}

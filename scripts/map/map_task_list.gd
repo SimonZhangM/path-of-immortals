@@ -7,6 +7,7 @@ const HARMONY = preload("res://assets/fonts/HarmonyOS_Sans_SC_Regular.ttf")
 const SORT_KEYS := ["accepted_at", "accepted_location", "updated_at"]
 const NORMAL_FRAME := "res://assets/UI-task-mid-taskbar1.webp"
 const SELECTED_FRAME := "res://assets/UI-task-mid-taskbar2.webp"
+const COMPLETED_STAMP := "res://assets/UI-task-right-finished1.webp"
 var definitions: Dictionary
 var entries: Array = []
 var category_id := "all"
@@ -38,19 +39,8 @@ func _init() -> void:
 	heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	heading.add_theme_constant_override("separation", 10)
 	column.add_child(heading)
-	var diamond := Control.new()
-	diamond.name = "GoldDiamond"
-	diamond.custom_minimum_size = Vector2(16, 40)
-	diamond.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var diamond := preload("res://scripts/ui/task_heading_diamond.gd").new()
 	heading.add_child(diamond)
-	var outline := Line2D.new()
-	# Equal diagonals and a closed path give four identical, sharp geometric corners.
-	outline.points = PackedVector2Array([Vector2(8,13),Vector2(15,20),Vector2(8,27),Vector2(1,20)])
-	outline.closed = true
-	outline.default_color = Color("e1bf77")
-	outline.width = 2
-	outline.antialiased = true
-	diamond.add_child(outline)
 	var heading_font := SystemFont.new()
 	heading_font.font_names = PackedStringArray(["KaiTi", "楷体", "serif"])
 	title_label = _label("任务列表", heading_font, 28, Color("e8c880"))
@@ -229,6 +219,21 @@ func _build_card(entry: Dictionary) -> void:
 	var tag := Tag.new(definitions.category_tags[entry.category])
 	tag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	first_line.add_child(tag)
+	# Completion comes from the supplied quest stage, not the selection or objective checks.
+	var stamp_spacer := Control.new()
+	stamp_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stamp_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	first_line.add_child(stamp_spacer)
+	var completed_stamp := TextureRect.new()
+	completed_stamp.name = "TaskCompletedStamp"
+	completed_stamp.texture = load(COMPLETED_STAMP)
+	completed_stamp.custom_minimum_size = Vector2(96, 48)
+	completed_stamp.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	completed_stamp.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	completed_stamp.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	completed_stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	completed_stamp.visible = str(entry.get("stage_id", "")) == "completed"
+	first_line.add_child(completed_stamp)
 	var summary := _label(entry.summary, HARMONY, 18, Color("c5d0d7"))
 	summary.name = "TaskSummary"
 	summary.clip_text = true

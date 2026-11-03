@@ -38,7 +38,16 @@ static func layers(member: PartyMemberState, status: String) -> int:
 
 static func capacity(member: PartyMemberState, status: String = "") -> int:
 	var base := int(member.definition.get("status_capacity", rank(member) * 10))
+	for source: Dictionary in item_capacity_sources(member, status): base += source.value
 	return base + (member.board.status_capacity_bonus(status) if member.board != null else 0)
+
+static func item_capacity_sources(member: PartyMemberState, status: String) -> Array:
+	var result: Array = []
+	for entry: Dictionary in member.inventory.get_instances():
+		var item := member._registry.get_item(entry.item_id)
+		var value: int = item.combat.get("status_capacity_bonuses", {}).get(status, 0)
+		if value > 0: result.append({"name": item.display_name, "value": value})
+	return result
 
 func clamp_buff_capacities(member: PartyMemberState) -> void:
 	# A board change trims only the wearer's buffs. Existing enemy debuffs
@@ -286,6 +295,35 @@ func can_activate(member: PartyMemberState, item: ItemData, at: int) -> bool:
 				return layers(member, "毒蚀") > 0 or at >= member.toxin_immune_until_usec
 	return false
 
+func delay_cooldowns(target: PartyMemberState, effect: Dictionary, at: int, source: Dictionary = {}) -> Array:
+	var candidates: Array = []
+	if target == null or target.hp <= 0: return candidates
+	# One stable board-order snapshot: later changes cannot alter this selection.
+	for entry: Dictionary in sim.cultivation.ordered(target):
+		var id: String = entry.instance_id
+		if not sim.timeline.timers.has(id) or sim.timeline.full_cd(id) <= 0 or sim.timeline.blocked(id, at): continue
+		var item: ItemData = sim._definitions[id]
+		if item.category in ["spell", "book"]: continue
+		if effect.item_scope == "attack_items" and not item.effects_for("on_activate").any(func(e: Dictionary): return e.effect == "damage"): continue
+		sim.timeline.settle(id, at)
+		var timer: Dictionary = sim.timeline.timers[id]
+		var speed: float = sim.timeline.speed(id, at)
+		if timer.entry > 0 or speed <= 0: continue
+		candidates.append({"id": id, "due": ceili(float(timer.cd) / speed)})
+	if effect.selection == "earliest_ready_one" and not candidates.is_empty():
+		var earliest: Dictionary = candidates[0]
+		for candidate: Dictionary in candidates:
+			if candidate.due < earliest.due: earliest = candidate
+		candidates = [earliest]
+	var changed: Array = []
+	for candidate: Dictionary in candidates:
+		if sim.timeline.change_cd(candidate.id, roundi(effect.seconds * 1_000_000), at):
+			changed.append(candidate.id)
+			var event := source.duplicate(true)
+			event.merge({"target_id": target.id, "target_name": target.definition.name, "target_instance_id": candidate.id, "target_item_name": sim._definitions[candidate.id].display_name, "seconds": effect.seconds}, true)
+			emit("cooldown_delayed", at, event)
+	return changed
+
 func activate(id: String, at: int) -> void:
 	var runtime: Dictionary = sim.state.item_runtime[id]
 	var owner: PartyMemberState = sim._owners[id]
@@ -320,6 +358,7 @@ func activate(id: String, at: int) -> void:
 		hp_loss = result.hp_loss
 	for e: Dictionary in item.effects_for("on_activate"):
 		match e.effect:
+			"delay_cooldown": delay_cooldowns(target, e, at, source)
 			"prime_item_attack":
 				owner.pending_item_attacks[e.target_item] = e.value
 				emit("attack_primed", at, {"owner_name": owner.definition.name, "item_id": e.target_item, "value": e.value})

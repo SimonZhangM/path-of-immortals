@@ -22,6 +22,7 @@
     "battle_pause": 32,
     "speed_half": 4194332,
     "speed_normal": 4194333,
-    "speed_double": 4194334
+    "speed_double": 4194334,
+    "map_task_tracker": 70
   }
 }

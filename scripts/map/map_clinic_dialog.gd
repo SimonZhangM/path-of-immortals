@@ -4,6 +4,7 @@ extends Control
 signal cancelled
 signal dialogue_requested(action: String, topic: String)
 signal treatment_requested
+signal herb_quest_requested
 
 # Clinic uses the shop-sized authored canvas, without a trading catalog or wallet.
 const FRAME := Rect2(32,32,1474,840)
@@ -24,6 +25,7 @@ var description_label: Label
 var leave_button: Button
 var treatment_tab: Button
 var conversation_tab: Button
+var herb_quest_button: Button
 var treatment_content: MapClinicTreatmentView
 var conversation_content: VBoxContainer
 var conversation_options: HBoxContainer
@@ -81,6 +83,9 @@ func _init() -> void:
 	treatment_tab = _button("诊治",Rect2(828,233,185,49),28)
 	treatment_tab.pressed.connect(func(): set_mode("treatment"))
 	conversation_tab.pressed.connect(func(): set_mode("conversation"))
+	herb_quest_button = _button("医馆备药",Rect2(1030,233,185,49),26)
+	herb_quest_button.pressed.connect(func(): herb_quest_requested.emit())
+	herb_quest_button.hide()
 	treatment_content = MapClinicTreatmentView.new()
 	_place(treatment_content,Rect2(674,315,706,504))
 	treatment_content.confirmed.connect(func(): treatment_requested.emit())
@@ -205,6 +210,7 @@ func present(event: Dictionary, loadout: MapLoadoutState = null, status: MapPlay
 	_topics_opened = false
 	_loadout = loadout
 	_status = status
+	herb_quest_button.visible = loadout!=null and event.get("id","")==HerbQuest.data.clinic_event and HerbQuest.clinic_available(loadout)
 	treatment_content.configure(event.get("treatment",{}),loadout,status)
 	_view = {"rows":[],"topics":[],"can_continue":false,"selected":"welcome"}
 	for child: Node in dialogue_rows.get_children(): child.free()

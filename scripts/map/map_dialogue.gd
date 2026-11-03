@@ -5,6 +5,7 @@ signal advance_requested
 
 const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
 const Settings = preload("res://scripts/settings/game_settings.gd")
+const Illustration = preload("res://scripts/dialogue/dialogue_illustration.gd")
 const Playback = preload("res://scripts/dialogue/dialogue_playback.gd")
 var player_status: MapPlayerStatus
 var playback := Playback.new()
@@ -12,7 +13,10 @@ var _phase := ""
 
 var background: TextureRect
 var portrait: TextureRect
-var text_label: Label
+var portrait_rim: TextureRect
+var _player_rim := false
+var _body_mask: ShaderMaterial
+var text_label: RichTextLabel
 var speaker_name: Label
 var next_marker: TextureRect
 var picture: MapEventPicture
@@ -29,6 +33,9 @@ func _init() -> void:
 	visible = false
 	picture = MapEventPicture.new()
 	add_child(picture)
+	picture.layout_changed.connect(_layout)
+	picture.dismissed.connect(func():
+		if _phase.is_empty(): hide())
 	portrait = _image("SpeakerPortrait")
 	portrait.texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -37,15 +44,23 @@ func _init() -> void:
 	portrait.material = portrait_mask
 	# The portrait overlaps the aperture slightly; draw the rim on top.
 	background = _image("DialogueBackground")
-	text_label = Label.new()
+	_body_mask = ShaderMaterial.new()
+	_body_mask.shader = preload("res://scripts/ui/dialogue_body_mask.gdshader")
+	portrait_rim = _image("SpeakerPortraitFrame")
+	text_label = RichTextLabel.new()
 	text_label.name = "DialogueText"
 	text_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	text_label.add_theme_color_override("font_color", Color("f0dfba"))
+	text_label.scroll_active = false
+	text_label.add_theme_color_override("default_color", Color.WHITE)
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["KaiTi", "楷体", "STKaiti", "Kaiti SC", "serif"])
-	text_label.add_theme_font_override("font", font)
+	text_label.add_theme_font_override("normal_font", font)
+	var bold_font := SystemFont.new()
+	bold_font.font_names = font.font_names
+	bold_font.font_weight = 700
+	text_label.add_theme_font_override("bold_font", bold_font)
 	add_child(text_label)
 	speaker_name = Label.new()
 	speaker_name.name = "SpeakerName"
@@ -53,7 +68,7 @@ func _init() -> void:
 	speaker_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	speaker_name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	speaker_name.add_theme_font_override("font", font)
-	speaker_name.add_theme_color_override("font_color", Color("f0dfba"))
+	speaker_name.add_theme_color_override("font_color", Color.WHITE)
 	add_child(speaker_name)
 	next_marker = _image("NextMarker")
 	resized.connect(_layout)
@@ -97,8 +112,10 @@ func prepare(registry: MapEventRegistry) -> String:
 			atlas.atlas = texture
 			atlas.region = region
 			textures.speakers[speaker_id] = atlas
-		if event.presentation.has("illustration"):
-			var art: Dictionary = event.presentation.illustration
+		var art := Illustration.art_for(event)
+		if not art.is_empty():
+			var sequence_error := Illustration.sequence_error(art,event.lines.size())
+			if not sequence_error.is_empty(): return sequence_error
 			var frame_texture := load(art.frame) as Texture2D
 			if art.has("frame_region"):
 				var crop: Array = art.frame_region
@@ -106,40 +123,73 @@ func prepare(registry: MapEventRegistry) -> String:
 				frame_atlas.atlas = frame_texture
 				frame_atlas.region = Rect2(crop[0], crop[1], crop[2], crop[3])
 				frame_texture = frame_atlas
-			var image_texture := load(art.image) as Texture2D
+			var images: Array = []
+			for page: Dictionary in art.get("pages",[{"image":art.get("image","")}]):
+				var image_texture := load(page.image) as Texture2D
+				if image_texture == null: return "剧情场景图片无效。"
+				images.append(image_texture)
 			var slot: Array = art.image_slot
-			if frame_texture == null or image_texture == null or not Rect2(Vector2.ZERO, frame_texture.get_size()).encloses(Rect2(slot[0], slot[1], slot[2], slot[3])):
+			if frame_texture == null or not Rect2(Vector2.ZERO, frame_texture.get_size()).encloses(Rect2(slot[0], slot[1], slot[2], slot[3])):
 				return "地图事件插画窗口超出框架或图片无效。"
 			textures.illustration_frame = frame_texture
-			textures.illustration_image = image_texture
+			textures.illustration_images = images
 		_textures[event.id] = textures
 	return ""
 
-func present(event: Dictionary, line: String, speaker_id: String = "", phase: String = "dialogue") -> void:
+func present(event: Dictionary, line: String, speaker_id: String = "", phase: String = "dialogue", line_index: int = 0) -> void:
 	_phase = phase
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	var art := Illustration.art_for(event)
+	var page := Illustration.page_at(art,line_index)
+	var page_text: String = art.get("page_text", "")
+	var page_dialogue := phase=="illustration" and page>=0 and not page_text.is_empty()
+	var show_dialogue := phase in ["dialogue","dialogue_paused"] or page_dialogue
 	_art = event.presentation
+	portrait_rim.texture = null
+	_player_rim = false
 	background.texture = _textures[event.id].background
 	portrait.texture = _textures[event.id].speakers.get(speaker_id, _textures[event.id].portrait)
 	var resolved_speaker: String = event.speaker_id if speaker_id.is_empty() else speaker_id
 	if player_status != null and resolved_speaker == "base.map_player.chen_yu":
 		portrait.texture = PLAYER_FRAMES.portrait_for(player_status.cultivation_rank_id)
 		speaker_name.text = player_status.display_name
+		if _art.get("speaker_rims",false):
+			portrait_rim.texture = load(PLAYER_FRAMES.path_for(player_status.cultivation_rank_id))
+			_player_rim = true
 	else:
 		var speaker: Dictionary = event.get("speakers", {}).get(resolved_speaker, {})
 		speaker_name.text = speaker.get("name", event.get("speaker_name", ""))
+		if _art.get("speaker_rims",false) and speaker.has("portrait_frame"):
+			portrait_rim.texture = load(speaker.portrait_frame)
+	background.material = _body_mask if portrait_rim.texture!=null else null
+	portrait_rim.visible = show_dialogue and portrait_rim.texture!=null
 	next_marker.texture = _textures[event.id].get("next_marker")
-	text_label.text = line
-	playback.begin([text_label],str(Settings.value("dialogue_speed","medium")),phase=="dialogue")
-	background.visible = phase == "dialogue"
-	portrait.visible = phase == "dialogue"
-	text_label.visible = phase == "dialogue"
-	speaker_name.visible = phase == "dialogue" and _art.has("name_rect")
+	# A gallery caption is fully visible and never starts ordinary auto playback.
+	set_line_text(page_text if page_dialogue else line,phase=="dialogue")
+	background.visible = show_dialogue
+	portrait.visible = show_dialogue
+	text_label.visible = show_dialogue
+	speaker_name.visible = show_dialogue and _art.has("name_rect")
 	next_marker.visible = phase == "dialogue" and next_marker.texture != null
-	picture.visible = _art.has("illustration")
-	if picture.visible:
-		picture.configure(_textures[event.id].illustration_frame, _textures[event.id].illustration_image, _art.illustration.image_slot)
+	var show_picture: bool = not art.is_empty() and (page>=0 if art.has("pages") else line_index>=int(art.get("start_line",0)))
+	if show_picture:
+		picture.configure(_textures[event.id].illustration_frame, _textures[event.id].illustration_images[maxi(0,page)], art.image_slot)
+	else:
+		picture.dismiss()
 	show()
 	_layout()
+
+func dismiss() -> void:
+	_phase = ""
+	playback.suspend()
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for view in [background,portrait,portrait_rim,text_label,speaker_name,next_marker]: view.hide()
+	picture.dismiss()
+	if not picture.visible: hide()
+
+func set_line_text(line: String, animate := true) -> void:
+	preload("res://scripts/dialogue/map_dialogue_text.gd").apply(text_label,line)
+	playback.begin([text_label],str(Settings.value("dialogue_speed","medium")),animate)
 
 func _process(delta: float) -> void:
 	if not is_visible_in_tree() or _phase!="dialogue" or get_tree().paused:
@@ -149,7 +199,7 @@ func _process(delta: float) -> void:
 		advance_requested.emit()
 
 func request_advance() -> void:
-	if not is_visible_in_tree(): return
+	if not is_visible_in_tree() or _phase.is_empty(): return
 	if _phase=="dialogue" and playback.finish_reveal(): return
 	playback.suspend()
 	advance_requested.emit()
@@ -198,13 +248,34 @@ func _layout() -> void:
 	if _art.get("portrait_fills_slot", false):
 		portrait.size = Vector2(slot[2], slot[3]) * factor
 	portrait.position = background.position + center * factor - portrait.size * 0.5
+	if portrait_rim.visible:
+		var diameter := minf(float(slot[2]),float(slot[3]))*factor
+		var anchor := background.position+center*factor
+		portrait.size = Vector2.ONE*diameter
+		if _player_rim:
+			# Enlarge the player's portrait and rim together around the same anchor.
+			var rim_scale := diameter/432.0*1.05
+			portrait.size = Vector2.ONE*PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE*rim_scale
+			portrait_rim.position = anchor-PLAYER_FRAMES.SOURCE_CENTER*rim_scale
+			portrait_rim.size = PLAYER_FRAMES.SOURCE_SIZE*rim_scale
+		else:
+			# This source's painted rim occupies only 568 of its 627 pixels.
+			# Cover the original 446px oval mask with the painted rim, not its
+			# transparent texture bounds, so no crescent-shaped gap is exposed.
+			var rim_scale := 446.0/568.0*factor
+			portrait.size = Vector2.ONE*540.0*rim_scale
+			portrait_rim.position = anchor-Vector2(318,313)*rim_scale
+			portrait_rim.size = Vector2.ONE*627*rim_scale
+		portrait.position = anchor-portrait.size*0.5
 	portrait.material.set_shader_parameter("portrait_size", portrait.size)
 	var text_rect: Array = _art.text_rect
 	text_label.position = background.position + Vector2(text_rect[0], text_rect[1]) * factor
-	text_label.add_theme_font_size_override("font_size", maxi(15, roundi(36.0 * text_factor) - 1))
+	var text_font_size := maxi(15, roundi(36.0 * text_factor) - 1)
+	text_label.add_theme_font_size_override("normal_font_size", text_font_size)
+	text_label.add_theme_font_size_override("bold_font_size", text_font_size)
 	var text_size := Vector2(text_rect[2], text_rect[3]) * factor
 	text_label.size = text_size
-	# Label updates its wrapped minimum height after the new width/font is shaped.
+	# Keep the authored text window after responsive font shaping.
 	text_label.set_deferred("size", text_size)
 	if speaker_name.visible:
 		var name_rect: Array = _art.name_rect

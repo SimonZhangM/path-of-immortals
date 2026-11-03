@@ -84,7 +84,7 @@ func run() -> void:
 		await capture("res://artifacts/gathering-selected-%d.png" % index)
 		await click(dialog.action_buttons[index])
 		check(not dialog.visible and preview.result_dialog.visible, "lit button opens result immediately")
-		check(preview.result_dialog.heading.text == "获得止血草" and preview.result_dialog.quantity_label.text == "数量：%d株" % (index+1), "result shows herb and quantity")
+		check(preview.result_dialog.heading.text == "获得止血草" and preview.result_dialog.card.quantity_label.text == "+%d" % (index+1), "result shows herb and quantity badge")
 		await click(preview.result_dialog.accept_button, MOUSE_BUTTON_RIGHT)
 		check(not preview.result_dialog.visible, "right click closes result")
 	dialog.present()

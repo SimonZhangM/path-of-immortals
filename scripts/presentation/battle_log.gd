@@ -26,6 +26,8 @@ func consume(events: Array[Dictionary], registry: ContentRegistry) -> String:
 				_lines.append("%s %s · %s结算%s" % [stamp, event.target_name, event.status, EffectSystem.number_text(event.value)])
 			"control":
 				_lines.append("%s %s · %s至%.2f秒" % [stamp, event.target_name, event.status, event.until / 1000000.0])
+			"cooldown_delayed":
+				_lines.append("%s %s · %s冷却延长%s秒" % [stamp, event.target_name, event.target_item_name, EffectSystem.number_text(event.seconds)])
 			"shield_interrupted":
 				_lines.append("%s %s · 本击扣盾%s；盾反击败攻击者，余伤中止" % [stamp,event.target_name,EffectSystem.number_text(event.value)])
 			"armor_only":

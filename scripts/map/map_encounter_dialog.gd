@@ -26,6 +26,7 @@ var enemy_name: Label
 var rank_label: Label
 var category_label: Label
 var enemy_description: Label
+var loot_heading: Label
 var trait_labels: Array[Label] = []
 var loot_slots: Array[MapEncounterItemSlot] = []
 var loot_names: Array[Label] = []
@@ -39,6 +40,7 @@ var intimidate_button: TextureButton
 var error_label: Label
 var selected_index := -1
 var _busy := false
+var _pending_enemy := false
 var _geometry: Array[Control] = []
 var _tag_labels: Array[Label] = []
 var _idle_textures: Array[Texture2D] = []
@@ -93,9 +95,9 @@ func _init() -> void:
 	rank_label = _tag()
 	category_label = _tag()
 	for index in 2: trait_labels.append(_tag())
-	enemy_description = _label("", Rect2(910,354,432,78), 25)
+	enemy_description = _label("", Rect2(910,354,432,94), 25)
 	enemy_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label("可能掉落", Rect2(931,480,187,42), 27, true, true)
+	loot_heading = _label("可能掉落", Rect2(931,480,187,42), 27, true, true)
 	for index in 3: _build_action(index)
 	retreat_button = action_buttons[0]
 	fight_button = action_buttons[1]
@@ -204,7 +206,7 @@ func _build_action(index: int) -> void:
 	mask.visible = not _action_enabled(index)
 
 func _action_enabled(index: int) -> bool:
-	return options.actions[index].get("enabled", true)
+	return options.actions[index].get("enabled", true) and (not _pending_enemy or options.actions[index].id == "retreat")
 
 func _show_loot(enemy: PartyMemberState) -> void:
 	for control in loot_slots + loot_names:
@@ -213,6 +215,7 @@ func _show_loot(enemy: PartyMemberState) -> void:
 		control.queue_free()
 	loot_slots.clear()
 	loot_names.clear()
+	if enemy == null: return
 	var items: Array[ItemData] = []
 	var seen: Dictionary = {}
 	# Display material drops, not combat organs, including first-victory rewards.
@@ -241,9 +244,27 @@ func _show_loot(enemy: PartyMemberState) -> void:
 		loot_names.append(label)
 
 func present(event: Dictionary, enemy: PartyMemberState) -> void:
+	_pending_enemy = event.get("pending_enemy", false)
 	location_illustration.texture = load(event.presentation.illustration)
 	heading.text = event.title
 	description.text = event.description
+	portrait.visible = not _pending_enemy
+	loot_heading.visible = not _pending_enemy
+	if _pending_enemy:
+		portrait.texture = null
+		portrait_frame.hide()
+		enemy_name.text = "动静未明"
+		rank_label.text = ""
+		category_label.text = ""
+		enemy_description.text = "暂且离开，继续探索。"
+		for label in trait_labels: label.text = ""
+		_show_loot(null)
+		error_label.text = ""
+		selected_index = -1
+		set_busy(false)
+		show()
+		_layout()
+		return
 	portrait.texture = load(enemy.definition.portrait)
 	ENEMY_FRAMES.show_definition(portrait_frame, enemy.definition)
 	enemy_name.text = enemy.definition.name
@@ -285,8 +306,11 @@ func _refresh_selection() -> void:
 	for index in action_buttons.size():
 		var selected := index == selected_index and _action_enabled(index)
 		selection_frames[index].visible = selected
-		action_buttons[index].texture_hover = _selected_textures[index] if selected else _idle_textures[index]
-		action_buttons[index].texture_pressed = action_buttons[index].texture_hover
+		var texture := _selected_textures[index] if selected else _idle_textures[index]
+		action_buttons[index].texture_normal = texture
+		action_buttons[index].texture_hover = texture
+		action_buttons[index].texture_pressed = texture
+		action_buttons[index].texture_disabled = texture
 
 func set_busy(value: bool) -> void:
 	_busy = value

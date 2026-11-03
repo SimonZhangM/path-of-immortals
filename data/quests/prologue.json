@@ -1,0 +1,170 @@
+{
+  "id": "quest.prologue.yaoxiangruchang",
+  "npc_id": "base.npc.yesongnian",
+  "accept_segment": "base.dialogue.yesongnian.quest.morning",
+  "deliver_segment": "base.dialogue.yesongnian.quest.returning",
+  "map_id": "base.map.xiyuanyaopo",
+  "shop_map_id": "base.map.qingshizhen",
+  "objectives": [
+    {
+      "id": "talk",
+      "text": "前往药材铺，与叶松年交谈",
+      "group": "morning",
+      "show_count": false,
+      "required": 1,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n14",
+          "point_marker": true,
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    },
+    {
+      "id": "visit",
+      "text": "前往溪源药坡",
+      "group": "travel",
+      "show_count": false,
+      "required": 1,
+      "targets": [
+        {
+          "map_id": "base.map.xiyuanyaopo",
+          "point_id": "base.map.xiyuanyaopo.point.n01",
+          "world_location_id": "base.world_location.xiyuanyaopo"
+        }
+      ]
+    },
+    {
+      "id": "kuaiye",
+      "text": "采集苦艾叶",
+      "group": "gathering",
+      "show_count": true,
+      "required": 3,
+      "unit": "株",
+      "item_id": "base.material.kuaiye",
+      "targets": [
+        {
+          "map_id": "base.map.xiyuanyaopo",
+          "point_id": "base.map.xiyuanyaopo.point.n07",
+          "world_location_id": "base.world_location.xiyuanyaopo"
+        },
+        {
+          "map_id": "base.map.xiyuanyaopo",
+          "point_id": "base.map.xiyuanyaopo.point.n12",
+          "world_location_id": "base.world_location.xiyuanyaopo"
+        }
+      ]
+    },
+    {
+      "id": "xilutai",
+      "text": "采集溪露苔",
+      "group": "gathering",
+      "show_count": true,
+      "required": 3,
+      "unit": "株",
+      "item_id": "base.material.xilutai",
+      "targets": [
+        {
+          "map_id": "base.map.xiyuanyaopo",
+          "point_id": "base.map.xiyuanyaopo.point.n13",
+          "world_location_id": "base.world_location.xiyuanyaopo"
+        },
+        {
+          "map_id": "base.map.xiyuanyaopo",
+          "point_id": "base.map.xiyuanyaopo.point.n18",
+          "world_location_id": "base.world_location.xiyuanyaopo"
+        }
+      ]
+    },
+    {
+      "id": "deliver",
+      "text": "将草药交给叶松年",
+      "group": "returning",
+      "show_count": false,
+      "required": 1,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n14",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "kind": "spirit_stones",
+      "name": "灵石",
+      "quantity": 5,
+      "icon": "res://assets/player-status-coin.webp"
+    }
+  ],
+  "people": [
+    {
+      "id": "base.npc.yesongnian",
+      "name": "叶松年",
+      "portrait": "res://assets/ui-portrait-yesongnian.webp"
+    }
+  ],
+  "locations": {
+    "morning": {
+      "name": "青石镇·药材铺",
+      "image": "res://assets/map-qingshizhen.webp"
+    },
+    "gathering": {
+      "name": "溪源药坡",
+      "image": "res://assets/map-xiyuanyaopo.webp"
+    },
+    "returning": {
+      "name": "青石镇·药材铺",
+      "image": "res://assets/map-qingshizhen.webp"
+    },
+    "travel": {
+      "name": "溪源药坡",
+      "image": "res://assets/map-xiyuanyaopo.webp"
+    }
+  },
+  "display_objectives": [
+    {
+      "id": "talk",
+      "text": "前往药材铺，与叶松年交谈",
+      "group": "morning",
+      "counter_ids": [
+        "talk"
+      ]
+    },
+    {
+      "id": "visit",
+      "text": "前往溪源药坡",
+      "group": "travel",
+      "counter_ids": [
+        "visit"
+      ]
+    },
+    {
+      "id": "kuaiye",
+      "text": "采集苦艾叶",
+      "group": "gathering",
+      "counter_ids": [
+        "kuaiye"
+      ]
+    },
+    {
+      "id": "xilutai",
+      "text": "采集溪露苔",
+      "group": "gathering",
+      "counter_ids": [
+        "xilutai"
+      ]
+    },
+    {
+      "id": "deliver",
+      "text": "将草药交给叶松年",
+      "group": "returning",
+      "counter_ids": [
+        "deliver"
+      ]
+    }
+  ]
+}

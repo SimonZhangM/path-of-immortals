@@ -1,0 +1,77 @@
+{
+  "id": "base.enemy.huiyi_fu",
+  "name": "灰翼蝠",
+  "art_profile": "base.enemy.huiyi_fu",
+  "cultivation_rank": "base.cultivation.mortal",
+  "max_hp": 42,
+  "innate_armor_type": "无甲",
+  "initial_armor": 0,
+  "max_stamina": 39,
+  "max_spirit": 0,
+  "innate_armor_capacity": 0,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 3,
+    "experience": 1
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.huifu_tooth",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.huifu_claw",
+      "cell": [
+        1,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.huifu_echo_sac",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.huifu_membrane",
+      "cell": [
+        0,
+        1
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.huifu_tooth",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.huifu_echo_sac",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.huifu_membrane",
+      "chance": 0.25
+    }
+  ],
+  "encounter_descriptions": [
+    "残破屋梁上倒挂着几道黑影，脚下积着厚厚的灰尘。你刚踏进殿内，一阵尖锐鸣声骤然响起，一只灰翼蝠猛然展开双翼扑下。",
+    "阴暗的石廊里回荡着细微的振翅声，头顶不时落下碎屑。你抬头寻找声源，一只灰翼蝠已脱离岩缝，在狭窄廊道里迎面飞来。",
+    "旧祠后殿的窗棂破损，几片薄薄的翼膜挂在木刺上。忽然，角落传来刺耳震鸣，一只灰翼蝠从神像背后的阴影里飞出。"
+  ],
+  "presentation": {
+    "rank_label": "凡人级",
+    "category_label": "飞兽类",
+    "description": "倒悬于旧祠阴暗檐梁，尖齿利爪出手迅疾。常以刺耳震鸣扰乱对手，使其攻击节奏迟缓。",
+    "traits": [
+      "快攻",
+      "震鸣干扰"
+    ],
+    "battle_background": "res://assets/battle-wumingjiuci-huiyifu.webp",
+    "summary": []
+  }
+}

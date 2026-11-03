@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n26",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n26",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-09-N26.webp"
+  },
+  "title": "六柱旧阵",
+  "description": "六根石柱围着斑驳圆阵，灰白蛛丝缠在柱基与地面刻纹之间。你刚走近阵心，一只穴居灰蛛便从石柱后探出，踏过刻纹，张开螯牙逼近。",
+  "enemy_id": "base.enemy.xueju_huizhu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

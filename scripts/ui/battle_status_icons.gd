@@ -101,6 +101,12 @@ func configure() -> void:
 		counts[word] = number
 		_display_order.append(word)
 
+func recovery_origin(word: String) -> Vector2:
+	if not is_inside_tree() or not slots.has(word): return Vector2.INF
+	var icon: TextureRect = slots[word].get_node("Icon")
+	# Keep the last laid-out position for a final tick that consumed its last layer.
+	return icon.get_global_transform_with_canvas() * (icon.size * 0.5)
+
 func refresh(current_member: PartyMemberState) -> void:
 	member = current_member
 	var any_visible := false

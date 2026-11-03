@@ -61,7 +61,7 @@ func run() -> void:
 	check(map.travel.map_position==prior_position,"settings pauses travel")
 	var center: Vector2 = panel.canvas.get_global_rect().get_center()
 	check(center.is_equal_approx(Vector2(root.size)*0.5),"settings canvas centered on viewport")
-	check(panel.pages.size()==5 and panel.widgets.size()==16 and panel._key_buttons.size()==9,"five pages and seventeen settings including nine-action key mapping")
+	check(panel.pages.size()==5 and panel.widgets.size()==16 and panel._key_buttons.size()==10,"five pages and seventeen settings including ten-action key mapping")
 	check(panel.reset_button.get_theme_stylebox("normal").texture.resource_path.ends_with("UI-start-button3.webp"),"default button uses requested button3")
 	check(panel.reset_button.get_theme_stylebox("hover").texture.resource_path.ends_with("UI-start-button2.webp"),"hover uses requested button2")
 	for resolution in [Vector2i(2560,1440),Vector2i(1920,1080)]:

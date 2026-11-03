@@ -14,6 +14,7 @@
     {"action":"map_inventory","label":"打开储物袋"},
     {"action":"map_techniques","label":"打开功法"},
     {"action":"map_tasks","label":"打开任务"},
+    {"action":"map_task_tracker","label":"开关任务追踪"},
     {"action":"map_world_map","label":"打开世界地图"},
     {"action":"dialogue_continue","label":"继续对话"},
     {"action":"battle_pause","label":"战斗暂停／继续"},

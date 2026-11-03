@@ -296,7 +296,7 @@ func _scale_art(control: Control, area_ratio: float) -> void:
 	control.scale = Vector2.ONE*sqrt(area_ratio)
 	var center := func(): control.pivot_offset = control.size*0.5
 	control.resized.connect(center)
-	center.call_deferred()
+	center.call()
 
 func _thumbnail(parent: Node, record: Dictionary, edge: float) -> Control:
 	var slot := Control.new()
@@ -564,7 +564,7 @@ func _on_inventory_changed() -> void:
 
 func _products() -> Array:
 	if crafting: return []
-	return shop.sale_items(state,category) if selling else shop.products(category)
+	return shop.sale_items(state,category) if selling else shop.products(category,state)
 
 func _unit_price(item_id: String) -> int:
 	return shop.pricing.sell_unit_price(item_id) if selling else shop.buy_unit_price(item_id)

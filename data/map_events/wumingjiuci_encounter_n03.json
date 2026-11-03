@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n03",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n03",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-01-N03.webp"
+  },
+  "title": "西庭断檐",
+  "description": "西庭入口的残檐下落着碎瓦，梁间忽然传来急促振翅声。一只灰翼蝠从断梁背后翻身掠出，擦过翘起的瓦角，尖鸣着扑向阶前。",
+  "enemy_id": "base.enemy.huiyi_fu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

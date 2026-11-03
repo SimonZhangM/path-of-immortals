@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n23",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n23",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-08-N23.webp"
+  },
+  "title": "封门石台",
+  "description": "雕纹石门紧闭，门前石台与两侧基座之间横着粗厚蛛丝。一只岩腹毒蛛从门侧阴影中爬出，厚硬腹甲擦过石面，带着毒液的螯牙缓缓张开。",
+  "enemy_id": "base.enemy.yanfu_duzhu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

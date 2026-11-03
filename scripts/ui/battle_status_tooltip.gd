@@ -94,6 +94,8 @@ func _capacity_text(actor: PartyMemberState) -> String:
 	var bonus := actor.board.status_capacity_bonus(word) if actor.board != null else 0
 	if bonus > 0:
 		text += "\n%s：+%d层上限" % [actor.board.display_name, bonus]
+	for item: Dictionary in T01CombatRules.item_capacity_sources(actor, word):
+		text += "\n%s：+%d层上限" % [item.name, item.value]
 	return text
 
 func _refresh() -> void:

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "base.book.yinqijue",
+      "name": "引气诀",
+      "type": "book",
+      "category": "book",
+      "quality": "",
+      "tags": [
+        "功法",
+        "书籍",
+        "任务物品"
+      ],
+      "size": [
+        2,
+        1
+      ],
+      "icon": "res://assets/UI-otherbook-yinqijue.webp",
+      "element": "base.element.none",
+      "cooldown": 0,
+      "effects": [],
+      "combat": {
+        "reading_only": true,
+        "quest_item": true,
+        "flavor_description": "先读，不急着练。",
+        "description": "记载入门吐纳法的薄册，由沈砚舟赠予。书中讲述引气入体的基础，可先行翻阅，待有人指导后再实际修行。"
+      }
+    }
+  ]
+}

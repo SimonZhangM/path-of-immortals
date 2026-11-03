@@ -175,7 +175,7 @@ func refresh_records() -> void:
 	if loadout == null: return
 	techniques.clear()
 	for record: Dictionary in loadout.storage_records():
-		if record.category != "book": continue
+		if record.category != "book" or record.get("reading_only",false): continue
 		record.practice_error = CultivationGrowth.book_error(loadout.growth,loadout.registry.library,loadout.knowledge,record.id)
 		techniques.append(record)
 	set_cultivation_progress(player.cultivation_progress,player.cultivation_required,"当前修为 %s" % CultivationGrowth.display(player.cultivation_progress))

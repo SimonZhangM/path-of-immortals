@@ -1,0 +1,17 @@
+{
+  "id": "base.map_event.baishacun.chest_n19",
+  "type": "chest",
+  "point_id": "base.map.baishacun.point.n19",
+  "trigger": "arrival",
+  "quality": "下品",
+  "reward_id": "base.map_reward.baishacun.chest_n19",
+  "respawn_days": 40,
+  "presentation": {},
+  "observation": {
+    "location_name": "晾衣崖后",
+    "location_description": "晾衣场后的小径伸向海崖，藤蔓攀住岩缝，风从树梢间带来咸湿的水汽。",
+    "chest_name": "崖隙木箱",
+    "description": "崖石旁搁着一只旧木箱，边角留有绳索磨痕，几片枯叶积在箱盖的凹槽里。",
+    "result_description": "你拨开木箱的锁扣，掀起箱盖。两格中各放着一件物品，可以择一收下。"
+  }
+}

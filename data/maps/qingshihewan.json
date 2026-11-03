@@ -15,6 +15,14 @@
   "sign_motion": "res://data/ui/map_sign_motion.json",
   "exits": [
     {
+      "point_id": "base.map.qingshihewan.point.n02",
+      "trigger": "arrival",
+      "title": "前往 无名旧祠",
+      "scene": "res://scenes/maps/wumingjiuci.tscn",
+      "target_point": "base.map.wumingjiuci.point.n01",
+      "target_facing": "left"
+    },
+    {
       "point_id": "base.map.qingshihewan.point.east_exit",
       "title": "前往 青石镇",
       "scene": "res://scenes/maps/qingshizhen.tscn",
@@ -31,8 +39,6 @@
     "res://data/map_events/qingshihewan_gathering_n04.json",
     "res://data/map_events/qingshihewan_gathering_n31.json",
     "res://data/map_events/qingshihewan_gathering_n36.json",
-    "res://data/map_events/qingshihewan_bridge_dialogue.json",
-    "res://data/map_events/qingshihewan_wounded_disciple.json",
     "res://data/map_events/qingshihewan_chest_n06.json",
     "res://data/map_events/qingshihewan_chest_n14.json",
     "res://data/map_events/qingshihewan_chest_n22.json",

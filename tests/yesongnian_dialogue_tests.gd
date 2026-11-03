@@ -28,7 +28,7 @@ func new_story(lib: NpcDialogueLibrary) -> Dictionary:
 
 func model_checks(map: Node, lib: NpcDialogueLibrary) -> void:
 	var n := new_story(lib)
-	check(lib.segments.size()==21 and lib.definition.greetings.entries.size()==9,"full supplied content loaded")
+	check(lib.segments.size()==23 and lib.definition.greetings.entries.size()==9,"full supplied content loaded")
 	check(DialogueJournal.view(n,lib,{}).topics.map(func(t): return t.label)==["药铺近况","请教药理","闲聊"],"initial topic labels")
 	DialogueJournal.select(n,lib,"shop",0,{})
 	DialogueJournal.advance(n,lib,0)
@@ -124,6 +124,7 @@ func model_checks(map: Node, lib: NpcDialogueLibrary) -> void:
 	var snapshot: Dictionary = map.loadout.snapshot()
 	var state: MapLoadoutState = MapLoadoutStore.candidate(map.loadout).state
 	state.narrative = n
+	QuestState.sync_flags(state)
 	var path := "res://artifacts/yesongnian-model.json"
 	check(MapLoadoutStore.save(state,path).is_empty(),"isolated journal saves")
 	check(MapLoadoutStore.load_into(state,path).is_empty() and state.narrative==n,"both NPC histories and knowledge reload")
@@ -133,6 +134,7 @@ func model_checks(map: Node, lib: NpcDialogueLibrary) -> void:
 	before = state.snapshot()
 	check(not NpcDialogueActions.command(state,lib,"select",FAILURE_PATH,"medicine").is_empty() and state.snapshot()==before,"failed save does not reveal next segment")
 	state.narrative = after
+	QuestState.sync_flags(state)
 	check(MapLoadoutStore.save(state,path).is_empty() and MapLoadoutStore.load_into(state,path).is_empty() and state.narrative==after,"frozen variant reloads with correct length")
 	state.narrative = after.duplicate(true)
 	state.narrative.npcs[NPC].seen[PREFIX+"medicine.02"] -= 1
@@ -225,6 +227,9 @@ func run() -> void:
 	check(load(lib.definition.portrait).get_image().has_mipmaps() and talk.backing.texture.atlas.get_image().has_mipmaps(),"new assets have mipmaps")
 	if DisplayServer.get_name()=="headless":
 		model_checks(map,lib)
+		# Keep this legacy UI fixture on ordinary dialogue; first quest has its own test.
+		map.loadout.quests[QuestState.ID].counts.talk = 1
+		QuestState.sync_flags(map.loadout)
 		map.inventory_save_path = "res://artifacts/yesongnian-ui.json"
 		await click(talk.continue_button)
 		var before: Dictionary = map.loadout.narrative.duplicate(true)

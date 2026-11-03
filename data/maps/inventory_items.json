@@ -2895,6 +2895,9 @@
   {
     "id": "base.map_item.warm_jade",
     "name": "温玉佩",
+    "quest_item": true,
+    "grant_on_start": false,
+    "acquisition_flag": "base.story.qingshihewan.cultivator_rescued",
     "flavor_description": "贴身温热，握在掌中，仿佛留住了一小片春阳。",
     "category": "artifact",
     "quality": "下品",

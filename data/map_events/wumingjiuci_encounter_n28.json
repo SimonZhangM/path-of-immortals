@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.wumingjiuci.encounter_n28",
+  "type": "encounter",
+  "point_id": "base.map.wumingjiuci.point.n28",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-wumingjiuci-10-N28.webp"
+  },
+  "title": "上殿东廊",
+  "description": "上殿东侧的平台沿石灯通向破院，灯座后方的檐下藏着一团灰影。脚步声刚响，一只灰翼蝠便展开双翼，从石灯旁疾掠而出，扑向狭窄的廊道。",
+  "enemy_id": "base.enemy.huiyi_fu",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

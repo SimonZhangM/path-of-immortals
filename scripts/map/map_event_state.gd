@@ -32,18 +32,18 @@ func _init(content: MapEventRegistry, completion_record: Variant = null, encount
 func resolved_event(event_id: String) -> Dictionary:
 	var event: Dictionary = registry.events.get(event_id, {}).duplicate(true)
 	if event.get("type") == "chest" and chest_resolver.is_valid(): event = chest_resolver.call(event)
-	if event.get("type") == "encounter":
+	if event.get("type") == "encounter" and not event.get("pending_enemy", false):
 		var sequence: Array = event.get("enemy_sequence", [event.enemy_id])
 		event.enemy_id = sequence[int(encounters.get(event_id, {}).get("index", 0)) % sequence.size()]
 	return event
 
 func _available(event: Dictionary) -> bool:
-	return event.get("enabled", true) and (event.get("type") != "encounter" or not enemy_available.is_valid() or enemy_available.call(event.enemy_id))
+	return event.get("enabled", true) and (event.get("type") != "encounter" or event.get("pending_enemy", false) or not enemy_available.is_valid() or enemy_available.call(event.enemy_id))
 
 func is_active() -> bool:
 	return not active_id.is_empty()
 
-func try_start(point_id: String, current_point_id: String, stationary: bool, trigger: String = "click") -> bool:
+func try_start(point_id: String, current_point_id: String, stationary: bool, trigger: String = "click", first_visit := false) -> bool:
 	if is_active() or not stationary or point_id != current_point_id:
 		return false
 	var event_id: String = registry.by_point.get(point_id, "")
@@ -52,8 +52,11 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 	var event := resolved_event(event_id)
 	if not _available(event): return false
 	if event.type == "chest" and reward_claimed.is_valid() and reward_claimed.call(event.reward_id): return false
+	# Rest sites introduce themselves only on first arrival; deliberate clicks remain reusable.
+	if event.type == "rest" and trigger == "arrival":
+		if not first_visit: return false
 	# Arrival encounters can be retried by clicking while standing at the node.
-	if event.get("trigger", "click") != trigger and not (event.type in ["encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation"] and trigger == "click"):
+	elif event.get("trigger", "click") != trigger and not (event.type in ["encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation"] and trigger == "click"):
 		return false
 	for prerequisite in registry.events[event_id].get("requires_completed", []):
 		if not completed.has(prerequisite):
@@ -61,7 +64,7 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 	active_id = event_id
 	_active_snapshot = event
 	# Authored location copy is stable; random species copy is only a fallback.
-	if event.type == "encounter" and event.description.strip_edges().is_empty() and enemy_lookup.is_valid():
+	if event.type == "encounter" and not event.get("pending_enemy", false) and event.description.strip_edges().is_empty() and enemy_lookup.is_valid():
 		var enemy: Dictionary = enemy_lookup.call(event.enemy_id)
 		var descriptions: Array = enemy.get("encounter_descriptions", [])
 		if not descriptions.is_empty(): _active_snapshot.description = descriptions[narrative_rng.randi_range(0, descriptions.size() - 1)]
@@ -184,6 +187,7 @@ func close_gathering(receipt_id := "") -> String:
 	return finished
 
 func resolve_encounter(event_id: String, result: String) -> bool:
+	if registry.events.get(event_id, {}).get("pending_enemy", false): return false
 	if registry.events.get(event_id, {}).get("type", "") != "encounter" or result not in ["victory", "defeat", "draw", "retreat"]:
 		return false
 	if not _available(resolved_event(event_id)): return false
@@ -198,6 +202,7 @@ func resolve_encounter(event_id: String, result: String) -> bool:
 	return true
 
 func respawn_encounter(event_id: String) -> bool:
+	if registry.events.get(event_id, {}).get("pending_enemy", false): return false
 	if active_id == event_id or registry.events.get(event_id, {}).get("type", "") != "encounter":
 		return false
 	if not registry.events[event_id].get("enabled", true): return false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=79 format=3]
+[gd_scene load_steps=76 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/gamemap-qingshihewan.webp" id="1_bg"]
 [ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="2_dot"]
@@ -8,13 +8,12 @@
 [ext_resource type="Texture2D" path="res://assets/mapdot1.webp" id="5_sign"]
 [ext_resource type="Texture2D" path="res://assets/mapdot2.webp" id="6_sign"]
 [ext_resource type="Texture2D" path="res://assets/mapdot3.webp" id="7_sign"]
-[ext_resource type="Texture2D" path="res://assets/mapdot4.webp" id="8_sign"]
 [ext_resource type="Texture2D" path="res://assets/mapdot5.webp" id="9_sign"]
 
 [ext_resource type="Texture2D" path="res://assets/map-enemy-1.webp" id="10_enemy_icon"]
 
 [ext_resource type="Texture2D" path="res://assets/map-likai-you.webp" id="11_exit_right"]
-[ext_resource type="Texture2D" path="res://assets/map-yiji.webp" id="12_ruins"]
+[ext_resource type="Texture2D" path="res://assets/map-likai-up.webp" id="12_ruins"]
 
 [ext_resource type="Texture2D" path="res://assets/map-xiux-shiwai.webp" id="14_outdoor"]
 [ext_resource type="Texture2D" path="res://assets/map-xiuxi-shinei.webp" id="15_indoor"]
@@ -23,12 +22,6 @@
 [ext_resource type="Texture2D" path="res://assets/map-zhiwu.webp" id="17_plant"]
 [ext_resource type="Texture2D" path="res://assets/map-kuangshi.webp" id="18_ore"]
 [ext_resource type="Texture2D" path="res://assets/map-baoxiang.webp" id="19_chest"]
-
-[ext_resource type="Texture2D" path="res://assets/map-juqing.webp" id="13_story"]
-
-[sub_resource type="AtlasTexture" id="Atlas_story"]
-atlas = ExtResource("13_story")
-region = Rect2(62, 8, 178, 284)
 
 [sub_resource type="AtlasTexture" id="Atlas_plant"]
 atlas = ExtResource("17_plant")
@@ -60,7 +53,7 @@ region = Rect2(17, 20, 266, 262)
 
 [sub_resource type="AtlasTexture" id="Atlas_ruins"]
 atlas = ExtResource("12_ruins")
-region = Rect2(10, 64, 601, 503)
+region = Rect2(0, 17, 300, 257)
 
 [sub_resource type="AtlasTexture" id="Atlas_enemy_icon"]
 atlas = ExtResource("10_enemy_icon")
@@ -77,10 +70,6 @@ region = Rect2(31, 19, 302, 330)
 [sub_resource type="AtlasTexture" id="Atlas_sign_3"]
 atlas = ExtResource("7_sign")
 region = Rect2(28, 32, 316, 311)
-
-[sub_resource type="AtlasTexture" id="Atlas_sign_4"]
-atlas = ExtResource("8_sign")
-region = Rect2(31, 28, 309, 317)
 
 [sub_resource type="AtlasTexture" id="Atlas_sign_5"]
 atlas = ExtResource("9_sign")
@@ -208,9 +197,16 @@ point_count = 4
 [sub_resource type="Curve2D" id="Curve_18"]
 bake_interval = 4.0
 _data = {
-"points": PackedVector2Array(0, 0, -8.8, 0, 2483, 889, 16.28, -0.44, -16.28, 0.44, 2403, 889, 13.86, -3.08, -13.86, 3.08, 2335, 893, 13.42, -6.82, -13.42, 6.82, 2277, 917, 15.18, -5.06, -15.18, 5.06, 2213, 955, 14.74, -0.44, -14.74, 0.44, 2139, 963, 6.6, 0.44, 0, 0, 2079, 959)
+"points": PackedVector2Array(0, 0, -8.8, 0, 2483, 889, 16.28, -0.44, -16.28, 0.44, 2403, 889, 13.86, -3.08, -13.86, 3.08, 2335, 893, 13.42, -6.82, -13.42, 6.82, 2277, 917)
 }
-point_count = 7
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_45"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(13.42, -6.82, -13.42, 6.82, 2277, 917, 15.18, -5.06, -15.18, 5.06, 2213, 955, 14.74, -0.44, -14.74, 0.44, 2139, 963, 6.6, 0.44, 0, 0, 2079, 959)
+}
+point_count = 4
 
 [sub_resource type="Curve2D" id="Curve_19"]
 bake_interval = 4.0
@@ -522,12 +518,12 @@ route_id = "base.map.qingshihewan.route.r17"
 start_point = NodePath("../../Points/N15")
 end_point = NodePath("../../Points/EastExit")
 
-[node name="R18_N37_N20" type="Path2D" parent="Routes"]
+[node name="R18_N37_N40" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_18")
 script = ExtResource("4_route")
 route_id = "base.map.qingshihewan.route.r18"
 start_point = NodePath("../../Points/N37")
-end_point = NodePath("../../Points/N20")
+end_point = NodePath("../../Points/N40")
 
 [node name="R19_N20_N21" type="Path2D" parent="Routes"]
 curve = SubResource("Curve_19")
@@ -710,6 +706,14 @@ script = ExtResource("4_route")
 route_id = "base.map.qingshihewan.route.r44"
 start_point = NodePath("../../Points/N14")
 end_point = NodePath("../../Points/N39")
+
+
+[node name="R45_N40_N20" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_45")
+script = ExtResource("4_route")
+route_id = "base.map.qingshihewan.route.r45"
+start_point = NodePath("../../Points/N40")
+end_point = NodePath("../../Points/N20")
 
 [node name="Points" type="Node2D" parent="."]
 z_index = 2
@@ -1154,26 +1158,6 @@ position = Vector2(0, -223.928571)
 scale = Vector2(0.861276987, 0.861276987)
 texture = SubResource("Atlas_sign_3")
 
-[node name="Sign" type="Sprite2D" parent="Points/N03"]
-position = Vector2(0, -223.928571)
-scale = Vector2(0.84497521, 0.84497521)
-texture = SubResource("Atlas_sign_4")
-
-[node name="Sign" type="Sprite2D" parent="Points/N20"]
-position = Vector2(0, -223.928571)
-scale = Vector2(0.84497521, 0.84497521)
-texture = SubResource("Atlas_sign_4")
-
-[node name="Sign" type="Sprite2D" parent="Points/N37"]
-position = Vector2(0, -223.928571)
-scale = Vector2(0.84497521, 0.84497521)
-texture = SubResource("Atlas_sign_4")
-
-[node name="Sign" type="Sprite2D" parent="Points/N16"]
-position = Vector2(0, -223.928571)
-scale = Vector2(0.84497521, 0.84497521)
-texture = SubResource("Atlas_sign_4")
-
 [node name="Sign" type="Sprite2D" parent="Points/N02"]
 position = Vector2(0, -223.928571)
 scale = Vector2(0.95663265, 0.95663265)
@@ -1244,7 +1228,7 @@ scale = Vector2(0.802, 0.802)
 texture = SubResource("Atlas_exit_right")
 
 [node name="LocationIcon" type="Sprite2D" parent="Points/N02/Sign"]
-scale = Vector2(0.366056572, 0.366056572)
+scale = Vector2(0.76, 0.76)
 texture = SubResource("Atlas_ruins")
 
 [node name="EventIcon" type="Sprite2D" parent="Points/N06/Sign"]
@@ -1299,18 +1283,10 @@ texture = SubResource("Atlas_indoor")
 scale = Vector2(0.739284467, 0.739284467)
 texture = SubResource("Atlas_water")
 
-[node name="StoryIcon" type="Sprite2D" parent="Points/N03/Sign"]
-scale = Vector2(0.715186134, 0.715186134)
-texture = SubResource("Atlas_story")
-
-[node name="StoryIcon" type="Sprite2D" parent="Points/N20/Sign"]
-scale = Vector2(0.715186134, 0.715186134)
-texture = SubResource("Atlas_story")
-
-[node name="StoryIcon" type="Sprite2D" parent="Points/N37/Sign"]
-scale = Vector2(0.715186134, 0.715186134)
-texture = SubResource("Atlas_story")
-
-[node name="StoryIcon" type="Sprite2D" parent="Points/N16/Sign"]
-scale = Vector2(0.715186134, 0.715186134)
-texture = SubResource("Atlas_story")
+[node name="N40" type="Sprite2D" parent="Points"]
+position = Vector2(2277, 917)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("2_dot")
+script = ExtResource("3_point")
+point_id = "base.map.qingshihewan.point.n40"
+location_note = "小庙前血迹"

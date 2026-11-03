@@ -8,6 +8,7 @@ const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames
 const ENEMY_FRAMES = preload("res://scripts/presentation/enemy_portrait_frames.gd")
 const BASE_SIZE := Vector2(410, 236)
 const ENEMY_PORTRAIT_CANVAS_SIZE := 272.0
+const PLAYER_PORTRAIT_SCALE := 1.1
 const COMPACT_SCALE := 0.66
 var member_index: int = -1
 var stat_bars: Dictionary = {}
@@ -199,11 +200,14 @@ func _layout_defense_rows() -> void:
 
 func _layout_portrait() -> void:
 	if _frame_override.get("player_level_frame", false):
-		# Match the enemy's painted circle, not its transparent source canvas.
+		# Enlarge around the original frame's bottom center, keeping its lower tip fixed.
 		var circle_size: float = ENEMY_PORTRAIT_CANVAS_SIZE * ENEMY_FRAMES.geometry.portrait_radius * 2.0 / ENEMY_FRAMES.geometry.portrait_canvas_size
-		var source_scale := circle_size / PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE
+		var base_scale := circle_size / PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE
+		var source_scale := base_scale * PLAYER_PORTRAIT_SCALE
+		var center := _portrait_slot.size * 0.5 + Vector2(0, portrait_vertical_offset)
+		center.y -= (PLAYER_FRAMES.SOURCE_SIZE.y - PLAYER_FRAMES.SOURCE_CENTER.y) * (source_scale - base_scale)
 		portrait.size = Vector2.ONE * PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE * source_scale
-		portrait.position = (_portrait_slot.size - portrait.size) * 0.5 + Vector2(0, portrait_vertical_offset)
+		portrait.position = center - portrait.size * 0.5
 		portrait_frame.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		portrait_frame.size = PLAYER_FRAMES.SOURCE_SIZE * source_scale
 		portrait_frame.position = portrait.position + portrait.size * 0.5 - PLAYER_FRAMES.SOURCE_CENTER * source_scale

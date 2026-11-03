@@ -19,13 +19,14 @@
   "speakers": {
     "base.npc.qinglan.outer_disciple": {
       "name": "青岚宗弟子",
-      "portrait": "res://assets/npc-qlzdz-1.webp",
+      "portrait": "res://assets/ui-portrait-shenyanzhou.webp",
       "portrait_region": [
-        27,
-        27,
-        664,
-        664
-      ]
+        0,
+        0,
+        411,
+        411
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
     },
     "base.map_player.chen_yu": {
       "portrait": "res://assets/player-1-1.webp",
@@ -45,12 +46,12 @@
       2113,
       437
     ],
-    "portrait": "res://assets/npc-qlzdz-1.webp",
+    "portrait": "res://assets/ui-portrait-shenyanzhou.webp",
     "portrait_region": [
-      27,
-      27,
-      664,
-      664
+      0,
+      0,
+      411,
+      411
     ],
     "portrait_slot": [
       68,
@@ -73,7 +74,7 @@
     "illustration": {
       "frame": "res://assets/map-event-picframe.webp",
       "frame_region": [101, 17, 1471, 907],
-      "image": "res://assets/map-event-1-1.webp",
+      "image": "res://assets/map-event-2-1.webp",
       "image_slot": [
         62,
         91,

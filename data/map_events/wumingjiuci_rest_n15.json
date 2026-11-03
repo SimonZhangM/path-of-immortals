@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.wumingjiuci.rest_n15",
+  "type": "rest",
+  "point_id": "base.map.wumingjiuci.point.n15",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-huifu-wumingjiuci-taijiehuotang.webp",
+    "background": "res://assets/tanchuang-huifu-linjiangouhuo1.webp"
+  },
+  "rest_kind": "outdoor",
+  "title": "苔阶火塘",
+  "description": "苔阶旁的岩壁挡住山风，石上铺着坐垫与薄毯。小火温着壶水，热气缓缓升起，可在此歇脚暖身，舒缓一路的疲乏。",
+  "note": "围火暖身，\n歇脚调息。",
+  "action_label": "稍作歇脚",
+  "recovery_percent": 30,
+  "duration_days": 1,
+  "allow_food": true
+}

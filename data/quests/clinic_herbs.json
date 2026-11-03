@@ -1,0 +1,211 @@
+{
+  "quest_id": "quest.prologue.yiguanbeiyao",
+  "clinic": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n32"
+  },
+  "clinic_event": "base.map_event.qingshizhen.clinic",
+  "river_exit": "base.map.qingshizhen.point.n25",
+  "accepted_location": "青石镇·医馆",
+  "item_id": "base.material.zhixuecao",
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.suqinghe": {
+      "name": "苏清禾",
+      "portrait": "res://assets/UI-portrait-suqinghe.webp",
+      "portrait_region": [
+        0,
+        0,
+        354,
+        354
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "intro": {
+      "lines": [
+        "（正将案上的药分装进纸包，听见你进门，抬起头来。）",
+        "清禾姐，叶伯说你找我。",
+        "你来啦。山脚那趟还顺利吧？🙂",
+        "顺利，两样药都采齐了。溪边石头滑，我就照叶伯说的，只取了岸边的。",
+        "嗯，这样就好。先坐会儿，我把这几包药收好。",
+        "（将药包放进柜中，回到案边。）",
+        "我想请你帮医馆补些止血草。前些日子用去不少，柜里该添一些了。你得空的时候，去青石河湾找找，好不好？",
+        "行。林间草坡那片我熟，背阴处就有。",
+        "嗯，就去那片。挑些叶子完整的，采到了直接送来医馆。眼下还够用，不用急着赶过去。",
+        "好。我带块干净的布，采好了给你包回来。",
+        "好呀，那就拜托你啦。路上要是不好走，就先回来，别为了几株药勉强。🙂",
+        "知道了，清禾姐。"
+      ],
+      "line_speakers": [
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z1-1.webp"
+      }
+    },
+    "delivery": {
+      "lines": [
+        "（正站在案边整理药包，见你进来，腾出一块空处。）",
+        "（将带来的止血草放到案上。）",
+        "清禾姐，止血草带来了。",
+        "带回来啦？放这儿吧，我看看。🙂",
+        "（摊开包药布，翻看草叶，确认无损后收进药篮。）",
+        "叶子都还完整，这些正合用。辛苦你啦。",
+        "没敢往篓底塞，怕压坏了。",
+        "（取出药钱，递到你手边。）",
+        "这是药钱，收好呀。🙂",
+        "好。药给你，我就放心了。",
+        "嗯，交给我吧。你有事就先去忙。",
+        "（将止血草分好，收进药柜。）"
+      ],
+      "line_speakers": [
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe",
+        "base.map_player.chen_yu",
+        "base.npc.suqinghe",
+        "base.npc.suqinghe"
+      ]
+    },
+    "missing": {
+      "lines": [
+        "还没备齐呀？没事，医馆里还有呢，等你方便再带来就好。"
+      ],
+      "line_speakers": [
+        "base.npc.suqinghe"
+      ]
+    }
+  },
+  "objectives": [
+    {
+      "id": "herb",
+      "text": "备齐止血草",
+      "show_count": true,
+      "required": 1,
+      "targets": [
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n04",
+          "world_location_id": "base.world_location.qingshihewan"
+        }
+      ]
+    },
+    {
+      "id": "deliver",
+      "text": "将止血草交给苏清禾",
+      "show_count": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n32",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ],
+      "completed": false
+    }
+  ],
+  "rewards": [
+    {
+      "kind": "spirit_stones",
+      "name": "灵石",
+      "quantity": 3,
+      "icon": "res://assets/player-status-coin.webp"
+    }
+  ],
+  "people": [
+    {
+      "name": "苏清禾",
+      "portrait": "res://assets/UI-portrait-suqinghe.webp"
+    },
+    {
+      "name": "叶松年",
+      "portrait": "res://assets/ui-portrait-yesongnian.webp"
+    }
+  ],
+  "locations": {
+    "gathering": {
+      "name": "青石河湾·林间草坡",
+      "image": "res://assets/gamemap-qingshihewan.webp"
+    },
+    "returning": {
+      "name": "青石镇·医馆",
+      "image": "res://assets/map-qingshizhen.webp"
+    },
+    "completed": {
+      "name": "青石镇·医馆",
+      "image": "res://assets/map-qingshizhen.webp"
+    }
+  }
+}
