@@ -14,6 +14,12 @@ func quick_path() -> String:
 func is_system(path: String) -> bool:
 	return path==legacy_path or path==quick_path()
 
+func is_quick(path: String) -> bool:
+	return Session.Slots.same_path(path,quick_path())
+
+func can_store(path: String) -> bool:
+	return not path.is_empty() and not Session.Slots.same_path(path,legacy_path) and not Session.Slots.is_auto(path)
+
 func paths() -> Array[String]:
 	var result: Array[String] = []
 	# Reserve 01/02 even before the first quick/timed checkpoint exists.
@@ -74,7 +80,7 @@ func describe(path: String, slot: int) -> Dictionary:
 		row.location = ""
 		row.saved_at = ""
 		row.duration = ""
-		row.duration_note = "开启对应保存选项后，在指定时机生成；不能手动覆盖系统档位。"
+		row.duration_note = "可手动存储当前进度，也可在动作完成时自动生成。" if is_quick(path) else "开启自动保存后，在指定时机生成；不能手动覆盖自动档位。"
 		return row
 	if not row.readable:
 		row.chapter = "存档无法读取"
@@ -91,6 +97,11 @@ func describe(path: String, slot: int) -> Dictionary:
 			row.location = location.name
 			row.picture = location.picture
 			break
+	if row.picture.is_empty():
+		var preview: Dictionary = config.get("map_previews",{}).get(str(map_location.get("map_id","")),{})
+		if not preview.is_empty():
+			row.location = preview.name
+			row.picture = preview.picture
 	var narrative: Dictionary = raw.get("narrative",{}) if raw.get("narrative",{}) is Dictionary else {}
 	if DialogueJournal.valid_name(narrative.get("identity")): row.name = DialogueJournal.full_name(narrative)
 	var growth: Dictionary = raw.get("growth",{}) if raw.get("growth",{}) is Dictionary else {}

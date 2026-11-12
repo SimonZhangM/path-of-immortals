@@ -62,5 +62,61 @@
     "portrait_includes_frame": false,
     "portrait_frame": "res://assets/UI-monster-fanren-portraitframe.webp",
     "board_layout": "base.board.yanfu_duzhu"
+  },
+  {
+    "id": "base.enemy.biyetengling",
+    "name": "碧叶藤灵",
+    "portrait": "res://assets/portrait-enemy-biyetengling.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-chuqi-portraitframe.webp",
+    "board_layout": "base.board.biyetengling"
+  },
+  {
+    "id": "base.enemy.xiwenlingyuan",
+    "name": "溪纹灵螈",
+    "portrait": "res://assets/portrait-enemy-xiwenlingyuan.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-chuqi-portraitframe.webp",
+    "board_layout": "base.board.xiwenlingyuan"
+  },
+  {
+    "id": "base.enemy.taibeishiling",
+    "name": "苔背石灵",
+    "portrait": "res://assets/portrait-enemy-taibeishiling.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-chuqi-portraitframe.webp",
+    "board_layout": "base.board.taibeishiling"
+  },
+  {
+    "id": "base.enemy.lanlinglingsun",
+    "name": "岚翎灵隼",
+    "portrait": "res://assets/portrait-enemy-lanlinglingsun.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-chuqi-portraitframe.webp",
+    "board_layout": "base.board.lanlinglingsun"
+  },
+  {
+    "id": "base.enemy.qingfenglingtang",
+    "name": "青锋灵螳",
+    "portrait": "res://assets/portrait-enemy-qingfenglingtang.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-chuqi-portraitframe.webp",
+    "board_layout": "base.board.qingfenglingtang"
+  },
+  {
+    "id": "base.enemy.yanbilingyuan_huguo",
+    "name": "岩臂灵猿·护果",
+    "portrait": "res://assets/portrait-enemy-yanbilingyuan.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-zhongqi-portraitframe.webp",
+    "board_layout": "base.board.yanbilingyuan"
+  },
+  {
+    "id": "base.enemy.yanbilingyuan_shouxue",
+    "name": "岩臂灵猿·守穴",
+    "portrait": "res://assets/portrait-enemy-yanbilingyuan.webp",
+    "portrait_includes_frame": false,
+    "portrait_frame": "res://assets/UI-monster-lianqi-zhongqi-portraitframe.webp",
+    "board_layout": "base.board.yanbilingyuan"
   }
 ]

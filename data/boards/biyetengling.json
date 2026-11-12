@@ -1,0 +1,23 @@
+{
+  "id": "base.board.biyetengling",
+  "name": "碧叶藤灵阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-biyetengling.webp",
+  "source_size": [
+    1448,
+    1086
+  ],
+  "x_lines": [
+    234,
+    479,
+    724,
+    969,
+    1214
+  ],
+  "y_lines": [
+    175,
+    420,
+    665,
+    910
+  ]
+}

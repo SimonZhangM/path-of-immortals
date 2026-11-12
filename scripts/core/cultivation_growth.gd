@@ -30,6 +30,7 @@ static func valid(raw: Variant) -> bool:
 		if not raw.has(key) or not WorldCalendar.integer_between(raw[key],0,100000000000): return false
 	if raw.get("version") != 1 or raw.realm > 5 or raw.layer < 1 or raw.layer > 10 or raw.day_usec >= 60000000: return false
 	if raw.realm==0 and raw.layer!=1: return false
+	if raw.has("breakthrough_attempt") and not valid_breakthrough_attempt(raw): return false
 	if not WorldCalendar.integer_between(raw.get("experience",0),0,100000000000): return false
 	if not raw.get("day_paid") is bool or not raw.get("resources") is Dictionary or not raw.get("roots") is Array: return false
 	var seen := {}
@@ -39,6 +40,61 @@ static func valid(raw: Variant) -> bool:
 	for key: Variant in raw.resources:
 		if key not in RESOURCE_KEYS or not WorldCalendar.integer_between(raw.resources[key],0,1000000000): return false
 	return int(raw.progress) <= target(raw)
+
+static func valid_breakthrough_attempt(growth: Dictionary) -> bool:
+	var attempt: Variant = growth.breakthrough_attempt
+	if not attempt is Dictionary: return false
+	# JSON numbers are floats; Array membership distinguishes 1.0 from 1.
+	# Validate integral versions without accepting fractional or string values.
+	if attempt.get("id")!="base.breakthrough.first_qi" or not WorldCalendar.integer_between(attempt.get("version"),1,2): return false
+	if attempt.get("phase") not in ["running","paused","failed","succeeded"]: return false
+	var rule: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/breakthrough_rules.json")).first_qi
+	var legacy: bool=attempt.version==1
+	var limit := int(rule.max_days)*(60 if legacy else int(rule.day_seconds))*1000000
+	if not WorldCalendar.integer_between(attempt.get("elapsed_usec"),0,limit): return false
+	var required := cents(100.0 if legacy else float(rule.target))
+	if not WorldCalendar.integer_between(attempt.get("progress"),0,required): return false
+	if attempt.has("result") and not valid_breakthrough_result(attempt,required): return false
+	var history: Variant=attempt.get("recent_gains",[])
+	if not history is Array or history.size()>required: return false
+	var last_time := 0
+	var earned := 0
+	for entry: Variant in history:
+		if not entry is Dictionary: return false
+		if not WorldCalendar.integer_between(entry.get("at_usec"),last_time,int(attempt.elapsed_usec)): return false
+		if not WorldCalendar.integer_between(entry.get("amount"),1,required): return false
+		last_time=int(entry.at_usec)
+		earned+=int(entry.amount)
+		if earned>required: return false
+	if attempt.phase=="succeeded": return int(growth.realm)>=1 and int(attempt.progress)==required
+	if int(growth.realm)!=0: return false
+	if attempt.phase=="failed": return int(attempt.elapsed_usec)==limit and int(attempt.progress)==0
+	return int(attempt.elapsed_usec)<limit
+
+static func valid_breakthrough_result(attempt: Dictionary, required: int) -> bool:
+	if attempt.phase not in ["succeeded","failed"]: return false
+	var result: Variant=attempt.result
+	if not result is Dictionary: return false
+	if not WorldCalendar.integer_between(result.get("target"),required,required): return false
+	if not WorldCalendar.integer_between(result.get("progress"),0,required): return false
+	var chance: Variant=result.get("chance")
+	if not (chance is int or chance is float) or not is_finite(float(chance)) or chance<0 or chance>1: return false
+	var gains: Variant=result.get("gains")
+	if not gains is Dictionary: return false
+	for key: String in ["hp","stamina","spirit","cultivation_efficiency_percent"]:
+		if not WorldCalendar.integer_between(gains.get(key),0,1000000000): return false
+		if attempt.phase=="failed" and gains[key]!=0: return false
+	return int(result.progress)==required if attempt.phase=="succeeded" else int(result.progress)<required
+
+static func migrate_breakthrough_attempt(growth: Dictionary) -> void:
+	var attempt: Dictionary=growth.get("breakthrough_attempt",{})
+	if attempt.is_empty() or attempt.version!=1 or attempt.phase not in ["running","paused"]: return
+	var rule: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/breakthrough_rules.json")).first_qi
+	# Preserve elapsed days and earned points, not the old seconds-per-day rate.
+	attempt.elapsed_usec=floori(float(attempt.elapsed_usec)*float(rule.day_seconds)/60.0)
+	attempt.version=2
+	# Old 60-second samples must not masquerade as income earned in 10 seconds.
+	attempt.recent_gains=[]
 
 static func rank_id(growth: Dictionary) -> String:
 	return "base.cultivation." + str(rules().realms[int(growth.realm)].id)

@@ -224,19 +224,21 @@ func present(event: Dictionary, loadout: MapLoadoutState = null, status: MapPlay
 			dialogue_note.text = error
 			library = null
 	_presentation = event.presentation.duplicate(true)
+	treatment_tab.visible = event.type!="conversation"
 	if library!=null and _presentation.has("conversation_portrait"):
 		library.definition.portrait = _presentation.conversation_portrait
 		library.definition.erase("portrait_region")
 	if is_instance_valid(illustration): illustration.free()
 	if is_instance_valid(picture_frame): picture_frame.free()
-	var frame_texture := AtlasTexture.new()
-	frame_texture.atlas = load(_presentation.frame)
-	frame_texture.region = METRICS.inspect(frame_texture.atlas).visible_rect
-	var rect := Rect2(Vector2(349,451)-frame_texture.get_size()*0.5,frame_texture.get_size())
-	illustration = _image(rect.grow(-5),load(_presentation.illustration))
-	illustration.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	illustration.clip_contents = true
-	picture_frame = _image(rect,frame_texture)
+	if not _presentation.frame.is_empty():
+		var frame_texture := AtlasTexture.new()
+		frame_texture.atlas = load(_presentation.frame)
+		frame_texture.region = METRICS.inspect(frame_texture.atlas).visible_rect
+		var rect := Rect2(Vector2(349,451)-frame_texture.get_size()*0.5,frame_texture.get_size())
+		illustration = _image(rect.grow(-5),load(_presentation.illustration))
+		illustration.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		illustration.clip_contents = true
+		picture_frame = _image(rect,frame_texture)
 	title_label.text = event.title
 	title_label.position.y = float(_presentation.get("title_center_y",133.0))+1.0-title_label.size.y*0.5-FRAME.position.y
 	description_label.text = event.description
@@ -362,7 +364,7 @@ func _scroll_to_latest(version: int) -> void:
 func _refresh_continue_hint() -> void:
 	var reading: bool = _view.get("can_continue",false)
 	var opening := _waiting_to_open_topics()
-	continue_button.text = "点击显示全文" if playback.is_revealing() else ("点击开启话题" if opening else "点击继续 ▸")
+	continue_button.text = "" if playback.is_revealing() else ("点击开启话题" if opening else "点击继续 ▸")
 	continue_button.visible = mode=="conversation" and (reading or opening or playback.is_revealing())
 	var pending_topic := false
 	for topic: Dictionary in _view.get("topics",[]):

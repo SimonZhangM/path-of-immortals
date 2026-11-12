@@ -28,6 +28,8 @@ var category_label: Label
 var enemy_description: Label
 var loot_heading: Label
 var trait_labels: Array[Label] = []
+var armor_label: Label
+var attack_labels: Array[Label] = []
 var loot_slots: Array[MapEncounterItemSlot] = []
 var loot_names: Array[Label] = []
 var action_cards: Array[Button] = []
@@ -47,6 +49,7 @@ var _idle_textures: Array[Texture2D] = []
 var _selected_textures: Array[Texture2D] = []
 var _title_font := SystemFont.new()
 var _kai_font := SystemFont.new()
+var _tag_layout_font_size := -1
 
 func _init() -> void:
 	name = "MapEncounterDialog"
@@ -95,6 +98,8 @@ func _init() -> void:
 	rank_label = _tag()
 	category_label = _tag()
 	for index in 2: trait_labels.append(_tag())
+	armor_label = _tag()
+	for index in 4: attack_labels.append(_tag())
 	enemy_description = _label("", Rect2(910,354,432,94), 25)
 	enemy_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	loot_heading = _label("可能掉落", Rect2(931,480,187,42), 27, true, true)
@@ -245,7 +250,7 @@ func _show_loot(enemy: PartyMemberState) -> void:
 
 func present(event: Dictionary, enemy: PartyMemberState) -> void:
 	_pending_enemy = event.get("pending_enemy", false)
-	location_illustration.texture = load(event.presentation.illustration)
+	location_illustration.texture = null if event.presentation.illustration.is_empty() else load(event.presentation.illustration)
 	heading.text = event.title
 	description.text = event.description
 	portrait.visible = not _pending_enemy
@@ -253,11 +258,13 @@ func present(event: Dictionary, enemy: PartyMemberState) -> void:
 	if _pending_enemy:
 		portrait.texture = null
 		portrait_frame.hide()
-		enemy_name.text = "动静未明"
+		enemy_name.text = event.get("pending_enemy_name", "动静未明")
 		rank_label.text = ""
 		category_label.text = ""
-		enemy_description.text = "暂且离开，继续探索。"
+		enemy_description.text = "" if event.has("pending_enemy_name") else "暂且离开，继续探索。"
 		for label in trait_labels: label.text = ""
+		armor_label.text = ""
+		for label in attack_labels: label.text = ""
 		_show_loot(null)
 		error_label.text = ""
 		selected_index = -1
@@ -275,6 +282,10 @@ func present(event: Dictionary, enemy: PartyMemberState) -> void:
 	var traits: Array = art.get("traits", [])
 	for index in trait_labels.size():
 		trait_labels[index].text = traits[index] if index < traits.size() else ""
+	var combat := EnemyPresentation.combat_tags(enemy)
+	armor_label.text = combat.armor
+	for index in attack_labels.size():
+		attack_labels[index].text = combat.attacks[index] if index < combat.attacks.size() else ""
 	_show_loot(enemy)
 	error_label.text = ""
 	selected_index = -1
@@ -327,6 +338,11 @@ func set_busy(value: bool) -> void:
 func _layout() -> void:
 	if canvas == null: return
 	var factor := minf(size.x/1920.0, size.y/1080.0)*DISPLAY_SCALE
+	var tag_font_size := maxi(1,roundi(18*factor))
+	if _tag_layout_font_size != tag_font_size:
+		_tag_layout_font_size = tag_font_size
+		# Label minimum sizes invalidate after a font-size change on resize.
+		_layout.call_deferred()
 	canvas.size = (FRAME.size*factor).round()
 	canvas.position = ((size-canvas.size)*0.5).round()
 	# Native pixel sizes avoid scaling an already-rasterized text surface.
@@ -337,16 +353,35 @@ func _layout() -> void:
 		control.position = ((rect.position-FRAME.position)*factor).round()
 		control.size = (rect.size*factor).round()
 	# Variable-width pills are measured using their actual font, not character count.
-	var cursor := Vector2(910,310)
+	var cursor := Vector2(910,300)
+	var tag_bottom := 300.0
 	for label in _tag_labels:
 		label.visible = not label.text.is_empty()
 		if not label.visible: continue
 		label.size = label.get_combined_minimum_size()
 		var width := label.size.x / maxf(factor,0.01)
 		if cursor.x + width > 1352:
-			cursor = Vector2(910,cursor.y+31)
+			cursor = Vector2(910,tag_bottom+5)
 		label.position = ((cursor-FRAME.position)*factor).round()
+		tag_bottom = maxf(tag_bottom,cursor.y+label.size.y/maxf(factor,0.01))
 		cursor.x += width+10
+	# Allow the added combat classifications to wrap above the description.
+	var description_y := maxf(354.0,tag_bottom+8.0)
+	var description_rect := Rect2(910,description_y,432,maxf(0,448-description_y))
+	enemy_description.set_meta("source_rect",description_rect)
+	enemy_description.position = ((description_rect.position-FRAME.position)*factor).round()
+	# Keep the complete authored prose inside the portrait frame after wrapping.
+	var prose_size := roundi(25*factor)
+	while prose_size > maxi(1,roundi(18*factor)):
+		var paragraph := TextParagraph.new()
+		paragraph.width = description_rect.size.x*factor
+		paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE
+		paragraph.add_string(enemy_description.text,_kai_font,prose_size)
+		var height := paragraph.get_size().y + maxi(0,paragraph.get_line_count()-1)*enemy_description.get_theme_constant("line_spacing")
+		if height <= description_rect.size.y*factor: break
+		prose_size -= 1
+	enemy_description.add_theme_font_size_override("font_size",prose_size)
+	enemy_description.size = (description_rect.size*factor).round()
 
 func _gui_input(_event: InputEvent) -> void:
 	accept_event()

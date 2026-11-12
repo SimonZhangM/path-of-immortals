@@ -117,8 +117,9 @@ func run() -> void:
 	var browser = controller.browser
 	for index in [0,1]:
 		await click(browser.row_buttons[index])
-		check(browser.back_button.disabled and not browser.load_button.disabled,"system slot selectable and load-only "+str(index))
-		check(not Ops.store_manual(catalog,map.loadout,map.inventory_save_path,browser.entries[index].path).is_empty(),"backend rejects system overwrite "+str(index))
+		check(browser.back_button.disabled==(index==1) and not browser.load_button.disabled,"quick writable and auto read-only "+str(index))
+		if index==1:
+			check(not Ops.store_manual(catalog,map.loadout,map.inventory_save_path,browser.entries[index].path).is_empty(),"backend rejects auto overwrite")
 	await click(browser.row_buttons[0])
 	check(browser.row_buttons[0].get_node("SaveKindBadge").texture.atlas.resource_path.ends_with("UI-start-saveload-quick.webp"),"quick badge uses supplied texture")
 	await capture("quick-auto-1920")

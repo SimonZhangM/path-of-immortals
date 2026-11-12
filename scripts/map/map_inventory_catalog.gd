@@ -27,6 +27,7 @@ func configure(config: Dictionary) -> void:
 
 func subcategories() -> Array:
 	if collection == "cultivation": return ["book", "spell"] + book_elements.keys()
+	if collection == "equipment": return category_groups.get(collection, []).duplicate() + ["recovery"]
 	if collection == "all":
 		var children: Array = []
 		for group: Array in category_groups.values():
@@ -50,9 +51,9 @@ func replace_entries(records: Array) -> String:
 		for key in ["id", "name", "category"]:
 			if not raw.get(key) is String or raw[key].strip_edges().is_empty():
 				return "物品字段无效：" + key
-		if ids.has(raw.id) or raw.category == "all" or not category_names.has(raw.category):
+		if ids.has(raw.id) or raw.category in ["all", "recovery"] or not category_names.has(raw.category):
 			return "物品ID重复或类别无效。"
-		if not raw.get("quality") is String or (MapItemQuality.level(raw.quality) == 0 and not (raw.category == "book" and raw.quality.is_empty())):
+		if not raw.get("quality") is String or (MapItemQuality.level(raw.quality) == 0 and not (raw.category in ["book", "key"] and raw.quality.is_empty())):
 			return "物品品级须为下品、凡品、良品、上品、灵品、玄品或仙品。"
 		if raw.category == "book" and (not raw.get("element") is String or (raw.element.trim_prefix("base.element.") not in book_elements and not (raw.get("reading_only",false) and raw.element=="base.element.none"))):
 			return "功法所属元素系无效。"
@@ -71,9 +72,24 @@ func replace_entries(records: Array) -> String:
 			return "物品数量须大于零。"
 		if not raw.get("grant_on_start", true) is bool:
 			return "初始发放标记须为布尔值。"
-		for key in ["favorite", "common", "recipe", "key_item", "quest_item"]:
+		if raw.has("quest_until_realm"):
+			if not ContentRegistry._positive_integer(raw.quest_until_realm) or raw.quest_until_realm>5 or not raw.get("training",false):
+				return "修炼物品的任务解除境界无效。"
+			for field in ["quest_description","unlocked_description"]:
+				if not raw.get(field) is String or raw[field].is_empty(): return "修炼物品缺少阶段说明。"
+		if raw.has("story_identity"):
+			var identity: Variant = raw.story_identity
+			if not identity is Dictionary or not identity.get("flag") is String or not identity.flag.begins_with("base.story."):
+				return "物品剧情识名条件无效。"
+			for stage in ["before","after"]:
+				if not identity.get(stage) is Dictionary: return "物品缺少识名前后说明。"
+				for field in ["name","description"]:
+					if not identity[stage].get(field) is String or identity[stage][field].strip_edges().is_empty(): return "物品识名内容无效。"
+		for key in ["favorite", "common", "recipe", "key_item", "quest_item", "recovery"]:
 			if not raw.get(key, false) is bool:
 				return "物品标签须为布尔值。"
+		if raw.get("recovery", false) and raw.category != "artifact":
+			return "恢复分类标签仅适用于法器。"
 		var icon_path: Variant = raw.get("icon", "")
 		if not icon_path is String:
 			return "物品图片须为有效资源路径。"
@@ -252,6 +268,7 @@ func visible_entries() -> Array[Dictionary]:
 
 func _matches_category(entry: Dictionary) -> bool:
 	if category == "all": return true
+	if category == "recovery": return entry.category == "artifact" and entry.get("recovery", false)
 	if collection == "cultivation" and book_elements.has(category):
 		return entry.category in ["book", "spell"] and entry.get("element", "") == "base.element." + category
 	return entry.category == category or (category in ["blueprint", "material"] and entry.category in category_groups.get(category, []))

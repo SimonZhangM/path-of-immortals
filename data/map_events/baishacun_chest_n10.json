@@ -6,7 +6,11 @@
   "quality": "下品",
   "reward_id": "base.map_reward.baishacun.chest_n10",
   "respawn_days": 40,
-  "presentation": {},
+  "presentation": {
+    "chest_image": "res://assets/tanchuang-baoxiang-baishacun-haiyugushu0.webp",
+    "illustration": "res://assets/tanchuang-baoxiang-baishacun-haiyugushu1.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-baishacun-haiyugushu2.webp"
+  },
   "observation": {
     "location_name": "海隅古树",
     "location_description": "村南古树的根须绕过岩石，白花沿着沙地生长，近岸潮声从礁隙间传来。",

@@ -918,7 +918,8 @@
         "base.story.qinglan.departure_ready"
       ],
       "retire_flags": [
-        "base.story.qinglan.joined"
+        "base.story.qinglan.joined",
+        "base.story.qinglanchujie.accepted"
       ]
     },
     "base.dialogue.suqinghe.story.return": {

@@ -1,0 +1,41 @@
+{
+  "first_qi_illustration": "res://assets/UI-player-pojing1.webp",
+  "design_size": [2560, 1440],
+  "success": {
+    "texture": "res://assets/UI-tupo-chonggong.webp",
+    "title_art": {
+      "texture": "res://assets/UI-tupo-chonggong-tupochenggong.webp",
+      "region": [0, 0, 1341, 574],
+      "rect": [510, 165, 790, 338]
+    },
+    "review_art": {
+      "texture": "res://assets/UI-tupo-chonggong-fupanxiangqing.webp",
+      "region": [43, 60, 996, 239],
+      "rect": [1722, 1192, 326, 79]
+    },
+    "confirm_art": {
+      "texture": "res://assets/UI-tupo-chonggong-queren.webp",
+      "region": [34, 40, 1014, 278],
+      "rect": [2075, 1186, 328, 90]
+    },
+    "summary_rect": [1740, 495, 640, 205],
+    "gains_rect": [1740, 831, 640, 265],
+    "review_rect": [1730, 1198, 310, 70],
+    "confirm_rect": [2080, 1198, 310, 70]
+  },
+  "failure": {
+    "texture": "res://assets/UI-tupo-shibai.webp",
+    "summary_rect": [1740, 580, 640, 205],
+    "outcome_rect": [1740, 838, 640, 60],
+    "notice_rect": [1830, 990, 545, 105],
+    "review_rect": [1730, 1190, 310, 70],
+    "confirm_rect": [2080, 1190, 310, 70]
+  },
+  "error_rect": [1710, 1300, 710, 80],
+  "gain_rows": [
+    {"key": "hp", "label": "气血上限", "icon": "res://assets/player-status-health.webp"},
+    {"key": "stamina", "label": "体力上限", "icon": "res://assets/player-status-stamina.webp"},
+    {"key": "spirit", "label": "灵力上限", "icon": "res://assets/player-status-spirit.webp"},
+    {"key": "cultivation_efficiency_percent", "label": "修为效率", "icon": "res://assets/player-status-level.webp", "suffix": "%"}
+  ]
+}

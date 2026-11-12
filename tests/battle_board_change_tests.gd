@@ -39,7 +39,6 @@ func run() -> void:
 	game.set_process(false)
 	var ui = scene.get_node("MainUI")
 	check(game.startup_error.is_empty(), "battle starts")
-	var durable := game._durable_snapshot.duplicate(true)
 	var all_units := units(game)
 	var board: InventoryView = ui.ally_panel.bags[0]
 	var big := stored(game,"base.map_item.qinglan_board_6")
@@ -137,7 +136,7 @@ func run() -> void:
 	check(not game.change_board(big), "realm gate enforced")
 	member.cultivation_rank_id = "base.cultivation.spirit_transformation"
 	check(not game.change_board("missing"), "unowned board rejected")
-	check(game._durable_snapshot == durable and game._durable_loadout.board.id == "base.board.bag", "temporary battle edit preserves saved map board")
+	check(game._durable_snapshot.board_id == member.board.id and game._durable_snapshot.placements[0].instance_id == sword, "battle edits persist selected board and retained placements")
 	var activated: int = game.simulation.state.item_runtime[sword].activation_count
 	game.toggle_pause()
 	game.simulation.advance(game.simulation.timeline.remaining(sword) / 1000000.0 + 0.01)

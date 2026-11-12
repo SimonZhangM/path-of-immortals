@@ -1,6 +1,9 @@
 {
   "id": "base.map_event.qingshihewan.cultivation_n32",
   "type": "cultivation",
+  "requires_story_flags": [
+    "base.story.hewanfengxian.cultivation_unlocked"
+  ],
   "point_id": "base.map.qingshihewan.point.n32",
   "trigger": "arrival",
   "title": "瀑下静台",
@@ -8,19 +11,41 @@
   "leave_label": "稍后再说",
   "default_mode": "cultivation",
   "default_days": 10,
-  "durations": [5, 10, 15],
+  "durations": [
+    5,
+    10,
+    15
+  ],
   "modes": [
-    {"id": "cultivation", "name": "专注修为", "description": "感悟天地灵气\n稳固自身修为", "image": "res://assets/UI-xiulian-zzxw1.webp", "selected_image": "res://assets/UI-xiulian-zzxw2.webp"},
-    {"id": "technique", "name": "专注功法", "description": "潜心研习功法\n加深法理领悟", "image": "res://assets/UI-xiulian-zzgf1.webp", "selected_image": "res://assets/UI-xiulian-zzgf2.webp"},
-    {"id": "balanced", "name": "兼修并进", "description": "修为与功法并重\n平衡而稳进", "image": "res://assets/UI-xiulian-jx1.webp", "selected_image": "res://assets/UI-xiulian-jx2.webp"}
+    {
+      "id": "cultivation",
+      "name": "专注修为",
+      "description": "感悟天地灵气\n稳固自身修为",
+      "image": "res://assets/UI-xiulian-zzxw1.webp",
+      "selected_image": "res://assets/UI-xiulian-zzxw2.webp"
+    },
+    {
+      "id": "technique",
+      "name": "专注功法",
+      "description": "潜心研习功法\n加深法理领悟",
+      "image": "res://assets/UI-xiulian-zzgf1.webp",
+      "selected_image": "res://assets/UI-xiulian-zzgf2.webp"
+    },
+    {
+      "id": "balanced",
+      "name": "兼修并进",
+      "description": "修为与功法并重\n平衡而稳进",
+      "image": "res://assets/UI-xiulian-jx1.webp",
+      "selected_image": "res://assets/UI-xiulian-jx2.webp"
+    }
   ],
   "presentation": {
     "background": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai.webp",
-    "illustration": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai-1.webp"
+    "illustration": "res://assets/tanchuang-qingshihewan-xiulian-puxiajingtai-1.webp"
   },
   "stage_two": {
     "background": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai2.webp",
-    "illustration": "res://assets/tanchuang-qingshizhen-xiulian-puxiajingtai-2.webp",
+    "illustration": "res://assets/tanchuang-qingshihewan-xiulian-puxiajingtai-2.webp",
     "description": "凝神静坐，调息凝气。暂离尘嚣，专注眼前的修行。",
     "status_interval_days": 5,
     "cultivation_statuses": [

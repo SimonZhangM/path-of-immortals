@@ -5,11 +5,11 @@
   "music": [
     "res://assets/bgm-qingshihewan-1.mp3"
   ],
-  "background": "res://assets/gamemap-qingshihewan.webp",
+  "background": "res://assets/map-qingheshiwan.webp",
   "marker": "res://assets/mapdot.webp",
   "source_size": [
-    3215,
-    1835
+    2765,
+    1580
   ],
   "layout_scene": "res://scenes/maps/qingshihewan_layout.tscn",
   "sign_motion": "res://data/ui/map_sign_motion.json",

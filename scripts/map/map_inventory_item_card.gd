@@ -161,7 +161,7 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 	square_layout = square
 	entry = record.duplicate(true)
 	name = "Item_" + String(entry.id).get_file()
-	var frame_path := str(entry.get("card_frame", "")) if entry.category == "book" else MapItemQuality.background_path(entry.quality)
+	var frame_path := str(entry.get("card_frame", "")) if entry.category == "book" or entry.quality.is_empty() else MapItemQuality.background_path(entry.quality)
 	frame = load(frame_path) if not frame_path.is_empty() else null
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	custom_minimum_size = Vector2(DESIGN_WIDTH, DESIGN_WIDTH * (STORAGE_ASPECT if square_layout else CARD_ASPECT))
@@ -171,7 +171,7 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 	background.name = "QualityBackground"
 	background.texture = frame
 	if frame == null:
-		# Unlearned books use the tooltip's solid fill, with no rarity artwork.
+		# Ungraded items share the plain fill used by introductory books.
 		var fill := GradientTexture2D.new()
 		fill.width = 2
 		fill.height = 2
@@ -226,6 +226,7 @@ func configure(record: Dictionary, category_name: String, square: bool = false) 
 	if entry.category == "weapon" and entry.has("damage_type"):
 		categories.append(entry.damage_type)
 	if entry.category == "book": categories.assign(entry.get("tags", []))
+	if entry.category == "artifact" and entry.get("recovery", false): categories.append("恢复")
 	if entry.get("quest_item",false) and "任务物品" not in categories: categories.append("任务物品")
 	if entry.has("armor_type"):
 		categories.append(entry.armor_type)
@@ -417,7 +418,7 @@ func _layout() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board", "food", "book"]:
+	if frame == null or entry.get("category", "") in ["plant", "beast", "mineral", "exotic", "material", "board", "food", "book", "key"]:
 		return
 	var artwork := artwork_rect()
 	var factor := artwork.size.x / DESIGN_WIDTH

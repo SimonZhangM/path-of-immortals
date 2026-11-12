@@ -68,6 +68,7 @@ func set_cultivation_rank(rank_id: String) -> bool:
 	if _registry.get_cultivation(rank_id).is_empty():
 		return false
 	cultivation_rank_id = rank_id
+	if cultivation_rank_id == "base.cultivation.mortal": spirit = 0
 	return true
 
 func equip_definition_loadout() -> void:
@@ -98,12 +99,15 @@ func has_defense_item(resource: String) -> bool:
 	return _defense_items.get(resource, false)
 
 func maximum(resource: String) -> int:
+	if resource == "spirit" and cultivation_rank_id == "base.cultivation.mortal": return 0
 	if resource == "armor":
 		var total := int(definition.get("innate_armor_capacity", 0))
 		for bonus in armor_capacity_sources.values():
 			total += int(bonus)
 		return total
 	var value := int(definition["max_" + resource]) + (board.resource_bonus(resource) if board != null else 0)
+	for entry: Dictionary in inventory.get_instances():
+		value += int(_registry.get_item(entry.item_id).combat.get("resource_bonuses", {}).get(resource, 0))
 	if resource == "hp":
 		for bonus in max_hp_sources.values():
 			value += int(bonus)

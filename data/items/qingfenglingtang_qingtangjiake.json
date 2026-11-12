@@ -1,0 +1,31 @@
+{
+  "id": "base.organ.qingfenglingtang_qingtangjiake",
+  "name": "青螳甲壳",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    2
+  ],
+  "icon": "res://assets/item-enemy-qingfenglingtang-qingtangjiake.webp",
+  "cooldown": 0,
+  "stamina_cost": 0,
+  "spirit_cost": 0,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 14,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "resource_bonuses": {
+      "stamina": 12,
+      "spirit": 12
+    }
+  },
+  "effects": []
+}

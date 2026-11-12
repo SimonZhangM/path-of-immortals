@@ -1,0 +1,248 @@
+{
+  "quest_id": "quest.prologue.hewanchuhuan",
+  "board_id": "base.notice_board.qingshizhen",
+  "mayor": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n11"
+  },
+  "accepted_location": "青石镇·公告板",
+  "materials": [
+    {
+      "item_id": "base.material.shanlang_fang",
+      "quantity": 2
+    },
+    {
+      "item_id": "base.material.cslz_tusk",
+      "quantity": 1
+    }
+  ],
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true,
+    "dismiss_together": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.zhoubinghe": {
+      "name": "周秉和",
+      "portrait": "res://assets/ui-portrait-zhoubinghe.webp",
+      "portrait_region": [
+        0,
+        0,
+        410,
+        410
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "notice": {
+      "lines": [
+        "（公告板上多了一张清理河湾兽患的告示，落款是镇长周秉和。）",
+        "（近来河湾山兽伤人，行路采药者须多加留意。现悬赏清理路旁山狼与野猪，有意者请到古树下找镇长问明路段及所需凭证，办妥后凭物领取酬劳。切勿孤身深入山林。）",
+        "镇里也在管这件事了。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ]
+    },
+    "accepting": {
+      "lines": [
+        "先到古树下找周镇长问问，别白跑一趟。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ]
+    },
+    "decline": {
+      "lines": [
+        "先记下，等有空再来。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ]
+    },
+    "reminder": {
+      "lines": [
+        "还差些，备齐了再来吧。带来的这些先收好。"
+      ],
+      "line_speakers": [
+        "base.npc.zhoubinghe"
+      ]
+    },
+    "details": {
+      "lines": [
+        "周镇长，我看了公告板上的悬赏，想问问河湾那边的事。",
+        "（将手边的记录合上，示意你走近。）",
+        "医馆已经让人报过信了。听说那位受伤弟子，是你和清禾接回来的？",
+        "嗯。山兽有些往路边跑，采药、运货的人都容易碰上。",
+        "正是担心这个。先顾住常有人经过的路段，别为了追兽跑进深山。",
+        "做完以后，拿什么回来交验？",
+        "山狼尖牙两份、赤鬃獠牙一份。带回来交给我，酬劳八枚灵石。",
+        "好，我记下了。",
+        "量力而行。遇上应付不了的，先回来，别为一份悬赏伤了自己。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe"
+      ]
+    },
+    "delivery": {
+      "lines": [
+        "周镇长，悬赏要的东西带来了。",
+        "（将分装好的山狼尖牙与赤鬃獠牙放到桌上。）",
+        "（逐一验看，核对数量，再将交来的材料收好。）",
+        "齐了。这是说好的酬劳，收着吧。",
+        "希望路上能太平些。",
+        "能少些危险，就是好事。镇里也会继续留意路况，不能让采药、赶路的人全靠运气。",
+        "（将酬劳交给你，在记录上记下一笔。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.npc.zhoubinghe"
+      ]
+    }
+  },
+  "rewards": [
+    {
+      "kind": "spirit_stones",
+      "name": "灵石",
+      "quantity": 8,
+      "icon": "res://assets/player-status-coin.webp"
+    }
+  ],
+  "people": [
+    {
+      "name": "周秉和",
+      "portrait": "res://assets/ui-portrait-zhoubinghe.webp"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "details",
+      "text": "到古树下找周秉和，了解悬赏详情",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n11",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    },
+    {
+      "id": "wolf_fangs",
+      "text": "备齐山狼尖牙",
+      "show_count": true,
+      "required": 2,
+      "targets": [
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n27",
+          "world_location_id": "base.world_location.qingshihewan"
+        },
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n21",
+          "world_location_id": "base.world_location.qingshihewan"
+        },
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n33",
+          "world_location_id": "base.world_location.qingshihewan"
+        }
+      ]
+    },
+    {
+      "id": "boar_tusk",
+      "text": "备齐赤鬃獠牙",
+      "show_count": true,
+      "required": 1,
+      "targets": [
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n12",
+          "world_location_id": "base.world_location.qingshihewan"
+        }
+      ]
+    },
+    {
+      "id": "deliver",
+      "text": "将凭证交给周秉和",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n11",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    }
+  ],
+  "commission_number": 1
+}

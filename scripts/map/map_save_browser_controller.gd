@@ -13,7 +13,7 @@ func is_open() -> bool:
 
 func open() -> void:
 	if is_open() or map.loadout==null or not map.startup_error.is_empty() or MapPresentation.transitioning: return
-	if map.is_world_map_open() or map.is_inventory_open() or map.is_technique_open() or map.is_task_open() or map.is_exit_open(): return
+	if map.is_world_map_open() or map.is_inventory_open() or map.is_technique_open() or map.is_task_open() or map.is_breakthrough_open() or map.is_exit_open(): return
 	if map.event_state!=null and map.event_state.is_active(): return
 	browser = Browser.new()
 	browser.in_game = true

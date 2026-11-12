@@ -1,5 +1,22 @@
 extends Control
 ## Presentation only; the map controller owns navigation and save commands.
+class InsetButtonStyle extends StyleBox:
+	var fill_color := Color(1,0.78,0.3,0.12)
+
+	func _draw(canvas_item: RID, rect: Rect2) -> void:
+		var inner := rect.grow(-6.0)
+		var radius := 20.0
+		var corners := [Vector2(inner.end.x,inner.position.y),inner.end,Vector2(inner.position.x,inner.end.y),inner.position]
+		var angles := [PI,-PI/2.0,0.0,PI/2.0]
+		var outline := PackedVector2Array()
+		for corner in 4:
+			for step in 9:
+				var angle: float = angles[corner]-PI/2.0*step/8.0
+				outline.append(corners[corner]+Vector2(cos(angle),sin(angle))*radius)
+		RenderingServer.canvas_item_add_polygon(canvas_item,outline,PackedColorArray([fill_color]))
+		outline.append(outline[0])
+		RenderingServer.canvas_item_add_polyline(canvas_item,outline,PackedColorArray([Color(1,0.83,0.4,0.8)]),2.0,true)
+
 signal action_requested(action: String)
 var canvas: Control
 var buttons: Dictionary = {}
@@ -35,18 +52,13 @@ func _ready() -> void:
 		button.size = Vector2(spec.rect[2],spec.rect[3])
 		button.focus_mode = Control.FOCUS_NONE
 		button.disabled = not spec.get("enabled",true)
-		button.tooltip_text = spec.label+ ("（暂未开放）" if button.disabled else "")
 		button.mouse_default_cursor_shape = Control.CURSOR_ARROW if button.disabled else Control.CURSOR_POINTING_HAND
 		for state in ["normal","focus","disabled"]:
 			button.add_theme_stylebox_override(state,StyleBoxEmpty.new())
-		var hover := StyleBoxFlat.new()
-		hover.bg_color = Color(1,0.78,0.3,0.12)
-		hover.border_color = Color(1,0.83,0.4,0.8)
-		hover.set_border_width_all(2)
-		hover.set_corner_radius_all(18)
+		var hover := InsetButtonStyle.new()
 		button.add_theme_stylebox_override("hover",hover)
-		var pressed := hover.duplicate() as StyleBoxFlat
-		pressed.bg_color = Color(0,0,0,0.25)
+		var pressed := InsetButtonStyle.new()
+		pressed.fill_color = Color(0,0,0,0.25)
 		button.add_theme_stylebox_override("pressed",pressed)
 		button.pressed.connect(func():
 			if not busy: action_requested.emit(spec.id))

@@ -10,14 +10,25 @@ static func initial(day: int, location := "") -> Dictionary:
 	for target: Dictionary in definition.objectives: counts[target.id] = 0
 	var quest := {"counts":counts,"accepted_at":day,"updated_at":day,"accepted_location":location}
 	quest.story = QuestStory.migrated(quest)
-	return {ID:quest,RiverQuest.ID:RiverQuest.initial(),HerbQuest.ID:HerbQuest.initial()}
+	return {ID:quest,RiverQuest.ID:RiverQuest.initial(),HerbQuest.ID:HerbQuest.initial(),HomecomingQuest.ID:HomecomingQuest.initial(),FishingNetQuest.ID:FishingNetQuest.initial(),MerchantRoadQuest.ID:MerchantRoadQuest.initial(),OldBenchQuest.ID:OldBenchQuest.initial(),QinglanDepartureQuest.ID:QinglanDepartureQuest.initial(),RiverBountyQuest.ID:RiverBountyQuest.initial(),DeerRestQuest.ID:DeerRestQuest.initial()}
 
 static func valid(raw: Variant) -> bool:
 	if not raw is Dictionary or not raw.get(ID) is Dictionary: return false
 	for id: String in raw:
-		if id not in [ID,RiverQuest.ID,HerbQuest.ID]: return false
+		if id not in [ID,RiverQuest.ID,HerbQuest.ID,HomecomingQuest.ID,FishingNetQuest.ID,MerchantRoadQuest.ID,OldBenchQuest.ID,QinglanDepartureQuest.ID,RiverBountyQuest.ID,DeerRestQuest.ID]: return false
+	if raw.has(DeerRestQuest.ID) and not DeerRestQuest.valid(raw[DeerRestQuest.ID]): return false
+	if raw.has(RiverBountyQuest.ID) and not RiverBountyQuest.valid(raw[RiverBountyQuest.ID]): return false
+	if raw.has(QinglanDepartureQuest.ID) and not QinglanDepartureQuest.valid(raw[QinglanDepartureQuest.ID]): return false
+	if raw.has(OldBenchQuest.ID) and not OldBenchQuest.valid(raw[OldBenchQuest.ID]): return false
+	if raw.has(MerchantRoadQuest.ID) and not MerchantRoadQuest.valid(raw[MerchantRoadQuest.ID]): return false
 	if raw.has(RiverQuest.ID) and not RiverQuest.valid(raw[RiverQuest.ID]): return false
 	if raw.has(HerbQuest.ID) and not HerbQuest.valid(raw[HerbQuest.ID]): return false
+	if raw.has(FishingNetQuest.ID) and not FishingNetQuest.valid(raw[FishingNetQuest.ID]): return false
+	if raw.has(HomecomingQuest.ID) and not HomecomingQuest.valid(raw[HomecomingQuest.ID]): return false
+	if raw.has(HomecomingQuest.ID) and (not raw[HomecomingQuest.ID].accepted_location.is_empty() or raw[HomecomingQuest.ID].active in ["merchant_intro","bridge","intro"]):
+		if "closing" not in raw.get(RiverQuest.ID,{}).get("done",[]): return false
+	if raw.has(MerchantRoadQuest.ID) and not raw[MerchantRoadQuest.ID].accepted_location.is_empty():
+		if "closing" not in raw.get(RiverQuest.ID,{}).get("done",[]): return false
 	var quest: Dictionary = raw[ID]
 	if not quest.get("counts") is Dictionary or quest.counts.size()!=definition.objectives.size(): return false
 	if not quest.get("accepted_location") is String: return false
@@ -46,7 +57,22 @@ static func normalized(raw: Dictionary) -> Dictionary:
 	result[ID].story.line = int(result[ID].story.line)
 	if not result.has(RiverQuest.ID): result[RiverQuest.ID] = RiverQuest.initial()
 	result[RiverQuest.ID] = RiverQuest.normalized(result[RiverQuest.ID])
+	if not result.has(DeerRestQuest.ID): result[DeerRestQuest.ID] = DeerRestQuest.initial()
+	result[DeerRestQuest.ID] = DeerRestQuest.normalized(result[DeerRestQuest.ID])
+	if not result.has(RiverBountyQuest.ID): result[RiverBountyQuest.ID] = RiverBountyQuest.initial()
+	result[RiverBountyQuest.ID] = RiverBountyQuest.normalized(result[RiverBountyQuest.ID])
+	if not result.has(QinglanDepartureQuest.ID): result[QinglanDepartureQuest.ID] = QinglanDepartureQuest.initial()
+	result[QinglanDepartureQuest.ID] = QinglanDepartureQuest.normalized(result[QinglanDepartureQuest.ID])
+	if not result.has(OldBenchQuest.ID): result[OldBenchQuest.ID] = OldBenchQuest.initial()
+	result[OldBenchQuest.ID] = OldBenchQuest.normalized(result[OldBenchQuest.ID])
+	if not result.has(FishingNetQuest.ID): result[FishingNetQuest.ID] = FishingNetQuest.initial()
+	if not result.has(MerchantRoadQuest.ID): result[MerchantRoadQuest.ID] = MerchantRoadQuest.initial()
+	result[MerchantRoadQuest.ID] = MerchantRoadQuest.normalized(result[MerchantRoadQuest.ID])
+	for key in ["line","accepted_at","updated_at"]: result[FishingNetQuest.ID][key] = int(result[FishingNetQuest.ID][key])
 	if not result.has(HerbQuest.ID): result[HerbQuest.ID] = HerbQuest.initial()
+	if not result.has(HomecomingQuest.ID): result[HomecomingQuest.ID] = HomecomingQuest.initial()
+	if not result[HomecomingQuest.ID].has("home_reunited"): result[HomecomingQuest.ID].home_reunited = false
+	for key in ["line","accepted_at","updated_at"]: result[HomecomingQuest.ID][key] = int(result[HomecomingQuest.ID][key])
 	for key in ["line","accepted_at","updated_at"]: result[HerbQuest.ID][key] = int(result[HerbQuest.ID][key])
 	for key in ["line","accepted_at","updated_at"]: result[RiverQuest.ID][key] = int(result[RiverQuest.ID][key])
 	return result
@@ -101,6 +127,18 @@ static func delivery_units(state: MapLoadoutState) -> Array[String]:
 
 static func sync_flags(state: MapLoadoutState) -> void:
 	HerbQuest.refresh_objectives(state)
+	RiverBountyQuest.refresh_objectives(state)
+	HomecomingQuest.sync_practice_flags(state)
+	state.narrative.flags["base.story.chaoshengguichu.guidance_standalone"] = true
+	if HomecomingQuest.ready_for_practice(state): state.narrative.flags[HomecomingQuest.GUIDED_FLAG] = true
+	if state.growth.has("breakthrough_attempt"):
+		state.narrative.flags[HomecomingQuest.PRACTICE_STARTED_FLAG] = true
+	if RiverQuest.done(state,"closing"):
+		state.narrative.flags["base.story.qingshihewan.cultivator_rescued"] = true
+	if HomecomingQuest.story(state).home_reunited:
+		state.narrative.flags[HomecomingQuest.REUNION_FLAG] = true
+	if HomecomingQuest.story(state).letter_received:
+		state.narrative.flags[HomecomingQuest.ACCEPTED_FLAG] = true
 	var counts: Dictionary = state.quests[ID].counts
 	state.narrative.flags[FLAG+"morning"] = counts.talk==0
 	state.narrative.flags[FLAG+"ready"] = stage(state.quests)=="returning" and counts.deliver==0 and not delivery_units(state).is_empty()
@@ -108,6 +146,9 @@ static func sync_flags(state: MapLoadoutState) -> void:
 	state.narrative.flags[FLAG+"map_dialogue"] = true
 
 static func after_dialogue(state: MapLoadoutState, previous: Dictionary, npc_id: String) -> String:
+	if npc_id==HomecomingQuest.MOTHER:
+		HomecomingQuest.after_dialogue(state)
+		return ""
 	if npc_id!=definition.npc_id: return ""
 	var done: Array = state.narrative.npcs.get(npc_id,{}).get("done",[])
 	var old_done: Array = previous.npcs.get(npc_id,{}).get("done",[])

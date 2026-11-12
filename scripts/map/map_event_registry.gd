@@ -5,6 +5,10 @@ var events: Dictionary = {}
 var by_point: Dictionary = {}
 static var encounter_catalog: Dictionary = {}
 
+static func is_unlocked(state: MapLoadoutState, event: Dictionary) -> bool:
+	if event.get("id","")=="base.map_event.qingshizhen.shop" and MerchantRoadQuest.shop_away(state): return false
+	return event.get("enabled",true) and event.get("requires_story_flags",[]).all(func(flag): return state.narrative.flags.get(flag,false))
+
 static func encounter_at(point_id: String) -> Dictionary:
 	if encounter_catalog.is_empty():
 		var world: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/world_map_locations.json"))
@@ -41,16 +45,19 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			return "地图事件字段不完整。"
 		if not raw.id is String or not raw.id.begins_with("base.map_event.") or loaded.has(raw.id):
 			return "地图事件ID无效或重复。"
-		if raw.type not in ["dialogue", "encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
+		if raw.type not in ["dialogue", "encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation", "conversation"] or raw.point_id not in point_ids or point_index.has(raw.point_id):
 			return "地图事件类型、节点或节点绑定无效。"
 		if raw.get("trigger", "click") not in ["arrival", "click"]:
 			return "地图事件触发方式无效。"
 		if not raw.get("enabled", true) is bool:
 			return "地图事件启用开关必须为布尔值。"
+		if not raw.get("requires_story_flags",[]) is Array: return "地图事件解锁条件无效。"
+		for flag: Variant in raw.get("requires_story_flags",[]):
+			if not flag is String or not flag.begins_with("base.story."): return "地图事件解锁标记无效。"
 		if not raw.get("story_flags_on_complete",[]) is Array: return "剧情完成标记无效。"
 		for flag: Variant in raw.get("story_flags_on_complete",[]):
 			if raw.type!="dialogue" or not flag is String or not flag.begins_with("base.story."): return "剧情完成标记引用无效。"
-		if raw.type in ["clinic","inn"]:
+		if raw.type in ["clinic","inn","conversation"]:
 			if raw.has("treatment"):
 				var treatment_error := MapClinicTreatment.configuration_error(raw.treatment)
 				if not treatment_error.is_empty(): return treatment_error
@@ -66,6 +73,7 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			var title_center: Variant = raw.presentation.get("title_center_y",133.0)
 			if (not title_center is float and not title_center is int) or not is_finite(float(title_center)) or float(title_center)<100 or float(title_center)>165: return "医馆标题中心位置无效。"
 			for key in ["background","illustration","frame"]:
+				if raw.type=="conversation" and key in ["illustration","frame"] and raw.presentation.get(key)=="": continue
 				if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "医馆素材不存在："+key
 			if raw.presentation.has("treatment_background") and (not raw.presentation.treatment_background is String or not ResourceLoader.exists(raw.presentation.treatment_background,"Texture2D")): return "医馆诊治底图不存在。"
 			if raw.type=="inn":
@@ -113,6 +121,7 @@ func configure(definitions: Array, point_ids: Array) -> String:
 			if raw.has("warehouse_id") and (not raw.warehouse_id is String or not raw.warehouse_id.begins_with("base.warehouse.") or raw.warehouse_id.trim_prefix("base.warehouse.").is_empty()): return "休息地点仓储标识无效。"
 			if not raw.presentation is Dictionary: return "休息展示配置无效。"
 			for key in ["background","illustration"]:
+				if key == "illustration" and raw.presentation.get(key) == "": continue
 				if not raw.presentation.get(key) is String or not ResourceLoader.exists(raw.presentation[key],"Texture2D"): return "休息图片不存在："+key
 			loaded[raw.id]=raw.duplicate(true)
 			point_index[raw.point_id]=raw.id
@@ -282,6 +291,7 @@ func _validate_cultivation(raw: Dictionary) -> String:
 	return ""
 
 func _validate_encounter(raw: Dictionary) -> String:
+	if not raw.get("direct_story_battle",false) is bool: return "剧情战斗标记无效。"
 	if raw.get("trigger_order","encounter_first") not in ["encounter_first","story_first"]:
 		return "遭遇与剧情触发顺序无效。"
 	# An authored encounter can open before its enemy is assigned, but may not
@@ -292,7 +302,9 @@ func _validate_encounter(raw: Dictionary) -> String:
 			if raw.has(key): return "待配置遭遇不可携带战斗数据：" + key
 		for key in ["title", "description"]:
 			if not raw.get(key) is String or raw[key].strip_edges().is_empty(): return "待配置遭遇文案无效。"
-		if not raw.presentation is Dictionary or not raw.presentation.get("illustration") is String or not ResourceLoader.exists(raw.presentation.illustration, "Texture2D"):
+		if raw.has("pending_enemy_name") and (not raw.pending_enemy_name is String or raw.pending_enemy_name.strip_edges().is_empty()):
+			return "待配置遭遇对象名称无效。"
+		if not raw.presentation is Dictionary or not raw.presentation.get("illustration") is String or (not raw.presentation.illustration.is_empty() and not ResourceLoader.exists(raw.presentation.illustration, "Texture2D")):
 			return "待配置遭遇图片不存在。"
 		return ""
 	if raw.has("enemy_sequence"):
@@ -317,6 +329,7 @@ func _validate_encounter(raw: Dictionary) -> String:
 	if not art is Dictionary or not art.has("illustration"):
 		return "地图遭遇美术配置不完整。"
 	for key in ["illustration"]:
+		if raw.get("direct_story_battle",false) and art[key]=="": continue
 		if not art[key] is String or not ResourceLoader.exists(art[key], "Texture2D"):
 			return "地图遭遇图片不存在：" + key
 	for key in ["battle_background", "enemy_summary"]:

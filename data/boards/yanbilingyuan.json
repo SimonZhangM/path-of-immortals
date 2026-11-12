@@ -1,0 +1,24 @@
+{
+  "id": "base.board.yanbilingyuan",
+  "name": "岩臂灵猿阵盘",
+  "resource_bonuses": {},
+  "texture": "res://assets/zhenpan-enemy-yanbilingyuan-4x4.webp",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "x_lines": [
+    179,
+    403,
+    627,
+    851,
+    1075
+  ],
+  "y_lines": [
+    179,
+    403,
+    627,
+    851,
+    1075
+  ]
+}

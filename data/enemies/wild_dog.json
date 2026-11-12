@@ -1,6 +1,7 @@
 {
   "id": "base.enemy.wild_dog",
   "name": "野狗",
+  "innate_armor_type": "无甲",
   "max_hp": 100,
   "max_stamina": 100,
   "max_spirit": 0,

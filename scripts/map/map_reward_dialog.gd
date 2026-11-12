@@ -16,6 +16,8 @@ var _display_height := DESIGN_SIZE.y
 var heading: Label
 var card: VBoxContainer
 var accept_button: TextureButton
+var close_button: Button
+var close_as_accept := false
 var error_label: Label
 var pick_sound: AudioStreamPlayer
 
@@ -59,6 +61,17 @@ func _init() -> void:
 	accept_button.focus_mode = Control.FOCUS_NONE
 	accept_button.pressed.connect(func(): accept_requested.emit())
 	canvas.add_child(accept_button)
+	close_button = Button.new()
+	close_button.text = "×"
+	close_button.size = Vector2(36,36)
+	close_button.add_theme_font_size_override("font_size",28)
+	close_button.add_theme_color_override("font_color",Color("f9f8c8"))
+	close_button.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
+	close_button.focus_mode = Control.FOCUS_NONE
+	close_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	close_button.pressed.connect(request_close)
+	canvas.add_child(close_button)
+	close_button.hide()
 	var caption := _label("收下", Rect2(Vector2.ZERO, accept_button.size), 26, Color.WHITE, accept_button)
 	caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	caption.name = "AcceptCaption"
@@ -105,7 +118,9 @@ func _label(text: String, rect: Rect2, font_size: int, color: Color, parent: Con
 	(canvas if parent == null else parent).add_child(label)
 	return label
 
-func present(record: Dictionary, _category_name: String, handover := false, dim_background := true) -> void:
+func present(record: Dictionary, _category_name: String, handover := false, dim_background := true, closing_accepts := false) -> void:
+	close_as_accept = closing_accepts
+	close_button.visible = close_as_accept
 	shade.visible = dim_background
 	heading.text = "交出" if handover else "获得物品"
 	accept_button.get_node("AcceptCaption").text = "确认" if handover else "收下"
@@ -127,7 +142,12 @@ func _layout() -> void:
 	var factor := minf(size.x / 1920.0, size.y / 1080.0) * _display_height / DESIGN_SIZE.y
 	canvas.scale = Vector2.ONE * factor
 	canvas.position = (size - DESIGN_SIZE * factor) * 0.5
+	close_button.position = backing.position+Vector2(backing.size.x-52,20)
+
+func request_close() -> void:
+	if visible and close_as_accept and not accept_button.disabled:
+		accept_requested.emit()
 
 func _gui_input(_event: InputEvent) -> void:
-	# Only the explicit accept button advances this modal.
+	# Background clicks never advance the receipt.
 	accept_event()

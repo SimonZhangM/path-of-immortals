@@ -5,7 +5,9 @@
     "enabled": true,
     "hint_length": 72.0
   },
-  "music": [],
+  "music": [
+    "res://assets/bgm-baishacun.mp3"
+  ],
   "background": "res://assets/map-baishacun.webp",
   "marker": "res://assets/mapdot.webp",
   "source_size": [
@@ -15,7 +17,8 @@
   "layout_scene": "res://scenes/maps/baishacun_layout.tscn",
   "sign_motion": "res://data/ui/map_sign_motion.json",
   "start_point": "base.map.baishacun.point.n01",
-  "show_map_title": false,
+  "show_map_title": true,
+  "title_image": "res://assets/map-title-baishacun.png",
   "exits": [
     {
       "point_id": "base.map.baishacun.point.n01",
@@ -27,6 +30,8 @@
   ],
   "event_files": [
     "res://data/map_events/baishacun_chest_n10.json",
-    "res://data/map_events/baishacun_chest_n19.json"
-  ]
+    "res://data/map_events/baishacun_chest_n19.json",
+    "res://data/map_events/baishacun_mother_home.json"
+  ],
+  "player_display_scale_multiplier": 0.6666666666666666
 }

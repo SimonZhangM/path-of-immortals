@@ -215,8 +215,13 @@
       ],
       "map_id": "base.map.wumingjiuci",
       "point_id": "base.map.wumingjiuci.point.n01",
-      "requires": ["root"],
-      "skip_after": ["mirror", "beasts_gone"]
+      "requires": [
+        "root"
+      ],
+      "skip_after": [
+        "mirror",
+        "beasts_gone"
+      ]
     },
     "root_discovery": {
       "lines": [
@@ -310,7 +315,13 @@
           }
         ],
         "resume_line": 9
-      }
+      },
+      "reward": {
+        "id": "base.map_reward.quest.hewanfengxian.broken_mirror",
+        "item_id": "base.map_item.broken_mirror",
+        "quantity": 1
+      },
+      "reward_after_line": 2
     },
     "beasts_gone": {
       "lines": [
@@ -405,7 +416,11 @@
       "requires": [
         "fox_notice"
       ],
-      "optional": true
+      "optional": true,
+      "illustration": {
+        "image": "res://assets/map-event-2-2a.webp",
+        "end_line": 2
+      }
     },
     "fox_leave": {
       "lines": [
@@ -791,7 +806,7 @@
         "这本《引气诀》是入门的吐纳法。你若有心，拿去看看。",
         "给我？我还没正经学过。",
         "先读，不急着练。有不明白的，等我缓过这阵再问。以后若想去宗里求学，我也能替你引见；该过的考察，还是得自己过。",
-        "好，那我收下了。你先歇着。"
+        "好，多谢。我先把书里的道理读明白。"
       ],
       "line_speakers": [
         "base.npc.shenyanzhou",
@@ -823,7 +838,7 @@
         "这边有我照看。你也跑了好几趟，回去歇歇吧。",
         "嗯，有事让人叫我。",
         "好。回去慢些呀。",
-        "（你收好薄册走到门边。回头时，清禾已重新坐在床旁，轻声询问沈砚舟哪里还疼。）"
+        "（你收好薄册和阵盘走到门边。回头时，清禾已重新坐在床旁，轻声询问沈砚舟哪里还疼。）"
       ],
       "line_speakers": [
         "base.npc.suqinghe",
@@ -842,7 +857,10 @@
       "requires_receipt": "base.map_reward.quest.hewanfengxian.yinqijue",
       "illustration": {
         "image": "res://assets/map-event-2-9.webp"
-      }
+      },
+      "requires_receipts": [
+        "base.map_reward.quest.hewanfengxian.xiaolan"
+      ]
     },
     "doctor_away": {
       "lines": [
@@ -898,6 +916,46 @@
       "recovery_points": [
         "base.map.qingshihewan.point.n02"
       ]
+    },
+    "gift_board": {
+      "lines": [
+        "（又从包裹里取出一方小阵盘，放在薄册旁。）",
+        "还有这个，叫“晓岚”，是我们青岚宗的入门阵盘，也给你。",
+        "这就是阵盘？我该怎么用？",
+        "把合用的器具安放在盘上，便能借阵纹贯通灵气。修炼时，器具耗去的体力、灵力，可以经由阵盘转为修为。往后用功，阵盘是少不了的。",
+        "先照《引气诀》学吐纳。河湾的瀑下静台清静，正好借这阵盘练习，等熟悉了再试着闯关。急不得，一步步来。",
+        "多谢你还替我想着这些。只是……这阵盘是不是很贵重？",
+        "别拘着。这就是个很普通的入门阵盘，连凡人也能驱使，算不得什么贵重东西。你救了我，留着它好好用便是。",
+        "那我就收下了。多谢你，书和阵盘我都会好好用。你先安心养伤。"
+      ],
+      "line_speakers": [
+        "base.npc.shenyanzhou",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu",
+        "base.npc.shenyanzhou",
+        "base.map_player.chen_yu"
+      ],
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n32",
+      "requires": [
+        "gift_book"
+      ],
+      "requires_receipt": "base.map_reward.quest.hewanfengxian.yinqijue",
+      "skip_after": [
+        "closing"
+      ],
+      "reward": {
+        "id": "base.map_reward.quest.hewanfengxian.xiaolan",
+        "item_id": "base.map_item.qinglan_board_1",
+        "quantity": 1
+      },
+      "reward_after_line": 6,
+      "illustration": {
+        "image": "res://assets/map-event-2-9.webp"
+      }
     }
   },
   "river_gate_routes": [
@@ -910,5 +968,6 @@
     "base.map.wumingjiuci.route.r05",
     "base.map.wumingjiuci.route.r06",
     "base.map.wumingjiuci.route.r07"
-  ]
+  ],
+  "training_notice": "青石河湾·瀑下静台已可修炼。"
 }

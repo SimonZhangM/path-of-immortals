@@ -1,0 +1,533 @@
+{
+  "quest_id": "quest.prologue.chaoshengguichu",
+  "shop": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n14"
+  },
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.yesongnian": {
+      "name": "叶松年",
+      "portrait": "res://assets/ui-portrait-yesongnian.webp",
+      "portrait_region": [
+        0,
+        0,
+        428,
+        428
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    },
+    "base.npc.mother": {
+      "name": "母亲",
+      "portrait": "res://assets/ui-portrait-mom-linwanqing.webp",
+      "portrait_region": [
+        0,
+        0,
+        431,
+        431
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "intro": {
+      "lines": [
+        "（从柜台内取出一封折好的信，放到你面前。）",
+        "前些日子，你娘托人问过，想知道你在铺里学得怎样。我给她回了封信，你带回去吧。",
+        "那我正好回去看看她。",
+        "嗯，陪她住几天。这阵子你也没少往外跑。",
+        "铺里要补的药……",
+        "缺什么我会安排。你把自己的东西带齐就行。",
+        "（将信收好，又低头看了一眼封口。）",
+        "叶伯，您没把我小时候认错药的事也写进去吧？",
+        "她问的是你如今学得怎样，我提那些做什么。倒是夸了你两句，可别翘尾巴。",
+        "那我可得亲手交给她。",
+        "去吧。也替我问声好。"
+      ],
+      "line_speakers": [
+        "base.npc.yesongnian",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian"
+      ],
+      "reward": {
+        "id": "base.map_reward.chaoshengguichu.letter",
+        "item_id": "base.map_item.yesongnian_letter",
+        "quantity": 1
+      },
+      "reward_after_line": 0
+    },
+    "reunion": {
+      "lines": [
+        "（院门半掩着，竹筛里摊着切好的鱼片。娘坐在屋檐下，用细绳将腌好的鱼一条条穿起。）",
+        "娘，我回来了。",
+        "（手里的绳结一顿。她抬头看清是你，脸上顿时有了笑意，忙放下鱼，擦着手迎到门边。）",
+        "哎呀，是你回来了！娘还想着，得过些日子才能见着你呢。😊",
+        "（拉住你的手，仔细看了看，又笑着拍拍你的胳膊。）",
+        "快进来。怎么也不托人捎句话？娘好早些给你做点爱吃的。铺里这几日不忙啦？",
+        "叶伯让我歇几天。还给你带了信。",
+        "那正好，多住几天呀。东西先放下，让娘好好看看。",
+        "（把信递给她，将药篓靠在桌边。）",
+        "（拆开信，读到一半，抬眼看了看你。）",
+        "说你如今能独自挑药，也知道照顾人了。",
+        "都是他教的。",
+        "那也得你肯学呀。叶伯平时可不轻易夸人，娘看着也高兴。☺️",
+        "你这里呢？又替人做这么多鱼干？",
+        "这两筛是替邻家腌的，那盆留着做鱼酱。做好了他们来取，给些手工钱，平日里够用了。",
+        "我先帮你把院里的收进来吧。",
+        "还没晒好，收早了要返潮。你把门边的空筛叠起来，别挡着路就成。",
+        "（将空竹筛叠到墙边，回屋坐下。桌角仍垫着一块旧木片，轻轻一碰，桌面就晃了晃。）",
+        "这桌脚还没修呀？",
+        "垫着也能用。你呀，一回来就惦记这桌脚，待会儿碗都叫你晃下来了。🙂",
+        "好，我不碰了。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-3-1.webp"
+      },
+      "dismiss_together": true
+    },
+    "guidance": {
+      "lines": [
+        "娘，那我也能修行吗？",
+        "能。你有灵根，小时候娘就看出来了。",
+        "那怎么一直没告诉我？",
+        "起先想等你大些再说，后来又总不放心。娘当年在外吃过亏，怕你一听说能修行，就急着往外闯，便一直拖着没说。",
+        "送你去叶伯那里，是想让你先学门安身的本事。可你如今也大了，总该问问你自己想走哪条路。",
+        "（将沈砚舟送的薄册取出来，摊在桌上。）",
+        "那位弟子给了我一本《引气诀》。我看过几页，好些地方没弄明白。",
+        "（翻过几页，将书放到你面前，指了指其中一行。）",
+        "这本写得平实，正好用来入门。你想学呀，娘就陪你从这里看起。😊",
+        "我想学。光看这书，好些地方心里都没底。",
+        "好。不过有灵根，只是能开始学。气息如何调，灵气如何引进来，都要你自己慢慢练。",
+        "那我先从哪儿练起？",
+        "先从这段吐纳开始，弄懂了再往下看。",
+        "（将窗边的席子铺平，又搬开旁边的竹筐，留出一处安静的位置。）",
+        "先坐稳，肩背放松。照书里说的试，哪里不明白就问我，不用憋着。",
+        "（依着她的指点坐下，将书摊在手边，先辨清吐纳与行气的次序。）",
+        "对，就照这个次序。往后练的时候也别着急，先把气息调匀。",
+        "（从木匣里取出一块小石头，轻轻放到你手里。）",
+        "这块导引石你拿着，放在阵盘上，能帮你梳理气息，练习引气入体。",
+        "好，娘。我先照你说的慢慢练。",
+        "嗯。等引气成了，它也能接着帮你修炼。先把眼前这一步走稳。😊"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-3-2.webp"
+      },
+      "dismiss_together": true,
+      "reward": {
+        "id": "base.map_reward.quest.chaoshengguichu.guide_stone",
+        "item_id": "base.map_item.training_guide_stone",
+        "quantity": 1
+      },
+      "reward_after_line": 18
+    },
+    "preparation": {
+      "lines": [
+        "娘，那我现在就能试着引气了吗？",
+        "先别急。光记住法子还不够，还得慢慢练熟。你有晓岚阵盘相助，可以去河湾的瀑下静台用功，先把根基打稳。",
+        "出去历练也有益处，不过得量力而行。河湾的山兽可不认人，遇上厉害的就绕开，受了伤早些回来，别硬撑着。",
+        "我记着呢。我先照你教的好好练，等准备好了，再回来找娘。",
+        "嗯。回来先好好歇歇，养足精神，娘再陪你试着引气。有哪儿拿不准的，咱们就停下来慢慢看。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-3-2.webp"
+      },
+      "dismiss_together": true
+    },
+    "rejoice": {
+      "lines": [
+        "（收住吐纳，缓缓睁眼。先前一晃便散的灵息，此刻仍留在体内，随着呼吸缓缓流转。）",
+        "娘，这次留住了。停下吐纳以后，也没有散。",
+        "（在你身旁坐下，握住你的手腕，仔细察看了一遍行气的情形。片刻后，她的眉眼舒展开来，露出了笑意。）",
+        "嗯，引气成了。气息也稳，已经是炼气一层了。😊",
+        "真的成了……方才还怕是自己感觉错了。",
+        "娘看过了，没有错。你自己再慢慢感受一下。",
+        "（依言静了片刻。那缕灵息并未散去，你这才放下心来，抬头朝娘笑了笑。）",
+        "还在。前些时候总留不住，我还以为是哪里练错了。今天总算成了。",
+        "这阵子的工夫没白费。你肯静下心来练，不明白的地方也肯细问，娘都看在眼里。",
+        "从前在镇上见到修士，总觉得离自己远得很。没想到，我也会有这一天。",
+        "要不是娘一点点讲给我听，那几页书，我还不知道要琢磨多久。",
+        "你愿意学，娘自然愿意教。看着你练成，娘心里也高兴。",
+        "（替你理了理衣领，低头看见摊开的书，又轻轻笑了。）",
+        "刚回来时，你还说这几页有好些地方看不明白。如今再看，是不是不一样了？",
+        "嗯。有几句话，以前只是记着，今天才算明白了。",
+        "那就好。以后也是这样，书要看，自己也要慢慢练。",
+        "我还想再坐一会儿。这次好不容易练成，总想多体会一下。",
+        "娘知道你高兴。不过今天先到这里，让气息稳一稳，明天再练。",
+        "好。刚才只顾着行气，倒没觉得饿，现在才想起还没吃饭。",
+        "饭还温着呢。起来慢些，娘去给你盛。😊",
+        "（将书合好，放到桌边。起身时，你又静静感受了一下，那缕灵息仍在体内。）",
+        "（跟着娘走到桌边，接过她递来的碗。窗外潮声如旧，你低头吃了两口饭，想起方才的情形，又不由得笑了。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.npc.mother",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ],
+      "dismiss_together": true
+    },
+    "merchant_intro": {
+      "lines": [
+        "（放下手里的药秤，看向刚进门的你。）",
+        "医馆的人来过了，说你们把那位弟子接回来了。伤得怎么样？",
+        "外伤暂时稳住了，还得养着。清禾姐正在照看。",
+        "听说是在河湾遇上的。那边如今是什么情形？",
+        "山兽往路边跑。我去旧祠找药，门外也经过一群，只好等它们走远了才出来。",
+        "那采药、运货的都得留神了……",
+        "（将包好的药往旁边挪了挪，像是想起了什么。）",
+        "钱掌柜出门前还来取过药，说这趟进货回来，想试试河湾那条近路。",
+        "他已经回来了没有？",
+        "还没听说回来。按他出门时说的日子，也该往回走了。",
+        "我去商道看看。要是碰上他，就一起回来。",
+        "去看看也好。遇上应付不了的，先回来喊人，别硬撑。",
+        "好的，知道了。"
+      ],
+      "line_speakers": [
+        "base.npc.yesongnian",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.npc.yesongnian",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu",
+        "base.npc.yesongnian",
+        "base.map_player.chen_yu"
+      ]
+    },
+    "bridge": {
+      "lines": [
+        "对了，稍等。"
+      ],
+      "line_speakers": [
+        "base.npc.yesongnian"
+      ]
+    }
+  },
+  "people": [
+    {
+      "name": "叶松年",
+      "portrait": "res://assets/ui-portrait-yesongnian.webp"
+    }
+  ],
+  "locations": {
+    "intro": {
+      "name": "青石镇",
+      "image": "res://assets/map-qingshizhen.webp"
+    },
+    "homeward": {
+      "name": "白沙村",
+      "image": "res://assets/map-baishacun.webp"
+    },
+    "chat": {
+      "name": "白沙村",
+      "image": "res://assets/map-baishacun.webp"
+    },
+    "talks": {
+      "name": "白沙村",
+      "image": "res://assets/map-baishacun.webp"
+    },
+    "practice": {
+      "name": "白沙村",
+      "image": "res://assets/map-baishacun.webp"
+    },
+    "guidance": {
+      "name": "白沙村",
+      "image": "res://assets/map-baishacun.webp"
+    },
+    "rejoice": {
+      "name": "白沙村",
+      "image": "res://assets/map-baishacun.webp"
+    }
+  },
+  "objectives": {
+    "intro": [
+      {
+        "id": "letter",
+        "text": "与叶松年交谈",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.qingshizhen",
+            "point_id": "base.map.qingshizhen.point.n14",
+            "world_location_id": "base.world_location.qingshizhen",
+            "point_marker": false
+          }
+        ]
+      }
+    ],
+    "homeward": [
+      {
+        "id": "letter",
+        "text": "与叶松年交谈",
+        "completed": true,
+        "show_count": false,
+        "targets": []
+      },
+      {
+        "id": "home",
+        "text": "将叶伯的信带给母亲",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.baishacun",
+            "point_id": "base.map.baishacun.point.n05",
+            "world_location_id": "base.world_location.baishacun"
+          }
+        ]
+      }
+    ],
+    "chat": [
+      {
+        "id": "mirror",
+        "text": "与娘说说河湾的事",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.baishacun",
+            "point_id": "base.map.baishacun.point.n05",
+            "world_location_id": "base.world_location.baishacun",
+            "point_marker": true
+          }
+        ]
+      }
+    ],
+    "talks": [
+      {
+        "id": "past",
+        "text": "听娘讲爹娘的往事",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.baishacun",
+            "point_id": "base.map.baishacun.point.n05",
+            "world_location_id": "base.world_location.baishacun"
+          }
+        ]
+      }
+    ],
+    "practice": [
+      {
+        "id": "cultivation_full",
+        "text": "积累修为至100%，具备突破条件",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.qingshihewan",
+            "point_id": "base.map.qingshihewan.point.n32",
+            "world_location_id": "base.world_location.qingshihewan"
+          }
+        ]
+      },
+      {
+        "id": "practice",
+        "text": "在母亲家尝试突破，达到炼气一层",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.baishacun",
+            "point_id": "base.map.baishacun.point.n05",
+            "world_location_id": "base.world_location.baishacun",
+            "point_marker": true
+          }
+        ]
+      }
+    ],
+    "guidance": [
+      {
+        "id": "guidance",
+        "text": "请母亲指点修行",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.baishacun",
+            "point_id": "base.map.baishacun.point.n05",
+            "world_location_id": "base.world_location.baishacun",
+            "point_marker": false
+          }
+        ]
+      }
+    ],
+    "rejoice": [
+      {
+        "id": "rejoice",
+        "text": "与娘说说初次引气的感受",
+        "completed": false,
+        "show_count": false,
+        "targets": [
+          {
+            "map_id": "base.map.baishacun",
+            "point_id": "base.map.baishacun.point.n05",
+            "world_location_id": "base.world_location.baishacun"
+          }
+        ]
+      }
+    ]
+  },
+  "home": {
+    "map_id": "base.map.baishacun",
+    "point_id": "base.map.baishacun.point.n05"
+  },
+  "mother_person": {
+    "name": "林晚晴",
+    "portrait": "res://assets/ui-portrait-mom-linwanqing.webp"
+  },
+  "completion_rewards": [
+    {
+      "kind": "item",
+      "item_id": "base.map_item.training_guide_stone",
+      "quantity": 1,
+      "badge_text": "解锁",
+      "show_tooltip": true
+    },
+    {
+      "kind": "item",
+      "item_id": "base.map_item.broken_mirror",
+      "quantity": 1,
+      "badge_text": "识名",
+      "show_tooltip": true
+    }
+  ]
+}

@@ -206,6 +206,6 @@ static func view(narrative: Dictionary, library: NpcDialogueLibrary, explored: D
 	if welcome_finished(narrative,library):
 		for topic: Dictionary in library.topics.values():
 			var next := next_segment(narrative,library,topic.id,explored)
-			result.topics.append({"id":topic.id,"label":topic.label if next.is_empty() else library.segments[next].label,"new":not next.is_empty() and not npc.seen.has(next),"history":next.is_empty()})
+			result.topics.append({"id":topic.id,"label":topic.label if next.is_empty() or topic.get("fixed_label",false) else library.segments[next].label,"new":not next.is_empty() and not npc.seen.has(next),"history":next.is_empty()})
 	DialogueGreetings.apply_view(result,narrative,library)
 	return result

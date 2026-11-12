@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3]
+[gd_scene load_steps=37 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/map-baishacun.webp" id="bg"]
 
@@ -193,6 +193,13 @@ _data = {
 }
 point_count = 4
 
+[sub_resource type="Curve2D" id="Curve_24"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0, 0, 14, 18, 2098.5742, 342.0468, -18, -14, 18, 14, 2156, 393, -23, -13, 23, 13, 2240, 451, -18, -10, 0, 0, 2320, 495)
+}
+point_count = 4
+
 [node name="BaishacunLayout" type="Node2D"]
 texture_filter = 4
 
@@ -363,6 +370,13 @@ script = ExtResource("route")
 route_id = "base.map.baishacun.route.r23"
 start_point = NodePath("../../Points/N12")
 end_point = NodePath("../../Points/N13")
+
+[node name="R24_N18_N21" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_24")
+script = ExtResource("route")
+route_id = "base.map.baishacun.route.r24"
+start_point = NodePath("../../Points/N18")
+end_point = NodePath("../../Points/N21")
 
 [node name="Points" type="Node2D" parent="."]
 
@@ -552,3 +566,11 @@ texture = ExtResource("dot")
 script = ExtResource("point")
 point_id = "base.map.baishacun.point.n20"
 location_note = "村井北侧岔路"
+
+[node name="N21" type="Sprite2D" parent="Points"]
+position = Vector2(2320, 495)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.baishacun.point.n21"
+location_note = "近岸取网礁滩"

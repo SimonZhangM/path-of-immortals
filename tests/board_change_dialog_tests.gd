@@ -90,7 +90,7 @@ func run() -> void:
 		ui.loadout_board._drop_data(ui.loadout_board.size * 0.5, data)
 		await settle()
 	check(ui.is_board_change_dialog_open() and model.snapshot() == original, "drop only prompts, does not mutate")
-	check(ui.board_change_dialog.canvas.get_child(0).texture.atlas.resource_path.ends_with("UI-jiaohu-size0.webp"), "shared confirmation artwork")
+	check(ui.board_change_dialog.backing.texture.atlas.resource_path.ends_with("UI-jiaohu-size-tiny.webp"), "compact board confirmation artwork")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://artifacts/board-change-dialog.png")

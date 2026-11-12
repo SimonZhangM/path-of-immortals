@@ -1,0 +1,51 @@
+{
+  "id": "base.organ.yanbilingyuan_shanlingguo",
+  "name": "山灵果",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-yanbilingyuan-shanlingguo.webp",
+  "cooldown": 12,
+  "stamina_cost": 0,
+  "spirit_cost": 0,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "activation_threshold": {
+      "resource": "hp",
+      "numerator": 3,
+      "denominator": 5
+    },
+    "battle_use_limit": 1
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "restore_ticks",
+      "resource": "hp",
+      "value": 6,
+      "ticks": 3,
+      "interval": 2
+    },
+    {
+      "trigger": "on_activate",
+      "effect": "restore_ticks",
+      "resource": "stamina",
+      "value": 8,
+      "ticks": 3,
+      "interval": 2
+    }
+  ],
+  "uses_per_unit": 1
+}

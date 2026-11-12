@@ -89,7 +89,8 @@
         }
       ],
       "retire_flags": [
-        "base.story.qinglan.joined"
+        "base.story.qinglan.joined",
+        "base.story.qinglanchujie.xie_introduced"
       ],
       "set_facts": [
         "base.story.xieyunshu.name_known"
@@ -1745,7 +1746,8 @@
           "base.story.xieyunshu.name_known"
         ],
         "excludes_flags": [
-          "base.story.qinglan.joined"
+          "base.story.qinglan.joined",
+          "base.story.qinglanchujie.accepted"
         ]
       },
       {

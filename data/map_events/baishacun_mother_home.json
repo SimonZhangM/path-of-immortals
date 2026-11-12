@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.baishacun.mother_home",
+  "type": "conversation",
+  "point_id": "base.map.baishacun.point.n05",
+  "trigger": "click",
+  "title": "海边的家",
+  "description": "竹筛晾着鱼干，娘在家里等你。",
+  "leave_label": "出门走走",
+  "dialogue": "res://data/dialogues/mother.json",
+  "presentation": {
+    "background": "res://assets/tanchuang-baishacun-jia.webp",
+    "illustration": "res://assets/tanchuang-baishacun-home-boss.webp",
+    "frame": "res://assets/tanchuang-tongyong-chuangjingbiankuang.webp"
+  }
+}

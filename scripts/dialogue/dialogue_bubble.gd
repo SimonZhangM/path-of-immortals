@@ -86,7 +86,7 @@ func configure(speaker: String, lines: Array, library: NpcDialogueLibrary, statu
 	if is_player:
 		face = PLAYER_FRAMES.portrait_for(status.cultivation_rank_id)
 	else:
-		face = load(library.definition.portrait)
+		face = null if library.definition.portrait.is_empty() else load(library.definition.portrait)
 		if library.definition.has("portrait_region"):
 			var atlas := AtlasTexture.new()
 			atlas.atlas = face
@@ -105,7 +105,7 @@ func configure(speaker: String, lines: Array, library: NpcDialogueLibrary, statu
 	if is_player:
 		var scale_factor := 88.0/432.0
 		rim = _image(load(PLAYER_FRAMES.path_for(status.cultivation_rank_id)),Rect2(center-PLAYER_FRAMES.SOURCE_CENTER*scale_factor,PLAYER_FRAMES.SOURCE_SIZE*scale_factor))
-	else:
+	elif not library.definition.portrait_frame.is_empty():
 		# Original ring is centered near (318,313) in its 627px source.
 		var scale_factor := 102.0/627.0
 		rim = _image(load(library.definition.portrait_frame),Rect2(center-Vector2(318,313)*scale_factor,Vector2.ONE*102))

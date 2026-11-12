@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "first_qi": {
+    "id": "base.breakthrough.first_qi",
+    "realm": 0,
+    "day_seconds": 10,
+    "target": 200,
+    "max_days": 30,
+    "complete_on_target": true,
+    "timeout_progress": 0,
+    "training_site_id": "base.map_event.qingshizhen.cultivation",
+    "map_id": "base.map.baishacun",
+    "point_id": "base.map.baishacun.point.n05"
+  }
+}

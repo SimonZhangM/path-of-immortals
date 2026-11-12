@@ -12,6 +12,23 @@ var _cultivation: Dictionary = {}
 var errors: PackedStringArray = []
 var library: CultivationLibrary
 
+func with_item_overrides(updates: Array[Dictionary]) -> ContentRegistry:
+	# Progress-dependent item presentation belongs to this save candidate.
+	var copy := ContentRegistry.new()
+	copy._elements = _elements
+	copy._traits = _traits
+	copy._items = _items.duplicate()
+	copy._enemies = _enemies
+	copy._enemy_art = _enemy_art
+	copy._characters = _characters
+	copy._boards = _boards
+	copy._cultivation = _cultivation
+	copy.library = library
+	copy.errors = errors.duplicate()
+	for raw: Dictionary in updates:
+		copy._items[raw.id] = ItemData.new(raw)
+	return copy
+
 func load_base_content() -> bool:
 	_elements.clear()
 	_traits.clear()
@@ -81,12 +98,16 @@ func enemy_loadout_error(enemy: Dictionary) -> String:
 		if not _nonnegative_integer(raw.cell[0]) or not _nonnegative_integer(raw.cell[1]) or not inventory.add_item("check.%d" % index, raw.item_id, Vector2i(raw.cell[0], raw.cell[1])):
 			return "unknown, overlapping or out-of-board item"
 		index += 1
+	var armor_capacity := int(enemy.get("innate_armor_capacity", 0))
+	for entry: Dictionary in inventory.get_instances(): armor_capacity += get_item(entry.item_id).armor_capacity
+	if enemy.get("initial_armor", 0) > armor_capacity: return "initial armor exceeds equipped capacity"
 	if not enemy.get("loot", []) is Array: return "loot must be an array"
 	var seen := {}
 	for row: Variant in enemy.get("loot", []):
 		if not row is Dictionary or not row.get("item_id") is String or seen.has(row.item_id): return "invalid/duplicate loot item"
 		if not row.get("chance") is float and not row.get("chance") is int: return "invalid loot probability"
 		if not is_finite(row.chance) or row.chance < 0 or row.chance > 1 or not row.get("first_victory_guaranteed", false) is bool: return "invalid loot probability/first victory flag"
+		if row.has("requires_remaining_item") and (not row.requires_remaining_item is String or not _items.has(row.requires_remaining_item)): return "unknown remaining-item loot condition"
 		seen[row.item_id] = true
 	return ""
 
@@ -270,11 +291,11 @@ func register_item(raw: Dictionary) -> bool:
 		error = "only body armor can define armor type"
 	if error.is_empty() and not _nonnegative_integer(raw.get("uses_per_unit", 0)):
 		error = "uses_per_unit must be a nonnegative integer"
-	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "plant", "beast", "mineral", "board", "food"]:
+	if error.is_empty() and raw.get("category", raw["type"]) not in ["weapon", "armor", "pill", "item", "talisman", "artifact", "throwable", "book", "spell", "plant", "beast", "mineral", "board", "food", "key"]:
 		error = "unsupported category"
 	if error.is_empty() and not raw.get("quality", "凡品") is String:
 		error = "quality must be a string"
-	if error.is_empty() and raw.get("category") not in ["book", "spell"] and MapItemQuality.level(raw.get("quality", "凡品")) == 0:
+	if error.is_empty() and raw.get("category") not in ["book", "spell"] and MapItemQuality.level(raw.get("quality", "凡品")) == 0 and not (raw.get("category") == "key" and raw.get("quality", "凡品").is_empty()):
 		error = "quality must name one of the seven item ranks"
 	if error.is_empty():
 		for effect in raw["effects"]:
@@ -324,8 +345,13 @@ func register_enemy(raw: Dictionary) -> bool:
 	for stat in ["innate_armor_capacity", "initial_armor"]:
 		if error.is_empty() and not _nonnegative_integer(raw.get(stat, 0)):
 			error = stat + " must be a nonnegative integer"
-	if error.is_empty() and raw.get("initial_armor", 0) > raw.get("innate_armor_capacity", 0):
-		error = "initial armor exceeds innate capacity"
+	if error.is_empty():
+		var starting_capacity := int(raw.get("innate_armor_capacity", 0))
+		if raw.get("loadout", []) is Array:
+			for entry: Variant in raw.get("loadout", []):
+				if entry is Dictionary and _items.has(entry.get("item_id", "")): starting_capacity += _items[entry.item_id].armor_capacity
+		if raw.get("initial_armor", 0) > starting_capacity: error = "initial armor exceeds equipped capacity"
+	if error.is_empty() and not raw.get("initialize_equipped_full", false) is bool: error = "initialize_equipped_full must be boolean"
 	if error.is_empty() and not _positive_integer(raw.get("max_hp")):
 		error = "max_hp must be a positive integer <= 1 billion"
 	if error.is_empty():

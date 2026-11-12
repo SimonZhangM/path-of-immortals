@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.diecuifeng.chest_n15",
+  "type": "chest",
+  "point_id": "base.map.diecuifeng.point.n15",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-diecuifeng-beilingshuxia1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-diecuifeng-beilingshuxia0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-diecuifeng-beilingshuxia2.webp"
+  },
+  "title": "北岭树下",
+  "quality": "凡品",
+  "reward_id": "base.map_reward.diecuifeng.chest_n15",
+  "observation": {
+    "location_name": "北岭树下",
+    "location_description": "石阶西侧的树荫铺满草地，岩石沿着山坡错落堆叠。",
+    "chest_name": "旧木箱",
+    "description": "树根旁藏着一只旧木箱，箱盖上落着几片枯叶。",
+    "result_description": "你打开木箱，可以从中选择一件物品收下。"
+  }
+}

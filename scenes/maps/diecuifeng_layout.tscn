@@ -1,0 +1,1023 @@
+[gd_scene load_steps=60 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/map-diecuifeng.webp" id="bg"]
+
+[ext_resource type="Texture2D" path="res://assets/mapdot.webp" id="dot"]
+
+[ext_resource type="Script" path="res://scripts/map/map_route_point.gd" id="point"]
+
+[ext_resource type="Script" path="res://scripts/map/map_route.gd" id="route"]
+
+[ext_resource type="Texture2D" path="res://assets/mapdot2.webp" id="hex"]
+
+[ext_resource type="Texture2D" path="res://assets/mapdot5.webp" id="square"]
+
+[ext_resource type="Texture2D" path="res://assets/mapdot3.webp" id="circle"]
+
+[ext_resource type="Texture2D" path="res://assets/mapdot1.webp" id="diamond"]
+
+[ext_resource type="Texture2D" path="res://assets/map-zhiwu.webp" id="plant"]
+
+[ext_resource type="Texture2D" path="res://assets/map-baoxiang.webp" id="chest"]
+
+[ext_resource type="Texture2D" path="res://assets/map-xiux-shiwai.webp" id="rest"]
+
+[ext_resource type="Texture2D" path="res://assets/map-enemy-1.webp" id="enemy"]
+
+[ext_resource type="Texture2D" path="res://assets/map-likai-zuo.webp" id="exit"]
+
+[ext_resource type="Texture2D" path="res://assets/map-likai-up.webp" id="exit_up"]
+
+[ext_resource type="Texture2D" path="res://assets/map-likai-you.webp" id="exit_right"]
+
+[sub_resource type="AtlasTexture" id="Atlas_hex"]
+atlas = ExtResource("hex")
+region = Rect2(31, 19, 302, 330)
+
+[sub_resource type="AtlasTexture" id="Atlas_square"]
+atlas = ExtResource("square")
+region = Rect2(37, 44, 288, 280)
+
+[sub_resource type="AtlasTexture" id="Atlas_circle"]
+atlas = ExtResource("circle")
+region = Rect2(28, 32, 316, 311)
+
+[sub_resource type="AtlasTexture" id="Atlas_diamond"]
+atlas = ExtResource("diamond")
+region = Rect2(11.0, 16.0, 346.0, 341.0)
+
+[sub_resource type="AtlasTexture" id="Atlas_plant"]
+atlas = ExtResource("plant")
+region = Rect2(12, 13, 280, 274)
+
+[sub_resource type="AtlasTexture" id="Atlas_chest"]
+atlas = ExtResource("chest")
+region = Rect2(5, 57, 289, 225)
+
+[sub_resource type="AtlasTexture" id="Atlas_rest"]
+atlas = ExtResource("rest")
+region = Rect2(22, 10, 258, 283)
+
+[sub_resource type="AtlasTexture" id="Atlas_enemy"]
+atlas = ExtResource("enemy")
+region = Rect2(23, 15, 254, 283)
+
+[sub_resource type="AtlasTexture" id="Atlas_exit"]
+atlas = ExtResource("exit")
+region = Rect2(15, 19, 270, 272)
+
+[sub_resource type="Curve2D" id="Curve_1"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 17.8125, -4.9465, 204.8438, 1632.3504, -36.3672, 14.0976, 36.3672, -14.0976, 311.7188, 1602.6713, -27.2135, 19.7861, 27.2135, -19.7861, 423.0469, 1547.7650, -16.5755, 21.0227, 16.5755, -21.0227, 475.0000, 1483.9549, -4.4531, 20.2807, 4.4531, -20.2807, 522.5000, 1421.6288, 3.4635, 9.8930, 0.0000, 0.0000, 501.7188, 1362.2706)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_2"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -1.9792, -10.3877, 501.7188, 1362.2706, 1.2370, 18.7968, -1.2370, -18.7968, 489.8438, 1299.9445, -13.1120, 14.8395, 13.1120, -14.8395, 494.2969, 1249.4900, -24.7396, 11.6243, 24.7396, -11.6243, 568.5156, 1210.9072, -24.2448, 4.9465, 24.2448, -4.9465, 642.7344, 1179.7441, -23.9974, -3.7099, 23.9974, 3.7099, 713.9844, 1181.2281, -22.0182, -7.6671, 22.0182, 7.6671, 786.7188, 1202.0035, -29.6875, -4.4519, 29.6875, 4.4519, 846.0938, 1227.2307, -19.7917, -0.2473, 0.0000, 0.0000, 964.8438, 1228.7147)
+}
+point_count = 9
+
+[sub_resource type="Curve2D" id="Curve_3"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 12.3698, -2.4733, 964.8438, 1228.7147, -26.4714, 8.1618, 26.4714, -8.1618, 1039.0625, 1213.8751, -19.0495, 13.3556, 19.0495, -13.3556, 1123.6719, 1179.7441, -8.9062, 21.5173, 8.9062, -21.5173, 1153.3594, 1133.7415, -3.9583, 13.8502, 0.0000, 0.0000, 1177.1094, 1050.6401)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_4"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 7.4219, 9.3984, 964.8438, 1228.7147, -17.0703, -20.0334, 17.0703, 20.0334, 1009.3750, 1285.1049, -19.7917, -18.3021, 19.7917, 18.3021, 1067.2656, 1348.9150, -21.0287, -8.9037, 21.0287, 8.9037, 1128.1250, 1394.9176, -22.2656, 3.2152, 22.2656, -3.2152, 1193.4375, 1402.3374, -24.4922, 15.3342, 24.4922, -15.3342, 1261.7188, 1375.6262, -27.2135, 21.7647, 27.2135, -21.7647, 1340.3906, 1310.3322, -14.1016, 10.8823, 0.0000, 0.0000, 1425.0000, 1245.0382)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_5"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -14.8438, -6.6778, 1177.1094, 1050.6401, 30.1823, 12.8610, -30.1823, -12.8610, 1088.0469, 1010.5733, 29.9349, 13.8502, -29.9349, -13.8502, 996.0156, 973.4744, 23.9974, 16.3235, -23.9974, -16.3235, 908.4375, 927.4718, 16.0807, 18.3021, -16.0807, -18.3021, 852.0312, 875.5334, 8.4115, 18.7968, -8.4115, -18.7968, 811.9531, 817.6592, 1.7318, 9.1511, 0.0000, 0.0000, 801.5625, 762.7528)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_6"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 10.6380, -4.4519, 1177.1094, 1050.6401, -25.2344, 5.1939, 25.2344, -5.1939, 1240.9375, 1023.9289, -26.7188, 8.9037, 26.7188, -8.9037, 1328.5156, 1019.4770, -25.7292, 13.6029, 25.7292, -13.6029, 1401.2500, 970.5065, -23.7500, 9.8930, 23.7500, -9.8930, 1482.8906, 937.8595, -20.7812, 13.6029, 20.7812, -13.6029, 1543.7500, 911.1483, -10.6380, 9.1510, 0.0000, 0.0000, 1607.5781, 856.2420)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_7"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -12.1224, 8.4091, 801.5625, 762.7528, 24.2448, -9.6457, -24.2448, 9.6457, 728.8281, 813.2073, 25.7292, -0.2473, -25.7292, 0.2473, 656.0938, 820.6271, 25.2344, 6.6778, -25.2344, -6.6778, 574.4531, 814.6912, 24.4922, 14.5922, -24.4922, -14.5922, 504.6875, 780.5603, 12.8646, 8.9037, 0.0000, 0.0000, 427.5000, 727.1379)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_8"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 11.8750, -3.4626, 801.5625, 762.7528, -23.7500, -1.9786, 23.7500, 1.9786, 872.8125, 741.9775, -19.7917, -5.4412, 19.7917, 5.4412, 944.0625, 774.6245, -17.0703, 4.2046, 17.0703, -4.2046, 991.5625, 774.6245, -9.1537, 4.2046, 0.0000, 0.0000, 1046.4844, 749.3972)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_9"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -6.6797, -8.9037, 801.5625, 762.7528, 6.6797, 15.5815, -6.6797, -15.5815, 761.4844, 709.3304, -7.1745, 12.1190, 7.1745, -12.1190, 761.4844, 669.2637, -17.0703, 10.6350, 17.0703, -10.6350, 804.5312, 636.6167, -9.8958, 5.1938, 0.0000, 0.0000, 863.9062, 605.4536)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_10"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 12.1224, 0.2473, 1046.4844, 749.3972, -22.2656, -3.4626, 22.2656, 3.4626, 1119.2188, 750.8812, -18.8021, -8.1618, 18.8021, 8.1618, 1180.0781, 770.1726, -14.8438, -9.1510, 14.8438, 9.1510, 1232.0312, 799.8517, -6.1849, -4.2045, 0.0000, 0.0000, 1269.1406, 825.0789)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_11"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 9.1536, -3.9572, 863.9062, 605.4536, -20.2865, 6.9251, 20.2865, -6.9251, 918.8281, 581.7103, -22.2656, 6.4305, 22.2656, -6.4305, 985.6250, 563.9029, -11.1328, 3.4626, 0.0000, 0.0000, 1052.4219, 543.1275)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_12"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -12.8646, -2.4733, 1052.4219, 543.1275, 26.9662, 7.6671, -26.9662, -7.6671, 975.2344, 528.2879, 27.9557, 9.6457, -27.9557, -9.6457, 890.6250, 497.1249, 28.6979, 7.4198, -28.6979, -7.4198, 807.5000, 470.4137, 31.1719, 3.2152, -31.1719, -3.2152, 718.4375, 452.6062, 16.3281, 0.2473, 0.0000, 0.0000, 620.4688, 451.1223)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_13"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 7.9167, 8.6564, 1052.4219, 543.1275, -15.3385, -12.6136, 15.3385, 12.6136, 1099.9219, 595.0659, -23.7500, -4.9465, 23.7500, 4.9465, 1144.4531, 618.8092, -33.3985, 0.7420, 33.3985, -0.7420, 1242.4219, 624.7450, -17.0703, 1.7313, 0.0000, 0.0000, 1344.8438, 614.3573)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_14"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -6.1849, -7.6671, 1344.8438, 614.3573, 12.1224, 16.0762, -12.1224, -16.0762, 1307.7344, 568.3547, 7.9167, 16.5708, -7.9167, -16.5708, 1272.1094, 517.9003, 1.7318, 15.0869, -1.7318, -15.0869, 1260.2344, 468.9297, -0.2474, 6.9251, 0.0000, 0.0000, 1261.7188, 427.3790)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_15"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 9.8958, -5.9358, 1344.8438, 614.3573, -15.5859, 12.8609, 15.5859, -12.8609, 1404.2188, 578.7424, -21.2760, 11.1297, 21.2760, -11.1297, 1438.3594, 537.1917, -28.4505, 9.1511, 28.4505, -9.1511, 1531.8750, 511.9644, -16.0807, 14.8396, 16.0807, -14.8396, 1609.0625, 482.2853, -2.2266, 17.0655, 2.2266, -17.0655, 1628.3594, 422.9271, 6.6797, 12.8609, -6.6797, -12.8609, 1622.4219, 379.8925, 5.6901, 5.6885, 0.0000, 0.0000, 1588.2812, 345.7615)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_16"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -9.4010, 1.2366, 1588.2812, 345.7615, 21.0286, 2.2259, -21.0286, -2.2259, 1531.8750, 353.1813, 23.0078, 9.1511, -23.0078, -9.1511, 1462.1094, 332.4059, 24.7396, 9.6457, -24.7396, -9.6457, 1393.8281, 298.2749, 27.9557, 6.9251, -27.9557, -6.9251, 1313.6719, 274.5317, 14.5963, 2.9679, 0.0000, 0.0000, 1226.0938, 256.7242)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_17"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -7.1745, -5.1938, 1588.2812, 345.7615, 12.1224, 12.1190, -12.1224, -12.1190, 1545.2344, 314.5984, 6.1849, 12.3663, -6.1849, -12.3663, 1515.5469, 273.0477, -5.4427, 11.6243, 5.4427, -11.6243, 1508.1250, 240.4007, -17.0703, 12.3663, 17.0703, -12.3663, 1548.2031, 203.3018, -16.0807, 11.3770, 16.0807, -11.3770, 1610.5469, 166.2029, -7.1745, 13.3556, 7.1745, -13.3556, 1644.6875, 135.0399, -1.4844, 8.1617, 0.0000, 0.0000, 1653.5938, 86.0694)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_18"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 13.1120, 6.4305, 1344.8438, 614.3573, -24.9870, -16.0762, 24.9870, 16.0762, 1423.5156, 652.9402, -16.8229, -19.0441, 16.8229, 19.0441, 1494.7656, 710.8144, -10.8854, -18.5494, 10.8854, 18.5494, 1524.4531, 767.2047, -13.8542, -14.8395, 13.8542, 14.8395, 1560.0781, 822.1110, -7.9167, -5.6885, 0.0000, 0.0000, 1607.5781, 856.2420)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_19"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 7.9167, -7.9144, 1607.5781, 856.2420, -15.0912, 12.8610, 15.0912, -12.8610, 1655.0781, 808.7554, -13.1120, 8.6564, 13.1120, -8.6564, 1698.1250, 779.0763, -12.1224, 4.9465, 12.1224, -4.9465, 1733.7500, 756.8170, -6.1849, 1.2366, 0.0000, 0.0000, 1770.8594, 749.3972)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_20"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 8.6588, 2.4733, 1607.5781, 856.2420, -15.3386, -2.7206, 15.3386, 2.7206, 1659.5312, 871.0815, -15.3386, -1.7313, 15.3386, 1.7313, 1699.6094, 872.5655, -8.6588, -1.4839, 0.0000, 0.0000, 1751.5625, 881.4692)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_21"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 1.9792, 6.9251, 1751.5625, 881.4692, -1.4844, -12.8610, 1.4844, 12.8610, 1763.4375, 923.0199, 6.6797, -9.1511, -6.6797, 9.1511, 1760.4688, 958.6349, 13.3594, -8.4091, -13.3594, 8.4091, 1723.3594, 977.9263, 7.1745, -5.1938, 0.0000, 0.0000, 1680.3125, 1009.0893)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_22"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 8.6588, -1.9786, 1751.5625, 881.4692, -18.3073, 7.4198, 18.3073, -7.4198, 1803.5156, 869.5976, -18.5547, 5.4412, 18.5547, -5.4412, 1861.4062, 836.9506, -16.3281, -2.9679, 16.3281, 2.9679, 1914.8438, 836.9506, -27.2135, -2.9679, 27.2135, 2.9679, 1959.3750, 854.7580, -30.4297, 2.4733, 30.4297, -2.4733, 2078.1250, 854.7580, -16.3281, 6.4305, 16.3281, -6.4305, 2141.9531, 839.9185, -5.6901, 3.9572, 0.0000, 0.0000, 2176.0938, 816.1752)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_23"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 9.1537, 7.4198, 1680.3125, 1009.0893, -22.7604, -14.3449, 22.7604, 14.3449, 1735.2344, 1053.6080, -26.9661, -17.0655, 26.9661, 17.0655, 1816.8750, 1095.1587, -32.1615, -12.3663, 32.1615, 12.3663, 1897.0312, 1156.0009, -18.8021, -2.2259, 0.0000, 0.0000, 2009.8438, 1169.3565)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_24"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -12.6172, -1.4840, 2009.8438, 1169.3565, 28.9453, 3.9572, -28.9453, -3.9572, 1934.1406, 1160.4527, 32.6562, 2.9679, -32.6562, -2.9679, 1836.1719, 1145.6132, 30.9245, -0.7420, -30.9245, 0.7420, 1738.2031, 1142.6453, 27.9557, -5.4412, -27.9557, 5.4412, 1650.6250, 1150.0650, 26.7188, -10.3877, -26.7188, 10.3877, 1570.4688, 1175.2923, 24.2448, -11.6243, -24.2448, 11.6243, 1490.3125, 1212.3912, 10.8854, -5.4412, 0.0000, 0.0000, 1425.0000, 1245.0382)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_25"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 13.8542, 4.2045, 2009.8438, 1169.3565, -28.6979, -10.3877, 28.6979, 10.3877, 2092.9688, 1194.5837, -31.6667, -12.3663, 31.6667, 12.3663, 2182.0312, 1231.6826, -33.3984, -12.8609, 33.3984, 12.8609, 2282.9688, 1268.7814, -16.5755, -6.6778, 0.0000, 0.0000, 2382.4219, 1308.8482)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_26"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -11.1328, 1.7313, 2382.4219, 1308.8482, 21.5234, -3.4626, -21.5234, 3.4626, 2315.6250, 1319.2359, 17.5651, -4.2045, -17.5651, 4.2045, 2253.2812, 1329.6236, 7.1745, -2.4733, 0.0000, 0.0000, 2210.2344, 1344.4631)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve_27"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 16.0807, -2.9679, 2382.4219, 1308.8482, -34.1406, 6.6778, 34.1406, -6.6778, 2478.9062, 1291.0408, -27.2136, 7.4198, 27.2136, -7.4198, 2587.2656, 1268.7814, -12.6172, 8.1618, 12.6172, -8.1618, 2642.1875, 1246.5221, 2.4739, 10.1403, -2.4739, -10.1403, 2662.9688, 1219.8109, 16.5755, 9.1510, -16.5755, -9.1510, 2627.3438, 1185.6800, 18.5547, 9.3984, -18.5547, -9.3984, 2563.5156, 1164.9046, 7.9167, 5.9358, 0.0000, 0.0000, 2516.0156, 1129.2897)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_28"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 5.4427, -9.1511, 2516.0156, 1129.2897, -10.8854, 17.0655, 10.8854, -17.0655, 2548.6719, 1074.3833, -13.6068, 16.8182, 13.6068, -16.8182, 2581.3281, 1026.8968, -15.5859, 15.3342, 15.5859, -15.3342, 2630.3125, 973.4744, -6.6797, 11.8716, 6.6797, -11.8716, 2674.8438, 934.8916, 9.6484, 16.3235, -9.6484, -16.3235, 2670.3906, 902.2446, 9.8958, 23.0013, -9.8958, -23.0013, 2616.9531, 836.9506, 0.9896, 12.1190, 0.0000, 0.0000, 2611.0156, 764.2368)
+}
+point_count = 8
+
+[sub_resource type="Curve2D" id="Curve_29"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -6.9271, 11.3770, 2611.0156, 764.2368, 12.6172, -21.5173, -12.6172, 21.5173, 2569.4531, 832.4987, 11.8750, -15.8289, -11.8750, 15.8289, 2535.3125, 893.3408, 12.3698, -5.4412, -12.3698, 5.4412, 2498.2031, 927.4718, 6.1849, 0.2473, 0.0000, 0.0000, 2461.0938, 925.9879)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_30"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 5.6901, -10.3877, 2611.0156, 764.2368, -7.9167, 18.7968, 7.9167, -18.7968, 2645.1562, 701.9107, -2.7214, 16.8182, 2.7214, -16.8182, 2658.5156, 651.4562, -4.7005, 14.3449, 4.7005, -14.3449, 2661.4844, 601.0017, -12.3698, 8.6564, 12.3698, -8.6564, 2686.7188, 565.3868, -8.1641, 2.7206, 0.0000, 0.0000, 2735.7031, 549.0633)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_31"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 0.9896, -10.1404, 2611.0156, 764.2368, 5.9375, 19.2914, -5.9375, -19.2914, 2616.9531, 703.3946, 16.8229, 14.5922, -16.8229, -14.5922, 2575.3906, 648.4883, 25.2344, 10.3877, -25.2344, -10.3877, 2516.0156, 615.8413, 25.9766, 8.6564, -25.9766, -8.6564, 2423.9844, 586.1622, 15.8333, 8.6564, -15.8333, -8.6564, 2360.1562, 563.9029, 5.1953, 4.9465, 0.0000, 0.0000, 2328.9844, 534.2238)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve_32"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 13.1120, -4.2046, 2611.0156, 764.2368, -24.9870, 11.8717, 24.9870, -11.8717, 2689.6875, 739.0095, -22.5130, 16.5708, 22.5130, -16.5708, 2760.9375, 693.0069, -19.5443, 14.3449, 19.5443, -14.3449, 2824.7656, 639.5846, -19.7917, 8.9037, 19.7917, -8.9037, 2878.2031, 606.9376, -10.8854, 3.4626, 0.0000, 0.0000, 2943.5156, 586.1622)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_33"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, -2.7214, -8.1617, 2328.9844, 534.2238, 8.6589, 13.8502, -8.6589, -13.8502, 2312.6562, 485.2533, 13.3594, 8.4091, -13.3594, -8.4091, 2277.0312, 451.1223, 12.6172, 2.2259, -12.6172, -2.2259, 2232.5000, 434.7988, 12.6172, -5.6885, -12.6172, 5.6885, 2201.3281, 437.7667, 7.4219, -5.1938, 0.0000, 0.0000, 2156.7969, 468.9297)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve_34"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 5.6901, -11.1297, 2328.9844, 534.2238, -13.1120, 20.5280, 13.1120, -20.5280, 2363.1250, 467.4458, -12.1224, 16.8182, 12.1224, -16.8182, 2407.6562, 411.0555, -10.1432, 11.1297, 10.1432, -11.1297, 2435.8594, 366.5369, -5.4427, 3.7099, 0.0000, 0.0000, 2468.5156, 344.2775)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve_35"]
+bake_interval = 4.0
+_data = {
+"points": PackedVector2Array(0.0000, 0.0000, 11.6276, -5.9358, 2176.0938, 816.1752, -25.4818, 10.3877, 25.4818, -10.3877, 2245.8594, 780.5603, -26.9661, 5.6885, 26.9661, -5.6885, 2328.9844, 753.8491, -28.6979, -0.9893, 28.6979, 0.9893, 2407.6562, 746.4293, -26.9662, -4.6992, 26.9662, 4.6992, 2501.1719, 759.7849, -18.3073, -0.7420, 18.3073, 0.7420, 2569.4531, 774.6245, -6.9271, 1.7313, 0.0000, 0.0000, 2611.0156, 764.2368)
+}
+point_count = 7
+
+[node name="DiecuifengLayout" type="Node2D"]
+texture_filter = 4
+
+[node name="Background" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+metadata/_edit_lock_ = true
+
+[node name="Routes" type="Node2D" parent="."]
+
+[node name="R01_N01_N02" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_1")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r01"
+start_point = NodePath("../../Points/N01")
+end_point = NodePath("../../Points/N02")
+
+[node name="R02_N02_N03" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_2")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r02"
+start_point = NodePath("../../Points/N02")
+end_point = NodePath("../../Points/N03")
+
+[node name="R03_N03_N04" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_3")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r03"
+start_point = NodePath("../../Points/N03")
+end_point = NodePath("../../Points/N04")
+
+[node name="R04_N03_N22" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_4")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r04"
+start_point = NodePath("../../Points/N03")
+end_point = NodePath("../../Points/N22")
+
+[node name="R05_N04_N05" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_5")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r05"
+start_point = NodePath("../../Points/N04")
+end_point = NodePath("../../Points/N05")
+
+[node name="R06_N04_N17" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_6")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r06"
+start_point = NodePath("../../Points/N04")
+end_point = NodePath("../../Points/N17")
+
+[node name="R07_N05_N06" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_7")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r07"
+start_point = NodePath("../../Points/N05")
+end_point = NodePath("../../Points/N06")
+
+[node name="R08_N05_N07" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_8")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r08"
+start_point = NodePath("../../Points/N05")
+end_point = NodePath("../../Points/N07")
+
+[node name="R09_N05_N09" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_9")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r09"
+start_point = NodePath("../../Points/N05")
+end_point = NodePath("../../Points/N09")
+
+[node name="R10_N07_N08" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_10")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r10"
+start_point = NodePath("../../Points/N07")
+end_point = NodePath("../../Points/N08")
+
+[node name="R11_N09_N10" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_11")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r11"
+start_point = NodePath("../../Points/N09")
+end_point = NodePath("../../Points/N10")
+
+[node name="R12_N10_N11" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_12")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r12"
+start_point = NodePath("../../Points/N10")
+end_point = NodePath("../../Points/N11")
+
+[node name="R13_N10_N12" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_13")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r13"
+start_point = NodePath("../../Points/N10")
+end_point = NodePath("../../Points/N12")
+
+[node name="R14_N12_N13" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_14")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r14"
+start_point = NodePath("../../Points/N12")
+end_point = NodePath("../../Points/N13")
+
+[node name="R15_N12_N14" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_15")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r15"
+start_point = NodePath("../../Points/N12")
+end_point = NodePath("../../Points/N14")
+
+[node name="R16_N14_N15" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_16")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r16"
+start_point = NodePath("../../Points/N14")
+end_point = NodePath("../../Points/N15")
+
+[node name="R17_N14_N16" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_17")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r17"
+start_point = NodePath("../../Points/N14")
+end_point = NodePath("../../Points/N16")
+
+[node name="R18_N12_N17" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_18")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r18"
+start_point = NodePath("../../Points/N12")
+end_point = NodePath("../../Points/N17")
+
+[node name="R19_N17_N18" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_19")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r19"
+start_point = NodePath("../../Points/N17")
+end_point = NodePath("../../Points/N18")
+
+[node name="R20_N17_N19" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_20")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r20"
+start_point = NodePath("../../Points/N17")
+end_point = NodePath("../../Points/N19")
+
+[node name="R21_N19_N20" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_21")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r21"
+start_point = NodePath("../../Points/N19")
+end_point = NodePath("../../Points/N20")
+
+[node name="R22_N19_N33" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_22")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r22"
+start_point = NodePath("../../Points/N19")
+end_point = NodePath("../../Points/N33")
+
+[node name="R23_N20_N21" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_23")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r23"
+start_point = NodePath("../../Points/N20")
+end_point = NodePath("../../Points/N21")
+
+[node name="R24_N21_N22" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_24")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r24"
+start_point = NodePath("../../Points/N21")
+end_point = NodePath("../../Points/N22")
+
+[node name="R25_N21_N23" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_25")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r25"
+start_point = NodePath("../../Points/N21")
+end_point = NodePath("../../Points/N23")
+
+[node name="R26_N23_N24" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_26")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r26"
+start_point = NodePath("../../Points/N23")
+end_point = NodePath("../../Points/N24")
+
+[node name="R27_N23_N25" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_27")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r27"
+start_point = NodePath("../../Points/N23")
+end_point = NodePath("../../Points/N25")
+
+[node name="R28_N25_N26" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_28")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r28"
+start_point = NodePath("../../Points/N25")
+end_point = NodePath("../../Points/N26")
+
+[node name="R29_N26_N27" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_29")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r29"
+start_point = NodePath("../../Points/N26")
+end_point = NodePath("../../Points/N27")
+
+[node name="R30_N26_N28" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_30")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r30"
+start_point = NodePath("../../Points/N26")
+end_point = NodePath("../../Points/N28")
+
+[node name="R31_N26_N29" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_31")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r31"
+start_point = NodePath("../../Points/N26")
+end_point = NodePath("../../Points/N29")
+
+[node name="R32_N26_N32" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_32")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r32"
+start_point = NodePath("../../Points/N26")
+end_point = NodePath("../../Points/N32")
+
+[node name="R33_N29_N30" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_33")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r33"
+start_point = NodePath("../../Points/N29")
+end_point = NodePath("../../Points/N30")
+
+[node name="R34_N29_N31" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_34")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r34"
+start_point = NodePath("../../Points/N29")
+end_point = NodePath("../../Points/N31")
+
+[node name="R35_N33_N26" type="Path2D" parent="Routes"]
+curve = SubResource("Curve_35")
+script = ExtResource("route")
+route_id = "base.map.diecuifeng.route.r35"
+start_point = NodePath("../../Points/N33")
+end_point = NodePath("../../Points/N26")
+
+[node name="Points" type="Node2D" parent="."]
+
+[node name="N01" type="Sprite2D" parent="Points"]
+position = Vector2(204.8438, 1632.3504)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n01"
+location_note = "山下镇道"
+
+[node name="Sign" type="Sprite2D" parent="Points/N01"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.95663265, 0.95663265)
+texture = SubResource("Atlas_square")
+
+[node name="LocationIcon" type="Sprite2D" parent="Points/N01/Sign"]
+scale = Vector2(0.820143885, 0.820143885)
+texture = SubResource("Atlas_exit")
+
+[node name="N02" type="Sprite2D" parent="Points"]
+position = Vector2(501.7188, 1362.2706)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n02"
+location_note = "南麓石阶"
+
+[node name="Sign" type="Sprite2D" parent="Points/N02"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N02/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+[node name="N03" type="Sprite2D" parent="Points"]
+position = Vector2(964.8438, 1228.7147)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n03"
+location_note = "南麓岔口"
+
+[node name="N04" type="Sprite2D" parent="Points"]
+position = Vector2(1177.1094, 1050.6401)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n04"
+location_note = "溪桥西头"
+
+[node name="N05" type="Sprite2D" parent="Points"]
+position = Vector2(801.5625, 762.7528)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n05"
+location_note = "西潭上径"
+
+[node name="N06" type="Sprite2D" parent="Points"]
+position = Vector2(427.5, 727.1379)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n06"
+location_note = "花荫藤坡"
+
+[node name="Sign" type="Sprite2D" parent="Points/N06"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N06/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N07" type="Sprite2D" parent="Points"]
+position = Vector2(1046.4844, 749.3972)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n07"
+location_note = "叠瀑湿岩"
+
+[node name="Sign" type="Sprite2D" parent="Points/N07"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N07/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N08" type="Sprite2D" parent="Points"]
+position = Vector2(1269.1406, 825.0789)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n08"
+location_note = "瀑东树隙"
+
+[node name="Sign" type="Sprite2D" parent="Points/N08"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_hex")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N08/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="N09" type="Sprite2D" parent="Points"]
+position = Vector2(863.9062, 605.4536)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n09"
+location_note = "盘根石径"
+
+[node name="N10" type="Sprite2D" parent="Points"]
+position = Vector2(1052.4219, 543.1275)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n10"
+location_note = "古树东岔"
+
+[node name="N11" type="Sprite2D" parent="Points"]
+position = Vector2(620.4688, 451.1223)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n11"
+location_note = "古树盘根"
+
+[node name="Sign" type="Sprite2D" parent="Points/N11"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.861276987, 0.861276987)
+texture = SubResource("Atlas_circle")
+
+[node name="RestIcon" type="Sprite2D" parent="Points/N11/Sign"]
+scale = Vector2(0.688291799, 0.688291799)
+texture = SubResource("Atlas_rest")
+
+[node name="N12" type="Sprite2D" parent="Points"]
+position = Vector2(1344.8438, 614.3573)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n12"
+location_note = "中峰三岔"
+
+[node name="N13" type="Sprite2D" parent="Points"]
+position = Vector2(1261.7188, 427.379)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n13"
+location_note = "双树草坪"
+
+[node name="Sign" type="Sprite2D" parent="Points/N13"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.861276987, 0.861276987)
+texture = SubResource("Atlas_circle")
+
+[node name="RestIcon" type="Sprite2D" parent="Points/N13/Sign"]
+scale = Vector2(0.688291799, 0.688291799)
+texture = SubResource("Atlas_rest")
+
+[node name="N14" type="Sprite2D" parent="Points"]
+position = Vector2(1588.2812, 345.7615)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n14"
+location_note = "北岭石阶"
+
+[node name="N15" type="Sprite2D" parent="Points"]
+position = Vector2(1226.0938, 256.7242)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n15"
+location_note = "北岭树下"
+
+[node name="Sign" type="Sprite2D" parent="Points/N15"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_hex")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N15/Sign"]
+scale = Vector2(0.695492023, 0.695492023)
+texture = SubResource("Atlas_chest")
+
+[node name="N16" type="Sprite2D" parent="Points"]
+position = Vector2(1653.5938, 86.0694)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n16"
+location_note = "北岭出口"
+
+[node name="Sign" type="Sprite2D" parent="Points/N16"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.95663265, 0.95663265)
+texture = SubResource("Atlas_square")
+
+[node name="LocationIcon" type="Sprite2D" parent="Points/N16/Sign"]
+scale = Vector2(0.820143885, 0.820143885)
+texture = ExtResource("exit_up")
+
+[node name="N17" type="Sprite2D" parent="Points"]
+position = Vector2(1607.5781, 856.242)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n17"
+location_note = "中峰坡脚"
+
+[node name="N18" type="Sprite2D" parent="Points"]
+position = Vector2(1770.8594, 749.3972)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n18"
+location_note = "鹿鸣草地"
+
+[node name="N19" type="Sprite2D" parent="Points"]
+position = Vector2(1751.5625, 881.4692)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n19"
+location_note = "东溪岔口"
+
+[node name="N20" type="Sprite2D" parent="Points"]
+position = Vector2(1680.3125, 1009.0893)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n20"
+location_note = "苔岩下坡"
+
+[node name="Sign" type="Sprite2D" parent="Points/N20"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N20/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N21" type="Sprite2D" parent="Points"]
+position = Vector2(2009.8438, 1169.3565)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n21"
+location_note = "南林藤径"
+
+[node name="Sign" type="Sprite2D" parent="Points/N21"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N21/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N22" type="Sprite2D" parent="Points"]
+position = Vector2(1425.0, 1245.0382)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n22"
+location_note = "浅溪石滩"
+
+[node name="Sign" type="Sprite2D" parent="Points/N22"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N22/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N23" type="Sprite2D" parent="Points"]
+position = Vector2(2382.4219, 1308.8482)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n23"
+location_note = "清潭草岸"
+
+[node name="Sign" type="Sprite2D" parent="Points/N23"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.861276987, 0.861276987)
+texture = SubResource("Atlas_circle")
+
+[node name="RestIcon" type="Sprite2D" parent="Points/N23/Sign"]
+scale = Vector2(0.688291799, 0.688291799)
+texture = SubResource("Atlas_rest")
+
+[node name="N24" type="Sprite2D" parent="Points"]
+position = Vector2(2210.2344, 1344.4631)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n24"
+location_note = "南潭湿岸"
+
+[node name="Sign" type="Sprite2D" parent="Points/N24"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N24/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N25" type="Sprite2D" parent="Points"]
+position = Vector2(2516.0156, 1129.2897)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n25"
+location_note = "东南石阶"
+
+[node name="N26" type="Sprite2D" parent="Points"]
+position = Vector2(2611.0156, 764.2368)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n26"
+location_note = "东岭四岔"
+
+[node name="N27" type="Sprite2D" parent="Points"]
+position = Vector2(2461.0938, 925.9879)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n27"
+location_note = "崖侧树根"
+
+[node name="Sign" type="Sprite2D" parent="Points/N27"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N27/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N28" type="Sprite2D" parent="Points"]
+position = Vector2(2735.7031, 549.0633)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n28"
+location_note = "花岩坡口"
+
+[node name="Sign" type="Sprite2D" parent="Points/N28"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N28/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N29" type="Sprite2D" parent="Points"]
+position = Vector2(2328.9844, 534.2238)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n29"
+location_note = "果林岔口"
+
+[node name="N30" type="Sprite2D" parent="Points"]
+position = Vector2(2156.7969, 468.9297)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n30"
+location_note = "灵果树下"
+
+[node name="Sign" type="Sprite2D" parent="Points/N30"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N30/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
+
+[node name="N31" type="Sprite2D" parent="Points"]
+position = Vector2(2468.5156, 344.2775)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n31"
+location_note = "东北药坡"
+
+[node name="Sign" type="Sprite2D" parent="Points/N31"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.81168831, 0.81168831)
+texture = SubResource("Atlas_hex")
+
+[node name="EventIcon" type="Sprite2D" parent="Points/N31/Sign"]
+scale = Vector2(0.714051873, 0.714051873)
+texture = SubResource("Atlas_plant")
+
+[node name="N32" type="Sprite2D" parent="Points"]
+position = Vector2(2943.5156, 586.1622)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n32"
+location_note = "青岚山道入口"
+
+[node name="Sign" type="Sprite2D" parent="Points/N32"]
+position = Vector2(0, -223.928571)
+scale = Vector2(0.95663265, 0.95663265)
+texture = SubResource("Atlas_square")
+
+[node name="LocationIcon" type="Sprite2D" parent="Points/N32/Sign"]
+scale = Vector2(0.820143885, 0.820143885)
+texture = ExtResource("exit_right")
+
+[node name="N33" type="Sprite2D" parent="Points"]
+position = Vector2(2176.0938, 816.1752)
+scale = Vector2(0.224, 0.224)
+texture = ExtResource("dot")
+script = ExtResource("point")
+point_id = "base.map.diecuifeng.point.n33"
+location_note = "东岭横径"
+
+[node name="Sign" type="Sprite2D" parent="Points/N33"]
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
+
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N33/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")

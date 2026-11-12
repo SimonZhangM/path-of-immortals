@@ -42,15 +42,13 @@ func run() -> void:
 	await settle()
 	assert(ui.victory_view == ui.VictoryView.REVIEW and not ui._log_button.disabled)
 	assert(ui._bag_button.disabled and ui._retreat_button.disabled and not ui._battle_button.disabled)
-	var record: String = ui._log_label.text
+	var record: String = ui._battle_log.text()
 	assert(not record.is_empty())
 	var time: int = game.simulation.state.time_usec
 	click(ui._log_button.get_global_rect().get_center())
 	await settle()
-	assert(ui._log_panel.is_visible_in_tree() and ui._log_label.text == record)
-	var close: Button
-	for button in ui._log_panel.find_children("*", "Button", true, false):
-		if button.text == "关闭 ×": close = button
+	assert(ui._log_panel.is_visible_in_tree() and ui._battle_log.text() == record)
+	var close: TextureButton = ui._log_panel.close_button
 	assert(close != null)
 	click(close.get_global_rect().get_center())
 	await settle()

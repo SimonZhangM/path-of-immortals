@@ -17,6 +17,9 @@ var message: Label
 var confirm_button: TextureButton
 var cancel_button: TextureButton
 var error_label: Label
+var _design_size := DESIGN_SIZE
+var _compact_content: MarginContainer
+var _notice_only := false
 
 func _init() -> void:
 	name = "MapExitDialog"
@@ -54,7 +57,7 @@ func _init() -> void:
 	resized.connect(_layout)
 
 func use_map_exit_art() -> void:
-	# Board-change confirmations share this class but retain their original art.
+	# Scene exits retain their title and medium frame independently of board prompts.
 	var source: Texture2D = load("res://assets/UI-jiaohu-size-m.webp")
 	var atlas := AtlasTexture.new()
 	atlas.atlas = source
@@ -67,6 +70,78 @@ func use_map_exit_art() -> void:
 	# header band, without moving the message or either existing action button.
 	var title_center := backing.position.y+((38.0+185.0)*0.5-atlas.region.position.y)*factor
 	heading.position.y = title_center-heading.size.y*0.5
+
+func use_board_change_art() -> void:
+	if _compact_content != null: return
+	var source: Texture2D = load("res://assets/UI-jiaohu-size-tiny.webp")
+	var atlas := AtlasTexture.new()
+	atlas.atlas = source
+	atlas.region = preload("res://scripts/map/map_texture_metrics.gd").inspect(source).visible_rect
+	backing.texture = atlas
+	_design_size = atlas.get_size()
+	canvas.size = _design_size
+	backing.position = Vector2.ZERO
+	backing.size = _design_size
+	heading.hide()
+	_compact_content = MarginContainer.new()
+	_compact_content.name = "BoardChangeContent"
+	_compact_content.mouse_filter = MOUSE_FILTER_IGNORE
+	canvas.add_child(_compact_content)
+	_compact_content.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	for side in ["left", "right"]:
+		_compact_content.add_theme_constant_override("margin_"+side, 32)
+	for side in ["top", "bottom"]:
+		# The revised tiny frame has a 270px visible height; keep the entire
+		# message, optional note and button stack inside its inner border.
+		_compact_content.add_theme_constant_override("margin_"+side, 36)
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 10)
+	column.mouse_filter = MOUSE_FILTER_IGNORE
+	_compact_content.add_child(column)
+	message.reparent(column)
+	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message.custom_minimum_size = Vector2(0, 52)
+	error_label.reparent(column)
+	error_label.custom_minimum_size = Vector2(0, 32)
+	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var actions := HBoxContainer.new()
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	actions.add_theme_constant_override("separation", 32)
+	actions.mouse_filter = MOUSE_FILTER_IGNORE
+	column.add_child(actions)
+	for button in [confirm_button, cancel_button]:
+		button.reparent(actions)
+		button.custom_minimum_size = MapRewardDialog.ACTION_SIZE
+		button.size_flags_horizontal = SIZE_SHRINK_CENTER
+		button.size_flags_vertical = SIZE_SHRINK_CENTER
+
+func present_confirmation(text: String, note := "") -> void:
+	use_board_change_art()
+	_notice_only = false
+	cancel_button.show()
+	message.text = text
+	confirm_button.get_node("Caption").text = "确认"
+	present("")
+	error_label.text = note
+	error_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	error_label.add_theme_font_size_override("font_size",22)
+	error_label.add_theme_color_override("font_color",Color("f9f8c8"))
+
+func present_notice(text: String) -> void:
+	present_confirmation(text)
+	_notice_only = true
+	cancel_button.hide()
+
+func handle_confirmation_input(event: InputEvent) -> bool:
+	if not visible: return false
+	if event is InputEventKey:
+		if not _notice_only and event.pressed and not event.echo and event.is_action_pressed("ui_cancel"): cancelled.emit()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT:
+		if not _notice_only and event.pressed: cancelled.emit()
+		get_viewport().set_input_as_handled()
+	return true
 
 func _label(text: String, rect: Rect2, font_size: int, color: Color, parent: Control = null) -> Label:
 	var label := Label.new()
@@ -113,14 +188,15 @@ func set_busy(busy: bool) -> void:
 
 func _layout() -> void:
 	# Center the seven Han characters; the trailing question mark hangs outside.
-	var font := message.get_theme_font("font")
-	var font_size := message.get_theme_font_size("font_size")
-	var body_width := font.get_string_size(message.text.trim_suffix("？"), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	message.position.x = (DESIGN_SIZE.x - body_width) * 0.5 + CONTENT_OFFSET_X
-	message.size.x = font.get_string_size(message.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	if _compact_content == null:
+		var font := message.get_theme_font("font")
+		var font_size := message.get_theme_font_size("font_size")
+		var body_width := font.get_string_size(message.text.trim_suffix("？"), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		message.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		message.position.x = (DESIGN_SIZE.x - body_width) * 0.5 + CONTENT_OFFSET_X
+		message.size.x = font.get_string_size(message.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 	canvas.scale = Vector2.ONE * minf(size.x / 1920.0, size.y / 1080.0)
-	canvas.position = (size - DESIGN_SIZE * canvas.scale) * 0.5
+	canvas.position = (size - _design_size * canvas.scale) * 0.5
 
 func _gui_input(_event: InputEvent) -> void:
 	accept_event()

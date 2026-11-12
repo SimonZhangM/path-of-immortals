@@ -1,5 +1,5 @@
 {
-	"music": {"stream": "res://assets/game-start.mp3", "volume_db": -6.0},
+	"music": {"playlist": ["res://assets/game-start1.mp3", "res://assets/game-start2.mp3"], "volume_db": -6.0},
   "reference_size": [2560, 1440],
   "background": "res://assets/UI-game-bg1.webp",
   "backgrounds": [

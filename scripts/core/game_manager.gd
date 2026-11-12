@@ -13,6 +13,7 @@ signal battle_review_requested
 signal battle_exit_requested
 
 const ITEM_ID := "base.test.fire_sword"
+const BATTLE_SETTLEMENT_USEC := 500_000
 const Settings = preload("res://scripts/settings/game_settings.gd")
 const ENEMY_ID := "base.enemy.wild_dog"
 const CLAW_ID := "base.weapon.dog_claw"
@@ -36,6 +37,8 @@ var interaction_epoch: int = 0
 var _placement_rng := RandomNumberGenerator.new()
 var _durable_loadout: MapLoadoutState
 var _durable_snapshot: Dictionary = {}
+var _pending_consumption: Dictionary = {}
+var consumption_save_error := ""
 var player_snapshot: Dictionary = {}
 @export var use_saved_loadout := false
 @export var enemy_id := ENEMY_ID
@@ -95,9 +98,12 @@ func _ready() -> void:
 		if startup_error.is_empty():
 			var loadout: MapLoadoutState = created.state
 			loadout.cultivation_rank_id = party[0].cultivation_rank_id
-			startup_error = MapLoadoutStore.load_into(loadout, loadout_save_path)
+			startup_error = MapLoadoutStore.load_into(loadout, loadout_save_path, player_snapshot.get("growth", {}))
 			if startup_error.is_empty():
-				if loadout.growth.is_empty() and not player_snapshot.get("growth",{}).is_empty(): loadout.growth=player_snapshot.growth.duplicate(true)
+				var adopted := MapLoadoutStore.adopt_session(loadout, loadout_save_path)
+				startup_error = adopted.error
+				if startup_error.is_empty(): loadout_save_path = adopted.path
+			if startup_error.is_empty():
 				_durable_loadout = loadout
 				_durable_snapshot = loadout.snapshot()
 				party[0].inventory = loadout.inventory
@@ -143,7 +149,13 @@ static func armor_instance(index: int) -> String:
 func _process(delta: float) -> void:
 	if simulation == null:
 		return
+	if not _pending_consumption.is_empty():
+		simulation.clock.paused = true
+		return
 	simulation.advance(delta)
+	_publish_simulation_events()
+
+func _publish_simulation_events() -> void:
 	var events := simulation.drain_events()
 	if not events.is_empty():
 		if use_saved_loadout and events.any(func(event: Dictionary): return event.kind == "pill_used" and event.get("consumed", false)):
@@ -153,7 +165,21 @@ func _process(delta: float) -> void:
 		presentation_events.emit(events)
 		inventory_changed.emit()
 
+func _flush_pending_simulation() -> bool:
+	if simulation == null:
+		return false
+	if not _retry_pending_consumption(): return false
+	if simulation.state.phase != GameState.Phase.BATTLE or simulation.clock.paused:
+		return not simulation.state.is_finished()
+	simulation.advance(0.0, true)
+	_publish_simulation_events()
+	return not simulation.clock.paused and not simulation.state.is_finished()
+
 func persist_consumption() -> bool:
+	return _persist_inventory()
+
+func _persist_inventory(save_layout := false) -> bool:
+	if not _pending_consumption.is_empty(): return _commit_consumption()
 	if _durable_loadout == null:
 		return true
 	var surviving := {}
@@ -169,15 +195,32 @@ func persist_consumption() -> bool:
 		if not surviving.has(unit_id):
 			next.owned_units.erase(unit_id)
 			removed = true
-	if not removed:
-		return true
+	if not removed and not save_layout: return true
 	var placements: Array = []
-	for placement: Dictionary in next.placements:
-		placement.unit_ids = placement.get("unit_ids", [placement.instance_id]).filter(func(id: String): return next.owned_units.has(id))
-		if not placement.unit_ids.is_empty():
-			placement.instance_id = placement.unit_ids[0]
-			placements.append(placement)
+	if save_layout:
+		next.board_id = party[0].board.id
+		for entry: Dictionary in party[0].inventory.get_instances():
+			# Preview/compatibility spells have no owned units and are not durable items.
+			var ids: Array = entry.units.map(func(unit: Dictionary): return unit.id).filter(func(id: String): return next.owned_units.has(id))
+			if not ids.is_empty():
+				placements.append({"instance_id": ids[0], "item_id": entry.item_id, "cell": [entry.cell.x, entry.cell.y], "unit_ids": ids})
+		_durable_loadout._sort_placements(placements)
+	else:
+		for placement: Dictionary in next.placements:
+			placement.unit_ids = placement.get("unit_ids", [placement.instance_id]).filter(func(id: String): return next.owned_units.has(id))
+			if not placement.unit_ids.is_empty():
+				placement.instance_id = placement.unit_ids[0]
+				placements.append(placement)
+	if not removed and next.board_id == _durable_snapshot.board_id and placements == _durable_snapshot.placements:
+		return true
 	next.placements = placements
+	_pending_consumption = next
+	return _commit_consumption()
+
+func _retry_pending_consumption() -> bool:
+	return _pending_consumption.is_empty() or persist_consumption()
+
+func _commit_consumption() -> bool:
 	# Do not replace the live simulation inventory with the saved layout.
 	var candidate := MapLoadoutState.new()
 	candidate.registry = registry
@@ -185,20 +228,24 @@ func persist_consumption() -> bool:
 	candidate.records = _durable_loadout.records
 	candidate.cultivation_rank_id = _durable_loadout.cultivation_rank_id
 	candidate.formation_icons = _durable_loadout.formation_icons
-	var error := candidate.restore(next)
+	var error := candidate.restore(_pending_consumption)
 	if error.is_empty():
 		error = MapLoadoutStore.save(candidate, loadout_save_path)
 	if not error.is_empty():
-		simulation.clock.paused = true
-		feedback.emit("消耗存档未完成，战斗已暂停：" + error)
-		push_error(error)
+		consumption_save_error = error
+		if simulation != null: simulation.clock.paused = true
+		feedback.emit("阵盘与消耗存档未完成，战斗已暂停：" + error)
+		push_warning(error)
 		return false
 	_durable_snapshot = candidate.snapshot()
+	_pending_consumption.clear()
+	consumption_save_error = ""
 	return true
 
 func restart() -> void:
 	if not startup_error.is_empty() or party.is_empty():
 		return
+	if not _retry_pending_consumption(): return
 	for member in party + enemies:
 		member.reset_resources()
 		member.inventory.locked = member in enemies
@@ -208,6 +255,7 @@ func restart() -> void:
 	adjustment_open = false
 	interaction_epoch += 1
 	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense)
+	simulation.settlement_interval_usec = BATTLE_SETTLEMENT_USEC
 	# A new encounter takes the preference once; in-battle commands stay local.
 	simulation.clock.set_speed(float(Settings.value("battle_speed", 1.0)))
 	if not player_snapshot.is_empty():
@@ -218,6 +266,7 @@ func restart() -> void:
 	adjustment_changed.emit()
 
 func start_battle() -> void:
+	if not _retry_pending_consumption(): return
 	if simulation != null and simulation.start():
 		if cultivation_preview: _prepare_preview_conditions()
 		adjustment_open = false
@@ -240,10 +289,14 @@ func move_item(member_index: int, instance_id: String, cell: Vector2i) -> bool:
 	return _inventory_result(false)
 
 func _inventory_result(success: bool) -> bool:
+	# The live edit has already succeeded. On save failure retain that layout,
+	# freeze it for retry, and pause instead of undoing simulation clocks/effects.
+	if success: _persist_inventory(true)
 	inventory_interaction.emit("place" if success else "invalid")
 	return success
 
 func can_edit_inventory() -> bool:
+	if not _pending_consumption.is_empty(): return false
 	return can_adjust() and (simulation.state.phase == GameState.Phase.PREPARATION or adjustment_open)
 
 func can_adjust() -> bool:
@@ -433,7 +486,9 @@ func pause_battle() -> void:
 		toggle_pause()
 
 func request_retreat() -> bool:
-	return simulation != null and simulation.request_retreat()
+	if simulation == null: return false
+	if not _flush_pending_simulation(): return false
+	return simulation.request_retreat()
 
 func request_battle_review() -> void:
 	if simulation != null and simulation.state.is_finished():
@@ -445,6 +500,9 @@ func request_battle_exit() -> void:
 
 func toggle_pause() -> void:
 	if simulation != null and simulation.state.phase == GameState.Phase.BATTLE:
+		if not _retry_pending_consumption(): return
+		if not simulation.clock.paused:
+			if not _flush_pending_simulation(): return
 		simulation.clock.paused = not simulation.clock.paused
 		if not simulation.clock.paused:
 			simulation.clear_paused_returns()
@@ -535,7 +593,9 @@ func equip_learned_spell(spell_id: String, cell: Vector2i) -> bool:
 	return true
 
 func set_item_automatic(id: String, automatic: bool) -> bool:
-	return simulation!=null and simulation.timeline!=null and simulation._owners.get(id)==party[0] and simulation.timeline.set_mode(id,automatic)
+	if simulation==null or simulation.timeline==null or simulation._owners.get(id)!=party[0]: return false
+	if not _flush_pending_simulation(): return false
+	return simulation.timeline.set_mode(id,automatic)
 
 func choose_armor_type(armor_type: String) -> bool:
 	if not can_adjust() or armor_type not in party[0].armor_candidates: return false
@@ -546,13 +606,18 @@ func choose_armor_type(armor_type: String) -> bool:
 	return true
 
 func set_all_automatic(automatic: bool) -> void:
-	if simulation!=null and simulation.timeline!=null: simulation.timeline.set_all(party[0],automatic)
+	if simulation!=null and simulation.timeline!=null:
+		if not _flush_pending_simulation(): return
+		simulation.timeline.set_all(party[0],automatic)
 
 func set_prepared_enabled(id: String, enabled: bool) -> bool:
-	return simulation!=null and simulation.timeline!=null and simulation._owners.get(id)==party[0] and simulation.timeline.set_enabled(id,enabled)
+	if simulation==null or simulation.timeline==null or simulation._owners.get(id)!=party[0]: return false
+	if not _flush_pending_simulation(): return false
+	return simulation.timeline.set_enabled(id,enabled)
 
 func activate_manual(id: String, target_id := "") -> bool:
 	if simulation==null or simulation.timeline==null or simulation._owners.get(id)!=party[0]: return false
+	if not _flush_pending_simulation(): return false
 	var result := simulation.timeline.request(id,target_id)
 	if result:
 		presentation_events.emit(simulation.drain_events())

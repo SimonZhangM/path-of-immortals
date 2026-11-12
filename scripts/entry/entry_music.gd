@@ -1,14 +1,16 @@
-extends AudioStreamPlayer
+extends "res://scripts/ui/music_player.gd"
 ## One player for the entire pre-game flow, independent of individual pages.
 const NODE_NAME := "EntryMusic"
 const CONFIG := "res://data/ui/start_menu.json"
 static var _pending_player: AudioStreamPlayer
 var _fade: Tween
+var playlist: Array = []
+var track_index := 0
 
 static func ensure_for(tree: SceneTree) -> AudioStreamPlayer:
 	var existing := tree.root.get_node_or_null(NODE_NAME)
 	if existing != null:
-		if not existing.playing: existing.play()
+		if not existing.playing: existing.start_playback()
 		return existing
 	if is_instance_valid(_pending_player): return _pending_player
 	var player = load("res://scripts/entry/entry_music.gd").new()
@@ -33,11 +35,20 @@ func _ready() -> void:
 	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
 	bus = "Music"
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CONFIG)).music
-	var track := load(config.stream).duplicate() as AudioStreamMP3
-	track.loop = true
+	playlist = config.playlist.duplicate()
+	finished.connect(_next_track)
+	music_gain = db_to_linear(float(config.volume_db))
+	_play_track()
+
+func _play_track() -> void:
+	var track := load(playlist[track_index]).duplicate() as AudioStreamMP3
+	track.loop = false
 	stream = track
-	volume_db = float(config.volume_db)
-	play()
+	start_playback()
+
+func _next_track() -> void:
+	track_index = (track_index+1)%playlist.size()
+	_play_track()
 
 func fade_out(seconds: float) -> void:
 	if _fade != null and _fade.is_valid(): _fade.kill()
@@ -46,6 +57,6 @@ func fade_out(seconds: float) -> void:
 		queue_free()
 		return
 	_fade = create_tween().set_ignore_time_scale(true)
-	_fade.tween_property(self, "volume_linear", 0.0, seconds)
+	_fade.tween_property(self, "music_gain", 0.0, seconds)
 	_fade.tween_callback(stop)
 	_fade.tween_callback(queue_free)

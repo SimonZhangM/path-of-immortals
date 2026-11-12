@@ -1,0 +1,256 @@
+{
+  "quest_id": "quest.prologue.jiuwangdaichao",
+  "dock": {
+    "map_id": "base.map.baishacun",
+    "point_id": "base.map.baishacun.point.n14"
+  },
+  "reef": {
+    "map_id": "base.map.baishacun",
+    "point_id": "base.map.baishacun.point.n21"
+  },
+  "route_id": "base.map.baishacun.route.r24",
+  "route_start": "base.map.baishacun.point.n18",
+  "accepted_location": "白沙村·码头",
+  "item_id": "base.map_item.fishing_net",
+  "net_reward": {
+    "id": "base.map_reward.jiuwangdaichao.net",
+    "item_id": "base.map_item.fishing_net",
+    "quantity": 1
+  },
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true,
+    "dismiss_together": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.xuchanghai": {
+      "name": "许长海",
+      "portrait": "res://assets/ui-portrait-xuchanghai.webp",
+      "portrait_region": [
+        0,
+        0,
+        445,
+        445
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "intro": {
+      "illustration": {
+        "image": "res://assets/map-event-z3-1.webp"
+      },
+      "lines": [
+        "（坐在船边整理绳索，听见脚步声，抬头看了看。）",
+        "回来啦？这回能在家住几天？",
+        "能住几天。许伯，怎么就您在这儿忙？",
+        "趁空把这些理顺。绳子搅成一团，到了船上再解可就麻烦了。",
+        "（在码头边蹲下，看见他手旁的网绳只收了一半。）",
+        "我搭把手？",
+        "你若得空，替我去岸边取张网吧。上回收的时候挂住一角，水又涨上来了，我没敢硬拽。",
+        "在哪一边？",
+        "（指向沿沙滩就能走到的近岸礁石。）",
+        "那块矮礁边，木浮子还露着。眼下潮退，走沙地就能过去。先看看怎么挂的，别上来就扯。",
+        "好，我去看看。",
+        "解不开就回来，别为张网下水。"
+      ],
+      "line_speakers": [
+        "base.npc.xuchanghai",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai"
+      ]
+    },
+    "retrieve": {
+      "illustration": {
+        "image": "res://assets/map-event-z3-2.webp"
+      },
+      "lines": [
+        "（沿沙滩走到近岸，退潮后的沙地上留着浅浅水痕。一枚木浮子靠在石边，下面的旧渔网兜住了突出的石棱。）",
+        "就是这张。网角压在里头，难怪收不动。",
+        "（顺着网边摸到系绳，先把绷紧的绳结松开，再将网角从石棱下慢慢绕出。）",
+        "松了……再往这边一点。",
+        "（将渔网摊在平整的沙地上，抖掉夹住的碎贝壳，检查了一遍网边，又把解开的系绳重新打好。）",
+        "没破，带回去还能用。",
+        "（把渔网卷好，抱在怀里。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu"
+      ]
+    },
+    "returning": {
+      "illustration": {
+        "image": "res://assets/map-event-z3-3.webp"
+      },
+      "lines": [
+        "许伯，网拿回来了，没割。",
+        "（接过网，在船边展开，捏住网角看了看。）",
+        "还以为得舍掉一截。你怎么解出来的？",
+        "边绳绷得太紧。我先把结松开，绕过石角，再重新系好。",
+        "（翻看系好的绳结，笑了笑。）",
+        "这打法，你爹以前常用。跟他学的吧？",
+        "嗯。小时候嫌难，他让我拆了又打。",
+        "他自己当年学的时候，也没少拆。倒没跟你说过？",
+        "这个还真没说。",
+        "在你面前，总得像个熟手嘛。",
+        "（忍不住笑了一下，又低头看了看那只绳结。）",
+        "难怪我一打错，他就看出来了。",
+        "（将网收好，取出一点报酬递给你。）",
+        "拿着，省得我另找人去取。回去陪你娘吧，这边我收拾就成。",
+        "那我先回去了。您也别忙太晚。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.xuchanghai",
+        "base.npc.xuchanghai",
+        "base.map_player.chen_yu"
+      ]
+    },
+    "reminder": {
+      "lines": [
+        "网还在礁边。你若有别的事，先去忙，空了再帮我看看。"
+      ],
+      "line_speakers": [
+        "base.npc.xuchanghai"
+      ]
+    },
+    "after": {
+      "lines": [
+        "收好了，网没坏，下回出船还能用。劳你跑这一趟。"
+      ],
+      "line_speakers": [
+        "base.npc.xuchanghai"
+      ]
+    }
+  },
+  "objectives": [
+    {
+      "id": "find",
+      "text": "找到礁边的旧渔网",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.baishacun",
+          "point_id": "base.map.baishacun.point.n21",
+          "world_location_id": "base.world_location.baishacun"
+        }
+      ]
+    },
+    {
+      "id": "retrieve",
+      "text": "取下挂住的渔网",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.baishacun",
+          "point_id": "base.map.baishacun.point.n21",
+          "world_location_id": "base.world_location.baishacun"
+        }
+      ]
+    },
+    {
+      "id": "return",
+      "text": "将旧渔网交给许长海",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.baishacun",
+          "point_id": "base.map.baishacun.point.n14",
+          "world_location_id": "base.world_location.baishacun"
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "kind": "spirit_stones",
+      "name": "灵石",
+      "quantity": 2,
+      "icon": "res://assets/player-status-coin.webp"
+    }
+  ],
+  "people": [
+    {
+      "name": "许长海",
+      "portrait": "res://assets/ui-portrait-xuchanghai.webp"
+    }
+  ]
+}

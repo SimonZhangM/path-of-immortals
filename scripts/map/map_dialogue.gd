@@ -25,6 +25,7 @@ var _textures: Dictionary = {}
 var _pressed := false
 var _press_position := Vector2.ZERO
 var _dragged := false
+var _dismiss_tween: Tween
 
 func _init() -> void:
 	name = "MapDialogue"
@@ -103,6 +104,9 @@ func prepare(registry: MapEventRegistry) -> String:
 			textures.next_marker = load(event.presentation.next_image)
 		for speaker_id in event.get("speakers", {}):
 			var speaker: Dictionary = event.speakers[speaker_id]
+			if speaker.portrait.is_empty():
+				textures.speakers[speaker_id] = null
+				continue
 			var texture := load(speaker.portrait) as Texture2D
 			var values: Array = speaker.portrait_region
 			var region := Rect2(values[0], values[1], values[2], values[3])
@@ -137,6 +141,10 @@ func prepare(registry: MapEventRegistry) -> String:
 	return ""
 
 func present(event: Dictionary, line: String, speaker_id: String = "", phase: String = "dialogue", line_index: int = 0) -> void:
+	if _dismiss_tween!=null:
+		_dismiss_tween.kill()
+		_dismiss_tween = null
+	for view in [background,portrait,portrait_rim,text_label,speaker_name,next_marker]: view.modulate.a = 1
 	_phase = phase
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	var art := Illustration.art_for(event)
@@ -167,11 +175,13 @@ func present(event: Dictionary, line: String, speaker_id: String = "", phase: St
 	# A gallery caption is fully visible and never starts ordinary auto playback.
 	set_line_text(page_text if page_dialogue else line,phase=="dialogue")
 	background.visible = show_dialogue
-	portrait.visible = show_dialogue
+	portrait.visible = show_dialogue and portrait.texture!=null
 	text_label.visible = show_dialogue
 	speaker_name.visible = show_dialogue and _art.has("name_rect")
 	next_marker.visible = phase == "dialogue" and next_marker.texture != null
 	var show_picture: bool = not art.is_empty() and (page>=0 if art.has("pages") else line_index>=int(art.get("start_line",0)))
+	if art.has("end_line"):
+		show_picture = show_picture and line_index<=int(art.end_line)
 	if show_picture:
 		picture.configure(_textures[event.id].illustration_frame, _textures[event.id].illustration_images[maxi(0,page)], art.image_slot)
 	else:
@@ -183,7 +193,13 @@ func dismiss() -> void:
 	_phase = ""
 	playback.suspend()
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for view in [background,portrait,portrait_rim,text_label,speaker_name,next_marker]: view.hide()
+	if _dismiss_tween!=null: _dismiss_tween.kill()
+	if _art.get("dismiss_together",false) and picture.requested_visible:
+		_dismiss_tween = create_tween().set_parallel(true).set_ignore_time_scale(true)
+		for view in [background,portrait,portrait_rim,text_label,speaker_name,next_marker]:
+			_dismiss_tween.tween_property(view,"modulate:a",0.0,MapEventPicture.FADE_OUT_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	else:
+		for view in [background,portrait,portrait_rim,text_label,speaker_name,next_marker]: view.hide()
 	picture.dismiss()
 	if not picture.visible: hide()
 
@@ -242,7 +258,7 @@ func _layout() -> void:
 		picture.position.y += shift
 	var slot: Array = _art.portrait_slot
 	var center := Vector2(slot[0] + slot[2] * 0.5, slot[1] + slot[3] * 0.5)
-	var portrait_size := portrait.texture.get_size()
+	var portrait_size := portrait.texture.get_size() if portrait.texture!=null else Vector2.ONE
 	portrait_size *= float(_art.portrait_max_size) / maxf(portrait_size.x, portrait_size.y)
 	portrait.size = portrait_size * factor
 	if _art.get("portrait_fills_slot", false):
@@ -254,7 +270,7 @@ func _layout() -> void:
 		portrait.size = Vector2.ONE*diameter
 		if _player_rim:
 			# Enlarge the player's portrait and rim together around the same anchor.
-			var rim_scale := diameter/432.0*1.05
+			var rim_scale := diameter/432.0*1.1025
 			portrait.size = Vector2.ONE*PLAYER_FRAMES.PORTRAIT_SOURCE_SIZE*rim_scale
 			portrait_rim.position = anchor-PLAYER_FRAMES.SOURCE_CENTER*rim_scale
 			portrait_rim.size = PLAYER_FRAMES.SOURCE_SIZE*rim_scale

@@ -40,6 +40,26 @@ static func preview_alignment(enemy: Dictionary) -> Vector2:
 	var coordinates: Array = enemy.get("presentation", {}).get("preview_alignment", [0.5, 0.5])
 	return Vector2(coordinates[0], coordinates[1])
 
+static func combat_tags(enemy: PartyMemberState) -> Dictionary:
+	var armor := ""
+	# Do not turn the runtime's implicit fallback into an approved classification.
+	if enemy.definition.has("innate_armor_type") or not enemy.armor_type_sources.is_empty():
+		armor = enemy.armor_type
+	var attacks: Array[String] = []
+	var missing: Array[String] = []
+	if armor.is_empty(): missing.append("护甲类型")
+	for entry: Dictionary in enemy.inventory.get_instances():
+		var item := enemy._registry.get_item(entry.item_id)
+		if item == null: continue
+		for effect: Dictionary in item.effects:
+			if effect.get("effect", "") != "damage": continue
+			var kind: String = effect.get("damage_type", "")
+			if kind.is_empty():
+				if item.display_name not in missing: missing.append(item.display_name)
+			elif kind not in attacks:
+				attacks.append(kind)
+	return {"armor": armor, "attacks": attacks, "missing": missing}
+
 static func summary_rows(enemy: PartyMemberState) -> Array:
 	var rows: Array = enemy.definition.get("presentation", {}).get("summary", []).duplicate(true)
 	for row: Dictionary in rows:

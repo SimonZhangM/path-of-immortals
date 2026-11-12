@@ -73,6 +73,7 @@ func configure(registry: ContentRegistry, config: Dictionary) -> String:
 	_active_board_bonuses = board.resource_bonuses.duplicate() if board != null else {}
 	for resource in ["hp", "stamina", "spirit"]:
 		maxima[resource] = int(character["max_" + resource]) + (board.resource_bonus(resource) if board != null else 0)
+		if resource == "spirit" and cultivation_rank_id == "base.cultivation.mortal": maxima[resource] = 0
 		resources[resource] = maxima[resource]
 	cultivation_progress = float(config.cultivation_progress)
 	cultivation_bonus_percent = 0
@@ -85,6 +86,7 @@ func apply_board(board: BoardLayout) -> void:
 	if character_definition.get("board_layout", "") == board.id: return
 	for resource in ["hp", "stamina", "spirit"]:
 		maxima[resource] += board.resource_bonus(resource) - int(_active_board_bonuses.get(resource, 0))
+		if resource == "spirit" and cultivation_rank_id == "base.cultivation.mortal": maxima[resource] = 0
 		resources[resource] = minf(resources[resource], maxima[resource])
 	_active_board_bonuses = board.resource_bonuses.duplicate()
 	character_definition.board_layout = board.id
@@ -179,6 +181,9 @@ func apply_growth(value: Dictionary) -> void:
 	for key: String in base:
 		character_definition["max_"+key] = base[key]
 		maxima[key] = int(base[key])+int(_active_board_bonuses.get(key,0))
+		if key == "spirit" and int(growth.realm) == 0:
+			maxima[key] = 0
+			growth.resources[key] = 0
 		resources[key] = minf(maxima[key],int(growth.resources.get(key,CultivationGrowth.cents(resources.get(key,maxima[key]))))/100.0)
 	cultivation_progress = int(growth.progress)/100.0
 	cultivation_required = maxi(1,CultivationGrowth.target(growth)/100)

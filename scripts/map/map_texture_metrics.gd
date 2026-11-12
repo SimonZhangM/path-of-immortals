@@ -7,10 +7,10 @@ static var _metrics: Dictionary = {}
 static var _mipmap_status: Dictionary = {}
 static var _alignment_overrides: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/item_art_alignment.json"))
 
-static func alignment_center(texture: Texture2D) -> Vector2:
+static func alignment_center(texture: Texture2D, context: String = "") -> Vector2:
 	var center := Rect2(inspect(texture).visible_rect).get_center()
 	var authored: Dictionary = _alignment_overrides.get(texture.resource_path, {})
-	if authored.get("optical_centroid", false):
+	if authored.get("optical_centroid", false) or (context == "tooltip" and authored.get("tooltip_optical_centroid", false)):
 		var metrics := inspect(texture)
 		if not metrics.has("optical_center"):
 			var source := texture.get_image()
@@ -27,6 +27,11 @@ static func alignment_center(texture: Texture2D) -> Vector2:
 	if authored.has("horizontal_center"):
 		center.x = float(authored.horizontal_center) * texture.get_width()
 	return center
+
+static func alignment_offset(texture: Texture2D, context: String) -> Vector2:
+	var authored: Dictionary = _alignment_overrides.get(texture.resource_path, {})
+	var offset: Array = authored.get(context + "_offset", [0, 0])
+	return Vector2(offset[0], offset[1])
 
 static func inspect(texture: Texture2D) -> Dictionary:
 	if texture == null:

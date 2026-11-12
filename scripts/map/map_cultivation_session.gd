@@ -3,6 +3,7 @@ extends RefCounted
 
 # Commands own simulation time and atomically commit resources, growth, books and calendar.
 signal changed
+signal presentation_events(events: Array[Dictionary])
 var event: Dictionary = {}
 var mode_id := ""
 var mode_name := ""
@@ -32,6 +33,19 @@ var _selection_pending := false
 var waiting_for_books := false
 
 var _completion_saved := false
+## Optional transactional settlement, used by the first breakthrough run.
+## Mutates only the candidate; an error rejects the entire step.
+var before_step_save: Callable
+var award_cultivation: Callable
+## Ordinary cultivation shares a daily allowance; breakthrough training does not.
+var enforce_daily_cap := true
+## Breakthrough converts exact paid stamina + spirit one-for-one, without site/bonus factors.
+var direct_resource_cultivation := false
+## Simulation seconds per calendar day. Ordinary cultivation retains 60.
+var calendar_day_seconds := 60.0
+
+func seconds_until_day_end() -> float:
+	return (60000000-int(loadout.growth.day_usec))/1000000.0*calendar_day_seconds/60.0
 
 func begin(definition: Dictionary, mode: String, days: int, today: int) -> bool:
 	var matching: Array = definition.get("modes",[]).filter(func(entry): return entry.id==mode)
@@ -154,17 +168,6 @@ func bind(state: MapLoadoutState, status: MapPlayerStatus, path: String) -> bool
 	save_path = path
 	site = CultivationGrowth.rules().sites.get(event.id,{}).duplicate(true)
 	if site.is_empty(): error="此修炼点尚未配置收益。"; return false
-	if not loadout.content_grants.get("training.guide.v1",false):
-		var prepared := MapLoadoutStore.candidate(loadout)
-		if not prepared.error.is_empty(): error=prepared.error; return false
-		var next: MapLoadoutState=prepared.state
-		next.storage.put(next._unit("gift.training.guide","base.map_item.training_guide_stone"))
-		if next.storage_over_capacity(): error="请先为首次修炼赠送的导引石留出一格行囊。"; return false
-		next.content_grants["training.guide.v1"]=true
-		error=MapLoadoutStore.save(next,save_path)
-		if not error.is_empty(): return false
-		error=loadout.restore(next.snapshot())
-		if not error.is_empty(): return false
 	refresh_records()
 	_sync_board()
 	waiting_for_books=mode_id!="cultivation"
@@ -219,6 +222,7 @@ func _sync_board() -> void:
 		member.board=loadout.board
 		for key: String in player.resources: member.set(key,player.resources[key])
 		simulation=CultivationTraining.new(member,loadout.registry)
+		simulation.use_actual_resource_payments=direct_resource_cultivation
 		for id: String in simulation.timeline.timers:
 			if simulation._definitions[id].combat.get("prepared",false): simulation.timeline.set_enabled(id,false)
 		if not simulation.start(): error=simulation.configuration_error; simulation=null
@@ -249,11 +253,16 @@ func advance(delta: float, flush := false) -> void:
 	var remaining := _tick
 	_tick=0.0
 	while remaining>0.000001 and not paused and elapsed_days<duration_days:
-		var duration := minf(minf(remaining,1.0),(60000000-int(loadout.growth.day_usec))/1000000.0)
+		var duration := minf(minf(remaining,1.0),seconds_until_day_end())
 		if not _advance_chunk(duration): return
 		remaining -= duration
 	if elapsed_days>=duration_days: _save_completion()
 	changed.emit()
+
+func daily_cap() -> int:
+	var realm := mini(int(loadout.growth.realm),int(site.realm))
+	var scale := pow(3.0,maxi(0,realm-1))
+	return CultivationGrowth.cents(minf(float(site.cap)*scale,6.0 if int(loadout.growth.realm)==0 else INF))
 
 func _advance_chunk(seconds: float) -> bool:
 	error=""
@@ -265,33 +274,48 @@ func _advance_chunk(seconds: float) -> bool:
 	var scale := pow(3.0,maxi(0,realm-1))
 	# Legacy paid-day markers no longer grant a bonus or create a charge.
 	growth.day_paid=false
-	var cap := CultivationGrowth.cents(minf(float(site.cap)*scale,6.0 if int(growth.realm)==0 else INF))
+	var cap := daily_cap()
 	var mode: Array=CultivationGrowth.rules().modes[mode_id]
+	var simulation_started_usec: int=simulation.state.time_usec
 	simulation.advance(seconds)
 	if not simulation.configuration_error.is_empty(): error=simulation.configuration_error; paused=true; return false
+	var events := simulation.drain_events()
 	var member: PartyMemberState=simulation.state.teams[0][0]
 	for key: String in player.resources: growth.resources[key]=CultivationGrowth.cents(float(member.get(key)))
 	var gained := 0
 	var books_gained := {}
 	for payment: Dictionary in simulation.take_payments():
 		var raw := scale*(float(site.stamina)*float(payment.stamina)+float(site.spirit)*float(payment.spirit))
-		var available := mini(maxi(0,cap-int(growth.budget)),CultivationGrowth.cents(raw))
-		growth.budget=int(growth.budget)+available
-		gained += CultivationGrowth.award(growth,CultivationGrowth.cents(available/100.0*float(mode[0])*(1.0+next.cultivation_bonus_percent()/100.0)))
+		var available := CultivationGrowth.cents(raw)
+		if enforce_daily_cap:
+			available = mini(maxi(0,cap-int(growth.budget)),available)
+			growth.budget=int(growth.budget)+available
+		var value := CultivationGrowth.cents(available/100.0*float(mode[0])*(1.0+next.cultivation_bonus_percent()/100.0))
+		if direct_resource_cultivation:
+			value=CultivationGrowth.cents(float(payment.stamina)+float(payment.spirit))
+		var payment_offset := int(payment.at)-simulation_started_usec
+		var credited := int(award_cultivation.call(next,value,payment_offset)) if award_cultivation.is_valid() else CultivationGrowth.award(growth,value)
+		gained += credited
+		if credited>0:
+			events.append({"kind":"cultivation_gained","value":credited/100.0,"at_usec":payment.at,
+				"instance_id":payment.instance_id,"item_id":payment.item_id,"owner_id":payment.owner_id,"target_id":payment.owner_id})
 		for id: String in selected_ids:
 			var book: Dictionary=next.registry.library.books[id]
 			if payment.element!="all" and payment.element!=book.element: continue
 			if not next.storage_records().any(func(record): return record.id==id): continue
-			var value := CultivationGrowth.cents(available/100.0*float(mode[1]))
-			books_gained[id]=int(books_gained.get(id,0))+CultivationGrowth.award_book(growth,next.registry.library,next.knowledge,id,value)
+			var book_value := CultivationGrowth.cents(available/100.0*float(mode[1]))
+			books_gained[id]=int(books_gained.get(id,0))+CultivationGrowth.award_book(growth,next.registry.library,next.knowledge,id,book_value)
 	var owned: Dictionary=next.snapshot().owned_units
 	for id: String in next.knowledge.learned_spells(next.registry.library):
 		if id not in owned.values(): next.storage.put(next._unit("learned."+id,id))
-	growth.day_usec=int(growth.day_usec)+roundi(seconds*1000000)
+	# The shared calendar stores a fraction of a 60-second ordinary day.
+	# Scale only calendar time; item CD and status timers keep simulation seconds.
+	growth.day_usec=int(growth.day_usec)+roundi(seconds*1000000*60.0/calendar_day_seconds)
 	var completed := int(growth.day_usec)>=60000000
 	if completed:
 		growth.day_usec=0; growth.budget=0; growth.day_paid=false
 		error=next.advance_days(1,event.id)
+	if error.is_empty() and before_step_save.is_valid(): error=before_step_save.call(next,seconds)
 	if error.is_empty(): error=MapLoadoutStore.save(next,save_path)
 	if not error.is_empty():
 		paused=true
@@ -311,6 +335,8 @@ func _advance_chunk(seconds: float) -> bool:
 	member.cultivation_rank_id=player.cultivation_rank_id
 	member.knowledge=loadout.knowledge
 	refresh_records()
+	# Presentation follows a successful commit; failed saves must remain silent.
+	presentation_events.emit(events)
 	return true
 
 func breakthrough_preview() -> String:
@@ -320,6 +346,8 @@ func breakthrough_preview() -> String:
 
 func breakthrough() -> bool:
 	if loadout==null: return false
+	# An active panel attempt has its own deadline and atomic settlement.
+	if loadout.growth.has("breakthrough_attempt"): return false
 	advance(0.0,true)
 	var prepared := MapLoadoutStore.candidate(loadout)
 	if not prepared.error.is_empty(): error=prepared.error; changed.emit(); return false

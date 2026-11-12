@@ -61,6 +61,7 @@ var _inventory_ui_config: Dictionary
 var startup_timings: Dictionary = {}
 var _startup_registry: ContentRegistry
 var sign_motion: MapSignMotion
+var _story_locked_signs: Dictionary = {}
 var player_status: MapPlayerStatus
 var status_header: MapStatusHeader
 var calendar_readout: MapCalendarReadout
@@ -70,7 +71,19 @@ var quest_tracker_controller: Node
 var quest_story_controller: Node
 var river_story_controller: Node
 var herb_story_controller: Node
+var homecoming_story_controller: Node
+var qinglan_departure_controller: Node
+var river_bounty_controller: Node
+var deer_rest_controller: Node
+var old_bench_story_controller: Node
+var fishing_net_story_controller: Node
+var merchant_story_controller: Node
 var task_screen: Control
+var breakthrough_screen: Control
+var breakthrough_exit_dialog: MapExitDialog
+var breakthrough_session = preload("res://scripts/map/map_breakthrough_session.gd").new()
+var _breakthrough_adjusting := false
+var _breakthrough_result_tween: Tween
 var world_map: Control
 var save_browser_controller: Node
 var system_menu_controller: Node
@@ -144,12 +157,9 @@ func initialize_staged() -> void:
 	if remember_error != OK: push_warning("无法记录最后使用的存档：%s" % error_string(remember_error))
 
 func _adopt_autosave() -> void:
-	if not MapLoadoutStore.SaveSlots.is_snapshot(inventory_save_path): return
-	var target: String = MapLoadoutStore.SaveSlots.working_path()
-	startup_error = MapLoadoutStore.save(loadout,target,inventory_save_path)
-	if not startup_error.is_empty(): return
-	inventory_save_path = target
-	MapLoadoutStore.GameSaveSession.active_path = target
+	var adopted := MapLoadoutStore.adopt_session(loadout, inventory_save_path)
+	startup_error = adopted.error
+	if startup_error.is_empty(): inventory_save_path = adopted.path
 
 func _restore_saved_location() -> void:
 	# Explicit transition/battle-return arrivals always take precedence.
@@ -168,6 +178,13 @@ func activate_location() -> void:
 	_location_active = true
 	if river_story_controller!=null: river_story_controller.set_process(true)
 	if herb_story_controller!=null: herb_story_controller.set_process(true)
+	if homecoming_story_controller!=null: homecoming_story_controller.set_process(true)
+	if qinglan_departure_controller!=null: qinglan_departure_controller.set_process(true)
+	if deer_rest_controller!=null: deer_rest_controller.set_process(true)
+	if river_bounty_controller!=null: river_bounty_controller.set_process(true)
+	if old_bench_story_controller!=null: old_bench_story_controller.set_process(true)
+	if fishing_net_story_controller!=null: fishing_net_story_controller.set_process(true)
+	if merchant_story_controller!=null: merchant_story_controller.set_process(true)
 	loadout.set_map_location(definition.id, travel.current_node_id)
 	_save_location()
 	if not staged_startup and location_save_error.is_empty():
@@ -247,21 +264,11 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 		push_error(startup_error)
 		return
 	loadout = created.state
-	startup_error = MapLoadoutStore.load_into(loadout, inventory_save_path)
+	startup_error = MapLoadoutStore.load_into(loadout, inventory_save_path, player_status.growth)
 	if not startup_error.is_empty():
 		loadout = null
 		push_error(startup_error)
 		return
-	if loadout.growth.is_empty():
-		if not player_status.growth.is_empty(): loadout.growth=player_status.growth.duplicate(true)
-		else:
-			loadout.growth = CultivationGrowth.initial(int(registry.get_cultivation(loadout.cultivation_rank_id).order))
-			var base := CultivationGrowth.maxima(loadout.growth)
-			for key: String in base: loadout.growth.resources[key] = int(base[key])*100
-		loadout.growth.experience=player_status.experience
-		if not MapLoadoutStore.SaveSlots.is_snapshot(inventory_save_path):
-			startup_error=MapLoadoutStore.save(loadout,inventory_save_path)
-		if not startup_error.is_empty(): return
 	player_status._active_board_bonuses=loadout.board.resource_bonuses.duplicate()
 	player_status.character_definition.board_layout=loadout.board.id
 	player_status.apply_growth(loadout.growth)
@@ -278,6 +285,9 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	event_state.chest_resolver = func(event: Dictionary): return MapChestRewards.current_event(loadout,event)
 	event_state.enemy_lookup = registry.get_enemy
 	event_state.enemy_available = func(id: String): return registry.enemy_battle_error(id).is_empty()
+	event_state.event_unlocked = func(event: Dictionary): return MapEventRegistry.is_unlocked(loadout,event)
+	loadout.changed.connect(_sync_story_locked_signs)
+	_sync_story_locked_signs()
 	for event: Dictionary in event_registry.events.values():
 		if event.get("pending_enemy", false): continue
 		if event.type == "encounter":
@@ -346,6 +356,35 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	herb_story_controller.map = self
 	herb_story_controller.model = HerbQuest
 	add_child(herb_story_controller)
+	homecoming_story_controller = preload("res://scripts/map/map_quest_story_controller.gd").new()
+	homecoming_story_controller.map = self
+	homecoming_story_controller.model = HomecomingQuest
+	add_child(homecoming_story_controller)
+	qinglan_departure_controller = preload("res://scripts/map/map_qinglan_departure_controller.gd").new()
+	qinglan_departure_controller.map = self
+	qinglan_departure_controller.model = QinglanDepartureQuest
+	add_child(qinglan_departure_controller)
+	if definition.id==DeerRestQuest.data.tree.map_id:
+		deer_rest_controller = preload("res://scripts/map/map_deer_rest_controller.gd").new()
+		deer_rest_controller.map = self
+		deer_rest_controller.model = DeerRestQuest
+		add_child(deer_rest_controller)
+	river_bounty_controller = preload("res://scripts/map/map_river_bounty_controller.gd").new()
+	river_bounty_controller.map = self
+	river_bounty_controller.model = RiverBountyQuest
+	add_child(river_bounty_controller)
+	old_bench_story_controller = preload("res://scripts/map/map_old_bench_story_controller.gd").new()
+	old_bench_story_controller.map = self
+	old_bench_story_controller.model = OldBenchQuest
+	add_child(old_bench_story_controller)
+	fishing_net_story_controller = preload("res://scripts/map/map_quest_story_controller.gd").new()
+	fishing_net_story_controller.map = self
+	fishing_net_story_controller.model = FishingNetQuest
+	add_child(fishing_net_story_controller)
+	merchant_story_controller = preload("res://scripts/map/map_merchant_story_controller.gd").new()
+	merchant_story_controller.map = self
+	merchant_story_controller.model = MerchantRoadQuest
+	add_child(merchant_story_controller)
 	if not defer_optional_views:
 		_ensure_inventory_view()
 		_ensure_technique_view()
@@ -387,7 +426,7 @@ func _ensure_technique_view() -> void:
 
 func _update_optional_view_visibility() -> void:
 	_update_calendar_visibility()
-	if sign_motion != null: sign_motion.set_suspended(is_task_open() or is_inventory_open() or is_technique_open() or is_world_map_open() or is_save_browser_open() or is_system_menu_open())
+	if sign_motion != null: sign_motion.set_suspended(is_task_open() or is_breakthrough_open() or is_inventory_open() or is_technique_open() or is_world_map_open() or is_save_browser_open() or is_system_menu_open())
 
 func is_system_menu_open() -> bool:
 	return system_menu_controller!=null and system_menu_controller.is_open()
@@ -413,9 +452,9 @@ func is_world_map_open() -> bool:
 	return world_map != null and world_map.visible
 
 func set_world_map_open(open: bool) -> void:
-	if open and (is_task_open() or is_save_browser_open() or is_system_menu_open()): return
+	if open and (is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open()): return
 	if is_world_map_open() == open: return
-	if open and (not is_visible_in_tree() or player == null or not startup_error.is_empty() or MapPresentation.transitioning or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
+	if open and (not is_visible_in_tree() or player == null or not startup_error.is_empty() or MapPresentation.transitioning or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
 	if open: _ensure_world_map_view()
 	ItemTooltipHost.for_control(self).dismiss()
 	_end_drag()
@@ -491,7 +530,7 @@ func _update_calendar_readout() -> void:
 
 func _update_calendar_visibility() -> void:
 	if calendar_readout == null: return
-	calendar_readout.visible = is_task_open() or is_inventory_open() or is_technique_open()
+	calendar_readout.visible = is_task_open() or is_breakthrough_open() or is_inventory_open() or is_technique_open()
 	if calendar_readout.visible: _layout_calendar.call_deferred()
 
 func _layout_calendar() -> void:
@@ -507,10 +546,115 @@ func is_technique_open() -> bool:
 func is_task_open() -> bool:
 	return task_screen != null and task_screen.visible
 
+func is_breakthrough_open() -> bool:
+	return breakthrough_screen != null and breakthrough_screen.visible
+
+func set_breakthrough_open(open: bool) -> void:
+	if is_breakthrough_open()==open: return
+	if open and (not is_visible_in_tree() or player==null or loadout==null or not startup_error.is_empty() or MapPresentation.transitioning): return
+	if open and (is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state!=null and event_state.is_active())): return
+	if open: _ensure_breakthrough_view()
+	else: breakthrough_session.set_paused(true)
+	ItemTooltipHost.for_control(self).dismiss()
+	breakthrough_screen.visible = open
+	status_header.map_title.visible = not open and bool(definition.get("show_map_title",true))
+	_end_drag()
+	_clear_hover()
+	if open: player.pause()
+	else:
+		_resume_fullscreen_parent()
+		if HomecomingQuest.rejoice_available(loadout):
+			homecoming_story_controller.try_arrival(travel.current_node_id)
+
+func _ensure_breakthrough_view() -> void:
+	if cultivation_session!=null and cultivation_session.active:
+		cultivation_session.set_paused(true,WorldCalendar.current_day(loadout.calendar))
+	breakthrough_session.bind_runtime(loadout,player_status,inventory_save_path)
+	breakthrough_session.configure(loadout)
+	if breakthrough_screen!=null: return
+	_ensure_calendar_readout()
+	breakthrough_screen = preload("res://scripts/map/map_breakthrough_screen.gd").new()
+	add_child(breakthrough_screen)
+	breakthrough_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	breakthrough_screen.bind_session(breakthrough_session,loadout)
+	breakthrough_screen.bind_feedback_header(status_header)
+	breakthrough_screen.change_requested.connect(_open_breakthrough_inventory)
+	breakthrough_screen.close_requested.connect(_exit_breakthrough)
+	breakthrough_screen.result_confirmed.connect(_finish_breakthrough_result)
+	breakthrough_screen.visibility_changed.connect(_update_optional_view_visibility)
+
+func _finish_breakthrough_result() -> void:
+	if _breakthrough_result_tween!=null or not is_breakthrough_open() or breakthrough_session.phase not in ["succeeded","failed"]: return
+	var succeeded: bool=breakthrough_session.phase=="succeeded"
+	var result: Dictionary=breakthrough_session.runtime.result_snapshot()
+	var audio: Node=breakthrough_screen.get_node("BreakthroughAudio")
+	if succeeded: audio.set_result_transition(true)
+	if not breakthrough_session.reset():
+		if succeeded: audio.set_result_transition(false)
+		breakthrough_screen.result_view.error_label.text=breakthrough_session.runtime.error
+		return
+	if succeeded:
+		breakthrough_screen.present_result("succeeded",result)
+		map_viewport.modulate.a=0.0
+		_breakthrough_result_tween=create_tween().set_ignore_time_scale(true).set_parallel(true)
+		_breakthrough_result_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_breakthrough_result_tween.tween_property(breakthrough_screen,"modulate:a",0.0,1.0)
+		_breakthrough_result_tween.tween_property(map_viewport,"modulate:a",1.0,1.0)
+		_breakthrough_result_tween.finished.connect(func():
+			_breakthrough_result_tween=null
+			set_breakthrough_open(false)
+			breakthrough_screen.modulate.a=1.0
+			audio.set_result_transition(false))
+		return
+	set_breakthrough_open(false)
+
+func _exit_breakthrough() -> void:
+	if is_instance_valid(breakthrough_exit_dialog) and breakthrough_exit_dialog.visible: return
+	if breakthrough_exit_dialog==null:
+		breakthrough_exit_dialog=MapExitDialog.new()
+		breakthrough_exit_dialog.name="BreakthroughExitConfirmation"
+		breakthrough_exit_dialog.z_index=100
+		add_child(breakthrough_exit_dialog)
+		breakthrough_exit_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		breakthrough_exit_dialog.cancelled.connect(breakthrough_exit_dialog.hide)
+		breakthrough_exit_dialog.confirmed.connect(_confirm_breakthrough_exit)
+	ItemTooltipHost.for_control(self).dismiss()
+	breakthrough_screen.stage.get_node("GainFeedback").clear()
+	breakthrough_exit_dialog.present_confirmation("确定退出突破流程吗？","注意：退出后不保留当前进度。")
+
+func _confirm_breakthrough_exit() -> void:
+	if not is_instance_valid(breakthrough_exit_dialog) or not breakthrough_exit_dialog.visible: return
+	if not breakthrough_session.reset(): return
+	breakthrough_exit_dialog.hide()
+	set_breakthrough_open(false)
+
+func _open_breakthrough_inventory() -> void:
+	if not is_breakthrough_open() or not breakthrough_session.can_adjust(): return
+	_breakthrough_adjusting = true
+	breakthrough_screen.get_node("BreakthroughAudio").set_adjusting(true)
+	breakthrough_screen.hide()
+	_ensure_inventory_view()
+	inventory_screen.set_warehouse()
+	inventory_screen.show()
+	status_header.map_title.hide()
+	player.pause()
+	_end_drag()
+	_clear_hover()
+
+func _return_from_breakthrough_inventory() -> void:
+	_breakthrough_adjusting = false
+	breakthrough_screen.show()
+	breakthrough_screen.get_node("BreakthroughAudio").set_adjusting(false)
+	breakthrough_screen.refresh()
+	status_header.map_title.hide()
+	player.pause()
+	_end_drag()
+	_clear_hover()
+
 func set_task_open(open: bool) -> void:
 	if is_task_open()==open: return
 	if open and (not is_visible_in_tree() or player==null or loadout==null or not startup_error.is_empty() or MapPresentation.transitioning): return
-	if open and (is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state!=null and event_state.is_active())): return
+	if open and (is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state!=null and event_state.is_active())): return
 	if open: _ensure_task_view()
 	ItemTooltipHost.for_control(self).dismiss()
 	task_screen.visible = open
@@ -534,7 +678,8 @@ func _ensure_task_view() -> void:
 		task_screen.visibility_changed.connect(_update_optional_view_visibility)
 
 func _open_book_details(book_id: String) -> void:
-	if is_task_open(): return
+	if _breakthrough_adjusting: return
+	if is_task_open() or is_breakthrough_open(): return
 	if not is_visible_in_tree() or not loadout.registry.library.books.has(book_id): return
 	if is_inventory_open():
 		if not _prepare_inventory_close(): return
@@ -550,7 +695,7 @@ func _open_book_details(book_id: String) -> void:
 	_clear_hover()
 
 func set_technique_open(open: bool) -> void:
-	if open and (is_task_open() or is_save_browser_open() or is_system_menu_open()): return
+	if open and (is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open()): return
 	if is_technique_open() == open: return
 	if open and (is_world_map_open() or is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
 	if open: _ensure_technique_view()
@@ -591,12 +736,22 @@ func _handle_fullscreen_switch(event: InputEventKey) -> bool:
 	if is_inventory_open(): current = "map_inventory"
 	elif is_technique_open(): current = "map_techniques"
 	elif is_task_open(): current = "map_tasks"
+	elif is_breakthrough_open(): current = "map_breakthrough"
 	elif is_world_map_open(): current = "map_world_map"
 	if current.is_empty(): return false
 	var target := ""
-	for action in ["map_inventory","map_techniques","map_tasks","map_world_map"]:
+	for action in ["map_inventory","map_techniques","map_tasks","map_breakthrough","map_world_map"]:
 		if event.is_action_pressed(action): target = action
 	if target.is_empty(): return false
+	if _breakthrough_adjusting:
+		if target=="map_inventory": return false
+		if target=="map_breakthrough": set_inventory_open(false)
+		return true
+	if is_breakthrough_open() and target!=current and breakthrough_session.phase!="ready":
+		if target=="map_inventory":
+			_open_breakthrough_inventory()
+			return true
+		return true
 	var warehouse := is_inventory_open() and not inventory_screen.warehouse_id.is_empty()
 	if target==current and not (warehouse and target=="map_inventory"): return false
 	if event_state!=null and event_state.is_active() and not warehouse and not _cultivation_adjusting: return false
@@ -606,6 +761,7 @@ func _handle_fullscreen_switch(event: InputEventKey) -> bool:
 		else: inventory_screen.hide()
 	if is_technique_open(): technique_screen.hide()
 	if is_task_open(): task_screen.hide()
+	if is_breakthrough_open(): breakthrough_screen.hide()
 	if is_world_map_open(): world_map.hide()
 	match target:
 		"map_techniques":
@@ -618,6 +774,9 @@ func _handle_fullscreen_switch(event: InputEventKey) -> bool:
 		"map_tasks":
 			_ensure_task_view()
 			task_screen.show()
+		"map_breakthrough":
+			_ensure_breakthrough_view()
+			breakthrough_screen.show()
 		"map_world_map":
 			_ensure_world_map_view()
 			world_map.present(definition.id,loadout.map_visited)
@@ -633,11 +792,11 @@ func is_exit_open() -> bool:
 	return exit_dialog != null and exit_dialog.visible
 
 func set_inventory_open(open: bool) -> void:
-	if open and (is_task_open() or is_save_browser_open() or is_system_menu_open()): return
+	if open and (is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open()): return
 	if not open and is_inventory_open() and not inventory_screen.warehouse_id.is_empty():
 		_close_home_warehouse()
 		return
-	if is_world_map_open() or is_technique_open() or is_task_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
+	if is_world_map_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (open and event_state != null and event_state.is_active()):
 		return
 	if is_inventory_open() == open:
 		return
@@ -650,6 +809,9 @@ func set_inventory_open(open: bool) -> void:
 	if open:
 		player.pause()
 	else:
+		if _breakthrough_adjusting:
+			_return_from_breakthrough_inventory()
+			return
 		if _cultivation_adjusting:
 			_cultivation_adjusting=false
 			cultivation_session.suspend("inventory",false,WorldCalendar.current_day(loadout.calendar))
@@ -683,13 +845,48 @@ func _sync_player_name() -> void:
 		player_status.changed.emit()
 
 func _input(event: InputEvent) -> void:
+	if deer_rest_controller!=null and deer_rest_controller.handle_choice_input(event): return
+	if river_bounty_controller!=null and river_bounty_controller.handle_choice_input(event): return
+	if old_bench_story_controller!=null and old_bench_story_controller.handle_choice_input(event): return
+	if _breakthrough_result_tween!=null:
+		get_viewport().set_input_as_handled()
+		return
+	if is_breakthrough_open() and breakthrough_screen.handle_completion_illustration_input(event): return
+	if river_story_controller!=null and river_story_controller.handle_notice_input(event): return
+	if is_instance_valid(breakthrough_exit_dialog) and breakthrough_exit_dialog.handle_confirmation_input(event): return
+	if is_instance_valid(reward_dialog) and reward_dialog.visible and reward_dialog.close_as_accept:
+		var close_key: bool = event is InputEventKey and event.pressed and not event.echo and event.keycode==KEY_ESCAPE
+		var close_mouse: bool = event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_RIGHT
+		if close_key or close_mouse:
+			reward_dialog.request_close()
+			get_viewport().set_input_as_handled()
+			return
 	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo and event.is_action_pressed("map_task_tracker"):
 		if quest_tracker_controller!=null and quest_tracker_controller.available():
 			quest_tracker_controller.toggle_shown()
 			get_viewport().set_input_as_handled()
 			return
+	if not Engine.is_editor_hint() and is_breakthrough_open() and event is InputEventKey and event.pressed and not event.echo and (event.keycode==KEY_SPACE or event.physical_keycode==KEY_SPACE):
+		var focus := get_viewport().gui_get_focus_owner()
+		if focus is LineEdit or focus is TextEdit: return
+		breakthrough_session.activate_primary()
+		get_viewport().set_input_as_handled()
+		return
 	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo:
 		if _handle_fullscreen_switch(event):
+			get_viewport().set_input_as_handled()
+			return
+	if not Engine.is_editor_hint() and is_breakthrough_open():
+		if event is InputEventKey:
+			if event.pressed and not event.echo and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("map_breakthrough")):
+				set_breakthrough_open(false)
+			get_viewport().set_input_as_handled()
+		return
+	if not Engine.is_editor_hint() and event is InputEventKey and event.pressed and not event.echo and event.is_action_pressed("map_breakthrough"):
+		var focus := get_viewport().gui_get_focus_owner()
+		if focus is LineEdit or focus is TextEdit: return
+		set_breakthrough_open(true)
+		if is_breakthrough_open():
 			get_viewport().set_input_as_handled()
 			return
 	if not Engine.is_editor_hint() and is_task_open():
@@ -877,6 +1074,10 @@ func _setup_events() -> void:
 		return
 	event_registry = MapEventRegistry.new()
 	startup_error = event_registry.load_files(files, travel.node_positions.keys())
+	if startup_error.is_empty() and definition.id==DeerRestQuest.data.tree.map_id:
+		event_registry.events[DeerRestQuest.data.battle.id] = DeerRestQuest.data.battle.duplicate(true)
+	if startup_error.is_empty() and definition.id==MerchantRoadQuest.data.road.map_id:
+		event_registry.events[MerchantRoadQuest.data.battle.id]=MerchantRoadQuest.data.battle.duplicate(true)
 	if not startup_error.is_empty():
 		push_error(startup_error)
 		return
@@ -1017,6 +1218,13 @@ func _configure_exits(configs: Variant) -> String:
 		if config.has("required_story_flag"):
 			if not config.required_story_flag is String or not config.required_story_flag.begins_with("base.story."):
 				return "地图出口剧情条件无效。"
+		var required_flags: Variant = config.get("required_story_flags", [])
+		if not required_flags is Array:
+			return "地图出口剧情条件列表无效。"
+		for flag: Variant in required_flags:
+			if not flag is String or not flag.begins_with("base.story."):
+				return "地图出口剧情条件无效。"
+		if config.has("required_story_flag") or not required_flags.is_empty():
 			if not config.get("locked_hint") is String or config.locked_hint.strip_edges().is_empty():
 				return "地图出口未解锁提示缺失。"
 		checked[config.point_id] = config.duplicate(true)
@@ -1032,6 +1240,21 @@ func _sync_completed_signs(animate: bool = false) -> void:
 			else:
 				point.get_node("Sign").hide()
 
+func _sync_story_locked_signs() -> void:
+	for event: Dictionary in event_registry.events.values():
+		if event.get("enabled",true) and event.get("requires_story_flags",[]).is_empty() and event.id!="base.map_event.qingshizhen.shop": continue
+		var point_id: String = event.point_id
+		var locked := not MapEventRegistry.is_unlocked(loadout,event)
+		if _story_locked_signs.get(point_id,false)==locked: continue
+		_story_locked_signs[point_id] = locked
+		if sign_motion!=null:
+			if locked: sign_motion.complete(point_id,false)
+			elif not event_state.completed.has(event.id): sign_motion.restore(point_id)
+		else:
+			for point: MapRoutePoint in content.get_node("Points").get_children():
+				if point.point_id==point_id and point.has_node("Sign"):
+					point.get_node("Sign").visible = not locked and not event_state.completed.has(event.id)
+
 func _on_encounter_changed(event_id: String, animate_signs: bool = true) -> void:
 	var point_id: String = event_registry.events[event_id].point_id
 	if event_state.completed.has(event_id):
@@ -1044,6 +1267,27 @@ func _on_encounter_changed(event_id: String, animate_signs: bool = true) -> void
 				point.get_node("Sign").show()
 
 func _advance_dialogue() -> void:
+	if deer_rest_controller!=null and deer_rest_controller.owns_dialogue():
+		deer_rest_controller.advance()
+		return
+	if qinglan_departure_controller!=null and qinglan_departure_controller.owns_dialogue():
+		qinglan_departure_controller.advance()
+		return
+	if river_bounty_controller!=null and river_bounty_controller.owns_dialogue():
+		river_bounty_controller.advance()
+		return
+	if old_bench_story_controller!=null and old_bench_story_controller.owns_dialogue():
+		old_bench_story_controller.advance()
+		return
+	if merchant_story_controller!=null and merchant_story_controller.owns_dialogue():
+		merchant_story_controller.advance()
+		return
+	if fishing_net_story_controller!=null and fishing_net_story_controller.owns_dialogue():
+		fishing_net_story_controller.advance()
+		return
+	if homecoming_story_controller!=null and homecoming_story_controller.owns_dialogue():
+		homecoming_story_controller.advance()
+		return
 	if herb_story_controller!=null and herb_story_controller.owns_dialogue():
 		herb_story_controller.advance()
 		return
@@ -1149,6 +1393,21 @@ func _present_event_progress(completed_id: String = "") -> void:
 		dialogue.present(event_state.active_event(), event_state.current_line(), event_state.current_speaker_id(), event_state.phase)
 
 func _accept_reward() -> void:
+	if river_bounty_controller!=null and river_bounty_controller.owns_dialogue():
+		river_bounty_controller.accept_reward()
+		return
+	if old_bench_story_controller!=null and old_bench_story_controller.owns_dialogue():
+		old_bench_story_controller.accept_reward()
+		return
+	if merchant_story_controller!=null and merchant_story_controller.owns_dialogue():
+		merchant_story_controller.accept_reward()
+		return
+	if fishing_net_story_controller!=null and fishing_net_story_controller.owns_dialogue():
+		fishing_net_story_controller.accept_reward()
+		return
+	if homecoming_story_controller!=null and homecoming_story_controller.owns_dialogue():
+		homecoming_story_controller.accept_reward()
+		return
 	if herb_story_controller!=null and herb_story_controller.owns_dialogue():
 		herb_story_controller.accept_reward()
 		return
@@ -1197,6 +1456,7 @@ func _visit_exploration(point_id: String) -> void:
 	var visited_ids: Array = loadout.map_visited.get(definition.id, [])
 	if exploration != null and (not _exploration_presented or visited_ids!=_exploration_visit_ids):
 		exploration.rebuild(travel.accessible_graph(), visited_ids)
+		FishingNetQuest.reveal_route(loadout,definition.id,exploration)
 		travel.revealed_points = exploration.revealed.duplicate()
 		travel.revealed_routes = exploration.full_routes.duplicate()
 		for point: MapRoutePoint in content.get_node("Points").get_children():
@@ -1215,11 +1475,14 @@ func _visit_exploration(point_id: String) -> void:
 		if not exploration_save_error.is_empty(): push_warning("探索进度尚未保存：" + exploration_save_error)
 
 func _on_node_arrived(point_id: String) -> void:
+	if _location_active and qinglan_departure_controller!=null: qinglan_departure_controller.record_arrival(point_id)
+	if _location_active and old_bench_story_controller!=null: old_bench_story_controller.record_arrival(point_id)
 	# Capture discovery before recording this arrival; the existing visit ledger persists it.
 	var first_visit: bool = point_id not in loadout.map_visited.get(definition.id, [])
 	if _location_active: loadout.set_map_location(definition.id, point_id)
 	_visit_exploration(point_id)
 	if _location_active: _save_location()
+	if merchant_story_controller!=null and merchant_story_controller.try_arrival(point_id): return
 	if exits_by_point.has(point_id) and exits_by_point[point_id].get("trigger", "arrival") == "arrival" and not event_state.is_active():
 		travel.stop_at_current_node()
 		if _try_open_exit(point_id):
@@ -1579,9 +1842,15 @@ func _cancel_chest() -> void:
 	_clear_hover()
 
 func _encounter_retreat_point() -> String:
-	var previous: String = loadout.map_previous_location.get("point_id","")
 	var candidates: Array = travel.adjacency.get(travel.current_node_id,[]).filter(
 		func(edge: Dictionary): return travel.edge_allowed(edge))
+	# The last traversed edge is authoritative during this visit. A save may
+	# still describe an earlier departure point; use it only after a reload.
+	if travel.last_arrival.get("to", "") == travel.current_node_id:
+		var incoming: String = travel.last_arrival.get("from", "")
+		for edge: Dictionary in candidates:
+			if edge.to == incoming: return incoming
+	var previous: String = loadout.map_previous_location.get("point_id","")
 	for edge: Dictionary in candidates:
 		if edge.to==previous: return previous
 	# Old saves have no arrival history. Prefer an already visited neighbour.
@@ -1593,6 +1862,7 @@ func _encounter_retreat_point() -> String:
 
 func _place_after_encounter(point_id: String) -> void:
 	if not travel.node_positions.has(point_id): return
+	travel.last_arrival.clear()
 	travel.current_node_id = point_id
 	travel.map_position = travel.node_positions[point_id]
 	travel.stop_at_current_node()
@@ -1634,12 +1904,17 @@ func _confirm_encounter() -> void:
 	_start_encounter_battle.call_deferred()
 
 func _encounter_error(message: String) -> void:
+	if deer_rest_controller!=null and event_state.active_id==DeerRestQuest.data.battle.id:
+		deer_rest_controller.battle_error(message)
+		return
 	encounter_dialog.error_label.text = message
 	encounter_dialog.set_busy(false)
 
-func _start_encounter_battle() -> void:
-	if event_state.phase != "encounter" or not encounter_dialog.visible:
-		return
+func _start_encounter_battle(direct_story := false) -> void:
+	if event_state.phase != "encounter": return
+	if direct_story:
+		if deer_rest_controller==null or event_state.active_id!=DeerRestQuest.data.battle.id or not DeerRestQuest.battle_ready(loadout): return
+	elif not encounter_dialog.visible: return
 	if event_state.active_event().get("pending_enemy", false):
 		encounter_dialog.set_busy(false)
 		return
@@ -1681,6 +1956,7 @@ func _start_encounter_battle() -> void:
 	battle.add_child(return_flow)
 	battle_ui.battle_exit_handler = return_flow.return_to_map
 	battle_ui.defer_battle_music = true
+	battle_ui.source_map_id = definition.id
 	battle_ui.hide()
 	battle.process_mode = Node.PROCESS_MODE_DISABLED
 	get_tree().root.add_child(battle)
@@ -1719,12 +1995,17 @@ func resume_after_battle(snapshot: Dictionary) -> String:
 	_end_drag()
 	_clear_hover()
 	if river_story_controller!=null: river_story_controller.set_process(true)
+	if merchant_story_controller!=null: merchant_story_controller.set_process(true)
+	if deer_rest_controller!=null: deer_rest_controller.set_process(true)
 	return ""
 
 func _exit_lock_hint(config: Dictionary) -> String:
 	var flag: String = config.get("required_story_flag", "")
 	if not flag.is_empty() and not loadout.narrative.flags.get(flag, false):
 		return config.locked_hint
+	for required: String in config.get("required_story_flags", []):
+		if not loadout.narrative.flags.get(required, false):
+			return config.locked_hint
 	return ""
 
 func _try_open_exit(point_id: String) -> bool:
@@ -1834,11 +2115,18 @@ func _complete_exit() -> void:
 func _try_start_event(point_id: String, trigger: String, stationary: bool, first_visit := false) -> bool:
 	if is_world_map_open(): return false
 	if travel.hidden_points.has(point_id): return false
+	if stationary and point_id==travel.current_node_id and deer_rest_controller!=null and deer_rest_controller.try_arrival(point_id,trigger=="click"): return true
+	if stationary and point_id==travel.current_node_id and merchant_story_controller!=null and merchant_story_controller.try_arrival(point_id,trigger=="click"): return true
 	if not MapEventRegistry.story_allowed(loadout,point_id):
 		return _start_registered_event(point_id,trigger,stationary,first_visit)
+	if stationary and point_id==travel.current_node_id and qinglan_departure_controller!=null and qinglan_departure_controller.try_arrival(point_id,trigger=="click"): return true
 	if stationary and point_id==travel.current_node_id and quest_story_controller!=null and quest_story_controller.try_arrival(point_id): return true
 	if stationary and point_id==travel.current_node_id and river_story_controller!=null and river_story_controller.try_arrival(point_id,trigger=="click"): return true
 	if stationary and point_id==travel.current_node_id and herb_story_controller!=null and herb_story_controller.try_arrival(point_id,trigger=="click"): return true
+	if stationary and point_id==travel.current_node_id and homecoming_story_controller!=null and homecoming_story_controller.try_arrival(point_id,trigger=="click"): return true
+	if stationary and point_id==travel.current_node_id and fishing_net_story_controller!=null and fishing_net_story_controller.try_arrival(point_id,trigger=="click"): return true
+	if stationary and point_id==travel.current_node_id and river_bounty_controller!=null and river_bounty_controller.try_arrival(point_id,trigger=="click"): return true
+	if stationary and point_id==travel.current_node_id and old_bench_story_controller!=null and old_bench_story_controller.try_arrival(point_id,trigger=="click"): return true
 	return _start_registered_event(point_id,trigger,stationary,first_visit)
 
 func _start_registered_event(point_id: String, trigger: String, stationary: bool, first_visit := false) -> bool:
@@ -1852,6 +2140,7 @@ func _start_registered_event(point_id: String, trigger: String, stationary: bool
 
 func _setup_player() -> void:
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/player.json"))
+	config.display_scale = float(config.display_scale)*float(definition.get("player_display_scale_multiplier",1.0))
 	if not arrival_facing.is_empty():
 		config.initial_facing = arrival_facing
 	var positions := {}
@@ -1892,9 +2181,13 @@ func _setup_player() -> void:
 	_clamp_position()
 
 func _process(delta: float) -> void:
-	if is_task_open() or is_save_browser_open() or is_system_menu_open(): return
+	if is_breakthrough_open():
+		if not is_instance_valid(breakthrough_exit_dialog) or not breakthrough_exit_dialog.visible:
+			breakthrough_session.advance(delta)
+		breakthrough_screen.refresh_rotation()
+	if is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open(): return
 	if cultivation_session != null and not Engine.is_editor_hint(): cultivation_session.advance(delta)
-	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open():
+	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open():
 		return
 	if travel != null and player != null:
 		if event_state == null or not event_state.is_active():
@@ -1904,16 +2197,22 @@ func _process(delta: float) -> void:
 func can_save_timed_checkpoint() -> bool:
 	if Engine.is_editor_hint() or not _location_active or not startup_error.is_empty() or loadout==null: return false
 	if MapPresentation.transitioning or not is_visible_in_tree() or not can_process(): return false
-	if is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open(): return false
+	if is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open(): return false
 	if event_state==null or event_state.is_active() or travel==null or travel.paused: return false
 	return true
 
 func _select_destination(pointer: Vector2) -> void:
-	if is_task_open() or is_save_browser_open() or is_system_menu_open(): return
-	if travel == null or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open(): return
+	if travel == null or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		return
 	var closest_id := _node_at(pointer)
 	if not closest_id.is_empty():
+		if closest_id == travel.current_node_id and travel.map_position.is_equal_approx(travel.node_positions[closest_id]):
+			# A click on the occupied node can advance its task immediately,
+			# including while a queued route still marks travel as moving.
+			travel.stop_at_current_node()
+			if _try_start_event(closest_id, "click", true):
+				return
 		if _try_open_exit(closest_id):
 			return
 		if _try_start_event(closest_id, "click", travel.mode == "idle"):
@@ -1941,8 +2240,8 @@ func _node_at(pointer: Vector2) -> String:
 	return closest_id
 
 func _refresh_cursor() -> void:
-	if is_task_open() or is_save_browser_open() or is_system_menu_open(): return
-	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open(): return
+	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		mouse_default_cursor_shape = Control.CURSOR_ARROW
 	elif _dragging:
 		mouse_default_cursor_shape = Control.CURSOR_MOVE
@@ -2003,7 +2302,7 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if Engine.is_editor_hint() or definition.is_empty():
 		return
-	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_exit_open() or (event_state != null and event_state.is_active()):
+	if is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state != null and event_state.is_active()):
 		accept_event()
 		return
 	if event is InputEventMouse and not map_viewport.get_rect().has_point(event.position):

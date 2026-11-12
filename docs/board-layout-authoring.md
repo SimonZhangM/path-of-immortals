@@ -1,5 +1,13 @@
 # 阵盘背景与格位配置
 
+**新灵物方格已校正（2026-11-09）：**六张制作稿按用户授权统一为4列×3行、每格245×245；源画布1448×1086，x=[234,479,724,969,1214]、y=[175,420,665,910]，工作区980×735。此坐标只适用于[方格校正版](../output/imagegen/战斗用图/制作批次/灵物阵盘V2_20261109/README.md)，原生稿坐标保留于批次原生记录。未写入data/boards或替换assets，接入时仍须验证实际器官布局。
+
+**新灵物制作稿（2026-11-09）：**用户明确碧叶藤灵、溪纹灵螈、苔背石灵、岚翎灵隼、青锋灵螳、岩臂灵猿的阵盘全部4列×3行，岩臂护果／守穴共用图。[六图及逐盘格线草案](../output/imagegen/战斗用图/制作批次/灵物阵盘V2_20261109/README.md)已完成；目前仍是制图配准，未新增data/boards或替换assets，不代表装备布局及实战已接入。
+
+**怪物美术当前状态（2026-11-09核对）：**8怪均已注册主档与独立阵盘，现用头像为627×627无框本体，由[enemy_art.json](../data/ui/enemy_art.json)指定独立凡人框；[共用几何](../data/ui/enemy_portrait_geometry.json)与[叠框实现](../scripts/presentation/enemy_portrait_frames.gd)保持圆心和覆盖关系。下文2026-10-08的“自带框／836像素／旧祠仅注册美术”是历史状态，不能作为新接入依据。逐盘格线仍以当前JSON为准；分类画风、现图对照与完整接入见[怪物制作规范](../output/imagegen/战斗用图/制作规范/README.md)。
+
+**突破页独立布局（2026-11-04）：**每张阵盘另存突破页位置档案，见[breakthrough_boards.json](../data/ui/breakthrough_boards.json)及[突破页规则](breakthrough-panel-design.md)。突破页复用实际装备的MapLoadoutState与只读MapLoadoutBoard，盘图、格线及内部物品构建随changed同步，包括暂停入袋调整和换盘。晓岚保留原档案；新增四张tmp-UI-tupo-zonghebuzhi-lianqi／zhuji／jiedan／yuanying用户参考，分别校准听风／凝翠／流霞／凌霄的完整源画布矩形，来源及哈希随各ID保存。太虚及普通行囊尚无本次专用参考，暂在unconfigured_viewport等比预览，用自身格线，不保存为已确认档案、不借用他盘格位。下方源尺寸和格线仍是逻辑映射依据，不因突破页展示位置而改动。
+
 八图全部1254×1254，独立格线（x／y）：
 
 | 文件尾段 | x_lines | y_lines |

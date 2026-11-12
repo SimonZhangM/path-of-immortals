@@ -33,7 +33,7 @@ func run() -> void:
 	check(member.maximum("armor") == 13, "cloth trio capacity is 7+1+2+3=13")
 	var body := registry.get_item("base.map_item.coarse_cloth_armor")
 	check(body.cooldown_usec == 6_000_000 and body.effects_for("on_activate")[0].value + bonus.recovery.body == 6, "body restores6 each6seconds with set")
-	check(ItemTooltip.effect_text(body).contains("套装：布护臂和布护腿同时与粗布甲紧贴，粗布甲护甲上限额外+3，粗布甲恢复护甲额外+2，且额外恢复2体力。"), "cloth set tooltip matches request")
+	check(ItemTooltip.effect_text(body).contains("套装：布护臂和布护腿同时与粗布甲紧贴，护甲上限+3。冷却完成，护甲回复+2，且额外恢复2点体力。"), "cloth set tooltip matches request")
 	check(ItemTooltip._colored(body.combat.equipment_note, ItemTooltip.highlighted_keywords()).contains("player-status-stamina.webp[/img]"), "stamina inline icon included")
 	sim = BattleSimulation.new([member],[enemy],registry)
 	rules = sim.t01

@@ -4,6 +4,12 @@ extends BattleSimulation
 # Independent non-combat context. Reuses the deterministic board event timeline;
 # no enemy attacks, encounter rewards, consumables, kill or retaliation events.
 var paid_actions: Array[Dictionary] = []
+var use_actual_resource_payments := false
+
+func _record_resource_payment(owner: PartyMemberState, id: String, cost: Vector2, at: int) -> void:
+	if not use_actual_resource_payments or cost.x+cost.y<=0: return
+	paid_actions.append({"item_id":_definitions[id].id,"instance_id":id,"owner_id":owner.id,
+		"element":"none","stamina":cost.x,"spirit":cost.y,"at":at})
 
 func _init(player: PartyMemberState, registry: ContentRegistry) -> void:
 	player.definition.training_precision = true
@@ -36,10 +42,15 @@ func _activate(payload: Dictionary, at: int) -> void:
 		owner.spirit = CultivationGrowth.quantize(owner.spirit-item.spirit_cost)
 		state.item_runtime[id].activation_count += 1
 		timeline.restart(id,at)
-		paid_actions.append({"item_id":item.id,"element":"all","stamina":item.stamina_cost,"spirit":item.spirit_cost,"at":at})
+		if use_actual_resource_payments:
+			_record_resource_payment(owner,id,Vector2(item.stamina_cost,item.spirit_cost),at)
+		else:
+			paid_actions.append({"item_id":item.id,"instance_id":id,"owner_id":owner.id,"element":"all","stamina":item.stamina_cost,"spirit":item.spirit_cost,"at":at})
+		_pending_events.append({"kind":"training_activated","at_usec":at,"item_id":item.id,"instance_id":id,"owner_id":owner.id})
 		return
 	var before := int(state.item_runtime[id].activation_count)
 	super(payload,at)
+	if use_actual_resource_payments: return
 	if int(state.item_runtime[id].activation_count)==before: return
 	if item.category not in ["weapon","spell"]: return
 	# Actual successful payment only. Weapon congestion surcharges do not train.
@@ -48,7 +59,7 @@ func _activate(payload: Dictionary, at: int) -> void:
 	var element := item.element.trim_prefix("base.element.") if item.category=="spell" else "none"
 	# Test-only spells can run on the board, but cannot bypass learned-source rules.
 	if item.category=="spell" and owner.knowledge.level(p.book_id)<int(p.learned_at_book_level): element="none"
-	paid_actions.append({"item_id":item.id,"element":element,"stamina":item.stamina_cost,"spirit":spirit,"at":at})
+	paid_actions.append({"item_id":item.id,"instance_id":id,"owner_id":owner.id,"element":element,"stamina":item.stamina_cost,"spirit":spirit,"at":at})
 
 func take_payments() -> Array[Dictionary]:
 	var result := paid_actions

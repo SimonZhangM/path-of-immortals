@@ -13,6 +13,7 @@ var hidden_points: Dictionary = {}
 var node_positions: Dictionary = {}
 var adjacency: Dictionary = {}
 var current_node_id := ""
+var last_arrival: Dictionary = {}
 var destination_id := ""
 var pending_destination_id := ""
 var map_position := Vector2.ZERO
@@ -61,6 +62,7 @@ func configure(points: Dictionary, edges: Array[Dictionary], start_id: String, w
 	walk_speed = walk
 	run_speed = run
 	current_node_id = start_id
+	last_arrival.clear()
 	destination_id = start_id
 	map_position = points[start_id]
 	pending_destination_id = ""
@@ -174,6 +176,9 @@ func advance(delta: float) -> void:
 			map_position = edge.curve.sample_baked(offset)
 			return
 		remaining = maxf(remaining - time_to_node, 0.0)
+		# Record the actual incoming edge before any arrival listener pauses,
+		# replans, saves or opens an encounter at this node.
+		last_arrival = {"from": edge.from, "to": edge.to}
 		current_node_id = edge.to
 		map_position = node_positions[current_node_id]
 		_edge_index += 1

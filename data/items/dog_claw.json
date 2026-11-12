@@ -18,6 +18,7 @@
     {
       "trigger": "on_activate",
       "effect": "damage",
+      "damage_type": "斩击",
       "value": 5
     }
   ],

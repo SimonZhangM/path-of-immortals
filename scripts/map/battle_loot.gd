@@ -3,7 +3,7 @@ extends RefCounted
 
 # Pure reward selection. Caller owns randomness and persists inventory plus
 # receipt together; retries must reuse the same battle ID and sampled rolls.
-static func candidate(state: MapLoadoutState, enemy: Dictionary, battle_id: String, rolls: Array) -> Dictionary:
+static func candidate(state: MapLoadoutState, enemy: Dictionary, battle_id: String, rolls: Array, remaining_items: Array = []) -> Dictionary:
 	var snapshot := state.snapshot()
 	var receipts: Dictionary = snapshot.get("battle_rewards", {})
 	if receipts.has(battle_id): return {"error": "", "snapshot": snapshot, "drops": receipts[battle_id].drops}
@@ -17,7 +17,8 @@ static func candidate(state: MapLoadoutState, enemy: Dictionary, battle_id: Stri
 		if not state.records.has(row.item_id) or state.records[row.item_id].category != "beast": return {"error": "未知的掉落材料。"}
 		var value: Variant = rolls[index]
 		if not (value is float or value is int) or not is_finite(value) or value < 0 or value >= 1: return {"error": "掉落随机数无效。"}
-		if first and row.get("first_victory_guaranteed", false) or value < row.chance:
+		var available: bool = not row.has("requires_remaining_item") or row.requires_remaining_item in remaining_items
+		if available and (first and row.get("first_victory_guaranteed", false) or value < row.chance):
 			drops.append(row.item_id)
 			snapshot.owned_units["loot.%s.%d" % [battle_id, index]] = row.item_id
 		index += 1

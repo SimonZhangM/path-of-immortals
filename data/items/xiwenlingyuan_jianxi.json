@@ -1,0 +1,36 @@
+{
+  "id": "base.organ.xiwenlingyuan_jianxi",
+  "name": "涧息",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-xiwenlingyuan-jianxi.webp",
+  "cooldown": 11.5,
+  "stamina_cost": 0,
+  "spirit_cost": 2,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "apply_status",
+      "status": "润脉",
+      "value": 4,
+      "target": "self",
+      "gate": "always"
+    }
+  ]
+}

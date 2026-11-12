@@ -78,8 +78,9 @@ func run() -> void:
 	manager._process(0); await settle()
 	check(ui.ally_panel.combat_status.text.contains("沉默"),"control visible with Chinese name")
 	var log_button: Button = ui.find_child("BattleLogButton",true,false)
+	manager.pause_battle()
 	log_button.pressed.emit(); await settle()
-	check(ui._log_panel.visible and ui._log_label.text.contains("回锋剑幕") and ui._log_label.text.contains("沉默"),"real log lists spell fee and control")
+	check(ui._log_panel.visible and ui._battle_log.text().contains("回锋剑幕") and ui._battle_log.text().contains("沉默"),"real log lists spell fee and control")
 	await capture("screen-and-log")
 	ui._log_panel.hide()
 	var spell_bag: InventoryView = ui.ally_panel.bags[0]

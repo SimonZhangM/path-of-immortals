@@ -6,6 +6,8 @@ signal layout_changed
 const FADE_IN_SECONDS := 0.25
 const FADE_OUT_SECONDS := 0.18
 const CROSSFADE_SECONDS := 0.12
+var fade_in_seconds := FADE_IN_SECONDS
+var fade_out_seconds := FADE_OUT_SECONDS
 var frame: TextureRect
 var illustration: TextureRect
 var previous_illustration: TextureRect
@@ -69,22 +71,22 @@ func configure(frame_texture: Texture2D, image_texture: Texture2D, image_slot: A
 	if not entering and not _same_texture(frame.texture,frame_texture):
 		# A changed frame ends one complete picture before introducing the next.
 		_fading_out = true
-		_fade_group(0,FADE_OUT_SECONDS,func():
+		_fade_group(0,fade_out_seconds,func():
 			if revision!=_revision: return
 			_fading_out = false
 			_install(frame_texture,image_texture,slot,false)
-			_fade_group(1,FADE_IN_SECONDS))
+			_fade_group(1,fade_in_seconds))
 		return
 	_install(frame_texture,image_texture,slot,not entering)
 	if entering:
 		modulate.a = 0
 		show()
-		_fade_group(1,FADE_IN_SECONDS)
+		_fade_group(1,fade_in_seconds)
 	elif was_fading_out:
 		# Same-frame continuations cancel an outgoing fade without replaying it.
-		_fade_group(1,FADE_IN_SECONDS*(1-modulate.a))
+		_fade_group(1,fade_in_seconds*(1-modulate.a))
 	elif modulate.a<1:
-		_fade_group(1,FADE_IN_SECONDS*(1-modulate.a))
+		_fade_group(1,fade_in_seconds*(1-modulate.a))
 
 func dismiss() -> void:
 	if not requested_visible: return
@@ -93,7 +95,7 @@ func dismiss() -> void:
 	var revision := _revision
 	_cancel_group_tween()
 	_fading_out = true
-	_fade_group(0,FADE_OUT_SECONDS,func():
+	_fade_group(0,fade_out_seconds,func():
 		if revision!=_revision: return
 		_fading_out = false
 		_cancel_image_tween()

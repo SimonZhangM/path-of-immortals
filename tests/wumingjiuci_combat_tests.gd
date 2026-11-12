@@ -34,6 +34,7 @@ func run() -> void:
 	check(content.error.is_empty(), "runtime item catalog loads: " + content.error)
 	if not content.error.is_empty(): quit(1); return
 	loadout = content.state
+	loadout.growth = CultivationGrowth.initial(5)
 	var occupied := [5,5,9,9]
 	var capacities := [0,0,4,9]
 	for i in IDS.size():

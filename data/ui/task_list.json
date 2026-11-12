@@ -45,12 +45,53 @@
       "updated_at": null
     },
     {
+      "id": "quest.prologue.chaoshengguichu",
+      "category": "main",
+      "title": "潮声归处",
+      "summary": "带一封信回海边的家，陪娘说说近况，也听她讲起旧事。",
+      "image": "res://assets/UI-task-mid-main-chaoshengguichu.webp",
+      "detail_image": "res://assets/UI-task-right-main-chaoshengguichu.webp",
+      "stage_id": "intro",
+      "introductions": {
+        "intro": "河湾的事情暂且告一段落。叶伯从柜台内取出一封信，似乎有事要同你说。",
+        "homeward": "娘托人问过你在药铺的近况，叶伯回了封信，让你亲自带回去。河湾的事情暂且告一段落，也该回海边看看了。那扇熟悉的门后，或许正飘着晒鱼干的咸香。",
+        "chat": "信已经交给娘了。久别重逢，她拉着你问了好些近况。可以再陪她聊聊河湾的事，也可以先到村里走走。",
+        "talks": "娘认出了旧镜，也说起自己曾经修行的事。关于她和爹的往事，以及你能走的修行之路，还有许多话想听她慢慢说。",
+        "practice": "听过娘的往事，也记下了她教的吐纳次序。接下来，要靠自己一点点练习，才能真正引气入体。",
+        "guidance": "娘认出了旧镜，也讲起了她与爹相识的往事。还有些关于修行的问题，想再向她请教。回到家门前，和娘继续说说吧。",
+        "rejoice": "那缕曾经留不住的灵息，终于在体内安稳流转。你已真正踏入炼气一层，守在身旁的娘也满脸欣喜。有许多话，这会儿正想同她说。",
+        "completed": "叶伯的一封信，带你回到了海边的家。在娘的指点与陪伴下，你靠自己的修炼踏入炼气一层。窗外潮声如旧，求道的第一步，已经走过。"
+      },
+      "accepted_at": null,
+      "updated_at": null,
+      "accepted_location": ""
+    },
+    {
+      "id": "quest.prologue.qinglanchujie",
+      "category": "main",
+      "title": "青岚初阶",
+      "summary": "辞别家人与故友，沿山路叩开青岚宗门，走上自己的修行路。",
+      "image": "res://assets/UI-task-mid-main-qinglanchujie.png",
+      "detail_image": "res://assets/UI-task-right-main-qinglanchujie.png",
+      "stage_id": "mother",
+      "introductions": {
+        "mother": "引气入体后，你想起沈砚舟在医馆说过的话。去青岚宗求学的念头渐渐清晰，先和娘说说这个打算。",
+        "farewells": "娘赞成你先去青岚宗学些本事，也看看山外的生活。回青石镇，把这个打算告诉叶伯和清禾，再去山下驻点问清入宗的规矩。",
+        "farewells_token": "谢云舒已交来沈砚舟留下的信牌，也讲明了入宗的规矩。出发前，还有故人未曾道别，先去当面说说吧。",
+        "outpost": "叶伯鼓励你去试试，清禾也说起了自己日后上山求学的念头。去宗门铺找谢云舒，问问该怎样前往、怎样应试。",
+        "road": "谢云舒交来沈砚舟留下的牌子，说持它可请山门弟子通报。那只是寻人的凭信，考核还得自己过。收拾妥当，便沿山路去青岚宗吧。"
+      },
+      "accepted_at": null,
+      "updated_at": null,
+      "accepted_location": ""
+    },
+    {
       "id": "quest.prologue.yiguanbeiyao",
       "category": "side",
       "title": "医馆备药",
       "summary": "替清禾备些止血草，带到医馆交给她。",
-      "image": "res://assets/UI-task-mid-main-yiguanbeiyao.webp",
-      "detail_image": "res://assets/UI-task-right-main-yiguanbeiyao.webp",
+      "image": "res://assets/UI-task-mid-zhi-yiguanbeiyao.webp",
+      "detail_image": "res://assets/UI-task-right-zhi-yiguanbeiyao.webp",
       "stage_id": "gathering",
       "introductions": {
         "gathering": "清禾在医馆托你补些止血草，青石河湾的林间草坡上就能找到。眼下还够用，不必赶路；采到合适的草药后，带回医馆交给她。",
@@ -60,6 +101,96 @@
       "accepted_at": null,
       "accepted_location": "",
       "updated_at": null
+    },
+    {
+      "id": "quest.prologue.shanglujinghun",
+      "category": "side",
+      "title": "商路惊魂",
+      "summary": "钱掌柜打算从河湾近路运货回镇，去看看他是否平安。",
+      "image": "res://assets/UI-task-mid-zhi-shanglujinghun.webp",
+      "detail_image": "res://assets/UI-task-right-zhi-shanglujinghun.webp",
+      "stage_id": "searching",
+      "introductions": {
+        "searching": "说起河湾的险情，叶伯想起钱掌柜来取药时提过，这次进货回来准备试走那条近路。你刚从那里接回伤者，放心不下，决定去商道上迎一迎他。",
+        "battle": "马车翻倒在商道旁，货物散落一地。钱掌柜躲在岩石后，赤鬃獠猪仍在附近冲撞，先替他解围。",
+        "rescued": "野猪已经倒下，钱掌柜受了惊，幸而没有重伤。上前看看他能否行走，再商量返镇。",
+        "escorting": "钱掌柜不敢独自留在林边。陪他沿路回镇，把人平安送到商铺。",
+        "completed": "钱掌柜已平安回到商铺。这趟近路险些酿成大祸，幸而及时赶到，人总算无恙。"
+      },
+      "accepted_at": null,
+      "accepted_location": "",
+      "updated_at": null
+    },
+    {
+      "id": "quest.prologue.jiuwangdaichao",
+      "category": "side",
+      "title": "旧网待潮",
+      "summary": "趁潮水退去，替许伯把挂在礁边的旧渔网收回来。",
+      "image": "res://assets/UI-task-mid-zhi-jiuwangdaichao.webp",
+      "detail_image": "res://assets/UI-task-right-jiuwangdaichao.webp",
+      "stage_id": "gathering",
+      "introductions": {
+        "gathering": "许伯上回收网时，有一角挂在近岸礁石上，只好暂时留下。如今礁滩露了出来，他却忙着整理船上的渔具。沿沙滩过去看看，或许不用割网，也能把它取出来。",
+        "returning": "渔网已经解了下来，网边也重新系好。把它带回码头吧，许伯还在船旁忙着。",
+        "completed": "旧渔网已经交还许伯，报酬也已收好。看着重新系牢的网结，你们聊起了爹从前的事。"
+      },
+      "accepted_at": null,
+      "accepted_location": "",
+      "updated_at": null
+    },
+    {
+      "id": "quest.prologue.shuxiajiudeng",
+      "category": "side",
+      "title": "树下旧凳",
+      "summary": "把树下晃动的长凳修稳，让过路的人有个歇脚处。",
+      "image": "res://assets/UI-task-mid-zhi-shuxiajiudeng.webp",
+      "detail_image": "res://assets/UI-task-right-zhi-shuxiajiudeng.webp",
+      "stage_id": "collect",
+      "introductions": {
+        "collect": "又走到古树下，正碰见周秉和查看那张晃动的长凳。凳面还好，只是凳脚松了。他已经托韩师傅做了加固铁件，请你去铁匠铺取来。",
+        "repair": "韩师傅备好了铁件和工具。带回古树下，和周秉和一起把长凳修稳，让歇脚的人坐得踏实些。",
+        "returning": "长凳已经稳当了。把借来的工具送回铁匠铺，顺便告诉韩师傅，铁件装上正合适。",
+        "completed": "长凳已修稳，借来的工具也已归还。往后走累了，树下又多了一处踏实的歇脚地方。"
+      },
+      "accepted_at": null,
+      "updated_at": null,
+      "accepted_location": ""
+    },
+    {
+      "id": "quest.prologue.lumianchu",
+      "category": "side",
+      "title": "鹿眠处",
+      "summary": "替山中的鹿，留一处安稳歇息的地方。",
+      "image": "res://assets/UI-task-mid-zhi-lumianchu.webp",
+      "detail_image": "res://assets/UI-task-right-zhi-lumianchu.webp",
+      "stage_id": "inspect",
+      "introductions": {
+        "inspect": "草坡上，一大一小两只鹿依偎着站在一起。通往古树方向的窄径上，小蹄印走到半途，却又折了回来。树下似乎有什么让它们不敢靠近，过去看看。",
+        "battle": "古树的老根间藏着一个草窝，干草压出了一大一小两个卧痕。一只碧叶藤灵占住窝口，稍有东西靠近，藤须便向外抽打。先让它离开，给山鹿留出回窝的路。",
+        "cleared": "窝口的藤须已经退去，里面的干草仍好好留着。挪开横着的枯枝，再把外侧的平石拂净，这处树荫便能安心歇脚了。",
+        "completed": "古树下的草窝已不再受藤灵侵扰。窝里留给山鹿，窝外的平石也收拾好了。往后经过这里，可以停下来歇一歇。"
+      },
+      "accepted_at": null,
+      "updated_at": null,
+      "accepted_location": ""
+    },
+    {
+      "id": "quest.prologue.hewanchuhuan",
+      "category": "commission",
+      "title": "河湾除患",
+      "summary": "清一段河湾兽患，护一程往来平安。",
+      "image": "res://assets/UI-task-mid-commission-hewanchuhuan.png",
+      "detail_image": "res://assets/UI-task-right-commission-hewanchuhuan.png",
+      "stage_id": "details",
+      "introductions": {
+        "details": "镇里贴出了清理河湾兽患的悬赏。先到古树下找周镇长问清情况，知道该去哪些路段、带回什么凭证，再作打算。",
+        "gathering": "周镇长希望先清理常有人经过的河湾路段，以山狼尖牙和赤鬃獠牙作交验凭证。备齐后直接交给他，不必再回公告板。",
+        "returning": "所需尖牙与獠牙已经备齐，回镇交给周秉和，领取这份悬赏的酬劳。",
+        "completed": "凭证已经交给周秉和，八枚灵石的报酬也已收好。镇里会继续留意河湾的路况。"
+      },
+      "accepted_at": null,
+      "updated_at": null,
+      "accepted_location": ""
     }
   ],
   "category_tags": {

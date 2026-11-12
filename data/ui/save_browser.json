@@ -39,7 +39,7 @@
   "calendar_rect": [1402, 425, 176, 40],
   "detail_label_x": 1170,
   "detail_value_x": 1300,
-  "detail_centers_y": [529, 582, 636, 692, 745],
+  "detail_centers_y": [532, 585, 639, 695, 748],
   "detail_labels": ["角色姓名", "修炼境界", "所在地点", "游戏时长", "存档时间"],
   "button_back_rect": [1119, 812, 194, 50],
   "button_load_rect": [1351, 812, 194, 50],
@@ -50,5 +50,11 @@
   "button_normal": "res://assets/UI-start-button1.webp",
   "game_button_normal": "res://assets/UI-start-button3.webp",
   "button_hover": "res://assets/UI-start-button2.webp",
-  "chapters": {"prologue": {"label": "序章", "title": "山外有仙"}}
+  "chapters": {"prologue": {"label": "序章", "title": "山外有仙"}},
+  "map_previews": {
+    "base.map.diecuifeng": {
+      "name": "叠翠峰",
+      "picture": "res://assets/map-worldmap-diecuifeng.webp"
+    }
+  }
 }

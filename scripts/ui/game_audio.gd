@@ -16,10 +16,27 @@ const STREAMS := {
 	"restore": preload("res://assets/sfx-restore.ogg")
 }
 var players: Dictionary = {}
-var music: AudioStreamPlayer
+var music: MusicPlayer
 var _victory_started := false
+var _battle_track: AudioStreamMP3
 
-func configure(manager: GameManager, defer_music: bool = false) -> void:
+func configure(manager: GameManager, defer_music: bool = false, source_map_id: String = "") -> void:
+	configure_effects()
+	var tracks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/battle_music.json"))
+	_battle_track = load(tracks.maps.get(source_map_id, tracks.default)) as AudioStreamMP3
+	manager.inventory_interaction.connect(play)
+	music = MusicPlayer.new()
+	music.bus = "Music"
+	music.name = "BattleMusic"
+	music.music_gain = db_to_linear(-6.0)
+	music.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(music)
+	manager.battle_restarted.connect(start_music)
+	if not defer_music:
+		start_music()
+
+func configure_effects() -> void:
+	if not players.is_empty(): return
 	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
 	for kind in STREAMS:
 		var player := AudioStreamPlayer.new()
@@ -29,25 +46,15 @@ func configure(manager: GameManager, defer_music: bool = false) -> void:
 		player.max_polyphony = 8 if kind in ["hit", "pierce", "throwable", "blunt", "magic", "restore"] else 3
 		add_child(player)
 		players[kind] = player
-	manager.inventory_interaction.connect(play)
-	music = AudioStreamPlayer.new()
-	music.bus = "Music"
-	music.name = "BattleMusic"
-	music.volume_db = -6
-	music.process_mode = Node.PROCESS_MODE_ALWAYS
-	add_child(music)
-	manager.battle_restarted.connect(start_music)
-	if not defer_music:
-		start_music()
 
 func start_music() -> void:
 	_victory_started = false
-	var track := preload("res://assets/battle.mp3").duplicate() as AudioStreamMP3
+	var track := _battle_track.duplicate() as AudioStreamMP3
 	track.loop = true
 	track.loop_offset = 0.0
 	music.stream = track
-	music.volume_db = -6.0
-	music.play()
+	music.music_gain = db_to_linear(-6.0)
+	music.start_playback()
 
 func play_victory() -> void:
 	if _victory_started: return
@@ -56,8 +63,8 @@ func play_victory() -> void:
 	var track := preload("res://assets/victory-song2.mp3").duplicate() as AudioStreamMP3
 	track.loop = false
 	music.stream = track
-	music.volume_db = -6.0
-	music.play()
+	music.music_gain = db_to_linear(-6.0)
+	music.start_playback()
 
 func play(kind: String) -> void:
 	if players.has(kind):

@@ -1052,7 +1052,8 @@
         "base.story.qinglan.joined"
       ],
       "retire_flags": [
-        "base.story.qinglan.joined"
+        "base.story.qinglan.joined",
+        "base.story.qinglanchujie.accepted"
       ]
     },
     "base.dialogue.yesongnian.story.return": {

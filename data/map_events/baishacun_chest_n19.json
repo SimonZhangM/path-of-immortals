@@ -6,7 +6,11 @@
   "quality": "下品",
   "reward_id": "base.map_reward.baishacun.chest_n19",
   "respawn_days": 40,
-  "presentation": {},
+  "presentation": {
+    "chest_image": "res://assets/tanchuang-baoxiang-baishacun-liangyiyahou0.webp",
+    "illustration": "res://assets/tanchuang-baoxiang-baishacun-liangyiyahou1.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-baishacun-liangyiyahou2.webp"
+  },
   "observation": {
     "location_name": "晾衣崖后",
     "location_description": "晾衣场后的小径伸向海崖，藤蔓攀住岩缝，风从树梢间带来咸湿的水汽。",

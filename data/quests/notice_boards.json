@@ -1,0 +1,12 @@
+{
+  "base.notice_board.qingshizhen": {
+    "location": {
+      "map_id": "base.map.qingshizhen",
+      "point_id": "base.map.qingshizhen.point.n18"
+    },
+    "commissions": [
+      "quest.prologue.hewanchuhuan"
+    ],
+    "notices": []
+  }
+}

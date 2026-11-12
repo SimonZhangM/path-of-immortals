@@ -175,20 +175,22 @@ func _build_controls() -> void:
 	var page: Control = pages.controls
 	_heading(page,"自定义按键",0,1420)
 	_hint(page,"点击键位后按下新按键，Esc取消",Vector2(840,54))
+	var row_step := minf(42.0, 420.0 / maxf(1.0, _config.bindings.size()))
+	var row_height := minf(40.0, row_step - 2.0)
 	for index in _config.bindings.size():
 		var spec: Dictionary = _config.bindings[index]
-		var row := _row(page,spec.label,90+index*42,40,1380)
-		row.size.y = 40
-		(row.get_child(0) as Control).custom_minimum_size.y = 40
-		# Keep the original key column and row centers; shrink its artwork and
-		# lettering together instead of moving the whole column to the right.
+		var row := _row(page,spec.label,90+index*row_step,40,1380)
+		row.size.y = row_height
+		(row.get_child(0) as Control).custom_minimum_size.y = row_height
+		# Keep the original key column; scale artwork and lettering together
+		# to fit every binding above the lower toggles.
 		var holder := Control.new()
 		holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		holder.custom_minimum_size = Vector2(190,40)
+		holder.custom_minimum_size = Vector2(190,row_height)
 		row.add_child(holder)
 		var button := _button(holder,"",Rect2(0,0,190,48))
 		button.custom_minimum_size = Vector2(190,48)
-		button.scale = Vector2(0.8,0.8)
+		button.scale = Vector2.ONE * minf(0.8, row_height / 48.0)
 		for kind in ["normal","disabled","hover","pressed","hover_pressed"]:
 			button.get_theme_stylebox(kind).content_margin_top = 4
 			button.get_theme_stylebox(kind).content_margin_bottom = 4
@@ -198,8 +200,8 @@ func _build_controls() -> void:
 		button.pressed.connect(_capture_key.bind(String(spec.action)))
 		_key_buttons[spec.action] = button
 		# _row initially clamps to its 60px label minimum; re-fit after reducing it.
-		row.set_deferred("size",Vector2(1380,40))
-		_line(page,Vector2(44,131+index*42),1380,0.16)
+		row.set_deferred("size",Vector2(1380,row_height))
+		_line(page,Vector2(44,90+row_step*(index+1)),1380,0.16)
 	_toggle(_row(page,"地图缩放滚轮反向",524,44,650),"invert_zoom")
 	_toggle(_row(page,"快捷键提示",524,824,600),"shortcut_hints")
 

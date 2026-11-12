@@ -33,7 +33,7 @@ func run() -> void:
 			check(pair[0].get_node("Caption").text==pair[1].get_node("Caption").text,"original action caption retained")
 		check(modal.confirm_button.position.x<modal.cancel_button.position.x,"left confirm right cancel")
 		check(modal.confirm_button.pressed.has_connections() and modal.cancel_button.pressed.has_connections(),"existing action callbacks remain connected")
-		check(map.inventory_screen.board_change_dialog.backing.texture.atlas.resource_path.ends_with("UI-jiaohu-size0.webp"),"board confirmation retains old artwork")
+		check(map.inventory_screen.board_change_dialog.backing.texture.atlas.resource_path.ends_with("UI-jiaohu-size-tiny.webp"),"board confirmation uses its separate tiny artwork")
 		check(modal.message.position.y==original.message.position.y,"message vertical layout unchanged")
 		check(map.loadout.snapshot()==before,"visual preview does not change save data")
 		print("EXIT ART ",scene," region ",atlas.region," design size ",modal.backing.size)

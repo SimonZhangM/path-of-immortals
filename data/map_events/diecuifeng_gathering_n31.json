@@ -1,0 +1,13 @@
+{
+  "id": "base.map_event.diecuifeng.gathering_n31",
+  "type": "gathering",
+  "point_id": "base.map.diecuifeng.point.n31",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-caiyao-diecuifeng-dongbeiyaopo.webp",
+    "description": "山坡草间生着一丛苦艾草，灰绿的叶片散出清苦气味。"
+  },
+  "title": "东北药坡",
+  "item_id": "base.material.kuaiye",
+  "reward_prefix": "base.map_reward.diecuifeng.gathering_n31"
+}

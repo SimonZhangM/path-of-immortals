@@ -1,7 +1,10 @@
 {
   "id": "base.map.qingshizhen",
   "name": "青石镇",
-  "exploration": {"enabled": true, "hint_length": 72.0},
+  "exploration": {
+    "enabled": true,
+    "hint_length": 72.0
+  },
   "music": [
     "res://assets/bgm-qingshizhen-1.mp3",
     "res://assets/bgm-qingshizhen-2.mp3"
@@ -24,8 +27,8 @@
       "scene": "res://scenes/maps/baishacun.tscn",
       "target_point": "base.map.baishacun.point.n01",
       "target_facing": "right",
-      "required_story_flag": "base.story.chaoshengguichu.accepted",
-      "locked_hint": "开启主线「潮声归处」后可前往白沙村。"
+      "required_story_flag": "base.story.qingshihewan.cultivator_rescued",
+      "locked_hint": "完成主线「河湾逢险」后可前往白沙村。"
     },
     {
       "point_id": "base.map.qingshizhen.point.n25",
@@ -39,6 +42,20 @@
       "scene": "res://scenes/maps/xiyuanyaopo.tscn",
       "target_point": "base.map.xiyuanyaopo.point.n01",
       "target_facing": "right"
+    },
+    {
+      "point_id": "base.map.qingshizhen.point.n02",
+      "title": "前往 叠翠峰",
+      "scene": "res://scenes/maps/diecuifeng.tscn",
+      "target_point": "base.map.diecuifeng.point.n01",
+      "target_facing": "right",
+      "required_story_flags": [
+        "base.story.qinglanchujie.mother_done",
+        "base.story.qinglanchujie.pharmacy_done",
+        "base.story.qinglanchujie.clinic_done",
+        "base.story.qinglanchujie.outpost_done"
+      ],
+      "locked_hint": "完成辞别与问路后可前往叠翠峰。"
     }
   ],
   "event_files": [

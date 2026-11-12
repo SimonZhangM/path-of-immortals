@@ -15,6 +15,7 @@ func configure(record: Dictionary, edge := 152.0) -> void:
 	add_theme_constant_override("separation",17)
 	square = MapItemThumbnail.create(self,entry,edge,-1,0.85)
 	square.name = "RewardSquare"
+	square.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	# A separate overlay keeps the badge from taking part in thumbnail layout.
 	var layer := Node2D.new()
 	square.add_child(layer)
@@ -46,6 +47,8 @@ func configure(record: Dictionary, edge := 152.0) -> void:
 	song.font_names = PackedStringArray(["SimSun","宋体","serif"])
 	name_label.add_theme_font_override("font",song)
 	name_label.add_theme_font_size_override("font_size",27)
+	# The caption may be wider than its square without enlarging the item art.
+	custom_minimum_size.x = maxf(edge,minf(300.0,ceilf(song.get_string_size(name_label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,27).x)+4.0))
 	name_label.add_theme_color_override("font_color",Color("e0e3df"))
 	add_child(name_label)
 

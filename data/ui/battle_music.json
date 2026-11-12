@@ -1,0 +1,7 @@
+{
+  "default": "res://assets/battle.mp3",
+  "maps": {
+    "base.map.diecuifeng": "res://assets/battle2.mp3",
+    "base.map.qinglanshandao": "res://assets/battle2.mp3"
+  }
+}

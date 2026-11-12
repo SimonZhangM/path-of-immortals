@@ -11,7 +11,7 @@ const FixedSeparatorValue := preload("res://scripts/ui/fixed_separator_value.gd"
 const RestoreFlight := preload("res://scripts/ui/restore_flight.gd")
 const SettingsInput = preload("res://scripts/settings/settings_input.gd")
 var _restore_flights: Array = []
-@export var preview_all_status_icons := true
+@export var preview_all_status_icons := false
 @export_file("*.webp", "*.png") var battle_background_path := ""
 @onready var manager: GameManager = $"../GameManager"
 var ally_panel: TeamPanel
@@ -34,17 +34,17 @@ var _retreat_dialog: Control
 var _result_heading: Label
 var _loot_label: Label
 var battle_exit_handler: Callable
-var _review_button: Button
-var _exit_button: Button
+var _review_button: TextureButton
+var _exit_button: TextureButton
 var _review_note: Label
 var _countdown: RetreatCountdown
-var _log_panel: PanelContainer
+var _log_panel: Control
 var storage_panel
-var _log_label: RichTextLabel
 var _speed_buttons: Dictionary = {}
 var _battle_log := BattleLog.new()
 var game_audio: GameAudio
 var defer_battle_music := false
+var source_map_id := ""
 var board_change_dialog: MapExitDialog
 var _pending_board_change: Dictionary = {}
 enum VictoryView { NONE, BANNER, REWARDS, REVIEW }
@@ -66,7 +66,7 @@ func _ready() -> void:
 	_refresh_shortcut_hints()
 	if not manager.startup_error.is_empty():
 		_status.text = "内容加载失败"
-		_log_label.text = manager.startup_error
+		_battle_log.consume([{"kind": "effect_error", "at_usec": 0, "message": manager.startup_error}], manager.registry)
 		set_process(false)
 		return
 	manager.presentation_events.connect(_on_events)
@@ -78,7 +78,7 @@ func _ready() -> void:
 	ItemTooltipHost.for_control(self).technique_requested.connect(_open_book_details)
 	game_audio = GameAudio.new()
 	add_child(game_audio)
-	game_audio.configure(manager, defer_battle_music)
+	game_audio.configure(manager, defer_battle_music, source_map_id)
 	_on_restart()
 
 func _open_book_details(book_id: String) -> void:
@@ -272,7 +272,7 @@ func _build_ui() -> void:
 	var divider: Control = preload("res://scripts/ui/battle_footer_divider.gd").new()
 	divider.name = "BattleFooterDivider"
 	middle.add_child(divider)
-	var log_button := _action_button(middle, "res://assets/button-battle-fightlog.webp", Vector2(182, 54) * (44.0 / 54.0), func(): _log_panel.show())
+	var log_button := _action_button(middle, "res://assets/button-battle-fightlog.webp", Vector2(182, 54) * (44.0 / 54.0), _open_battle_record)
 	# Match visible artwork height, since the two source images have different ratios.
 	var action_art: Vector2 = _bag_button.artwork.get_size()
 	var action_box: Vector2 = _bag_button.custom_minimum_size
@@ -318,6 +318,7 @@ func _build_ui() -> void:
 	victory_banner.dismissed.connect(_show_victory_rewards)
 	board_change_dialog = MapExitDialog.new()
 	board_change_dialog.name = "BattleBoardChangeDialog"
+	board_change_dialog.use_board_change_art()
 	board_change_dialog.message.text = "确定更换阵盘吗？"
 	board_change_dialog.confirm_button.get_node("Caption").text = "确认"
 	add_child(board_change_dialog)
@@ -357,8 +358,23 @@ func _confirm_board_change() -> void:
 func _bind_background_focus() -> void:
 	for panel in [ally_panel, enemy_panel]:
 		if not panel.bags.is_empty():
+			panel.bags[0].item_rect_changed.connect(_align_battle_boards.call_deferred)
+			panel.bags[0].board_layout_changed.connect(_align_battle_boards.call_deferred)
 			panel.bags[0].item_rect_changed.connect(_update_background_focus.call_deferred)
+	_align_battle_boards.call_deferred()
 	_update_background_focus.call_deferred()
+
+func _align_battle_boards() -> void:
+	if ally_panel.bags.is_empty() or enemy_panel.bags.is_empty(): return
+	var player_board: InventoryView = ally_panel.bags[0]
+	var enemy_board: InventoryView = enemy_panel.bags[0]
+	var player_center := player_board.get_global_transform() * player_board.visible_art_rect().get_center()
+	var enemy_parent := enemy_board.get_parent() as Control
+	var target_center := enemy_parent.get_global_transform().affine_inverse() * player_center
+	var enemy_center := enemy_board.position + enemy_board.visible_art_rect().get_center()
+	var offset := target_center.y - enemy_center.y
+	if not is_zero_approx(offset):
+		enemy_board.position.y += offset
 
 func _update_background_focus() -> void:
 	if ally_panel.bags.is_empty() or enemy_panel.bags.is_empty(): return
@@ -425,42 +441,30 @@ func _refresh_shortcut_hints() -> void:
 	if is_instance_valid(_bag_button): _bag_button.tooltip_text = SettingsInput.caption("储物袋", "map_inventory")
 
 func _build_retreat_dialog() -> void:
-	_retreat_dialog = Control.new()
-	_retreat_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_retreat_dialog.z_index = 40
+	var dialog := MapExitDialog.new()
+	dialog.use_board_change_art()
+	_retreat_dialog = dialog
 	add_child(_retreat_dialog)
-	var shade := ColorRect.new()
-	shade.color = Color("16120f", 0.65)
-	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_retreat_dialog.add_child(shade)
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_retreat_dialog.add_child(center)
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(460, 230)
-	var box := _box(Color("2d261f"), GOLD)
-	box.set_content_margin_all(28)
-	panel.add_theme_stylebox_override("panel", box)
-	center.add_child(panel)
-	var column := VBoxContainer.new()
-	column.alignment = BoxContainer.ALIGNMENT_CENTER
-	column.add_theme_constant_override("separation", 24)
-	panel.add_child(column)
-	_result_heading = _label(column, "战斗失败", 28, GOLD)
-	_result_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_retreat_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_result_heading = dialog.message
+	_result_heading.text = "战斗失败"
+	var column := _result_heading.get_parent()
 	_loot_label = _label(column, "", 18, GOLD)
 	_loot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_loot_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.move_child(_loot_label, 1)
 	_loot_label.hide()
-	_review_note = _label(column, "战斗复盘尚未开放", 18, MUTED)
-	_review_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_review_note = dialog.error_label
+	_review_note.text = ""
+	_review_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_review_note.hide()
-	var actions := HBoxContainer.new()
-	actions.add_theme_constant_override("separation", 16)
-	column.add_child(actions)
-	_review_button = _button(actions, "战斗复盘", manager.request_battle_review)
-	_exit_button = _button(actions, "返回地图" if battle_exit_handler.is_valid() else "退出战斗", manager.request_battle_exit)
-	_review_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_exit_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_review_button = dialog.cancel_button
+	_exit_button = dialog.confirm_button
+	_review_button.get_parent().move_child(_review_button, 0)
+	_review_button.get_node("Caption").text = "战斗记录"
+	_exit_button.get_node("Caption").text = "返回地图" if battle_exit_handler.is_valid() else "退出战斗"
+	dialog.cancelled.connect(manager.request_battle_review)
+	dialog.confirmed.connect(manager.request_battle_exit)
 	_retreat_dialog.hide()
 
 func _exit_battle() -> void:
@@ -488,29 +492,18 @@ func _exit_battle() -> void:
 	get_tree().quit()
 
 func _build_log() -> void:
-	_log_panel = PanelContainer.new()
-	_log_panel.z_index = 20
-	_log_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	_log_panel.offset_left = -365
-	_log_panel.offset_right = 365
-	_log_panel.offset_top = -330
-	_log_panel.offset_bottom = 330
-	_log_panel.add_theme_stylebox_override("panel", _box(Color("101b21", 0.98), GOLD))
+	_log_panel = preload("res://scripts/ui/battle_record_panel.gd").new()
 	add_child(_log_panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 16)
-	_log_panel.add_child(column)
-	var row := HBoxContainer.new()
-	column.add_child(row)
-	_label(row, "战斗记录", 24, GOLD).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_button(row, "关闭 ×", func(): _log_panel.hide())
-	_log_label = RichTextLabel.new()
-	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_log_label.add_theme_font_size_override("normal_font_size", 18)
-	_log_label.scroll_following = true
-	_log_label.add_theme_color_override("default_color", MUTED)
-	column.add_child(_log_label)
-	_log_panel.hide()
+	_log_panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_log_panel.configure(manager, _battle_log)
+
+func _open_battle_record() -> void:
+	if manager.simulation == null: return
+	var state := manager.simulation.state
+	if not state.is_finished() and (state.phase != GameState.Phase.BATTLE or not manager.simulation.clock.paused): return
+	if victory_view in [VictoryView.BANNER, VictoryView.REWARDS]: return
+	move_child(_log_panel, get_child_count() - 1)
+	_log_panel.present()
 
 func _process(_delta: float) -> void:
 	_refresh()
@@ -619,7 +612,7 @@ func _refresh() -> void:
 		# Recover a BANNER state left by an interrupted debug hot reload too.
 		if victory_view == VictoryView.NONE or (victory_view == VictoryView.BANNER and not victory_banner.visible and victory_banner.timer.is_stopped()):
 			_begin_victory()
-	_time.text = format_battle_time(state.time_usec)
+	_time.text = format_battle_time(sim.presentation_time_usec())
 	_layout_time_suffix()
 	_bag_button.disabled = not manager.can_adjust()
 	var reviewing := victory_view == VictoryView.REVIEW
@@ -632,14 +625,14 @@ func _refresh() -> void:
 	_battle_button.action_icon = null if reviewing else (_wait_icon if fighting and not sim.clock.paused else _battle_icon)
 	_battle_button.icon_reference = null if reviewing else _battle_icon
 	_battle_button.caption_reference = "离开战场" if reviewing else "战斗继续"
-	_log_button.disabled = state.is_finished() and state.result == "victory" and not reviewing
+	_log_button.disabled = not (fighting and sim.clock.paused or state.is_finished()) or victory_view in [VictoryView.BANNER, VictoryView.REWARDS]
 	for speed in _speed_buttons:
 		_speed_buttons[speed].disabled = state.is_finished()
 		_speed_buttons[speed].set_pressed_no_signal(not sim.clock.paused and is_equal_approx(speed, sim.clock.speed_multiplier))
 	_pause_button.disabled = not fighting
 	_pause_button.set_pressed_no_signal(fighting and sim.clock.paused)
 	_retreat_button.disabled = not fighting or state.retreat_at_usec >= 0
-	_countdown.update_remaining(state.retreat_at_usec - state.time_usec if state.retreat_at_usec >= 0 else 0)
+	_countdown.update_remaining(state.retreat_at_usec - sim.presentation_time_usec() if state.retreat_at_usec >= 0 else 0)
 	_retreat_dialog.visible = state.is_finished() and state.result != "victory" and (state.result == "defeat" or battle_exit_handler.is_valid())
 	if _retreat_dialog.visible:
 		_result_heading.text = {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局", "retreat": "战斗失败"}.get(state.result, "战斗结束")
@@ -664,8 +657,9 @@ func _on_restart() -> void:
 	if storage_panel != null and not ally_panel.bags.is_empty():
 		storage_panel.target_board = ally_panel.bags[0]
 	_battle_log.reset()
+	_battle_log.bind(manager.simulation.state.teams, manager.simulation.state.companions)
+	_log_panel.hide()
 	_review_note.hide()
-	_log_label.text = "布阵中。"
 	_refresh()
 
 func _begin_victory() -> void:
@@ -693,7 +687,10 @@ func _begin_victory() -> void:
 					song = song.duplicate() as AudioStreamMP3
 					song.loop = false
 					player.stream = song
-					player.volume_db = -6
+					if player is MusicPlayer:
+						player.music_gain = db_to_linear(-6.0)
+					else:
+						player.volume_db = -6
 					player.play()
 
 func _show_victory_rewards() -> void:
@@ -714,7 +711,7 @@ func _show_victory_rewards() -> void:
 
 func _review_victory() -> void:
 	if manager.simulation == null or manager.simulation.state.result != "victory":
-		_review_note.show()
+		_open_battle_record()
 		return
 	if victory_view != VictoryView.REWARDS or victory_rewards.accept_button.disabled: return
 	victory_view = VictoryView.REVIEW
@@ -743,11 +740,11 @@ func _art(path: String) -> TextureRect:
 
 func _on_started() -> void:
 	_clear_restore_flights()
-	_log_label.text = _battle_log.consume([], manager.registry)
 	_refresh()
 
 func _on_events(events: Array[Dictionary]) -> void:
-	_log_label.text = _battle_log.consume(events, manager.registry)
+	_battle_log.consume(events, manager.registry, false)
+	_log_panel.refresh_records()
 	var sounded := {}
 	for event in events:
 		if event["kind"] == "restore":

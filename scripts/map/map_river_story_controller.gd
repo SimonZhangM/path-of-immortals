@@ -7,6 +7,7 @@ var retry_begin := ""
 var _gate_signature := ""
 var _claiming := false
 var _claim_scheduled := false
+var completion_notice: Control
 
 func _ready() -> void:
 	map.startup_error = RiverQuest.configuration_error()
@@ -31,6 +32,10 @@ func _ready() -> void:
 
 func refresh() -> void:
 	var gates := RiverQuest.gates(map.loadout,map.definition.id)
+	# Merge gates before publishing them so independent quest adapters cannot overwrite each other.
+	if map.definition.id==FishingNetQuest.data.reef.map_id and not FishingNetQuest.route_open(map.loadout):
+		gates.routes[FishingNetQuest.data.route_id] = true
+		gates.points[FishingNetQuest.data.reef.point_id] = true
 	var signature := JSON.stringify(gates)
 	if signature!=_gate_signature:
 		_gate_signature = signature
@@ -44,7 +49,7 @@ func refresh() -> void:
 		if not RiverQuest.done(map.loadout,"injured") or RiverQuest.allowed(map.loadout,"medicine") or RiverQuest.allowed(map.loadout,"return_jade") or RiverQuest.allowed(map.loadout,"pickup"):
 			points.append(RiverQuest.data.scenes.injured.point_id)
 	elif map.definition.id==RiverQuest.TOWN:
-		for id in ["invite_doctor","clinic_arrival","gift_book","closing"]:
+		for id in ["invite_doctor","clinic_arrival","gift_book","gift_board","closing"]:
 			if RiverQuest.allowed(map.loadout,id): points.append(RiverQuest.data.scenes[id].point_id)
 	elif map.definition.id==RiverQuest.SHRINE:
 		for id in ["root_discovery","mirror","fox_notice","array","wood_door","stone_door"]:
@@ -72,6 +77,7 @@ func _claim_parcels() -> void:
 func _process(_delta: float) -> void:
 	if not map._location_active or MapPresentation.transitioning or not map.is_visible_in_tree() or not map.startup_error.is_empty(): return
 	if map.event_state.is_active(): return
+	if map.is_breakthrough_open() or map.is_inventory_open() or map.is_task_open() or map.is_technique_open() or map.is_world_map_open() or map.is_system_menu_open() or map.is_save_browser_open() or map.is_exit_open(): return
 	set_process(false)
 	if not RiverQuest.story(map.loadout).parcels.is_empty(): _claim_parcels()
 	try_arrival(map.travel.current_node_id)
@@ -81,6 +87,9 @@ func owns_dialogue() -> bool:
 
 func try_arrival(point: String, manual := false) -> bool:
 	if map.event_state.is_active(): return owns_dialogue()
+	if RiverQuest.training_notice_pending(map.loadout):
+		_show_completion_notice()
+		return true
 	var scene := RiverQuest.arrival(map.loadout,map.definition.id,point,manual)
 	if scene.is_empty(): return false
 	begin(scene)
@@ -112,6 +121,7 @@ func begin(scene: String) -> void:
 	present()
 
 func advance() -> void:
+	if is_instance_valid(completion_notice) and completion_notice.visible: return
 	if not retry_begin.is_empty():
 		begin(retry_begin)
 		return
@@ -130,6 +140,9 @@ func advance() -> void:
 	else: present()
 
 func present() -> void:
+	if RiverQuest.training_notice_pending(map.loadout):
+		_show_completion_notice()
+		return
 	var saved := RiverQuest.story(map.loadout)
 	if saved.active.is_empty(): return
 	occupy(saved.active)
@@ -150,6 +163,8 @@ func present() -> void:
 		var record: Dictionary = map.loadout.records[transfer.item_id].duplicate(true)
 		record.quantity = transfer.quantity
 		map.reward_dialog.present(record,record.name,event.has("handover"),event.has("handover"))
+		map.reward_dialog.card.loadout = map.loadout
+		map.reward_dialog.card.mouse_filter = Control.MOUSE_FILTER_STOP
 	else:
 		map.dialogue.present(event,DialogueJournal.render_text(event.lines[saved.line],map.loadout.narrative),event.line_speakers[saved.line],"illustration" if RiverQuest.picture_page(saved)>=0 else "dialogue",int(saved.line))
 		if event.has("choices"):
@@ -242,6 +257,9 @@ func finish(previous: String) -> void:
 	map.travel.paused = false
 	map._saved_loadout_revision = map.loadout.revision
 	refresh()
+	if RiverQuest.training_notice_pending(map.loadout):
+		_show_completion_notice()
+		return
 	if previous=="beasts_gone":
 		map.travel.stop_at_current_node()
 		map._try_open_exit(map.travel.current_node_id)
@@ -254,3 +272,34 @@ func finish(previous: String) -> void:
 	if map.event_state.try_start(map.travel.current_node_id,map.travel.current_node_id,true,"arrival"):
 		map.travel.paused = true
 		map._present_event_progress()
+
+func _show_completion_notice() -> void:
+	if completion_notice==null:
+		# Load on demand to avoid a static UI/quest script dependency cycle.
+		completion_notice = load("res://scripts/map/map_exit_dialog.gd").new()
+		completion_notice.name = "RiverTrainingNotice"
+		completion_notice.z_index = 100
+		map.add_child(completion_notice)
+		completion_notice.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		completion_notice.confirmed.connect(_confirm_completion_notice)
+	map.dialogue.dismiss()
+	choices.hide()
+	map.event_state.active_id = RiverQuest.PREFIX+"training_notice"
+	map.event_state.phase = "notice"
+	map.travel.paused = true
+	map._end_drag()
+	map._clear_hover()
+	completion_notice.present_notice(RiverQuest.data.training_notice)
+
+func _confirm_completion_notice() -> void:
+	if not is_instance_valid(completion_notice) or not completion_notice.visible: return
+	var error := RiverQuest.command(map.loadout,map.inventory_save_path,"acknowledge_training_notice")
+	if not error.is_empty():
+		completion_notice.error_label.text = error
+		return
+	completion_notice.hide()
+	if RiverQuest.story(map.loadout).active.is_empty(): finish("")
+	else: present()
+
+func handle_notice_input(event: InputEvent) -> bool:
+	return is_instance_valid(completion_notice) and completion_notice.handle_confirmation_input(event)

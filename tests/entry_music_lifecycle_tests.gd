@@ -13,7 +13,10 @@ func settle() -> void:
 	for i in 5: await process_frame
 func run() -> void:
 	create_timer(40).timeout.connect(func(): quit(2))
-	AudioServer.set_bus_mute(0,true)
+	# Hidden test windows may lose focus; playback checks must keep advancing.
+	check(root.get_node("GameSettings").apply_values({"background_pause":false,"background_mute":false}).is_empty(),"isolated playback fixture disables focus pausing")
+	AudioServer.set_bus_mute(0,false)
+	AudioServer.set_bus_volume_db(0,-90.0)
 	Session.index_path = "res://artifacts/entry-music-isolated-index.json"
 	preload("res://scripts/entry/start_menu_background_cycle.gd").state_path = "res://artifacts/entry-music-background.cfg"
 	var paths := ["user://inventory_loadout.json","user://manual_save_02.json","user://save_slots.json"]
@@ -25,16 +28,24 @@ func run() -> void:
 	while page.entrance.active: await process_frame
 	var music = page.music
 	check(music.playing and music.stream is AudioStreamMP3,"menu automatically starts music")
-	check(music.stream.data==load("res://assets/game-start.mp3").data and music.stream.loop,"game-start is the looping track")
+	check(music.stream.data==load("res://assets/game-start1.mp3").data and not music.stream.loop,"menu starts with game-start1 without single-track looping")
 	music.seek(music.stream.get_length()-0.15)
 	await create_timer(0.6).timeout
-	check(music.playing and music.get_playback_position()<1.5,"actual playback loops across track end")
+	check(music.playing and music.get_playback_position()<1.5 and music.stream.data==load("res://assets/game-start2.mp3").data,"actual end of game-start1 advances to game-start2")
+	music.seek(music.stream.get_length()-0.15)
+	await create_timer(0.6).timeout
+	check(music.playing and music.get_playback_position()<1.5 and music.stream.data==load("res://assets/game-start1.mp3").data,"actual end of game-start2 returns to game-start1")
+	music.seek(music.stream.get_length()-0.15)
+	await create_timer(0.6).timeout
+	check(music.stream.data==load("res://assets/game-start2.mp3").data,"playlist continues alternating on later cycles")
 	page._open_saves()
 	await settle()
 	check(page.music==music and music.playing,"save browser retains same player")
 	page._close_saves()
 	page._request_menu(&"settings")
 	check(page.music==music and music.playing,"settings entry does not stop music")
+	page.settings_panel.closed.emit()
+	await settle()
 	page._begin_journey()
 	while is_instance_valid(page) or root.has_node("EntrySceneCrossfade"): await process_frame
 	check(current_scene.scene_file_path.ends_with("character_preparation.tscn") and root.get_node("EntryMusic")==music and music.playing,"preparation preserves continuous player")
@@ -43,6 +54,7 @@ func run() -> void:
 	page = current_scene
 	while page.entrance.active: await process_frame
 	check(page.music==music and music.playing,"return to menu preserves continuous player")
+	check(music.stream.data==load("res://assets/game-start2.mp3").data,"menu navigation preserves current playlist track")
 	page._navigating = true
 	page._load_game("res://artifacts/entry-music-intentionally-missing-save.json")
 	check(not music.playing and root.has_node("GameLoadingOverlay"),"entry music stops immediately at loading")
@@ -50,5 +62,9 @@ func run() -> void:
 	await settle()
 	check(page.music==music and music.playing and not root.has_node("GameLoadingOverlay"),"failed loading restores menu music")
 	for i in paths.size(): check(hashes[i]==FileAccess.get_sha256(paths[i]),"real save unchanged")
+	music.stop()
+	music.stream = null
+	music.queue_free()
+	await settle()
 	print("ENTRY_MUSIC_LIFECYCLE: %d checks; %d failures" % [checks,failures])
 	quit(1 if failures else 0)

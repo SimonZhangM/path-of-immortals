@@ -36,7 +36,7 @@ func run() -> void:
 	map.set_process(false)
 	check(map.startup_error.is_empty(),"isolated map starts")
 	var before: Dictionary = map.loadout.snapshot()
-	var keys := [KEY_I,KEY_G,KEY_T,KEY_M]
+	var keys := [KEY_I,KEY_G,KEY_R,KEY_M]
 	# Every ordered pair, using actual input dispatch rather than direct page calls.
 	for source in 4:
 		await key(keys[source])
@@ -54,11 +54,11 @@ func run() -> void:
 	map.inventory_screen.add_child(input)
 	input.size = Vector2(160,32)
 	input.grab_focus()
-	await key(KEY_T)
-	check(map.is_inventory_open() and not map.is_task_open(),"typing T does not switch from a text field")
+	await key(KEY_R)
+	check(map.is_inventory_open() and not map.is_task_open(),"typing R does not switch from a text field")
 	input.release_focus()
 	input.queue_free()
-	await key(KEY_T)
+	await key(KEY_R)
 	await key(KEY_G,true)
 	check(map.is_task_open(),"key repeat does not switch pages")
 	# Closing the task page restores the suspended cultivation parent, if any.
@@ -68,16 +68,16 @@ func run() -> void:
 	await key(KEY_ESCAPE)
 	check(not map.is_task_open() and map.cultivation_progress_dialog.visible and not map._cultivation_adjusting,"task close returns to cultivation adjustment parent")
 	map.cultivation_progress_dialog.hide()
-	await key(KEY_T)
+	await key(KEY_R)
 	var bindings: Dictionary = Settings.values_snapshot().bindings.duplicate(true)
 	bindings.map_tasks = KEY_Y
 	root.get_node("GameSettings").apply_values({"bindings":bindings})
 	await key(KEY_I)
-	await key(KEY_T)
+	await key(KEY_R)
 	check(map.is_inventory_open(),"old remapped task shortcut inactive")
 	await key(KEY_Y)
 	check(map.is_task_open(),"remapped task key participates in cross-page switching")
-	bindings.map_tasks = KEY_T
+	bindings.map_tasks = KEY_R
 	root.get_node("GameSettings").apply_values({"bindings":bindings})
 	map.task_screen.task_list.select_task(QuestState.ID)
 	await settle()
@@ -107,7 +107,7 @@ func run() -> void:
 		# Tracking/navigation click behavior is covered by task_tracker_tests.gd.
 	await key(KEY_ESCAPE)
 	map._open_system_menu()
-	await key(KEY_T)
+	await key(KEY_R)
 	check(map.is_system_menu_open() and not map.is_task_open(),"system menu retains its modal input boundary")
 	map.system_menu_controller.close()
 	Meta.stop()

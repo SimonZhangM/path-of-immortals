@@ -1,0 +1,37 @@
+{
+  "id": "base.organ.taibeishiling_yanjicu",
+  "name": "岩棘簇",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    2,
+    1
+  ],
+  "icon": "res://assets/item-enemy-taibeishiling-yanjicu.webp",
+  "cooldown": 8,
+  "stamina_cost": 0,
+  "spirit_cost": 5,
+  "rule_version": 1,
+  "element": "base.element.earth",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "action_name": "岩屑",
+    "hit_chance": 0.95,
+    "physical_attack": false
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 16,
+      "damage_type": "法术型"
+    }
+  ]
+}

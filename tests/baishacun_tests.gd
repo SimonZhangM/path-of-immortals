@@ -2,7 +2,7 @@ extends "res://tests/world_map_discovery_tests.gd"
 
 const VILLAGE := "base.map.baishacun"
 const VILLAGE_LOCATION := "base.world_location.baishacun"
-const ACCEPTED := "base.story.chaoshengguichu.accepted"
+const ACCEPTED := "base.story.qingshihewan.cultivator_rescued"
 
 func capture(label: String) -> void:
 	if DisplayServer.get_name() == "headless": return
@@ -81,8 +81,8 @@ func run() -> void:
 	village.set_process(false)
 	check(village.startup_error.is_empty() and village.travel.current_node_id == VILLAGE + ".point.n01", "arrival at northwest village exit")
 	check(not village.is_exit_open(), "arrival does not immediately prompt return")
-	check(village.travel.node_positions.size() == 20, "all twenty drawn circles are nodes")
-	check(village.content.get_node("Routes").get_child_count() == 23, "twenty-three authored route segments")
+	check(village.travel.node_positions.size() == 21, "twenty original points plus the quest reef")
+	check(village.content.get_node("Routes").get_child_count() == 24, "twenty-three original routes plus the quest shore path")
 	check(not village.travel.request_destination(VILLAGE + ".point.n19"), "unexplored distant node cannot be selected")
 	village.travel.exploration_enabled = false
 	for id: String in village.travel.node_positions:
@@ -97,7 +97,7 @@ func run() -> void:
 		check(route.curve.get_point_position(0).is_equal_approx(route.get_node(route.start_point).position), "curve starts at node")
 		check(route.curve.get_point_position(route.curve.point_count - 1).is_equal_approx(route.get_node(route.end_point).position), "curve ends at node")
 	check(village.event_registry.events.size() == 2, "exactly two chest events")
-	check(view.catalog._points_by_map[VILLAGE].size() == 20, "village nodes join world exploration count")
+	check(view.catalog._points_by_map[VILLAGE].size() == 21, "village nodes join world exploration count")
 	check(view.catalog.region_progress("base.world_region.qinglanshanlu", {}).total == 144, "five maps contribute current valid nodes")
 	icon = village.content.get_node("Points/N01/Sign/LocationIcon")
 	check(icon.texture.atlas.resource_path == "res://assets/map-likai-zuo.webp", "village uses left exit icon")

@@ -1,0 +1,21 @@
+{
+  "id": "base.map_event.diecuifeng.chest_n08",
+  "type": "chest",
+  "point_id": "base.map.diecuifeng.point.n08",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-baoxiang-diecuifeng-pudongshuxi1.webp",
+    "chest_image": "res://assets/tanchuang-baoxiang-diecuifeng-pudongshuxi0.webp",
+    "result_illustration": "res://assets/tanchuang-baoxiang-diecuifeng-pudongshuxi2.webp"
+  },
+  "title": "瀑东树隙",
+  "quality": "凡品",
+  "reward_id": "base.map_reward.diecuifeng.chest_n08",
+  "observation": {
+    "location_name": "瀑东树隙",
+    "location_description": "瀑布旁的树根探入岩隙，水声掩住了林间的动静。",
+    "chest_name": "旧木箱",
+    "description": "树根旁藏着一只旧木箱，箱盖上落着几片枯叶。",
+    "result_description": "你打开木箱，可以从中选择一件物品收下。"
+  }
+}

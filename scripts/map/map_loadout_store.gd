@@ -60,18 +60,35 @@ static func create_state(registry: ContentRegistry, board: BoardLayout) -> Dicti
 					error = "敌方掉落引用了未知兽材：" + row.item_id
 	return {"state": state, "error": error}
 
-static func load_into(state: MapLoadoutState, path: String) -> String:
-	return _load_inventory(state, path)
+static func adopt_session(state: MapLoadoutState, path: String) -> Dictionary:
+	if not SaveSlots.is_snapshot(path): return {"path": path, "error": ""}
+	var target := SaveSlots.working_path()
+	var error := save(state, target, path)
+	if not error.is_empty(): return {"path": path, "error": error}
+	GameSaveSession.active_path = target
+	return {"path": target, "error": ""}
 
-static func _load_inventory(state: MapLoadoutState, path: String) -> String:
+static func load_into(state: MapLoadoutState, path: String, legacy_growth: Dictionary = {}) -> String:
+	return _load_inventory(state, path, legacy_growth)
+
+static func _initialize_growth(state: MapLoadoutState, legacy_growth: Dictionary) -> String:
+	var value := state.initial_growth(legacy_growth) if state.growth.is_empty() else state.growth
+	if not CultivationGrowth.valid(value): return "旧档默认成长数据无效。"
+	state.growth = value
+	state.cultivation_rank_id = CultivationGrowth.rank_id(value)
+	return ""
+
+static func _load_inventory(state: MapLoadoutState, path: String, legacy_growth: Dictionary) -> String:
 	if path.is_empty():
-		return ""
+		return _initialize_growth(state, legacy_growth)
 	var target_path := path
 	if not FileAccess.file_exists(path):
 		# Recover the last complete file if shutdown interrupted the rename.
 		if not FileAccess.file_exists(path + ".bak"):
 			if GameSaveSession.resume_requested:
 				return "最后使用的存档已不存在，无法继续修行。"
+			var growth_error := _initialize_growth(state, legacy_growth)
+			if not growth_error.is_empty(): return growth_error
 			if SaveSlots.is_system(path): return ""
 			return save(state, path)
 		path += ".bak"
@@ -87,13 +104,13 @@ static func _load_inventory(state: MapLoadoutState, path: String) -> String:
 	if parser.data is Dictionary and not parser.data.has("learning"):
 		var legacy_error := CultivationStore.load_into(state.knowledge,state.registry.library,int(state.registry.get_cultivation(state.cultivation_rank_id).order),target_path+".cultivation.json")
 		if not legacy_error.is_empty(): return legacy_error
-	var error := state.restore(parser.data)
+	var error := state.restore(parser.data, false, legacy_growth)
 	if not error.is_empty(): return error
 	var removed_book := false
 	for placement: Dictionary in parser.data.get("placements", []):
 		var item := state.registry.get_item(str(placement.get("item_id", "")))
 		if item != null and item.category == "book": removed_book = true
-	if removed_book or parser.data.get("formations", []) != state.formations or path != target_path or not parser.data.has("calendar") or not parser.data.has("bag_capacity") or parser.data.get("respawn_rules_version",0)!=MapLoadoutState.RESPAWN_RULES.VERSION or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants:
+	if parser.data.get("growth", {}).is_empty() or removed_book or parser.data.get("formations", []) != state.formations or path != target_path or not parser.data.has("calendar") or not parser.data.has("bag_capacity") or parser.data.get("respawn_rules_version",0)!=MapLoadoutState.RESPAWN_RULES.VERSION or parser.data.get("version", 1) == 1 or parser.data.get("content_grants", {}) != state.content_grants:
 		if not SaveSlots.is_snapshot(target_path): error = save(state, target_path)
 	return error
 

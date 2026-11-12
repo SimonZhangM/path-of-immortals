@@ -109,6 +109,9 @@ func ordered_entries() -> Array:
 	return visible_entries
 
 func _comes_before(a: Dictionary, b: Dictionary) -> bool:
+	var a_completed := str(a.get("stage_id", "")) == "completed"
+	var b_completed := str(b.get("stage_id", "")) == "completed"
+	if a_completed != b_completed: return not a_completed
 	var av: Variant = a.get(sort_key)
 	var bv: Variant = b.get(sort_key)
 	var a_missing: bool = av == null or (av is String and av.is_empty())
@@ -171,7 +174,7 @@ func _build_card(entry: Dictionary) -> void:
 	var thumbnail := TextureRect.new()
 	thumbnail.name = "TaskThumbnail"
 	thumbnail.z_index = 1
-	thumbnail.texture = load(entry.image)
+	thumbnail.texture = load(entry.image) if not str(entry.get("image", "")).is_empty() else null
 	thumbnail.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	thumbnail.stretch_mode = TextureRect.STRETCH_SCALE
 	thumbnail.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -197,7 +200,7 @@ func _build_card(entry: Dictionary) -> void:
 	_refresh_card_frame(button)
 	button.resized.connect(func():
 		# Keep the photo's left edge and vertical center fixed; scale by row height.
-		thumbnail.size = thumbnail.texture.get_size() * (button.size.y / thumbnail.texture.get_height())
+		thumbnail.size = thumbnail.texture.get_size() * (button.size.y / thumbnail.texture.get_height()) if thumbnail.texture!=null else Vector2(button.size.y*1.5,button.size.y)
 		thumbnail.position = Vector2(0, (button.size.y-thumbnail.size.y)*0.5)
 		padding.add_theme_constant_override("margin_left", int(ceil(thumbnail.size.x+10.0)))
 		var frame_scale := button.size / Vector2(795,140)

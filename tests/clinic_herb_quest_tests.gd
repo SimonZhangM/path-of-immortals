@@ -96,7 +96,7 @@ func run() -> void:
 	await settle()
 	var header = map.task_screen.detail_header
 	check(header.title_label.text=="医馆备药" and header.category_tag.caption.text=="支线任务","new task name and side classification")
-	check(header.artwork.texture.resource_path.ends_with("UI-task-right-main-yiguanbeiyao.webp"),"specified detail illustration bound")
+	check(header.artwork.texture.resource_path.ends_with("UI-task-right-zhi-yiguanbeiyao.webp"),"specified detail illustration bound")
 	for image_path in [entry().image,entry().detail_image]:
 		var texture: Texture2D = load(image_path)
 		check(texture!=null and texture.get_image().has_mipmaps(),"specified image imported with mipmaps: "+image_path)

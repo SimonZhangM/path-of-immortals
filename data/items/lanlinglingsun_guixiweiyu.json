@@ -1,0 +1,40 @@
+{
+  "id": "base.organ.lanlinglingsun_guixiweiyu",
+  "name": "归息尾羽",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-lanlinglingsun-guixiweiyu.webp",
+  "cooldown": 12,
+  "stamina_cost": 0,
+  "spirit_cost": 3,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "activation_threshold": {
+      "resource": "stamina",
+      "numerator": 2,
+      "denominator": 5
+    },
+    "battle_use_limit": 2
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "restore_instant",
+      "resource": "stamina",
+      "value": 12
+    }
+  ]
+}

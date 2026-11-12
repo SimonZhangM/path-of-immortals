@@ -78,6 +78,8 @@ static func arrival(state: MapLoadoutState, map_id: String, point_id: String) ->
 		return saved.active if saved.location=={"map_id":map_id,"point_id":point_id} else ""
 	if {"map_id":map_id,"point_id":point_id}!=data.clinic:
 		return ""
+	if clinic_available(state) and quantity(state)>0 and delivery_error(state).is_empty() and RiverQuest.arrival(state,map_id,point_id).is_empty():
+		return "delivery"
 	if state.quests[QuestState.ID].counts.deliver==0 or accepted(state):
 		return ""
 	if RiverQuest.doctor_away(state) or not RiverQuest.arrival(state,map_id,point_id).is_empty():
@@ -88,15 +90,10 @@ static func arrival(state: MapLoadoutState, map_id: String, point_id: String) ->
 	return "intro"
 
 static func has_clinic_marker(state: MapLoadoutState) -> bool:
-	return not arrival(state,data.clinic.map_id,data.clinic.point_id).is_empty() or (clinic_available(state) and quantity(state)>0)
+	return not arrival(state,data.clinic.map_id,data.clinic.point_id).is_empty()
 
 static func interaction(state: MapLoadoutState, map_id: String, point_id: String) -> String:
-	var scene := arrival(state,map_id,point_id)
-	if not scene.is_empty(): return scene
-	if {"map_id":map_id,"point_id":point_id}!=data.clinic: return ""
-	if clinic_available(state) and quantity(state)>0 and delivery_error(state).is_empty() and RiverQuest.arrival(state,map_id,point_id).is_empty():
-		return "delivery"
-	return ""
+	return arrival(state,map_id,point_id)
 
 static func exit_blocked(state: MapLoadoutState, map_id: String, point_id: String) -> bool:
 	if map_id!=data.clinic.map_id or point_id!=data.river_exit:

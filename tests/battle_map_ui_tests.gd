@@ -23,7 +23,8 @@ func shot(label: String) -> void:
 
 func _run() -> void:
 	create_timer(45).timeout.connect(func(): quit(2))
-	AudioServer.set_bus_mute(0, true)
+	AudioServer.set_bus_mute(0, false)
+	AudioServer.set_bus_volume_db(0, -90.0)
 	root.size = Vector2i(2560, 1440)
 	presentation = root.get_node("MapPresentation")
 	var map = load("res://scenes/maps/qingshihewan.tscn").instantiate()

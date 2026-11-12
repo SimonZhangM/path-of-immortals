@@ -79,11 +79,6 @@ func _draw() -> void:
 	var center := transform * number_center()
 	var slash_width := number_font.get_string_size("/", HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 	var used_width := number_font.get_string_size(str(displayed.x), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	if displayed.x > 99 and not storage_banner:
-		# Three testing digits use the same font as the board, not a reduced one.
-		# Shift the group just enough to clear the painted "容量" caption.
-		var safe_start := transform * ((Vector2(number_area.position.x, number_area.get_center().y) - (texture as AtlasTexture).region.position) * factor)
-		center.x = maxf(center.x, safe_start.x + used_width + gap + slash_width * 0.5)
 	center += number_offset * pixel_scale
 	var baseline := roundf(center.y + (number_font.get_ascent(font_size) - number_font.get_descent(font_size)) * 0.5)
 	var slash_x := roundf(center.x - slash_width * 0.5)

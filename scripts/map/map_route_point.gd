@@ -5,6 +5,9 @@ extends Sprite2D
 @export var point_id: String = ""
 @export var location_note: String = ""
 
+func _init() -> void:
+	texture_filter = TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+
 func present_exploration(revealed: bool, visited: bool) -> void:
 	visible = revealed
 	# Material affects this Sprite only: child road signs retain their own colors.

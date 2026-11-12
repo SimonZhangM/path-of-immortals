@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "coordinate_space": "breakthrough_design_canvas_2560x1440",
+  "reference_board_id": "base.board.qinglan_1",
+  "unknown_board_policy": "temporary_fit_preview_region_without_saving_profile",
+  "profiles": {
+    "base.board.qinglan_1": {
+      "board_definition": "res://data/boards/qinglan_1.json",
+      "texture": "res://assets/zhenpan-qlz-1.webp",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "canvas_rect": [
+        964.992,
+        365.0,
+        631.514,
+        631.514
+      ],
+      "center": [
+        1280.749,
+        680.757
+      ],
+      "embedded_in_composition": false,
+      "note": "2026-11-10??????????????????????????????ID???????????????",
+      "reference_composition_sha256": "f2261e2fd072c15f7d66005fdb469f3507b4058d219e166ab94caf404d33d531",
+      "reference_artwork": "res://assets/UI-tupo-zonghebuzhi-fanren.webp",
+      "calibration_method": "opaque_source_pixel_registration_to_user_reference",
+      "calibration_mean_absolute_error": 1.7816,
+      "source_scale": 0.5036,
+      "reference_realm_pair": [
+        "fanren",
+        "lianqi"
+      ],
+      "calibration_date": "2026-11-10"
+    },
+    "base.board.qinglan_2": {
+      "board_definition": "res://data/boards/qinglan_2.json",
+      "texture": "res://assets/zhenpan-qlz-2.webp",
+      "source_size": [
+        1254,
+        1454
+      ],
+      "canvas_rect": [
+        978.524,
+        333.0,
+        607.939,
+        704.899
+      ],
+      "center": [
+        1282.4935,
+        685.4495
+      ],
+      "embedded_in_composition": false,
+      "reference_artwork": "res://assets/UI-tupo-zonghebuzhi-lianqi.webp",
+      "reference_composition_sha256": "af611a28cd1b21747a491e7672c298f75a34ec3bb4f10e563a8feca1b4f76ca5",
+      "calibration_method": "opaque_source_pixel_registration_to_user_reference",
+      "calibration_mean_absolute_error": 2.6265,
+      "source_scale": 0.4848,
+      "reference_realm_pair": [
+        "lianqi",
+        "zhuji"
+      ],
+      "calibration_date": "2026-11-10",
+      "note": "2026-11-10??????????????????????????????ID???????????????"
+    },
+    "base.board.qinglan_3": {
+      "board_definition": "res://data/boards/qinglan_3.json",
+      "texture": "res://assets/zhenpan-qlz-3.webp",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "canvas_rect": [
+        927.864,
+        325.5,
+        710.767,
+        710.767
+      ],
+      "center": [
+        1283.2475,
+        680.8835
+      ],
+      "embedded_in_composition": false,
+      "reference_artwork": "res://assets/UI-tupo-zonghebuzhi-zhuji.webp",
+      "reference_composition_sha256": "ca26bf23549eef9c986433818b79cd727a68ad7eac1d5026418b17f4bbde3e34",
+      "calibration_method": "opaque_source_pixel_registration_to_user_reference",
+      "calibration_mean_absolute_error": 3.9096,
+      "source_scale": 0.5668,
+      "reference_realm_pair": [
+        "zhuji",
+        "jiedan"
+      ],
+      "calibration_date": "2026-11-10",
+      "note": "2026-11-10??????????????????????????????ID???????????????"
+    },
+    "base.board.qinglan_4": {
+      "board_definition": "res://data/boards/qinglan_4.json",
+      "texture": "res://assets/zhenpan-qlz-4.webp",
+      "source_size": [
+        1254,
+        1400
+      ],
+      "canvas_rect": [
+        954.952,
+        307.25,
+        656.093,
+        732.48
+      ],
+      "center": [
+        1282.9985,
+        673.49
+      ],
+      "embedded_in_composition": false,
+      "reference_artwork": "res://assets/UI-tupo-zonghebuzhi-jiedan.webp",
+      "reference_composition_sha256": "6e5c7189997113b53265e53c40f04cac5f420d6f923c71e5ae1cc18a80fde4a2",
+      "calibration_method": "opaque_source_pixel_registration_to_user_reference",
+      "calibration_mean_absolute_error": 4.0356,
+      "source_scale": 0.5232,
+      "reference_realm_pair": [
+        "jiedan",
+        "yuanying"
+      ],
+      "calibration_date": "2026-11-10",
+      "note": "2026-11-10??????????????????????????????ID???????????????"
+    },
+    "base.board.qinglan_5": {
+      "board_definition": "res://data/boards/qinglan_5.json",
+      "texture": "res://assets/zhenpan-qlz-5.webp",
+      "source_size": [
+        1254,
+        1454
+      ],
+      "canvas_rect": [
+        897.268,
+        204.25,
+        770.959,
+        893.919
+      ],
+      "center": [
+        1282.7475,
+        651.2095
+      ],
+      "embedded_in_composition": false,
+      "reference_artwork": "res://assets/UI-tupo-zonghebuzhi-yuanying.webp",
+      "reference_composition_sha256": "8b31570ac5a31c00ae9da556e7ec519da7fe4af106ffed42871080f36cb63beb",
+      "calibration_method": "opaque_source_pixel_registration_to_user_reference",
+      "calibration_mean_absolute_error": 3.0888,
+      "source_scale": 0.6148,
+      "reference_realm_pair": [
+        "yuanying",
+        "huashen"
+      ],
+      "calibration_date": "2026-11-10",
+      "note": "2026-11-10??????????????????????????????ID???????????????"
+    }
+  },
+  "unconfigured_viewport": [
+    924,
+    342,
+    705,
+    705
+  ],
+  "unconfigured_note": "专用布局未确认的实际阵盘，临时在预留区等比显示，物品仍使用该盘自己的源格线；不写入确认档案，不借用晓岚格位。",
+  "composition_alignment": {
+    "artwork_sha256": "eb09617f1ff97002ed33e39099c5125a2ca5f7ffd0a18aeb203b0b104ea2aec3",
+    "date": "2026-11-10",
+    "method": "independent_registration_per_board_to_realm_reference",
+    "note": "???????????????????????????????????????"
+  }
+}

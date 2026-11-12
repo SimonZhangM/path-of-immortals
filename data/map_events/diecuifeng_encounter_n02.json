@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.diecuifeng.encounter_n02",
+  "type": "encounter",
+  "point_id": "base.map.diecuifeng.point.n02",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-diecuifeng-01-N02.webp"
+  },
+  "title": "南麓石阶",
+  "description": "南麓石阶附近出现了苔背石灵。",
+  "enemy_id": "base.enemy.taibeishiling",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

@@ -45,7 +45,7 @@ static func runtime_error(raw: Dictionary) -> String:
 			return "T01 costs must be finite nonnegative numbers"
 	if raw.get("category") in ["pill", "throwable"] and raw.get("uses_per_unit") != 1:
 		return "T01 consumables require one use per unit"
-	for flag in ["first_ready", "barrier_full_stop"]:
+	for flag in ["first_ready", "barrier_full_stop", "requires_missing_armor", "physical_attack"]:
 		if not combat.get(flag, false) is bool:
 			return "T01 flag must be boolean: " + flag
 	if not combat.get("waste_on_insufficient", false) is bool:
@@ -63,12 +63,30 @@ static func runtime_error(raw: Dictionary) -> String:
 			var amount: Variant = reward.get(key, 0)
 			if not (amount is int or amount is float) or not is_finite(amount) or amount < 0 or amount != floorf(amount):
 				return "link_reward must contain nonnegative integers: " + key
-	if combat.has("resource_threshold"):
-		var threshold: Variant = combat.resource_threshold
+	for key in ["resource_threshold", "activation_threshold"]:
+		if not combat.has(key): continue
+		var threshold: Variant = combat[key]
 		if not threshold is Dictionary or threshold.get("resource") not in ["hp", "stamina", "spirit"]:
 			return "invalid resource threshold"
 		if not ContentRegistry._positive_integer(threshold.get("numerator")) or not ContentRegistry._positive_integer(threshold.get("denominator")) or threshold.numerator > threshold.denominator:
 			return "invalid resource threshold fraction"
+	if combat.has("battle_use_limit") and not ContentRegistry._positive_integer(combat.battle_use_limit): return "invalid battle use limit"
+	if combat.has("resource_bonuses"):
+		if not combat.resource_bonuses is Dictionary: return "invalid resource bonuses"
+		for key: Variant in combat.resource_bonuses:
+			if key not in ["hp", "stamina", "spirit"] or not ContentRegistry._nonnegative_integer(combat.resource_bonuses[key]): return "invalid resource bonus"
+	if combat.has("periodic_restore"):
+		var periodic: Variant = combat.periodic_restore
+		if not periodic is Dictionary or not ContentRegistry._positive_number(periodic.get("interval")) or periodic.interval > 86400 or not periodic.get("resources") is Dictionary or periodic.resources.is_empty(): return "invalid periodic restoration"
+		for key: Variant in periodic.resources:
+			if key not in ["hp", "stamina", "spirit"] or not ContentRegistry._positive_number(periodic.resources[key]): return "invalid periodic resource"
+	if combat.has("multi_hit"):
+		var combo: Variant = combat.multi_hit
+		if not combo is Dictionary or not ContentRegistry._positive_integer(combo.get("count")) or combo.count > 10 or not ContentRegistry._positive_number(combo.get("interval")) or combo.interval > 60: return "invalid multi-hit attack"
+		if not raw.effects.any(func(e: Dictionary): return e.get("effect") == "damage"): return "multi-hit requires damage"
+	if combat.has("low_hp_physical_buff"):
+		var buff: Variant = combat.low_hp_physical_buff
+		if not buff is Dictionary or not ContentRegistry._positive_integer(buff.get("numerator")) or not ContentRegistry._positive_integer(buff.get("denominator")) or buff.numerator > buff.denominator or not ContentRegistry._positive_number(buff.get("duration")) or not ContentRegistry._positive_number(buff.get("bonus")) or buff.bonus > 1: return "invalid low-HP physical buff"
 	for effect: Dictionary in raw.effects:
 		if effect.get("effect") not in ["damage", "apply_status", "restore_capped", "restore_ticks", "restore_instant", "restore_armor", "cleanse_toxin", "barrier", "resistance", "cast_spell", "prime_item_attack", "delay_cooldown"]:
 			return "T01 effect is not implemented: " + str(effect.get("effect"))

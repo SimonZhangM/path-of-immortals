@@ -1,0 +1,70 @@
+{
+  "id": "base.enemy.qingfenglingtang",
+  "name": "青锋灵螳",
+  "art_profile": "base.enemy.qingfenglingtang",
+  "cultivation_rank": "base.cultivation.qi_refining",
+  "cultivation_stage": "初期",
+  "max_hp": 136,
+  "max_stamina": 72,
+  "max_spirit": 36,
+  "innate_armor_type": "轻甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 14,
+  "initialize_equipped_full": true,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 28,
+    "experience": 16
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.qingfenglingtang_qingfenglianzhi",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.qingfenglingtang_jinfeng",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.qingfenglingtang_chuanyeci",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.qingfenglingtang_qingtangjiake",
+      "cell": [
+        3,
+        0
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.qingfenglingtang_qingfenglianzhi",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.qingfenglingtang_qingtangjiake",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "炼气初期",
+    "category_label": "虫豸灵兽",
+    "description": "青色甲壳下收着锋利镰肢，以连续斩击、穿叶突刺与金锋交替压制对手。",
+    "traits": [
+      "双镰连击",
+      "锋痕"
+    ],
+    "battle_background": "res://assets/battle-qinglanshandao-qingfenglingtang.webp",
+    "summary": []
+  }
+}

@@ -69,7 +69,8 @@ func _award_victory() -> String:
 	state.formation_icons = manager._durable_loadout.formation_icons
 	var error := state.restore(manager._durable_snapshot)
 	if not error.is_empty(): return error
-	var prepared := BattleLoot.candidate(state, enemy, _battle_id, _loot_rolls)
+	var remaining_items: Array = manager.enemies[0].inventory.get_instances().map(func(entry: Dictionary): return entry.item_id)
+	var prepared := BattleLoot.candidate(state, enemy, _battle_id, _loot_rolls, remaining_items)
 	if not prepared.error.is_empty(): return prepared.error
 	# Victory loot may overflow the bag; map travel then disables running.
 	# Never block the result screen or discard earned drops because the bag is full.
@@ -86,7 +87,10 @@ func _award_victory() -> String:
 		var cultivation_reward := snappedf(float(rewards.get("cultivation",0))*(1.0+state.cultivation_bonus_percent()/100.0),0.1)
 		CultivationGrowth.award(state.growth,CultivationGrowth.cents(cultivation_reward))
 		state.growth.experience=int(state.growth.get("experience",0))+int(rewards.get("experience",0))
-	if error.is_empty(): error = MapLoadoutStore.save(state, save_path)
+	if error.is_empty():
+		MerchantRoadQuest.record_victory(state,event_id)
+		DeerRestQuest.record_victory(state,event_id)
+		error = MapLoadoutStore.save(state, save_path)
 	if not error.is_empty(): return error
 	# Publish ownership only after the inventory and first-victory receipt save.
 	for entry: Dictionary in state.storage.entries():

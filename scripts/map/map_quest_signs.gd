@@ -8,6 +8,12 @@ func configure(points: Node, sign_motion: MapSignMotion) -> void:
 	for point: MapRoutePoint in points.get_children():
 		entries[point.point_id] = {"point":point,"original":point.get_node_or_null("Sign"),"overlay":null,"was_visible":true}
 
+func show_task_at(point_ids: Array[String], category: String) -> void:
+	# Only main quests use red. All other current task categories use yellow.
+	var optional_points: Array[String] = []
+	if category!="main": optional_points = point_ids
+	show_at(point_ids,optional_points)
+
 func show_at(point_ids: Array[String], optional_point_ids: Array[String] = []) -> void:
 	for id: String in entries:
 		var entry: Dictionary = entries[id]

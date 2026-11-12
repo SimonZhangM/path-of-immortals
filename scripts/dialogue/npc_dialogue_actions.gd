@@ -3,6 +3,7 @@ extends RefCounted
 
 static func command(state: MapLoadoutState, library: NpcDialogueLibrary, action: String, path: String, topic := "", context: Dictionary = {}) -> String:
 	if library.definition.id=="base.npc.suqinghe" and RiverQuest.doctor_away(state): return "清禾正在出诊，暂时不在医馆。"
+	if library.definition.id==HomecomingQuest.MOTHER and state.map_location!=HomecomingQuest.data.home: return "请回家再和娘说话。"
 	var prepared := MapLoadoutStore.candidate(state)
 	if not prepared.error.is_empty(): return prepared.error
 	var candidate: MapLoadoutState = prepared.state

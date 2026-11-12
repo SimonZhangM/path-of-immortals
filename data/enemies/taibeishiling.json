@@ -1,0 +1,74 @@
+{
+  "id": "base.enemy.taibeishiling",
+  "name": "苔背石灵",
+  "art_profile": "base.enemy.taibeishiling",
+  "cultivation_rank": "base.cultivation.qi_refining",
+  "cultivation_stage": "初期",
+  "max_hp": 184,
+  "max_stamina": 64,
+  "max_spirit": 36,
+  "innate_armor_type": "重甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 56,
+  "initialize_equipped_full": true,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 24,
+    "experience": 12
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.taibeishiling_shiquan",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.taibeishiling_yanjicu",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.taibeishiling_jutu",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.taibeishiling_yanke",
+      "cell": [
+        3,
+        0
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.taibeishiling_shiquan",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.taibeishiling_yanjicu",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.taibeishiling_yanke",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "炼气初期",
+    "category_label": "岩土灵物",
+    "description": "苔岩凝成的石灵，岩壳厚重，挥动石拳与岩棘攻击，聚土修补受损护甲。",
+    "traits": [
+      "厚甲",
+      "聚土修甲"
+    ],
+    "battle_background": "res://assets/battle-diecuifeng-taibeishiling.webp",
+    "summary": []
+  }
+}

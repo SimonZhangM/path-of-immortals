@@ -1,0 +1,50 @@
+{
+  "id": "base.map.diecuifeng",
+  "name": "叠翠峰",
+  "exploration": {
+    "enabled": true,
+    "hint_length": 72.0
+  },
+  "music": [
+    "res://assets/bgm-diecuifeng-qinglanshandao.mp3"
+  ],
+  "background": "res://assets/map-diecuifeng.webp",
+  "marker": "res://assets/mapdot.webp",
+  "source_size": [
+    3040,
+    1711
+  ],
+  "layout_scene": "res://scenes/maps/diecuifeng_layout.tscn",
+  "sign_motion": "res://data/ui/map_sign_motion.json",
+  "start_point": "base.map.diecuifeng.point.n01",
+  "show_map_title": true,
+  "title_image": "res://assets/map-title-diecuifeng.webp",
+  "exits": [
+    {
+      "point_id": "base.map.diecuifeng.point.n01",
+      "title": "前往 青石镇",
+      "scene": "res://scenes/maps/qingshizhen.tscn",
+      "target_point": "base.map.qingshizhen.point.n02",
+      "target_facing": "left"
+    }
+  ],
+  "event_files": [
+    "res://data/map_events/diecuifeng_encounter_n02.json",
+    "res://data/map_events/diecuifeng_encounter_n06.json",
+    "res://data/map_events/diecuifeng_encounter_n07.json",
+    "res://data/map_events/diecuifeng_chest_n08.json",
+    "res://data/map_events/diecuifeng_rest_n11.json",
+    "res://data/map_events/diecuifeng_rest_n13.json",
+    "res://data/map_events/diecuifeng_chest_n15.json",
+    "res://data/map_events/diecuifeng_encounter_n20.json",
+    "res://data/map_events/diecuifeng_encounter_n21.json",
+    "res://data/map_events/diecuifeng_encounter_n22.json",
+    "res://data/map_events/diecuifeng_rest_n23.json",
+    "res://data/map_events/diecuifeng_encounter_n24.json",
+    "res://data/map_events/diecuifeng_encounter_n27.json",
+    "res://data/map_events/diecuifeng_encounter_n28.json",
+    "res://data/map_events/diecuifeng_encounter_n30.json",
+    "res://data/map_events/diecuifeng_gathering_n31.json",
+    "res://data/map_events/diecuifeng_encounter_n33.json"
+  ]
+}

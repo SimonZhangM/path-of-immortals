@@ -1,0 +1,18 @@
+{
+  "id": "base.map_event.diecuifeng.rest_n23",
+  "type": "rest",
+  "point_id": "base.map.diecuifeng.point.n23",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/tanchuang-huifu-diecuifeng-qingtancaoan.webp",
+    "background": "res://assets/tanchuang-huifu-linjiangouhuo1.webp"
+  },
+  "title": "清潭草岸",
+  "rest_kind": "outdoor",
+  "description": "潭边草岸开阔，清风带着水气，可以在此歇脚。",
+  "note": "暂歇片刻，\n调息养神。",
+  "action_label": "稍作歇脚",
+  "recovery_percent": 30,
+  "duration_days": 1,
+  "allow_food": true
+}

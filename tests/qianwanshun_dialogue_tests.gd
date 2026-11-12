@@ -87,7 +87,7 @@ func model_checks(map: Node, lib: NpcDialogueLibrary) -> void:
 	read(late,lib,"shop")
 	read(late,lib,"shop")
 	check(not late.npcs[QIAN].seen.has(P+"shop.02"),"entire missed pre-rescue segment is not false history")
-	# Per-line address freezes history but newly revealed lines use current relation.
+	# Merchant wording stays natural before and after learning the player's name.
 	var addresses := fresh(lib)
 	DialogueJournal.select(addresses,lib,"chat",0,{})
 	var first_text: String = DialogueJournal.view(addresses,lib,{}).rows[0].text
@@ -96,7 +96,7 @@ func model_checks(map: Node, lib: NpcDialogueLibrary) -> void:
 	finish(addresses,lib)
 	read(addresses,lib,"chat")
 	var rows: Array = DialogueJournal.view(addresses,lib,{}).rows
-	check(rows[0].text==first_text and "小兄弟" in rows[0].text and rows.any(func(row): return "辰宇兄弟，东西找不着" in row.text),"past address stays literal, unread suitable content adopts new relationship")
+	check(rows[0].text==first_text and rows.all(func(row): return "兄弟" not in row.text and "辰宇" not in row.text) and rows.any(func(row): return "东西找不着" in row.text),"merchant uses no brother or nickname address before or after name introduction")
 	# 90-day, two-at-a-time ordinary visits, independent of main story revisions.
 	var timed := fresh(lib)
 	read(timed,lib,"chat")

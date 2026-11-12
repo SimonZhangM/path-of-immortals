@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.diecuifeng.encounter_n21",
+  "type": "encounter",
+  "point_id": "base.map.diecuifeng.point.n21",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-diecuifeng-06-N21.webp"
+  },
+  "title": "南林藤径",
+  "description": "南林藤径附近出现了碧叶藤灵。",
+  "enemy_id": "base.enemy.biyetengling",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

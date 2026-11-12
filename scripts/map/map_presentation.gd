@@ -6,7 +6,7 @@ const WIPE_OUT := 1.0
 const WIPE_IN := 1.0
 const BATTLE_FADE := 0.5
 const MUSIC_VOLUME := 0.501187 # -6 dB, matching battle music.
-var music: AudioStreamPlayer
+var music: MusicPlayer
 var map_id := ""
 var playlist: Array = []
 var track_index := 0
@@ -20,7 +20,7 @@ var _mask: ShaderMaterial
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	preload("res://scripts/settings/game_settings.gd").ensure_audio_buses()
-	music = AudioStreamPlayer.new()
+	music = MusicPlayer.new()
 	music.bus = "Music"
 	music.name = "MapMusic"
 	add_child(music)
@@ -63,21 +63,21 @@ func enter_map(definition: Dictionary, seconds: float = MUSIC_FADE) -> void:
 		map_id = next_id
 		playlist = tracks.duplicate()
 		track_index = 0
-		music.volume_linear = 0.0
-		music.stream_paused = false
+		music.music_gain = 0.0
+		music.set_context_paused(false)
 		if playlist.is_empty():
 			music_state = "stopped"
 			return
 		_play_track()
 	else:
-		music.stream_paused = false
+		music.set_context_paused(false)
 	music_state = "resuming"
 	if seconds <= 0.0:
-		music.volume_linear = MUSIC_VOLUME
+		music.music_gain = MUSIC_VOLUME
 		music_state = "playing"
 		return
 	_fade = create_tween().set_ignore_time_scale(true)
-	_fade.tween_property(music, "volume_linear", MUSIC_VOLUME, seconds)
+	_fade.tween_property(music, "music_gain", MUSIC_VOLUME, seconds)
 	_fade.tween_callback(func(): music_state = "playing")
 
 func _play_track() -> void:
@@ -87,7 +87,7 @@ func _play_track() -> void:
 	elif stream is AudioStreamWAV:
 		stream.loop_mode = AudioStreamWAV.LOOP_DISABLED
 	music.stream = stream
-	music.play()
+	music.start_playback()
 
 func _next_track() -> void:
 	# A track may end during a fade: advance without changing fade or gain.
@@ -100,14 +100,30 @@ func _cancel_fade() -> void:
 	if _fade != null and _fade.is_valid():
 		_fade.kill()
 
+func suspend_for_overlay() -> Dictionary:
+	var saved := {"map_id":map_id,"stream":music.stream,"state":music_state,"paused":music.context_paused}
+	_cancel_fade()
+	music.set_context_paused(true)
+	music_state="paused"
+	return saved
+
+func resume_from_overlay(saved: Dictionary) -> void:
+	# A transition may have selected another map while the old view was closing.
+	if saved.is_empty() or transitioning or saved.map_id!=map_id or saved.stream!=music.stream or music_state!="paused": return
+	music.set_context_paused(bool(saved.paused))
+	music_state=str(saved.state)
+	if music_state in ["playing","resuming"]:
+		music.music_gain=MUSIC_VOLUME
+		music_state="playing"
+
 func fade_out(pause_for_battle: bool, seconds: float = MUSIC_FADE) -> void:
 	_cancel_fade()
 	music_state = "pausing" if pause_for_battle else "leaving"
 	_fade = create_tween().set_ignore_time_scale(true)
-	_fade.tween_property(music, "volume_linear", 0.0, seconds)
+	_fade.tween_property(music, "music_gain", 0.0, seconds)
 	_fade.tween_callback(func():
 		if pause_for_battle:
-			music.stream_paused = true
+			music.set_context_paused(true)
 			music_state = "paused"
 		else:
 			music.stop()
@@ -129,11 +145,11 @@ func _wipe(direction_value: Vector2, revealing: bool, seconds: float, gain: floa
 	_mask.set_shader_parameter("revealing", revealing)
 	_mask.set_shader_parameter("progress", 0.0)
 	var started := Time.get_ticks_usec()
-	var initial_gain := music.volume_linear
+	var initial_gain := music.music_gain
 	while true:
 		var progress := clampf(float(Time.get_ticks_usec() - started) / (seconds * 1000000.0), 0.0, 1.0)
 		_mask.set_shader_parameter("progress", progress)
-		music.volume_linear = lerpf(initial_gain, gain, progress)
+		music.music_gain = lerpf(initial_gain, gain, progress)
 		if progress >= 1.0:
 			break
 		await get_tree().process_frame
@@ -159,7 +175,7 @@ func change_map(source: Control, destination: Control, outgoing: Vector2, incomi
 	if source.has_method("deactivate_location"): source.deactivate_location()
 	if destination.has_method("activate_location"): destination.activate_location()
 	enter_map(destination.definition, 0.0)
-	music.volume_linear = 0.0
+	music.music_gain = 0.0
 	music_state = "resuming"
 	await _wipe(incoming, true, WIPE_IN, MUSIC_VOLUME)
 	music_state = "playing" if not playlist.is_empty() else "stopped"
@@ -181,7 +197,7 @@ func change_battle_scene(source: Node, destination: Node, source_view: CanvasIte
 		music_state = "pausing"
 	await _uniform_fade(1.0, music if entering_battle else battle_audio.music, 0.0)
 	if entering_battle:
-		music.stream_paused = true
+		music.set_context_paused(true)
 		music_state = "paused"
 	else:
 		battle_audio.music.stop()
@@ -192,10 +208,10 @@ func change_battle_scene(source: Node, destination: Node, source_view: CanvasIte
 	if destination.has_method("activate_location"): destination.activate_location()
 	if entering_battle:
 		battle_audio.start_music()
-		battle_audio.music.volume_linear = 0.0
+		battle_audio.music.music_gain = 0.0
 	else:
 		enter_map(destination.definition, 0.0)
-		music.volume_linear = 0.0
+		music.music_gain = 0.0
 		music_state = "resuming"
 	await _uniform_fade(0.0, battle_audio.music if entering_battle else music, MUSIC_VOLUME)
 	if not entering_battle:
@@ -204,16 +220,16 @@ func change_battle_scene(source: Node, destination: Node, source_view: CanvasIte
 	destination.process_mode = Node.PROCESS_MODE_INHERIT
 	transitioning = false
 
-func _uniform_fade(alpha: float, player: AudioStreamPlayer, gain: float) -> void:
+func _uniform_fade(alpha: float, player: MusicPlayer, gain: float) -> void:
 	# One presentation-only wall clock keeps picture and sound in sync, even
 	# after a slow loading/render frame. It never advances simulation time.
 	var started := Time.get_ticks_usec()
 	var initial_alpha := _cover.modulate.a
-	var initial_gain := player.volume_linear
+	var initial_gain := player.music_gain
 	while true:
 		var progress := clampf(float(Time.get_ticks_usec() - started) / (BATTLE_FADE * 1000000.0), 0.0, 1.0)
 		_cover.modulate.a = lerpf(initial_alpha, alpha, progress)
-		player.volume_linear = lerpf(initial_gain, gain, progress)
+		player.music_gain = lerpf(initial_gain, gain, progress)
 		if progress >= 1.0:
 			break
 		await get_tree().process_frame

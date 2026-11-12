@@ -34,7 +34,7 @@
     "board_layout": "base.board.qinglan_1",
     "required_cultivation": "base.cultivation.mortal",
     "faction": "青岚宗",
-    "origin_description": "出自青岚宗的制式阵盘。",
+    "origin_description": "出自青岚宗的入门阵盘，凡人亦可驱使。阵纹贯通灵气，使盘中器具在修炼时消耗的体力、灵力转为修为。",
     "card_frame": "res://assets/level-1.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,

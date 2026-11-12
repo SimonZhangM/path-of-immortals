@@ -115,7 +115,7 @@ func run() -> void:
 			previous_end = button.position.x+button.size.x
 		check(browser.cancel_button.text=="取消" and browser.back_button.text=="存储" and browser.load_button.text=="读取","cancel/store/load order")
 		await click(browser.row_buttons[0])
-		check(browser.entries[0].slot==1 and browser.entries[0].chapter=="尚无快速存档" and browser.back_button.disabled and browser.load_button.disabled,"missing quick slot visible but cannot store or load")
+		check(browser.entries[0].slot==1 and browser.entries[0].chapter=="尚无快速存档" and not browser.back_button.disabled and browser.load_button.disabled,"missing quick slot can store but cannot load")
 		check(not FileAccess.file_exists(Slots.quick_path()),"viewing 01 does not manufacture a quick save")
 		await click(browser.row_buttons[2])
 		check(not browser.back_button.disabled and not browser.load_button.disabled,"existing manual row still enables store and load")
@@ -143,7 +143,7 @@ func run() -> void:
 	await settle()
 	check(browser.entries[0].slot==1 and browser.entries[0].readable and not browser.entries[0].get("empty_system_slot",false),"first quick checkpoint replaces 01 placeholder")
 	await click(browser.row_buttons[0])
-	check(browser.back_button.disabled and not browser.load_button.disabled,"generated quick slot can load but cannot be manually overwritten")
+	check(not browser.back_button.disabled and not browser.load_button.disabled,"generated quick slot can load and be manually overwritten")
 	await click(browser.cancel_button)
 	map.system_menu_controller.close()
 	map.queue_free()

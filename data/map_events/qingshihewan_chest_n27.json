@@ -1,7 +1,7 @@
 {
   "id": "base.map_event.qingshihewan.chest_n27",
   "type": "chest",
-  "point_id": "base.map.qingshihewan.point.n27",
+  "point_id": "base.map.qingshihewan.point.n17",
   "trigger": "arrival",
   "quality": "下品",
   "reward_id": "base.map_reward.qingshihewan.chest_n27",
@@ -11,8 +11,8 @@
     "result_illustration": "res://assets/tanchuang-baoxiang-nanpolinyuan2.webp"
   },
   "observation": {
-    "location_name": "南坡林缘",
-    "location_description": "南岸林木沿山坡延伸，草木间透着斑驳日光。老树盘根错节，地面铺满枯枝与厚厚的落叶。",
+    "location_name": "临水双林",
+    "location_description": "河岸两片树林之间留着一条窄道，临水礁石旁草叶轻晃。树根探入碎石与落叶，一只木匣藏在背阴处。",
     "chest_name": "林根秘匣",
     "description": "一只深褐色木匣倚在树根旁，匣面缠着几缕细藤，隐约可见古朴的机关纹路，双格锁扣尚未损坏。",
     "result_description": "你解开缠绕的细藤，开启匣盖上的机关。两处锁格依次弹开，露出本次可供挑选的物品。"

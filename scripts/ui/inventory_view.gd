@@ -108,7 +108,7 @@ func _process(delta: float) -> void:
 			_pulses.erase(id)
 		queue_redraw()
 	if manager != null and manager.simulation != null:
-		var time_usec := manager.simulation.state.time_usec
+		var time_usec := manager.simulation.presentation_time_usec()
 		if time_usec != _last_time_usec:
 			_last_time_usec = time_usec
 			queue_redraw()
@@ -451,6 +451,10 @@ func build_item_tooltip(_for_text: String) -> Object:
 	var item := manager.registry.get_item(_tooltip_entry["item_id"])
 	var panel := ItemTooltip.new()
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
+	if enemy_side:
+		_tooltip_entry["enemy_armor_type"] = EnemyPresentation.combat_tags(owner).armor
+	else:
+		_tooltip_entry.erase("enemy_armor_type")
 	if item.category == "spell":
 		_tooltip_entry.merge(CultivationDescription.tooltip_context(owner.knowledge, item.id, item), true)
 	elif item.category == "book":

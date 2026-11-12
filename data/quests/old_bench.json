@@ -1,0 +1,317 @@
+{
+  "quest_id": "quest.prologue.shuxiajiudeng",
+  "tree": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n11"
+  },
+  "smith": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n23"
+  },
+  "accepted_location": "青石镇·古树",
+  "item_id": "base.map_item.toolkit",
+  "tools_reward": {
+    "id": "base.map_reward.shuxiajiudeng.tools",
+    "item_id": "base.map_item.toolkit",
+    "quantity": 1
+  },
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true,
+    "dismiss_together": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.zhoubinghe": {
+      "name": "周秉和",
+      "portrait": "res://assets/ui-portrait-zhoubinghe.webp",
+      "portrait_region": [
+        0,
+        0,
+        410,
+        410
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    },
+    "base.npc.hantieshan": {
+      "name": "韩铁山",
+      "portrait": "res://assets/ui-portrait-hantieshan.webp",
+      "portrait_region": [
+        0,
+        0,
+        389,
+        389
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "intro": {
+      "lines": [
+        "（走到古树下，看见周秉和正弯腰按着长凳。他刚一松手，凳脚便轻轻晃了一下。）",
+        "周伯，这凳子坏了？",
+        "腿松了，凳面倒还结实。先别坐，我看看哪儿得加个撑。",
+        "（蹲下看了看，扶住他手边的凳脚。）",
+        "这样扶着就不晃了。",
+        "总不能让你天天在这儿扶着。已经托韩师傅做铁件了，不知道做好没有。",
+        "我去问问？",
+        "好，做好了就替我带过来，工具也借一套。省得往后谁坐下，连人带凳翻了。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-1.webp"
+      }
+    },
+    "accepting": {
+      "lines": [
+        "行，我去一趟。",
+        "劳你了。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-1.webp"
+      }
+    },
+    "decline": {
+      "lines": [
+        "行，你先忙。空了再来，凳子我先放到旁边。"
+      ],
+      "line_speakers": [
+        "base.npc.zhoubinghe"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-1.webp"
+      }
+    },
+    "offer": {
+      "lines": [
+        "这会儿有空了？替我去韩师傅那儿取一下铁件吧，工具也借一套。"
+      ],
+      "line_speakers": [
+        "base.npc.zhoubinghe"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-1.webp"
+      }
+    },
+    "collect": {
+      "lines": [
+        "韩师傅，周伯托您做的加固铁件，好了吗？",
+        "树下那张凳子用的？好了，正搁着呢。",
+        "（从工作台旁取来一包铁件，又将要用的工具一并装好。）",
+        "凳脚晃得厉害，周伯说加个撑就能用。",
+        "嗯，木头还好，扔了可惜。这副按尺寸做的，装上就稳了。",
+        "（接过铁件和工具，分开收好。）",
+        "忙完把工具带回来，我这边还得用。",
+        "记着呢。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.hantieshan",
+        "base.npc.hantieshan",
+        "base.map_player.chen_yu",
+        "base.npc.hantieshan",
+        "base.map_player.chen_yu",
+        "base.npc.hantieshan",
+        "base.map_player.chen_yu"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-2.webp"
+      }
+    },
+    "smith_reminder": {
+      "lines": [
+        "铁件都给你了，带到树下就成。工具可别落在那儿。"
+      ],
+      "line_speakers": [
+        "base.npc.hantieshan"
+      ]
+    },
+    "repair": {
+      "lines": [
+        "周伯，东西取来了。",
+        "（接过铁件，在凳脚间比了比位置。）",
+        "正合适。来，你扶住这头，我把它装上。",
+        "（扶稳长凳，看他把铁件紧固在凳腿之间。装好后，你轻轻按了按凳面，又坐下试了试。）",
+        "这下稳了。",
+        "那就好。歇脚的人总算不用先挑哪头能坐了。",
+        "您也坐一会儿？",
+        "（掸掉凳面上的木屑，在另一头坐下，长凳没有再晃。）",
+        "嗯，坐着踏实。你把工具收好，替我跟韩师傅说一声，铁件正好。",
+        "（将工具逐件收回包里，确认没有落下。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu",
+        "base.npc.zhoubinghe",
+        "base.npc.zhoubinghe",
+        "base.map_player.chen_yu"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-3.webp"
+      }
+    },
+    "tree_reminder": {
+      "lines": [
+        "得先拿到铁件，才好动手。韩师傅在铁匠铺，你替我去问问。"
+      ],
+      "line_speakers": [
+        "base.npc.zhoubinghe"
+      ]
+    },
+    "returning": {
+      "lines": [
+        "韩师傅，工具还您。凳子修好了，周伯说铁件正合适。",
+        "（收好工具，笑着点了点头。）",
+        "稳当了就成。那地方天天有人坐，早该拾掇了。",
+        "方才试过了，两头都不晃。",
+        "这点报酬拿着，替我省了一趟路。",
+        "那我收下了。您忙着。"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.npc.hantieshan",
+        "base.npc.hantieshan",
+        "base.map_player.chen_yu",
+        "base.npc.hantieshan",
+        "base.map_player.chen_yu"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z4-4.webp"
+      }
+    },
+    "after": {
+      "lines": [
+        "（凳脚已经加固，坐着稳当了。树影落在凳面上，风吹过时，叶间漏下的光也轻轻晃着。）"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu"
+      ]
+    }
+  },
+  "objectives": [
+    {
+      "id": "collect",
+      "text": "向韩铁山领取铁件和工具",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n23",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    },
+    {
+      "id": "repair",
+      "text": "回到古树下，协助周秉和修稳长凳",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n11",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    },
+    {
+      "id": "return",
+      "text": "将工具交还韩铁山",
+      "show_count": false,
+      "completed": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n23",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "kind": "spirit_stones",
+      "name": "灵石",
+      "quantity": 2,
+      "icon": "res://assets/player-status-coin.webp"
+    }
+  ],
+  "people": [
+    {
+      "name": "韩铁山",
+      "portrait": "res://assets/ui-portrait-hantieshan.webp"
+    },
+    {
+      "name": "周秉和",
+      "portrait": "res://assets/ui-portrait-zhoubinghe.webp"
+    }
+  ]
+}

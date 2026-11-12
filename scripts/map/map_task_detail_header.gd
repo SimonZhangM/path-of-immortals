@@ -74,7 +74,7 @@ func _init() -> void:
 	hide()
 
 func show_entry(entry: Dictionary, category_texture: Texture2D, tags: Dictionary) -> void:
-	if entry.is_empty() or str(entry.get("detail_image", "")).is_empty():
+	if entry.is_empty():
 		clear_entry()
 		return
 	task_id = str(entry.id)
@@ -83,7 +83,7 @@ func show_entry(entry: Dictionary, category_texture: Texture2D, tags: Dictionary
 	var introductions: Dictionary = entry.get("introductions", {})
 	introduction.text = str(introductions.get(stage_id, ""))
 	title_label.text = str(entry.title)
-	artwork.texture = load(str(entry.detail_image))
+	artwork.texture = load(str(entry.detail_image)) if not str(entry.get("detail_image", "")).is_empty() else null
 	icon.texture = category_texture
 	if is_instance_valid(category_tag):
 		tag_slot.remove_child(category_tag)
@@ -106,9 +106,9 @@ func clear_entry() -> void:
 	hide()
 
 func _layout() -> void:
-	if size.x <= 0 or artwork.texture == null: return
+	if size.x <= 0: return
 	artwork.position = Vector2.ZERO
-	artwork.size = Vector2(size.x, size.x / artwork.texture.get_size().aspect())
+	artwork.size = Vector2(size.x, size.x / artwork.texture.get_size().aspect() if artwork.texture != null else 0.0)
 	var mask := artwork.material as ShaderMaterial
 	mask.set_shader_parameter("panel_size", size)
 	mask.set_shader_parameter("art_size", artwork.size)

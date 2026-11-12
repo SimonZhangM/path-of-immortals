@@ -1,0 +1,37 @@
+{
+  "id": "base.organ.lanlinglingsun_sunhui",
+  "name": "隼喙",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    2,
+    1
+  ],
+  "icon": "res://assets/item-enemy-lanlinglingsun-sunhui.webp",
+  "cooldown": 2.7,
+  "stamina_cost": 2,
+  "spirit_cost": 0,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "action_name": "啄袭",
+    "hit_chance": 0.9,
+    "physical_attack": true
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "damage",
+      "value": 12,
+      "damage_type": "穿刺"
+    }
+  ]
+}

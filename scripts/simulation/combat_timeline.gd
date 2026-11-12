@@ -123,6 +123,7 @@ func wake(at: int) -> void:
 			continue
 		if not t.auto and not t.request: continue
 		if member.paralyzed_until > at: continue
+		if not sim.item_rules.available(id) or not BattleItemRules.conditions_met(member, item): continue
 		if not sim._can_activate(id):
 			# Ordinary automatic weapons waste this cycle when they cannot pay.
 			# Recovery later in the cycle must not release a saved attack.
@@ -206,6 +207,7 @@ func apply_control(member: PartyMemberState, kind: String, scope: String, durati
 	for id: String in timers:
 		if sim._owners[id] == member: settle(id, at)
 	var until := at + duration
+	var previous: int = controls.get(key, {}).get("until", 0)
 	if kind == "freeze": until = maxi(at, int(controls.get(key, {}).get("until", 0))) + duration
 	if kind == "weakness": until = maxi(until, int(controls.get(key, {}).get("until", 0)))
 	controls[key] = {"member": member, "kind": kind, "scope": scope, "until": until, "source": source}
@@ -214,12 +216,13 @@ func apply_control(member: PartyMemberState, kind: String, scope: String, durati
 	sim.queue.schedule(until, "control_end", {"key": key, "until": until}, -4)
 	for id: String in timers:
 		if sim._owners[id] == member: sync(id, at)
-	sim.t01.emit("control", at, {"target_name": member.definition.name, "status": CONTROL_NAMES[kind], "until": until, "source": source})
+	sim.t01.emit("control", at, {"target_id": member.id, "target_name": member.definition.name, "status": CONTROL_NAMES[kind], "until": until, "source": source, "previous_expiry": previous})
 	return true
 
 func end_control(payload: Dictionary, at: int) -> void:
 	if not controls.has(payload.key) or controls[payload.key].until != payload.until: return
 	var c: Dictionary = controls[payload.key]
+	if at >= c.until: sim.t01.emit("status_expired", at, {"target_id": c.member.id, "target_name": c.member.definition.name, "status": CONTROL_NAMES[c.kind]})
 	for id: String in timers:
 		if sim._owners[id] == c.member: settle(id, at)
 	controls.erase(payload.key)
@@ -235,10 +238,13 @@ func end_control(payload: Dictionary, at: int) -> void:
 func clear_control(member: PartyMemberState, scope: String, kinds: Array, at: int) -> void:
 	for key: String in controls.keys():
 		var c: Dictionary = controls[key]
-		if c.member == member and c.kind in kinds and (scope == "all" or scope == c.scope): end_control({"key": key, "until": c.until}, at)
+		if c.member == member and c.kind in kinds and (scope == "all" or scope == c.scope):
+			if c.until > at: sim.t01.emit("status_removed", at, {"target_id": member.id, "target_name": member.definition.name, "status": CONTROL_NAMES[c.kind], "value": 1, "removal": "净化"})
+			end_control({"key": key, "until": c.until}, at)
 	wake(at)
 
 func cleanse(member: PartyMemberState, at: int) -> void:
+	if member.paralyzed_until > at: sim.t01.emit("status_removed", at, {"target_id": member.id, "target_name": member.definition.name, "status": "麻痹", "value": 1, "removal": "净化"})
 	member.paralyzed_until = at
 	clear_control(member, "all", ["weakness"], at)
 
@@ -246,7 +252,11 @@ func change_cd(id: String, delta: int, at: int) -> bool:
 	if not timers.has(id) or full_cd(id) <= 0 or blocked(id, at): return false
 	settle(id, at)
 	if timers[id].entry > 0: return false
+	var previous: float = timers[id].cd
 	timers[id].cd = maxf(0, float(timers[id].cd) + delta)
+	if not sim.record_trace.current().is_empty() and not is_equal_approx(previous, timers[id].cd):
+		var target: PartyMemberState = sim._owners[id]
+		sim.t01.emit("cooldown_changed", at, {"target_id": target.id, "target_name": target.definition.name, "target_item_name": sim._definitions[id].display_name, "seconds": (timers[id].cd - previous) / 1000000.0})
 	sync(id, at)
 	return true
 
@@ -262,10 +272,19 @@ func remaining(id: String, entry := false) -> int:
 	settle(id, sim.state.time_usec)
 	return ceili(timers[id].entry if entry else timers[id].cd)
 
+func remaining_at(id: String, at: int, entry := false) -> int:
+	if not timers.has(id): return 0
+	var timer: Dictionary = timers[id]
+	var work := maxf(0, at - int(timer.at)) * float(timer.speed)
+	var entry_work := minf(work, float(timer.entry))
+	# Presentation estimates the pending fraction without settling authority.
+	return ceili(maxf(0, float(timer.entry) - entry_work) if entry else maxf(0, float(timer.cd) - (work - entry_work)))
+
 # Waiting for an affordable manual cast is meaningful; an exhausted board with
 # no pending resource recovery must still terminate as a draw.
 func has_future_action(id: String, at: int) -> bool:
 	if not timers.has(id) or full_cd(id) <= 0: return false
+	if not sim.item_rules.available(id): return false
 	var member: PartyMemberState = sim._owners[id]
 	var item: ItemData = sim._definitions[id]
 	if member.hp <= 0 or item.combat.get("prepared", false): return false

@@ -260,6 +260,9 @@ func _tile(parent: HBoxContainer, data: Dictionary, portrait: bool) -> void:
 		rim.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	elif data.get("kind","")=="item" and state!=null and state.records.has(data.get("item_id","")):
 		MapItemThumbnail.create(square,state.records[data.item_id],118,-1,0.85)
+		if data.get("show_tooltip",true):
+			square.mouse_filter = MOUSE_FILTER_STOP
+			ItemTooltipHost.bind(square,func(_point: Vector2): return data.item_id,_reward_tooltip)
 	else:
 		preload("res://scripts/map/map_item_small_background.gd").create(square,{},Color("7b8a94"))
 		var icon := _image(square,data.get("icon",layout.resource_icons.get(data.get("kind",""),"")))
@@ -267,7 +270,7 @@ func _tile(parent: HBoxContainer, data: Dictionary, portrait: bool) -> void:
 		icon.size = Vector2(84,84)
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	if not portrait:
-		var quantity := _label("+%d" % int(data.quantity),25,Color.WHITE,HARMONY)
+		var quantity := _label(str(data.get("badge_text","+%d" % int(data.quantity))),25,Color.WHITE,HARMONY)
 		quantity.name = "RewardQuantity"
 		quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var badge := StyleBoxFlat.new()
@@ -284,6 +287,13 @@ func _tile(parent: HBoxContainer, data: Dictionary, portrait: bool) -> void:
 	caption.clip_text = true
 	caption.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	tile.add_child(caption)
+
+func _reward_tooltip(item_id: String) -> Object:
+	if state==null: return null
+	var item := state.registry.get_item(item_id)
+	var tooltip := ItemTooltip.new()
+	tooltip.configure(item,CultivationDescription.tooltip_context(state.knowledge,item_id,item),-1,0,state.can_use_item(item_id))
+	return tooltip
 
 func _location(data: Dictionary) -> void:
 	if data.is_empty(): return

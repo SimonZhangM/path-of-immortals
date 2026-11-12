@@ -1,0 +1,81 @@
+{
+  "id": "base.enemy.xiwenlingyuan",
+  "name": "溪纹灵螈",
+  "art_profile": "base.enemy.xiwenlingyuan",
+  "cultivation_rank": "base.cultivation.qi_refining",
+  "cultivation_stage": "初期",
+  "max_hp": 160,
+  "max_stamina": 40,
+  "max_spirit": 24,
+  "innate_armor_type": "灵甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 16,
+  "initialize_equipped_full": true,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 22,
+    "experience": 12
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.xiwenlingyuan_xiwenyuanwei",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.xiwenlingyuan_hanjiantuxi",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.xiwenlingyuan_jianxi",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.xiwenlingyuan_shuiwenyuanpi",
+      "cell": [
+        3,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.xiwenlingyuan_shuixinang",
+      "cell": [
+        2,
+        1
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.xiwenlingyuan_xiwenyuanwei",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.xiwenlingyuan_shuiwenyuanpi",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.xiwenlingyuan_shuixinang",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "炼气初期",
+    "category_label": "水栖灵兽",
+    "description": "栖于湿岩浅溪，以尾扫近敌，寒涧吐息凝霜，涧息与水息囊支撑持久战。",
+    "traits": [
+      "寒霜",
+      "润脉回灵"
+    ],
+    "battle_background": "res://assets/battle-diecuifeng-xiwenlingyuan.webp",
+    "summary": []
+  }
+}

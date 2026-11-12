@@ -1490,7 +1490,7 @@
       "recovery": 2,
       "stamina": 2
     },
-    "equipment_note": "套装：布护臂和布护腿同时与粗布甲紧贴，粗布甲护甲上限额外+3，粗布甲恢复护甲额外+2，且额外恢复2体力。"
+    "equipment_note": "套装：布护臂和布护腿同时与粗布甲紧贴，护甲上限+3。冷却完成，护甲回复+2，且额外恢复2点体力。"
   },
   {
     "id": "base.map_item.t01_0011",
@@ -1525,7 +1525,7 @@
     "armor_capacity": 10,
     "armor_gain": 5,
     "lineage": "t01.lineage.iron_armor",
-    "equipment_note": "套装：铁护臂和铁护腿同时与铁甲紧贴，铁甲护甲上限额外+3，铁甲恢复护甲额外+2。",
+    "equipment_note": "套装：铁护臂和铁护腿同时与铁甲紧贴，护甲上限+3。冷却完成，护甲回复+2。",
     "art_outline_px": 1
   },
   {
@@ -2894,6 +2894,7 @@
   },
   {
     "id": "base.map_item.warm_jade",
+    "recovery": true,
     "name": "温玉佩",
     "quest_item": true,
     "grant_on_start": false,
@@ -2940,6 +2941,7 @@
   },
   {
     "id": "base.map_item.t01_0019",
+    "recovery": true,
     "asset_id": "t01.asset.0019",
     "name": "回春玉",
     "flavor_description": "玉色柔润，一缕生意藏在掌心的暖光里。",
@@ -2975,6 +2977,7 @@
   },
   {
     "id": "base.map_item.t01_0020",
+    "recovery": true,
     "asset_id": "t01.asset.0020",
     "name": "养息珠",
     "flavor_description": "珠光明灭缓缓，如同长途行路后渐稳的呼吸。",
@@ -3010,6 +3013,7 @@
   },
   {
     "id": "base.map_item.t01_0021",
+    "recovery": true,
     "asset_id": "t01.asset.0021",
     "name": "聚灵珠",
     "flavor_description": "点点灵光聚在珠心，像夜露落入一汪清泉。",
@@ -3045,6 +3049,7 @@
   },
   {
     "id": "base.map_item.t01_0083",
+    "recovery": true,
     "asset_id": "t01.asset.0083",
     "name": "回春佩",
     "flavor_description": "佩中灵光似新芽舒展，为受损生机添一分春色。",
@@ -3080,6 +3085,7 @@
   },
   {
     "id": "base.map_item.t01_0084",
+    "recovery": true,
     "asset_id": "t01.asset.0084",
     "name": "行气珠",
     "flavor_description": "珠内气纹循环不息，仿佛自有一套吐纳节律。",
@@ -3115,6 +3121,7 @@
   },
   {
     "id": "base.map_item.t01_0085",
+    "recovery": true,
     "asset_id": "t01.asset.0085",
     "name": "聚元环",
     "flavor_description": "环中空明，灵气却在边缘流转，久久不散。",
@@ -3150,6 +3157,7 @@
   },
   {
     "id": "base.map_item.t01_0086",
+    "recovery": true,
     "asset_id": "t01.asset.0086",
     "name": "调息玉",
     "flavor_description": "温光与清气交融，握玉静坐，呼吸也渐从容。",
@@ -3237,6 +3245,7 @@
   },
   {
     "id": "base.map_item.t01_0088",
+    "recovery": true,
     "asset_id": "t01.asset.0088",
     "name": "青木铃",
     "flavor_description": "铃音清越，余响中仿佛有草木抽芽。",
@@ -3263,7 +3272,7 @@
     ],
     "base_stamina_cost": 0,
     "spirit_cost": 4,
-    "cooldown": 9,
+    "cooldown": 4,
     "source_location": "t01-08-物品资产主表-260928.xlsx::04_法器!A15",
     "uses_per_unit": 0,
     "subcategory": "法器",
@@ -4429,8 +4438,8 @@
   {
     "id": "base.map_item.training_guide_stone",
     "name": "导引石",
-    "flavor_description": "收敛心神，循石导气。",
-    "description": "仅在修炼点生效。每6秒消耗6体力、2灵力，帮助所选功法积累修炼度。",
+    "flavor_description": "一石引清息，寸心候初明。",
+    "description": "母亲交给你的青灰石，石面刻着浅金气纹，能帮助初学者梳理气息、练习引气入体。放入阵盘后，在修炼与突破时每3秒消耗3体力，辅助修炼。",
     "category": "artifact",
     "subcategory": "修炼",
     "quality": "下品",
@@ -4438,15 +4447,113 @@
     "grant_on_start": false,
     "acquired_at": 1000,
     "enhancement_level": 0,
-    "icon": "res://assets/zhen-xiulian.webp",
+    "icon": "res://assets/item-weapon-xp-yindaoshi.webp",
     "card_frame": "res://assets/level-1.webp",
     "footprint_rows": 1,
     "footprint_columns": 1,
-    "cooldown": 6,
-    "base_stamina_cost": 6,
-    "spirit_cost": 2,
+    "cooldown": 3,
+    "base_stamina_cost": 3,
+    "spirit_cost": 0,
     "training": true,
     "effects": [],
-    "uses_per_unit": 0
+    "uses_per_unit": 0,
+    "quest_item": true,
+    "quest_until_realm": 1,
+    "unlocked_description": "青灰石面刻着浅金气纹，能帮助修行者梳理气息。放入阵盘后，在修炼与突破时每3秒消耗3体力，帮助积累修为或所选功法的修炼度。",
+    "quest_description": "母亲交给你的青灰石，石面刻着浅金气纹，能帮助初学者梳理气息、练习引气入体。放入阵盘后，在修炼与突破时每3秒消耗3体力，辅助修炼。"
+  },
+  {
+    "id": "base.map_item.yesongnian_letter",
+    "name": "叶松年的信",
+    "category": "key",
+    "subcategory": "任务物品",
+    "quality": "",
+    "quest_item": true,
+    "grant_on_start": false,
+    "quantity": 1,
+    "acquired_at": 0,
+    "enhancement_level": 0,
+    "icon": "res://assets/UI-other-letter from yesongnian.webp",
+    "card_frame": "",
+    "card_border_color": "777f8a",
+    "footprint_columns": 1,
+    "footprint_rows": 1,
+    "cooldown": 0,
+    "effects": [],
+    "description": "叶松年写给母亲的信，托你亲手带回白沙村。",
+    "flavor_description": "纸封平整，封口仔细，几句家常话里藏着长辈的牵挂。"
+  },
+  {
+    "id": "base.map_item.broken_mirror",
+    "name": "残破古镜",
+    "category": "key",
+    "subcategory": "任务物品",
+    "quality": "",
+    "quest_item": true,
+    "grant_on_start": false,
+    "quantity": 1,
+    "acquired_at": 0,
+    "enhancement_level": 0,
+    "icon": "res://assets/item-faqi-rw-canpogujing.webp",
+    "card_frame": "",
+    "card_border_color": "777f8a",
+    "footprint_columns": 1,
+    "footprint_rows": 1,
+    "cooldown": 0,
+    "effects": [],
+    "description": "自无名旧祠拾得的残破古镜。镜缘缺损，古铜纹饰斑驳，蒙灰的镜面偶尔泛起异光。来历与用途尚不明，暂且妥善收存。",
+    "flavor_description": "尘封残照，似藏旧世余光。",
+    "story_identity": {
+      "flag": "base.story.chaoshengguichu.completed",
+      "before": {
+        "name": "残破古镜",
+        "description": "自无名旧祠拾得的残破古镜。镜缘缺损，古铜纹饰斑驳，蒙灰的镜面偶尔泛起异光。来历与用途尚不明，暂且妥善收存。"
+      },
+      "after": {
+        "name": "照尘镜",
+        "description": "在无名旧祠拾得的古镜，镜缘残缺，铜纹斑驳。据娘回忆，此镜应名为照尘镜，她的先人可能曾经用过。镜中曾掠过几幕难解的异景，如今又只映出寻常倒影。你与娘都还不知它的用法，只能先妥善收存。"
+      }
+    }
+  },
+  {
+    "id": "base.map_item.fishing_net",
+    "name": "渔网",
+    "category": "key",
+    "subcategory": "任务物品",
+    "quality": "凡品",
+    "quest_item": true,
+    "grant_on_start": false,
+    "quantity": 1,
+    "acquired_at": 0,
+    "enhancement_level": 0,
+    "icon": "res://assets/item-qita-rw-yuwang.webp",
+    "card_frame": "res://assets/level-2.webp",
+    "footprint_columns": 1,
+    "footprint_rows": 1,
+    "cooldown": 0,
+    "effects": [],
+    "description": "从白沙村近岸礁石上解下的旧渔网。网身完好，边绳已经重新系牢，带回码头交给许长海。",
+    "flavor_description": "旧结仍牢，收网待潮。"
+  },
+  {
+    "id": "base.map_item.toolkit",
+    "name": "工具包",
+    "category": "key",
+    "subcategory": "任务物品",
+    "quality": "",
+    "quest_item": true,
+    "grant_on_start": false,
+    "quantity": 1,
+    "acquired_at": 0,
+    "enhancement_level": 0,
+    "icon": "res://assets/item-qita-rw-gongjubao.webp",
+    "card_frame": "",
+    "card_border_color": "777f8a",
+    "footprint_columns": 1,
+    "footprint_rows": 1,
+    "cooldown": 0,
+    "effects": [],
+    "description": "韩铁山借给你的工具包，旧皮卷里收着小铁锤、铁钳和锥子。带到古树下修稳长凳，用完后归还铁匠铺。",
+    "flavor_description": "旧具在手，修得一处安稳。"
   }
 ]

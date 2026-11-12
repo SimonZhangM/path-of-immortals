@@ -6,6 +6,7 @@ const PREFIX := "base.map_event.quest.hewanfengxian."
 const RIVER := "base.map.qingshihewan"
 const SHRINE := "base.map.wumingjiuci"
 const TOWN := "base.map.qingshizhen"
+const CULTIVATION_UNLOCKED_FLAG := "base.story.hewanfengxian.cultivation_unlocked"
 const Illustration = preload("res://scripts/dialogue/dialogue_illustration.gd")
 static var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/quests/river_story.json"))
 
@@ -18,11 +19,25 @@ static func story(state: MapLoadoutState) -> Dictionary:
 static func done(state: MapLoadoutState, id: String) -> bool:
 	return id in story(state).done
 
+static func recover_legacy_mirror(saved_quests: Dictionary, owned: Dictionary, grants: Dictionary, receipts: Dictionary) -> void:
+	var saved: Dictionary = saved_quests.get(ID,{})
+	var reward: Dictionary = data.scenes.mirror.reward
+	if "mirror" not in saved.get("done",[]): return
+	if owned.values().has(reward.item_id) or grants.has(reward.id) or saved.get("parcels",{}).has("mirror"): return
+	if receipts.get("quest.mirror_item.v1",false): return
+	owned["reward.%s.0" % reward.id] = reward.item_id
+	grants[reward.id] = {"item_id":reward.item_id,"quantity":1}
+	receipts["quest.mirror_item.v1"] = true
+
 static func enabled(state: MapLoadoutState) -> bool:
 	return state.quests[QuestState.ID].counts.deliver>0
 
+static func training_notice_pending(state: MapLoadoutState) -> bool:
+	return state.has_reward(data.scenes.gift_board.reward.id) and not state.narrative.flags.get(CULTIVATION_UNLOCKED_FLAG,false)
+
 static func configuration_error() -> String:
 	if data.get("quest_id")!=ID: return "河湾任务标识无效。"
+	if not data.get("training_notice") is String or data.training_notice.is_empty(): return "河湾修炼场所提示未配置。"
 	for id: String in data.scenes:
 		var entry: Dictionary = data.scenes[id]
 		var sequence_error := Illustration.sequence_error(entry.get("illustration",{}),entry.lines.size())
@@ -122,6 +137,8 @@ static func allowed(state: MapLoadoutState, id: String) -> bool:
 	for completed: String in entry.get("skip_after",[]):
 		if done(state,completed): return false
 	if entry.has("requires_receipt") and not state.has_reward(entry.requires_receipt): return false
+	for receipt: String in entry.get("requires_receipts",[]):
+		if not state.has_reward(receipt): return false
 	return true
 
 static func arrival(state: MapLoadoutState, map_id: String, point_id: String, manual := false) -> String:
@@ -132,7 +149,7 @@ static func arrival(state: MapLoadoutState, map_id: String, point_id: String, ma
 	# Entry is recovered at the actual saved point too, including pre-feature saves.
 	if map_id==SHRINE and allowed(state,"entrance"): return "entrance"
 	if map_id==RIVER and allowed(state,"blood_herb") and not done(state,"root") and item_count(state,"base.material.zhixuecao")>0: return "blood_herb"
-	for id in ["traces","injured","detour","root_discovery","courtyard_check","mirror","beasts_gone","fox_release","fox_notice","array","wood_door","stone_door","medicine","return_jade","invite_doctor","pickup","clinic_arrival","gift_book","closing"]:
+	for id in ["traces","injured","detour","root_discovery","courtyard_check","mirror","beasts_gone","fox_release","fox_notice","array","wood_door","stone_door","medicine","return_jade","invite_doctor","pickup","clinic_arrival","gift_book","gift_board","closing"]:
 		var entry: Dictionary = data.scenes[id]
 		if entry.map_id==map_id and (entry.point_id==point_id or point_id in entry.get("recovery_points",[])) and allowed(state,id):
 			if id=="medicine" and not has_medicine(state): return "medicine_missing"
@@ -252,6 +269,9 @@ static func command(state: MapLoadoutState, path: String, action: String, value 
 	next.storage_capacity_rules = state.storage_capacity_rules
 	var saved := story(next)
 	match action:
+		"acknowledge_training_notice":
+			if not training_notice_pending(next): return ""
+			next.narrative.flags[CULTIVATION_UNLOCKED_FLAG] = true
 		"begin":
 			if not data.scenes.has(value): return "河湾对白未配置。"
 			if not saved.active.is_empty(): return "" if saved.active==value else "请先完成当前对白。"
@@ -363,10 +383,12 @@ static func display_entry(state: MapLoadoutState, presentation: Dictionary) -> D
 	if done(state,"clinic_arrival"):
 		_objective(result,"book","收下《引气诀》",state.has_reward(data.scenes.gift_book.reward.id),TOWN,32)
 	result.has_locked_next = not done(state,"pickup")
-	result.people = [{"name":"沈砚舟" if done(state,"injured") else "青岚宗弟子","portrait":"res://assets/npc-qlzdz-1.webp"}]
+	result.people = [{"name":"沈砚舟" if done(state,"injured") else "青岚宗弟子","portrait":"res://assets/ui-portrait-shenyanzhou.webp"}]
 	if done(state,"medicine"): result.people.append({"name":"苏清禾","portrait":"res://assets/UI-portrait-suqinghe.webp"})
 	result.rewards = []
-	if done(state,"clinic_arrival"): result.rewards = [{"kind":"item","item_id":data.scenes.gift_book.reward.item_id,"name":"引气诀","quantity":1}]
+	if done(state,"clinic_arrival"):
+		result.rewards = [{"kind":"item","item_id":data.scenes.gift_book.reward.item_id,"name":"引气诀","quantity":1},
+			{"kind":"item","item_id":data.scenes.gift_board.reward.item_id,"name":"晓岚","quantity":1}]
 	result.location = {"name":"无名旧祠" if result.stage_id=="shrine" else "青石河湾","image":"res://assets/map-wumingjiuci.webp" if result.stage_id=="shrine" else "res://assets/gamemap-qingshihewan.webp"}
 	if result.stage_id in ["doctor","clinic","settling","completed"]:
 		result.location = {"name":"青石镇","image":"res://assets/map-qingshizhen.webp"}

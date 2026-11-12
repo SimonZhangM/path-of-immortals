@@ -26,6 +26,8 @@ var load_button: Button
 var cancel_button: Button
 var message: Label
 var busy := false
+var overwrite_dialog: MapExitDialog
+var _overwrite_path := ""
 var _config: Dictionary
 var _song := SystemFont.new()
 var _bold := FontVariation.new()
@@ -266,7 +268,8 @@ func _add_row(index: int) -> void:
 	duration.name = "Duration"
 	duration.add_theme_font_override("font",_detail_font)
 	duration.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	if in_game and catalog.is_system(record.path) and not record.get("empty_system_slot",false): button.tooltip_text = "快速和自动存档可以读取，不能手动覆盖。"
+	if in_game and catalog.is_system(record.path):
+		button.tooltip_text = "可手动存储当前进度到快速档位。" if catalog.is_quick(record.path) else "自动存档可以读取，不能手动覆盖。"
 	button.pressed.connect(select.bind(index))
 
 func select(index: int) -> void:
@@ -275,7 +278,9 @@ func select(index: int) -> void:
 	for number in row_buttons.size(): row_buttons[number].get_node("Selection").visible = number == selected_index
 	load_button.disabled = selected_index < 0 or not entries[selected_index].readable
 	load_button.modulate = Color(0.5,0.5,0.5,1.0) if load_button.disabled else Color.WHITE
-	back_button.disabled = selected_index<0 or entries[selected_index].get("empty_system_slot",false) or (in_game and catalog.is_system(entries[selected_index].path))
+	back_button.disabled = selected_index<0
+	if selected_index>=0:
+		back_button.disabled = not catalog.can_store(entries[selected_index].path) if in_game else entries[selected_index].get("empty_system_slot",false)
 	back_button.modulate = Color(0.5,0.5,0.5,1.0) if back_button.disabled else Color.WHITE
 	if selected_index < 0:
 		picture.texture = null
@@ -326,7 +331,30 @@ func _add_empty_thumbnail(parent: Control, writable := true) -> void:
 
 func _request_action() -> void:
 	if busy or selected_index<0 or back_button.disabled: return
-	action_requested.emit(entries[selected_index].path)
+	if is_instance_valid(overwrite_dialog) and overwrite_dialog.visible: return
+	var path: String=entries[selected_index].path
+	if in_game and FileAccess.file_exists(path):
+		if overwrite_dialog==null:
+			overwrite_dialog=MapExitDialog.new()
+			overwrite_dialog.name="OverwriteConfirmation"
+			add_child(overwrite_dialog)
+			overwrite_dialog.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+			overwrite_dialog.cancelled.connect(_cancel_overwrite)
+			overwrite_dialog.confirmed.connect(_confirm_overwrite)
+		_overwrite_path=path
+		overwrite_dialog.present_confirmation("确定要覆盖存档吗？")
+		return
+	action_requested.emit(path)
+
+func _cancel_overwrite() -> void:
+	_overwrite_path=""
+	overwrite_dialog.hide()
+
+func _confirm_overwrite() -> void:
+	if busy or _overwrite_path.is_empty() or not overwrite_dialog.visible: return
+	var path := _overwrite_path
+	_cancel_overwrite()
+	action_requested.emit(path)
 
 func show_error(text: String) -> void:
 	message.text = text
@@ -334,6 +362,7 @@ func show_error(text: String) -> void:
 
 func _request_slot() -> void:
 	if busy or selected_index < 0: return
+	if is_instance_valid(overwrite_dialog) and overwrite_dialog.visible: return
 	var record := catalog.describe(entries[selected_index].path,entries[selected_index].slot)
 	if not record.readable:
 		refresh()
@@ -353,6 +382,7 @@ func _layout() -> void:
 
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree() or busy: return
+	if is_instance_valid(overwrite_dialog) and overwrite_dialog.handle_confirmation_input(event): return
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		closed.emit()

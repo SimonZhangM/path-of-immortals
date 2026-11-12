@@ -50,7 +50,7 @@ func run() -> void:
 	finish_herb_scene("intro")
 	check(HerbQuest.accepted(state) and HerbQuest.quantity(state)==2 and entry().stage_id=="returning","side accepts pre-existing stock immediately")
 	check(not map.event_state.is_active() and not HerbQuest.story(state).completed,"acceptance does not automatically consume or submit")
-	check(HerbQuest.arrival(state,map.definition.id,HerbQuest.data.clinic.point_id).is_empty(),"arrival does not auto-start delivery")
+	check(HerbQuest.arrival(state,map.definition.id,HerbQuest.data.clinic.point_id)=="delivery","arrival offers delivery when gold marker is available")
 	check(HerbQuest.interaction(state,map.definition.id,HerbQuest.data.clinic.point_id)=="delivery","explicit interaction offers immediate delivery")
 	var ready: Dictionary = state.snapshot().duplicate(true)
 	var stones: int = state.spirit_stones
@@ -107,7 +107,7 @@ func run() -> void:
 		check(HerbQuest.story(state).active.is_empty() and map.travel.mode!="idle","pointer away from node only requests travel")
 		map.travel.stop_at_current_node()
 		arrive(32)
-		check(not map.event_state.is_active(),"arrival after pointer travel still waits for another click")
+		check(HerbQuest.story(state).active=="delivery","arrival after pointer travel starts delivery")
 		var full := ready.duplicate(true)
 		full.spirit_stones = 1000000000
 		check(state.restore(full).is_empty() and HerbQuest.interaction(state,map.definition.id,HerbQuest.data.clinic.point_id).is_empty(),"wallet limit preserves dismissible ordinary clinic path")

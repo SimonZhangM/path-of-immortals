@@ -1,0 +1,699 @@
+{
+  "id": "base.npc.mother",
+  "name": "母亲",
+  "portrait": "res://assets/ui-portrait-mom-linwanqing.webp",
+  "portrait_frame": "res://assets/UI-portrait-putongren.webp",
+  "welcome": "base.dialogue.mother.welcome",
+  "clues": {},
+  "topics": [
+    {
+      "id": "mirror",
+      "label": "药篓里的旧镜",
+      "fixed_label": true,
+      "initial": [],
+      "story": [
+        "base.dialogue.mother.mirror"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "past",
+      "label": "爹娘的往事",
+      "fixed_label": true,
+      "initial": [],
+      "story": [
+        "base.dialogue.mother.past",
+        "base.dialogue.mother.cultivation"
+      ],
+      "revisits": []
+    },
+    {
+      "id": "chat",
+      "label": "闲聊",
+      "fixed_label": true,
+      "initial": [
+        "base.dialogue.mother.fishwork",
+        "base.dialogue.mother.town",
+        "base.dialogue.mother.meal",
+        "base.dialogue.mother.sewing",
+        "base.dialogue.mother.dinner"
+      ],
+      "story": [
+        "base.dialogue.mother.practice_failed",
+        "base.dialogue.mother.practice_pending",
+        "base.dialogue.mother.practice_ready",
+        "base.dialogue.mother.mirror_use",
+        "base.dialogue.mother.north",
+        "base.dialogue.mother.qi_after"
+      ],
+      "revisits": []
+    }
+  ],
+  "segments": {
+    "base.dialogue.mother.welcome": {
+      "topic": "welcome",
+      "label": "和娘说说话",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "回来啦，快坐到娘身边来。今天想说点什么？😊"
+        }
+      ]
+    },
+    "base.dialogue.mother.mirror": {
+      "topic": "mirror",
+      "label": "药篓里的旧镜",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "前阵子在河湾，我遇到一位受伤的青岚宗弟子。后来和清禾姐一起，把他接回医馆了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你也碰上山兽了？"
+        },
+        {
+          "speaker": "player",
+          "text": "伤他的那只我没碰上。找药时倒遇到些山兽，就躲进旧祠，等它们走了才出来，没受伤。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（正要收起信，手指却忽然停住。她看向药篓，神情渐渐认真起来。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "你还从那里带回了什么？"
+        },
+        {
+          "speaker": "player",
+          "text": "一面旧镜。娘，你怎么知道？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先拿出来，让我看看。"
+        },
+        {
+          "speaker": "player",
+          "text": "（从篓里取出布包，掀开一角。母亲没有立即伸手，只盯着镜背看了片刻。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "（起身关好门，将案上的鱼线和针收到一旁，这才接过古镜。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "方才察觉到一丝熟悉的灵息，还不敢认。这个纹样……我在家里传下来的旧图上见过。"
+        },
+        {
+          "speaker": "player",
+          "text": "娘，你认得它？"
+        },
+        {
+          "speaker": "npc",
+          "text": "我不太确定，印象中好像叫……照尘镜。娘的先人可能曾经用过。"
+        },
+        {
+          "speaker": "player",
+          "text": "咱们家的东西，怎么会在旧祠里？"
+        },
+        {
+          "speaker": "npc",
+          "text": "这我也说不上来。我只见过图样，听长辈提起过，从没见过实物。"
+        },
+        {
+          "speaker": "player",
+          "text": "我拿起它时，看见了些奇怪的东西。泡在水里的石阶，一只裹着布的手，还有个铜铃……再看就没了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（翻过镜背，沿残缺的边缘仔细看了一圈，又把镜面转向窗边。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "家里的旧记说，它能留下往事的影像。可你说的那些地方，我也认不出来，更不知道里面的人是谁。"
+        },
+        {
+          "speaker": "player",
+          "text": "那些真是以前发生的事？"
+        },
+        {
+          "speaker": "npc",
+          "text": "家里是这样记的。只凭几个影子，眼下还说不清。先把镜子收好，别急着试。"
+        },
+        {
+          "speaker": "player",
+          "text": "娘，你方才说的灵息……你也会修行？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（将镜子轻轻放回布上，沉默了一会儿。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "会一点。娘也是炼气修士，只是这些年，一直没跟你提过。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.chaoshengguichu.home_reunited"
+      ]
+    },
+    "base.dialogue.mother.past": {
+      "topic": "past",
+      "label": "爹娘的往事",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "娘，你以前是什么样的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "年轻时也在外面闯荡过，学了些吐纳、护身的法子。可没你想的那么厉害。"
+        },
+        {
+          "speaker": "player",
+          "text": "后来怎么到了这里？"
+        },
+        {
+          "speaker": "npc",
+          "text": "有一回在海上遇到海妖，斗到后来，灵力耗尽，人也掉进海里。我醒过来时，已经躺在岸边了。"
+        },
+        {
+          "speaker": "player",
+          "text": "是爹救了你？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。他那时靠出海打渔过日子。那天返航时发现了我，把我救上船，又送回村里养伤。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（望了一眼墙边挂着的旧蓑衣，唇边带了点笑。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "那时候他天天给我送饭，鱼刺挑得比谁都仔细，自己倒总忘了吃。问他，他就说在船上吃过了。"
+        },
+        {
+          "speaker": "player",
+          "text": "你信了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "信了几回呀，后来听见他肚子响，哪里还瞒得住。🙂"
+        },
+        {
+          "speaker": "player",
+          "text": "所以你就没走？"
+        },
+        {
+          "speaker": "npc",
+          "text": "哪是一下子就定了的。伤好了，我又住了一阵，和他相处久了，便舍不得走了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "后来成了家，有了你。我不再用从前的名字，也断了过去的来往，没告诉乡邻自己修过道，就在这里住下了。"
+        },
+        {
+          "speaker": "player",
+          "text": "可爹后来出了那场风暴……这么多年仍旧杳无音讯。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（指腹在信纸的折痕上轻轻压过，过了一会儿才开口。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "我沿岸找过，也托回来的人打听过。风暴过去，船和人都没再回来。"
+        },
+        {
+          "speaker": "player",
+          "text": "修士也找不到吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "娘只有炼气修为。海那么大，我也不能想去哪里就去哪里。"
+        },
+        {
+          "speaker": "player",
+          "text": "以后若有消息，我和你一起找。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。有消息，咱们一起打听。可别自己闷着头往海上找，让娘再担心一回。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.chaoshengguichu.home_reunited"
+      ],
+      "requires_done": [
+        "base.dialogue.mother.mirror"
+      ]
+    },
+    "base.dialogue.mother.cultivation": {
+      "topic": "past",
+      "label": "你也能修行",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "娘，那我也能修行吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "能。你有灵根，小时候娘就看出来了。"
+        },
+        {
+          "speaker": "player",
+          "text": "那怎么一直没告诉我？"
+        },
+        {
+          "speaker": "npc",
+          "text": "起先想等你大些再说，后来又总不放心。娘当年在外吃过亏，怕你一听说能修行，就急着往外闯，便一直拖着没说。"
+        },
+        {
+          "speaker": "npc",
+          "text": "送你去叶伯那里，是想让你先学门安身的本事。可你如今也大了，总该问问你自己想走哪条路。"
+        },
+        {
+          "speaker": "player",
+          "text": "（将沈砚舟送的薄册取出来，摊在桌上。）"
+        },
+        {
+          "speaker": "player",
+          "text": "那位弟子给了我一本《引气诀》。我看过几页，好些地方没弄明白。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（翻过几页，将书放到你面前，指了指其中一行。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "这本写得平实，正好用来入门。你想学呀，娘就陪你从这里看起。😊"
+        },
+        {
+          "speaker": "player",
+          "text": "我想学。光看这书，好些地方心里都没底。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好。不过有灵根，只是能开始学。气息如何调，灵气如何引进来，都要你自己慢慢练。"
+        },
+        {
+          "speaker": "player",
+          "text": "那我先从哪儿练起？"
+        },
+        {
+          "speaker": "npc",
+          "text": "先从这段吐纳开始，弄懂了再往下看。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（将窗边的席子铺平，又搬开旁边的竹筐，留出一处安静的位置。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "先坐稳，肩背放松。照书里说的试，哪里不明白就问我，不用憋着。"
+        },
+        {
+          "speaker": "player",
+          "text": "（依着她的指点坐下，将书摊在手边，先辨清吐纳与行气的次序。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "对，就照这个次序。往后练的时候也别着急，先把气息调匀。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.chaoshengguichu.home_reunited"
+      ],
+      "requires_done": [
+        "base.dialogue.mother.mirror",
+        "base.dialogue.mother.past"
+      ],
+      "retire_flags": [
+        "base.story.chaoshengguichu.guidance_standalone"
+      ]
+    },
+    "base.dialogue.mother.fishwork": {
+      "topic": "chat",
+      "label": "一起料理鱼货",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "这个绳结我来打吧。"
+        },
+        {
+          "speaker": "npc",
+          "text": "别勒太紧，晾干还得解开。"
+        },
+        {
+          "speaker": "player",
+          "text": "（照她的样子打好一个结，提起来试了试。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "这回像样了。小时候你打的结，最后都得拿剪子剪。"
+        },
+        {
+          "speaker": "player",
+          "text": "都多久以前的事，你还记着。"
+        },
+        {
+          "speaker": "npc",
+          "text": "自家的孩子，哪有那么容易忘。"
+        }
+      ]
+    },
+    "base.dialogue.mother.town": {
+      "topic": "chat",
+      "label": "镇上的日子",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "叶伯信里说你好，娘还想听你自己说。住在镇上，习惯吗？"
+        },
+        {
+          "speaker": "player",
+          "text": "习惯。就是天一亮便有人开铺，想多睡一会儿也难。"
+        },
+        {
+          "speaker": "npc",
+          "text": "家里还有鸡叫呢，也没见你每回都起得来。"
+        },
+        {
+          "speaker": "player",
+          "text": "如今不一样了，得赶着去药铺。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯，知道有事该自己担着了。"
+        }
+      ]
+    },
+    "base.dialogue.mother.meal": {
+      "topic": "chat",
+      "label": "晚饭的味道",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "娘，这个还是从前的味道。"
+        },
+        {
+          "speaker": "npc",
+          "text": "盐放得少些，你小时候嫌咸，总把鱼往饭底下藏。"
+        },
+        {
+          "speaker": "player",
+          "text": "你原来都看见了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "碗就是我收的，还能看不见？慢点吃，锅里还有。"
+        }
+      ]
+    },
+    "base.dialogue.mother.sewing": {
+      "topic": "chat",
+      "label": "袖口的针脚",
+      "lines": [
+        {
+          "speaker": "npc",
+          "text": "（看见你抬手时露出的线头，伸手轻轻拉住袖口。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "这儿都开线了，怎么还穿着到处跑？脱下来，娘给你缝两针。"
+        },
+        {
+          "speaker": "player",
+          "text": "前些天被树枝挂了一下。本想着回来再补，转头就忘了。"
+        },
+        {
+          "speaker": "npc",
+          "text": "就知道你顾不上。去把外衣换下来。"
+        },
+        {
+          "speaker": "player",
+          "text": "（换下外衣递给母亲，在她身边坐下。她翻出针线，将裂开的布边拢到一起。）"
+        },
+        {
+          "speaker": "player",
+          "text": "不用缝得太细，能穿就行。"
+        },
+        {
+          "speaker": "npc",
+          "text": "针脚密些才结实。你倒会替娘省事。"
+        },
+        {
+          "speaker": "player",
+          "text": "（看着针尖在布间一上一下，伸手替她拉住衣角。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "别绷那么紧。对，轻轻拿着就好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（缝好最后几针，剪去线头，将外衣抖开递给你。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "穿上试试，抬抬胳膊。"
+        },
+        {
+          "speaker": "player",
+          "text": "（穿好外衣，活动了一下手臂。）"
+        },
+        {
+          "speaker": "player",
+          "text": "正好，一点也不勒。还是娘缝得好。"
+        },
+        {
+          "speaker": "npc",
+          "text": "好了，别光说好听的。再挂破了，记着早些补。"
+        }
+      ]
+    },
+    "base.dialogue.mother.dinner": {
+      "topic": "chat",
+      "label": "爹拿手的红烧鱼",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "（从院里回到屋中，灶边已经飘起酱香。母亲揭开锅盖，将鱼连同汤汁盛进盘里。）"
+        },
+        {
+          "speaker": "player",
+          "text": "今天做红烧鱼？"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。你爹从前最拿手这道菜，难得你回来，娘也照他的做法烧一回。"
+        },
+        {
+          "speaker": "player",
+          "text": "（接过盘子放到桌上，等母亲坐下，夹起一块鱼肉尝了尝。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "怎么样？"
+        },
+        {
+          "speaker": "player",
+          "text": "好吃！鱼肉很嫩，这汤汁拌饭肯定也香。"
+        },
+        {
+          "speaker": "npc",
+          "text": "你爹也爱拿它拌饭。每回嘴上说汤汁该少放，盛饭时却一勺也舍不得剩。"
+        },
+        {
+          "speaker": "player",
+          "text": "我也舍不得剩，这点倒真像他。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑着把盘子往你面前挪了些。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "吃鱼的本事倒学得快。慢点，仔细挑刺。"
+        },
+        {
+          "speaker": "player",
+          "text": "娘，你也吃，别都留给我。"
+        },
+        {
+          "speaker": "player",
+          "text": "（给母亲夹了一块鱼腹肉，又替自己添了些饭。屋外风吹过竹筛，桌上的菜还冒着热气。）"
+        }
+      ]
+    },
+    "base.dialogue.mother.mirror_use": {
+      "topic": "chat",
+      "label": "镜子该怎么用",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "（将包好的照尘镜放到桌上，掀开布角，对着窗光看了看。）"
+        },
+        {
+          "speaker": "player",
+          "text": "娘，我又看过几次，还是只能照见自己。旧祠里的那些影子，怎么就不出来了？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（接过镜子换了几个角度，镜面始终只有寻常倒影。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "娘也看不出门道。认得它的样子，可不等于知道怎么用。"
+        },
+        {
+          "speaker": "player",
+          "text": "家里的旧图上，没有写过吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "只有图样和几句来历，没留下用法。我从前连实物都没见过。"
+        },
+        {
+          "speaker": "player",
+          "text": "我还以为，等学会了修行就能弄明白。"
+        },
+        {
+          "speaker": "npc",
+          "text": "娘也会修行，不还是得对着它发愁？慢慢来吧，眼下咱们都不知道它怎么回事。"
+        },
+        {
+          "speaker": "player",
+          "text": "（用布把古镜重新裹好。）"
+        },
+        {
+          "speaker": "player",
+          "text": "那先收着。以后有了线索，再一起琢磨。"
+        }
+      ],
+      "requires_done": [
+        "base.dialogue.mother.mirror"
+      ]
+    },
+    "base.dialogue.mother.north": {
+      "topic": "chat",
+      "label": "北陆的旧日",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "娘，你从前的家在哪里？"
+        },
+        {
+          "speaker": "npc",
+          "text": "北陆高原，离这里很远。"
+        },
+        {
+          "speaker": "player",
+          "text": "一直没听你提过。那里是什么样的？"
+        },
+        {
+          "speaker": "npc",
+          "text": "风大，冬天也比这里冷。小时候出门，家里人总要叮嘱，把衣领拢紧些。"
+        },
+        {
+          "speaker": "player",
+          "text": "难怪你总这么叮嘱我。"
+        },
+        {
+          "speaker": "npc",
+          "text": "（笑了笑，将你翻起的一点领边压平。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "海边风也凉呀，领口敞着可不行。"
+        },
+        {
+          "speaker": "player",
+          "text": "那你是在那边的宗门学的修行？叫什么名字？"
+        },
+        {
+          "speaker": "npc",
+          "text": "（手在衣领上停了一下，随后慢慢放开。）"
+        },
+        {
+          "speaker": "npc",
+          "text": "那段事，娘现在还不想说。"
+        },
+        {
+          "speaker": "player",
+          "text": "好，那我先不问。你哪天想说了，我再听。"
+        },
+        {
+          "speaker": "npc",
+          "text": "嗯。"
+        },
+        {
+          "speaker": "player",
+          "text": "你会想那边吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "偶尔会。尤其风大的时候，就想起从前的屋子。不过这里也住惯了，邻里都熟。你一回来，屋里就热闹了，娘也高兴。"
+        }
+      ],
+      "requires_done": [
+        "base.dialogue.mother.mirror"
+      ]
+    },
+    "base.dialogue.mother.practice_pending": {
+      "topic": "chat",
+      "label": "修行的准备",
+      "lines": [
+        {"speaker": "player", "text": "娘，我这几日一直照你教的练，能再试试引气了吗？"},
+        {"speaker": "npc", "text": "还得再下些功夫，别急着赶这一步。静下心来，把娘教的慢慢练熟。出门也照顾好自己，你平平安安的，娘才放心。"}
+      ],
+      "requires_flags": ["base.story.chaoshengguichu.practice_pending"],
+      "retire_flags": ["base.story.chaoshengguichu.practice_ready", "base.story.chaoshengguichu.practice_failed", "base.story.chaoshengguichu.practice_finished"]
+    },
+    "base.dialogue.mother.practice_ready": {
+      "topic": "chat",
+      "label": "准备尝试引气",
+      "lines": [
+        {"speaker": "npc", "text": "前面的工夫够了。等精神养足，再照教过你的法子引气，娘在旁边。"}
+      ],
+      "requires_flags": ["base.story.chaoshengguichu.practice_ready"],
+      "retire_flags": ["base.story.chaoshengguichu.practice_pending", "base.story.chaoshengguichu.practice_failed", "base.story.chaoshengguichu.practice_finished"]
+    },
+    "base.dialogue.mother.practice_failed": {
+      "topic": "chat",
+      "label": "引气未成",
+      "lines": [
+        {"speaker": "player", "text": "娘，我照着练了，可还是留不住那口气。"},
+        {"speaker": "npc", "text": "刚开始会这样。先停一停，把书里这一段再看一遍，别只想着赶紧练成。"}
+      ],
+      "requires_flags": ["base.story.chaoshengguichu.practice_failed"],
+      "retire_flags": ["base.story.chaoshengguichu.practice_pending", "base.story.chaoshengguichu.practice_ready", "base.story.chaoshengguichu.practice_finished"]
+    },
+    "base.dialogue.mother.qi_after": {
+      "topic": "chat",
+      "label": "引气之后再问一句",
+      "lines": [
+        {
+          "speaker": "player",
+          "text": "娘，你刚学会的时候，也这么高兴吗？"
+        },
+        {
+          "speaker": "npc",
+          "text": "高兴。觉得往后什么地方都能去，什么事都想试。"
+        },
+        {
+          "speaker": "player",
+          "text": "后来呢？"
+        },
+        {
+          "speaker": "npc",
+          "text": "后来走得多了，才知道自己不会的还多。你慢慢来，别急着把路一口气走完。"
+        }
+      ],
+      "requires_flags": [
+        "base.story.chaoshengguichu.qi_confirmed"
+      ]
+    }
+  }
+}

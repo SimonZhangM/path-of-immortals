@@ -1,0 +1,114 @@
+{
+  "id": "base.enemy.yanbilingyuan_shouxue",
+  "name": "岩臂灵猿·守穴",
+  "art_profile": "base.enemy.yanbilingyuan_shouxue",
+  "cultivation_rank": "base.cultivation.qi_refining",
+  "cultivation_stage": "中期",
+  "max_hp": 240,
+  "max_stamina": 126,
+  "max_spirit": 80,
+  "innate_armor_type": "重甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 106,
+  "initialize_equipped_full": true,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 60,
+    "experience": 34
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.yanbilingyuan_suiyanzhang",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_lianbizhongchui",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_zhendi",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_huyan_shouxue",
+      "cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_yanwenyuanpi_shouxue",
+      "cell": [
+        2,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_hujing",
+      "cell": [
+        3,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_shanlingguo",
+      "cell": [
+        3,
+        2
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_yanyuanzhanggu",
+      "cell": [
+        0,
+        3
+      ]
+    },
+    {
+      "item_id": "base.organ.yanbilingyuan_yanyuanbigu",
+      "cell": [
+        2,
+        3
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.yanbilingyuan_yanwenyuanpi",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanbilingyuan_yanyuanzhanggu",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanbilingyuan_yanyuanbigu",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.yanbilingyuan_shanlingguo",
+      "chance": 0.25,
+      "requires_remaining_item": "base.organ.yanbilingyuan_shanlingguo"
+    }
+  ],
+  "presentation": {
+    "rank_label": "炼气中期·首领",
+    "category_label": "灵兽首领",
+    "description": "守在山洞附近的岩臂灵猿，体魄与岩肤更坚实。近身掌捶配合震地，重伤时激发护境本能。",
+    "traits": [
+      "厚甲续航",
+      "护境反击"
+    ],
+    "battle_background": "res://assets/battle-qinglanshandao-yanbilingyuan.webp",
+    "summary": []
+  }
+}

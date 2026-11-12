@@ -117,7 +117,7 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 			continue
 		if not preload("res://scripts/map/map_buff_bonuses.gd").valid(record.get("buff_bonuses", {})):
 			return "物品常驻增益加成无效。"
-		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable", "plant", "beast", "mineral", "board", "food"]:
+		if record.category not in ["weapon", "armor", "artifact", "pill", "throwable", "plant", "beast", "mineral", "board", "food", "key"]:
 			return "此物品尚未接入行囊战斗：" + String(record.name)
 		if record.get("rule_version", 0) == 0 and record.category in ["artifact", "pill"] and (not record.get("effects") is Array or not ContentRegistry._positive_number(record.get("cooldown"))):
 			return "法器／丹药缺少战斗效果或轮转：" + String(record.name)
@@ -141,7 +141,10 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 		else:
 			raw.effects = record.effects.duplicate(true)
 			raw.uses_per_unit = record.get("uses_per_unit", 0)
+		if record.get("recovery", false): raw.tags.append("恢复")
 		if record.get("quest_item",false): raw.tags.append("任务物品")
+		if record.category=="key":
+			raw.combat = {"description":record.get("description",""),"flavor_description":record.get("flavor_description","")}
 		if record.category == "food":
 			if not MapFood.valid_definition(record.get("food")): return "食品效果无效。"
 			raw.combat = {"description": MapFood.effect_text(record), "flavor_description": record.get("description", "")}
@@ -161,7 +164,43 @@ func configure(content: ContentRegistry, layout: BoardLayout, definitions: Array
 			_owned[id] = String(record.id)
 			storage.put(_unit(id, record.id))
 	_seed_owned = _owned.duplicate()
+	_refresh_quest_item_status()
+	inventory._registry = registry
 	return ""
+
+func _refresh_quest_item_status() -> void:
+	var updates: Array[Dictionary] = []
+	var realm := int(registry.get_cultivation(cultivation_rank_id).order)
+	for id: String in records:
+		var record: Dictionary = records[id]
+		if not record.has("quest_until_realm") and not record.has("story_identity"): continue
+		var protected: bool = record.get("quest_item",false)
+		var description: String = record.description
+		var display_name: String = record.name
+		if record.has("quest_until_realm"):
+			protected = realm<int(record.quest_until_realm)
+			description = record.quest_description if protected else record.unlocked_description
+		if record.has("story_identity"):
+			var identity: Dictionary = record.story_identity
+			var version: Dictionary = identity.after if narrative.get("flags",{}).get(identity.flag,false) else identity.before
+			display_name = version.name
+			description = version.description
+		if record.get("quest_item",false)==protected and record.description==description and record.name==display_name: continue
+		if updates.is_empty(): records = records.duplicate()
+		record = record.duplicate(true)
+		record.quest_item = protected
+		record.name = display_name
+		record.description = description
+		records[id] = record
+		var tags: Array = [record.subcategory]
+		if protected and "任务物品" not in tags: tags.append("任务物品")
+		updates.append({"id":id,"name":record.name,"type":record.category,"category":record.category,
+			"quality":record.quality,"tags":tags,"size":[record.footprint_columns,record.footprint_rows],
+			"icon":record.icon,"cooldown":record.cooldown,"stamina_cost":record.get("base_stamina_cost",0),
+			"spirit_cost":record.get("spirit_cost",0),"training":record.get("training",false),
+			"effects":record.effects,"uses_per_unit":record.get("uses_per_unit",0),
+			"combat":{"description":description,"flavor_description":record.flavor_description}})
+	if not updates.is_empty(): registry = registry.with_item_overrides(updates)
 
 static func board_description(record: Dictionary, layout: BoardLayout, rank: Dictionary) -> String:
 	var lines: PackedStringArray = [record.get("origin_description", record.get("description", "")), "适用境界：%s及以上。" % rank.name]
@@ -374,7 +413,7 @@ func set_bag_capacity(value: int) -> String:
 
 func can_use_item(item_id: String) -> bool:
 	var item := registry.get_item(item_id)
-	if item != null and item.category == "book": return true
+	if item != null and item.category in ["book","key"]: return true
 	if item != null and item.category == "spell":
 		return content_grants.get(TEST_SPELL_GRANT, false) or knowledge.level(item.combat.book_id) >= int(item.combat.learned_at_book_level)
 	if item != null and item.category == "board":
@@ -571,23 +610,36 @@ func formation_snapshot() -> Dictionary:
 	_sort_placements(placements)
 	return {"placements": placements}
 
+# Defaults for saves predating growth. Current nonempty growth is authoritative.
+func initial_growth(fallback: Dictionary = {}) -> Dictionary:
+	if not fallback.is_empty(): return fallback.duplicate(true)
+	var result := CultivationGrowth.initial(int(registry.get_cultivation(cultivation_rank_id).order))
+	var base := CultivationGrowth.maxima(result)
+	for key: String in base: result.resources[key] = int(base[key]) * 100
+	result.experience = int(JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json")).experience)
+	return result
+
 # Hydration accepts legacy overflow; inventory-changing commands opt into the guard.
-func restore(raw: Variant, enforce_capacity: bool = false) -> String:
+func restore(raw: Variant, enforce_capacity: bool = false, legacy_growth: Dictionary = {}) -> String:
 	if not raw is Dictionary or not CultivationGrowth.valid(raw.get("growth", {})): return "修炼成长存档无效。"
 	if raw.has("learning") and not raw.learning is Dictionary: return "学习存档格式无效。"
 	var previous_growth := growth
 	var previous_rank := cultivation_rank_id
 	var previous_knowledge := knowledge.snapshot()
 	var saved_growth: Dictionary = raw.get("growth", {})
-	if not saved_growth.is_empty(): cultivation_rank_id = CultivationGrowth.rank_id(saved_growth)
+	if saved_growth.is_empty(): saved_growth = initial_growth(legacy_growth)
+	if not CultivationGrowth.valid(saved_growth): return "旧档默认成长数据无效。"
+	cultivation_rank_id = CultivationGrowth.rank_id(saved_growth)
 	if raw.has("learning") and not knowledge.restore(raw.learning,registry.library,int(registry.get_cultivation(cultivation_rank_id).order)):
 		cultivation_rank_id = previous_rank
 		return knowledge.error
 	growth = saved_growth.duplicate(true)
+	CultivationGrowth.migrate_breakthrough_attempt(growth)
 	if not growth.is_empty():
 		for key: String in ["version","realm","layer","progress","day_usec","budget","breakthrough_serial","experience"]:
 			if growth.has(key): growth[key]=int(growth[key])
 		for key: String in growth.resources: growth.resources[key]=int(growth.resources[key])
+		if int(growth.realm) == 0: growth.resources.spirit = 0
 	var error := _restore_state(raw,enforce_capacity)
 	if not error.is_empty():
 		growth = previous_growth
@@ -669,6 +721,11 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 		for unit_id: String in _seed_owned:
 			if records[_seed_owned[unit_id]].category == "board" and _seed_owned[unit_id] not in owned.values():
 				owned[unit_id] = _seed_owned[unit_id]
+	# Historical mirror dialogue predated its physical quest reward. Recover
+	# only that missing receipt, using copies so a rejected restore is read-only.
+	grants = grants.duplicate(true)
+	receipts = receipts.duplicate(true)
+	RiverQuest.recover_legacy_mirror(saved_quests,owned,grants,receipts)
 	var selected := registry.get_board(raw.get("board_id", ""))
 	if not receipts.get("starter.bag.v1", false):
 		for unit_id: String in _seed_owned:
@@ -737,6 +794,7 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 		for key in ["percent","start_day","expires_day"]: lodging_bonus[key] = int(lodging_bonus[key])
 	narrative = DialogueJournal.normalized(saved_narrative)
 	quests = QuestState.normalized(saved_quests)
+	HomecomingQuest.migrate(quests[HomecomingQuest.ID],narrative)
 	RiverQuest.migrate_root_discovery(quests[RiverQuest.ID],granted_rewards)
 	quest_tracking = saved_tracking.duplicate(true)
 	if quests[QuestState.ID].counts.deliver>0: quest_tracking.ids.erase(QuestState.ID)
@@ -763,6 +821,8 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	formations = restored_formations
 	board = selected
 	quest_tracking = QuestTracking.normalized(quest_tracking,QuestTracking.entries(self))
+	_refresh_quest_item_status()
+	checked.inventory._registry = registry
 	_apply_checked_layout(checked)
 	QuestState.sync_flags(self)
 	formations_changed.emit()

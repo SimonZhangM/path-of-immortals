@@ -1,0 +1,15 @@
+{
+  "id": "base.map_event.diecuifeng.encounter_n11",
+  "type": "encounter",
+  "point_id": "base.map.diecuifeng.point.n11",
+  "trigger": "arrival",
+  "presentation": {
+    "illustration": "res://assets/battle-diecuifeng-04-N11.webp"
+  },
+  "title": "古树盘根",
+  "description": "古树盘根附近出现了碧叶藤灵。",
+  "enemy_id": "base.enemy.biyetengling",
+  "battle_scene": "res://scenes/main/main.tscn",
+  "enabled": true,
+  "respawn_days": 20
+}

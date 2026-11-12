@@ -1,0 +1,33 @@
+{
+  "id": "base.organ.yanbilingyuan_hujing",
+  "name": "护境",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-yanbilingyuan-hujing.webp",
+  "cooldown": 0,
+  "stamina_cost": 0,
+  "spirit_cost": 0,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "low_hp_physical_buff": {
+      "numerator": 2,
+      "denominator": 5,
+      "duration": 8,
+      "bonus": 0.2
+    }
+  },
+  "effects": []
+}

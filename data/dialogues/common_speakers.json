@@ -1,0 +1,13 @@
+{
+  "base.narrator": {
+    "name": "旁白",
+    "portrait": "res://assets/ui-portrait-pangbai.webp",
+    "portrait_region": [
+      0,
+      0,
+      376,
+      376
+    ],
+    "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+  }
+}

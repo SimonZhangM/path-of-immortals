@@ -107,15 +107,22 @@ func activation_source(id: String, at: int) -> Dictionary:
 	if rules.active_injury(member,at)>0 and (cost.x>0 or cost.y>0): injury_event(status_source(member,"重伤"),at)
 	member.stamina = rules.resource_q(member,member.stamina - cost.x)
 	member.spirit = rules.resource_q(member,member.spirit - cost.y)
+	sim._record_resource_payment(member,id,cost,at)
 	sim.state.item_runtime[id].activation_count += 1
 	var src := {"kind": "active", "item_id": item.id, "instance_id": id, "owner_id": member.id, "owner_name": member.definition.name, "side": sim.state.item_runtime[id].side, "category": item.category, "label": item.display_name, "stamina_cost": cost.x, "spirit_cost": cost.y, "spell": data(member, item)}
 	src.entry = member.inventory.get_instance(id).duplicate(true)
+	src = sim.record_trace.capture(src)
 	var event := src.duplicate(true)
 	event.entry = member.inventory.get_instance(id)
 	rules.emit("item_activated", at, event)
 	return src
 
 func cast(id: String, at: int) -> void:
+	sim.record_trace.begin(rules.record_source(sim._owners[id], rules.item_source(id)), at)
+	_cast(id, at)
+	sim.record_trace.end()
+
+func _cast(id: String, at: int) -> void:
 	var owner: PartyMemberState = sim._owners[id]
 	var item: ItemData = sim._definitions[id]
 	var p := data(owner, item)
@@ -131,10 +138,15 @@ func cast(id: String, at: int) -> void:
 			statuses(owner, target, p, {"hit": true}, at, src)
 		"sword_screen":
 			if not owner.thunder_shields.is_empty():
+				var previous := target.paralyzed_until
 				target.paralyzed_until = maxi(target.paralyzed_until, at + owner.thunder_shields.size() * 1_000_000)
+				rules.emit("control", at, {"target_id": target.id, "target_name": target.definition.name, "status": "麻痹", "until": target.paralyzed_until, "previous_expiry": previous})
 				owner.thunder_shields.clear()
 			owner.sword_screen = {"value": float(p.shield), "counter": float(p.get("counter", 0)), "absorption": float(p.absorption)}
-		"enchant": owner.weapon_enchantment = p.duplicate(true)
+			rules.emit("shield_created", at, {"target_id": owner.id, "target_name": owner.definition.name, "resource": "sword_screen", "value": float(p.shield)})
+		"enchant":
+			owner.weapon_enchantment = p.duplicate(true)
+			rules.emit("temporary_buff", at, {"target_id": owner.id, "target_name": owner.definition.name, "label": "武器附魔", "value": p.get("ratio", 0)})
 		"weapon_barrier":
 			var weapon := strongest(weapons(owner, at))
 			add_barrier(owner, float(weapon_attack(sim._definitions[weapon]).value) * p.ratio, item.id)
@@ -150,6 +162,8 @@ func cast(id: String, at: int) -> void:
 				var cost: Vector2 = fees[weapon]
 				owner.stamina = rules.resource_q(owner,owner.stamina - rules.resource_q(owner,cost.x))
 				owner.spirit = rules.resource_q(owner,owner.spirit - rules.resource_q(owner,cost.y))
+				sim._record_resource_payment(owner,weapon,Vector2(rules.resource_q(owner,cost.x),rules.resource_q(owner,cost.y)),at)
+				rules.emit("resource_cost", at, {"stamina_cost": rules.resource_q(owner, cost.x), "spirit_cost": rules.resource_q(owner, cost.y)})
 				var a := weapon_attack(def)
 				var ratio := float(p.main_ratio if weapon == main else p.other_ratio) if p.opcode == "weapon_union" else 1.0
 				parts.append({"base": a.value * ratio, "element": def.element, "type": a.damage_type, "main": weapon == main, "original": a.value})
@@ -214,7 +228,11 @@ func trigger(id: String, at: int) -> Dictionary:
 	var allowed := tax_attempt(id, at)
 	sim.timeline.timers[id].triggering = false
 	if not allowed: return {}
-	activation_source(id, at)
+	sim.record_trace.begin(rules.record_source(sim._owners[id], rules.item_source(id)), at, "prepared")
+	p.record_source = activation_source(id, at)
+	var description: String = {"dodge": "闪避本次攻击", "force_critical": "强化本次暴击", "guard_critical": "抵挡本次暴击", "followup": "触发武器追击"}.get(p.opcode, "")
+	if not description.is_empty(): rules.emit("temporary_buff", at, {"target_id": sim._owners[id].id, "target_name": sim._owners[id].definition.name, "label": description})
+	sim.record_trace.end()
 	sim.timeline.restart(id, at)
 	return p
 
@@ -222,6 +240,8 @@ func add_barrier(member: PartyMemberState, value: float, source: String) -> floa
 	var actual := rules.q(minf(value, maxf(0, rules.barrier_capacity(member) - member.barrier)))
 	member.barrier = rules.q(member.barrier + actual)
 	if actual > 0: member.barrier_sources.append({"source": source, "value": actual})
+	if actual > 0:
+		rules.emit("barrier_changed", int(sim.record_trace.current().get("record_at", sim.state.time_usec)), {"target_id": member.id, "target_name": member.definition.name, "resource": "barrier", "value": actual, "after": member.barrier})
 	return actual
 
 func spend_barrier(member: PartyMemberState, amount: float, source := "") -> float:
@@ -333,9 +353,21 @@ func absorption(member: PartyMemberState) -> float:
 
 func counter_attack(owner: PartyMemberState, target: PartyMemberState, value: float, element: String, p: Dictionary, at: int) -> void:
 	if owner.hp<=0 or target.hp<=0: return
+	var source := rules.record_source(owner, {"label": p.get("name", "返剑"), "item_id": p.get("id", "")})
+	if p.has("record_source"):
+		source = p.record_source.duplicate(true)
+		source.record_mode = "counter"
+		sim.record_trace.resume(source)
+	else: sim.record_trace.begin(source, at, "counter")
+	_counter_attack(owner, target, value, element, p, at)
+	sim.record_trace.end()
+
+func _counter_attack(owner: PartyMemberState, target: PartyMemberState, value: float, element: String, p: Dictionary, at: int) -> void:
+	rules.emit("attack_started", at, {"target_id": target.id, "target_name": target.definition.name})
 	if rules.roll() >= hit_chance(owner,target,.95,"base.element."+element,at,false):
 		rules.half_consume(target,"轻灵")
 		dodged(target,owner,at)
+		rules.emit("miss", at, {"target_id": target.id, "target_name": target.definition.name})
 		return
 	var add := float(p.get("damage_pct",0))
 	if element=="thunder" and general(owner,"thunder",1,"雷罡"): add+=.2
@@ -344,11 +376,18 @@ func counter_attack(owner: PartyMemberState, target: PartyMemberState, value: fl
 	statuses(owner,target,p,result,at)
 
 func shield_broken(defender: PartyMemberState, attacker: PartyMemberState, context: Dictionary, at: int, screen: Dictionary = {}) -> void:
+	sim.record_trace.begin(rules.record_source(defender, {"label": "剑幕·破裂" if not screen.is_empty() else "雷盾·破裂"}), at, "reaction")
+	_shield_broken(defender, attacker, context, at, screen)
+	sim.record_trace.end()
+
+func _shield_broken(defender: PartyMemberState, attacker: PartyMemberState, context: Dictionary, at: int, screen: Dictionary = {}) -> void:
 	if not screen.is_empty():
 		if float(screen.get("counter",0))>0: counter_attack(defender,attacker,screen.counter,"metal",{},at)
 		return
-	var duration := 1_500_000 if general(defender,"thunder",1,"雷罡") else 1_000_000
+	var duration := 2_000_000 if general(defender,"thunder",1,"雷罡") else 1_000_000
+	var previous := attacker.paralyzed_until
 	attacker.paralyzed_until = maxi(attacker.paralyzed_until,at+duration)
+	rules.emit("control", at, {"target_id": attacker.id, "target_name": attacker.definition.name, "status": "麻痹", "until": attacker.paralyzed_until, "previous_expiry": previous})
 	sim.queue.schedule(attacker.paralyzed_until,"t01_wake",{},-2)
 	# Conversion waits until the whole incoming attack has finished.
 	rules.defer_thunder+=1
@@ -375,11 +414,14 @@ func after_primary(owner: PartyMemberState, target: PartyMemberState, item: Item
 			rules.emit("armor_only",at,{"value":actual,"target_name":target.definition.name,"label":"熔爆"})
 		else: rules.damage(owner,target,value,"法术型",item.element,at,{"kind":"derived","label":p.name,"damage_pct":p.get("burst_pct",0)},false,context)
 	if item.element=="base.element.fire" and result.armor_loss>0 and before["破甲"]>0 and spec(owner,"fire",1,"熔痕") and target.combat_statuses.has("破甲"):
+		var previous: int = target.combat_statuses["破甲"].next
 		target.combat_statuses["破甲"].next=at+10_000_000
+		_record_refresh(target, "破甲", previous, at + 10_000_000, at)
 		rules.schedule_status(target,"破甲")
 	if p.has("drain_spirit"):
 		var drained := minf(target.spirit,p.drain_spirit)
 		target.spirit=rules.resource_q(target,target.spirit-drained)
+		if drained > 0: rules.emit("resource_drained", at, {"target_id": target.id, "target_name": target.definition.name, "resource": "spirit", "value": drained})
 		if p.has("drain_return"): rules.restore(owner,"spirit",drained*p.drain_return,at,-1.0,source)
 	if p.has("life_per_hp") and result.hp_loss>0: rules.apply_status(owner,"生机",maxi(1,roundi(result.hp_loss*p.life_per_hp)),owner,at)
 	if p.has("poison_entangle") and before["毒蚀"]>0: rules.apply_status(target,"缠绕",p.poison_entangle,owner,at)
@@ -388,11 +430,15 @@ func after_primary(owner: PartyMemberState, target: PartyMemberState, item: Item
 		for status in ["灼烧","破甲"]:
 			if target.combat_statuses.has(status):
 				var pool: Dictionary = target.combat_statuses[status]
+				var previous: int = pool.expires if status == "灼烧" else pool.next
 				if status=="灼烧": pool.expires=at+10_000_000
 				else: pool.next=at+10_000_000
+				_record_refresh(target, status, previous, at + 10_000_000, at)
 				rules.schedule_status(target,status)
 	if p.has("paralysis_extension") and source.get("pre_paralyzed",false):
+		var previous := target.paralyzed_until
 		target.paralyzed_until+=roundi(p.paralysis_extension*1_000_000)
+		rules.emit("control", at, {"target_id": target.id, "target_name": target.definition.name, "status": "麻痹", "until": target.paralyzed_until, "previous_expiry": previous})
 		sim.queue.schedule(target.paralyzed_until,"t01_wake",{},-2)
 	if p.get("return_resources",false):
 		var portion: float = result.effective * source.get("missing_ratio",0) / (1+source.get("missing_ratio",0))
@@ -404,6 +450,10 @@ func after_primary(owner: PartyMemberState, target: PartyMemberState, item: Item
 	if result.hp_loss>0 and before["流血"]>0 and spec(owner,"metal",5,"血势不绝"): rules.apply_status(target,"流血",1,owner,at)
 	if item.element=="base.element.thunder" and result.effective>0: lightning(owner,target,p,at,context)
 
+func _record_refresh(target: PartyMemberState, status: String, previous: int, until: int, at: int) -> void:
+	if until <= previous: return
+	rules.emit("status_applied", at, {"target_id": target.id, "target_name": target.definition.name, "status": status, "layers_before": rules.layers(target, status), "layers": rules.layers(target, status), "value": 0, "previous_expiry": previous, "expires": until})
+
 func lightning(owner: PartyMemberState, target: PartyMemberState, p: Dictionary, at: int, context: Dictionary) -> void:
 	var strikes := 0
 	if rules.layers(target,"雷印")>=10:
@@ -411,6 +461,7 @@ func lightning(owner: PartyMemberState, target: PartyMemberState, p: Dictionary,
 	var new_chain := 0
 	for i in strikes:
 		if owner.hp<=0 or target.hp<=0 or rules.layers(target,"雷印")<10: break
+		sim.record_trace.begin(sim.record_trace.capture(rules.record_source(owner, {"label": "雷击"})), at, "derived")
 		rules.consume(target,"雷印",10)
 		var highest := 0.0
 		for entry: Dictionary in owner.inventory.get_instances():
@@ -424,9 +475,11 @@ func lightning(owner: PartyMemberState, target: PartyMemberState, p: Dictionary,
 		rules.paralyze(target,at)
 		if spec(owner,"thunder",1,"留印"): rules.apply_status(target,"雷印",3,owner,at)
 		if spec(owner,"thunder",3,"雷击成环"): new_chain+=2
+		sim.record_trace.end()
 	var chains := (1 if strikes>0 else 2) if p.get("extra_chain",false) else (0 if strikes>0 else 1)
 	for i in chains:
 		if owner.hp<=0 or target.hp<=0 or rules.layers(target,"连环")<=0: break
+		sim.record_trace.begin(sim.record_trace.capture(rules.record_source(owner, {"label": "连环"})), at, "derived")
 		var n := rules.layers(target,"连环")
 		var ordinal := count(owner,"chain")
 		if not (spec(owner,"thunder",5,"连霆不绝") and ordinal%5==0): rules.consume(target,"连环",1)
@@ -434,6 +487,7 @@ func lightning(owner: PartyMemberState, target: PartyMemberState, p: Dictionary,
 		if p.get("extra_chain",false) and (strikes>0 or i==1): add+=float(p.get("chain_bonus",0))
 		rules.damage(owner,target,n*2,"法术型","base.element.thunder",at,{"kind":"derived","label":"连环","damage_pct":add},false,context)
 		if spec(owner,"thunder",3,"连环回蕴"): rules.apply_status(owner,"雷蕴",1,owner,at)
+		sim.record_trace.end()
 	if new_chain>0 and target.hp>0: rules.apply_status(target,"连环",new_chain,owner,at)
 
 func followup(owner: PartyMemberState, target: PartyMemberState, item: ItemData, first: float, at: int) -> void:
@@ -443,9 +497,17 @@ func followup(owner: PartyMemberState, target: PartyMemberState, item: ItemData,
 	if not guaranteed and (rules.layers(target,"失衡")<=0 or rules.roll()>=chance): return
 	var p := trigger(id,at) if guaranteed else {}
 	if guaranteed and p.is_empty(): return
+	var source := rules.record_source(owner, {"item_id": item.id, "label": "追风式" if guaranteed else "失衡追击"})
+	sim.record_trace.begin(source, at, "followup")
+	_followup_attack(owner, target, item, first, at, p, guaranteed)
+	sim.record_trace.end()
+
+func _followup_attack(owner: PartyMemberState, target: PartyMemberState, item: ItemData, first: float, at: int, p: Dictionary, guaranteed: bool) -> void:
+	rules.emit("attack_started", at, {"target_id": target.id, "target_name": target.definition.name})
 	if rules.roll()>=hit_chance(owner,target,float(item.combat.get("hit_chance",.9))+float(p.get("followup_hit",0)),item.element,at,false):
 		rules.half_consume(target,"轻灵")
 		dodged(target,owner,at)
+		rules.emit("miss", at, {"target_id": target.id, "target_name": target.definition.name})
 		return
 	var pierce := "穿刺" in item.tags
 	var ratio := .5+float(p.get("followup_bonus",0))+(float(p.get("pierce_bonus",0)) if pierce else 0.0)
@@ -524,6 +586,9 @@ func resource_tick(member: PartyMemberState, status: String, pool: Dictionary, n
 		feedback.recovery_status = status
 		rules.emit_restore(member,"spirit",member.spirit-old.x,at,feedback)
 		rules.emit_restore(member,"stamina",member.stamina-old.y,at,feedback)
+	else:
+		if old.x > member.spirit: rules.emit("resource_drained", at, {"target_id": member.id, "target_name": member.definition.name, "resource": "spirit", "value": old.x - member.spirit})
+		if old.y > member.stamina: rules.emit("resource_drained", at, {"target_id": member.id, "target_name": member.definition.name, "resource": "stamina", "value": old.y - member.stamina})
 	if gain and spec(source,"water",3,"盈流成护"):
 		var leftover := overflow.x+overflow.y if room.x==0 and room.y==0 else transfer.x+transfer.y-second.x-second.y
 		add_barrier(member,leftover*.5,"status.resources")
@@ -568,6 +633,7 @@ func dispel_one(member: PartyMemberState, targets: Array, at: int) -> void:
 		member.temporary_effects.erase(id)
 		if id=="toxin_immunity": member.toxin_immune_until_usec=at
 	else: rules.consume(member,id,1)
+	rules.emit("status_removed", at, {"target_id": member.id, "target_name": member.definition.name, "status": id, "value": 1, "removal": "驱散"})
 
 func flush_delays(member: PartyMemberState, at: int) -> void:
 	var id := cd_target(member,"",{"delay_cd":2},at,str(member.definition.get("dispel_target","")))
@@ -593,6 +659,7 @@ func tax_attempt(id: String, at: int) -> bool:
 	# New injury is applied after the fee snapshot and cannot affect this cast.
 	sim.state.item_runtime[id].fee_override=Vector2(rules.q(normal.x+extra.x),rules.q(normal.y+extra.y))
 	sim.state.item_runtime[id].participant_fees=fees
+	sim.record_trace.resume(p.record_source)
 	rules.apply_status(member,"重伤",p.injury,enemy,at)
 	if not enough:
 		sim.state.item_runtime[id].erase("fee_override")
@@ -600,6 +667,7 @@ func tax_attempt(id: String, at: int) -> bool:
 		sim.timeline.activation_failed(id,at,"cast_tax")
 		sim.timeline.restart(id,at)
 		rules.emit("cast_interrupted",at,{"item_id":item.id,"label":"镇脉诀","target_name":member.definition.name})
+	sim.record_trace.end()
 	return enough
 
 func injury_event(source: PartyMemberState, at: int) -> void:

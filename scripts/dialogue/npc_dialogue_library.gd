@@ -11,9 +11,12 @@ func load_file(path: String) -> String:
 
 func configure(raw: Variant) -> String:
 	if not raw is Dictionary or not raw.get("id") is String or not raw.id.begins_with("base.npc."): return "对话人物ID无效。"
-	for key in ["name","portrait","portrait_frame","welcome"]:
+	for key in ["name","welcome"]:
 		if not raw.get(key) is String or raw[key].is_empty(): return "对话人物配置缺失："+key
+	if not raw.get("portrait_pending",false) is bool: return "头像待补标识无效。"
 	for key in ["portrait","portrait_frame"]:
+		if not raw.get(key) is String: return "对话人物配置缺失："+key
+		if raw.get("portrait_pending",false) and raw[key].is_empty(): continue
 		if not ResourceLoader.exists(raw[key],"Texture2D"): return "对话头像素材不存在："+key
 	if raw.has("portrait_region"):
 		var region: Variant = raw.portrait_region
@@ -29,6 +32,7 @@ func configure(raw: Variant) -> String:
 	var checked_topics := {}
 	var references := {raw.welcome:"welcome"}
 	for topic: Variant in raw.topics:
+		if topic is Dictionary and not topic.get("fixed_label",false) is bool: return "话题标签固定开关无效。"
 		if not topic is Dictionary or not topic.get("id") is String or topic.id.is_empty() or topic.id=="welcome" or checked_topics.has(topic.id) or not topic.get("label") is String or topic.label.is_empty(): return "对话话题无效。"
 		for key in ["revisit_interval_days","revisit_batch_size"]:
 			if topic.has(key) and not WorldCalendar.integer_between(topic[key],1,10000): return "回访周期或批量无效。"

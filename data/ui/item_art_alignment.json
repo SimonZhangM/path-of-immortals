@@ -1,5 +1,6 @@
 {
   "res://assets/item-enemy-cslz-4.webp": {"optical_centroid": true},
+  "res://assets/weapon-dbtc.webp": {"tooltip_optical_centroid": true, "tooltip_offset": [4, -5]},
   "res://assets/item-armor-xp-buhutui.webp": {
     "horizontal_center": 0.54049
   }

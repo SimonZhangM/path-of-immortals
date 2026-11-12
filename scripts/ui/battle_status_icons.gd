@@ -3,9 +3,11 @@ extends GridContainer
 
 const COLUMNS := 8
 const ICON_SIDE := 32.0
+const LAYER_FONT_SIZE := 13
 # The battle layout is scaled by 4/3 at native 2K: 0.375 becomes 0.5px.
 const OUTLINE_RADIUS := 0.375
-var show_all_for_testing := true
+var show_all_for_testing := false
+var element_buffs_only := false
 var slots: Dictionary = {}
 var counts: Dictionary = {}
 static var _textures: Dictionary = {}
@@ -35,6 +37,7 @@ func configure() -> void:
 		for word: String in paths:
 			if kinds[word] == kind: ordered.append(word)
 	for word: String in ordered:
+		if element_buffs_only and not T01Definition.is_buff(word): continue
 		var slot := StatusSlot.new()
 		slot.word = word
 		slot.owner_grid = weakref(self)
@@ -77,8 +80,8 @@ func configure() -> void:
 		number.name = "Layers"
 		number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		number.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		number.add_theme_font_size_override("font_size",CooldownRing.FONT_SIZE)
-		number.add_theme_color_override("font_color",Color("fff9e9"))
+		number.add_theme_font_size_override("font_size",LAYER_FONT_SIZE)
+		number.add_theme_color_override("font_color",Color.WHITE)
 		number.add_theme_color_override("font_shadow_color",Color.TRANSPARENT)
 		number.add_theme_constant_override("outline_size",0)
 		number.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -88,15 +91,18 @@ func configure() -> void:
 			var edge := Label.new()
 			edge.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 			edge.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-			edge.add_theme_font_size_override("font_size",CooldownRing.FONT_SIZE)
+			edge.add_theme_font_size_override("font_size",LAYER_FONT_SIZE)
 			edge.add_theme_color_override("font_color",Color.BLACK)
 			edge.add_theme_color_override("font_shadow_color",Color.TRANSPARENT)
 			edge.add_theme_constant_override("outline_size",0)
 			edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			edge.show_behind_parent = true
 			number.add_child(edge)
-			edge.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			edge.position += Vector2.from_angle(TAU * step / 8.0) * OUTLINE_RADIUS
+			# The empty parent is laid out later. Full-rect offsets calculated now
+			# would retain the child's minimum height and displace its outline.
+			edge.size = number.size
+			number.resized.connect(func(): edge.size=number.size)
+			edge.position = Vector2.from_angle(TAU * step / 8.0) * OUTLINE_RADIUS
 		slots[word] = slot
 		counts[word] = number
 		_display_order.append(word)
@@ -109,6 +115,9 @@ func recovery_origin(word: String) -> Vector2:
 
 func refresh(current_member: PartyMemberState) -> void:
 	member = current_member
+	if member==null:
+		hide()
+		return
 	var any_visible := false
 	for word: String in slots:
 		var layers := T01CombatRules.layers(member,word)

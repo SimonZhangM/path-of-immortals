@@ -1,0 +1,85 @@
+{
+  "id": "base.enemy.lanlinglingsun",
+  "name": "岚翎灵隼",
+  "art_profile": "base.enemy.lanlinglingsun",
+  "cultivation_rank": "base.cultivation.qi_refining",
+  "cultivation_stage": "初期",
+  "max_hp": 136,
+  "max_stamina": 24,
+  "max_spirit": 40,
+  "innate_armor_type": "轻甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 11,
+  "initialize_equipped_full": true,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 26,
+    "experience": 14
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.lanlinglingsun_sunhui",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.lanlinglingsun_luefengfeiyu",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.lanlinglingsun_zhenling",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.lanlinglingsun_lansunfuyu",
+      "cell": [
+        3,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.lanlinglingsun_guixiweiyu",
+      "cell": [
+        2,
+        1
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.lanlinglingsun_sunhui",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.lanlinglingsun_luefengfeiyu",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.lanlinglingsun_lansunfuyu",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.lanlinglingsun_guixiweiyu",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "炼气初期",
+    "category_label": "飞禽灵兽",
+    "description": "灰白羽翼掠过山崖，啄袭迅疾，振翎积蓄轻灵；体力不足时以尾羽转换灵力。",
+    "traits": [
+      "迅疾进攻",
+      "体灵转换"
+    ],
+    "battle_background": "res://assets/battle-qinglanshandao-lanlinglingsun.webp",
+    "summary": []
+  }
+}

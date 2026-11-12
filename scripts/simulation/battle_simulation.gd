@@ -3,6 +3,7 @@ extends RefCounted
 
 const INSERTION_COOLDOWN_USEC := 3_000_000
 var insertion_cooldown_usec: int = INSERTION_COOLDOWN_USEC
+var settlement_interval_usec: int = 0
 var clock := SimulationClock.new()
 var queue := EventQueue.new()
 var state: GameState
@@ -12,23 +13,28 @@ var _versions: Dictionary = {}
 var _registry: ContentRegistry
 var _effects := EffectSystem.new()
 var _pending_events: Array[Dictionary] = []
+var record_trace := preload("res://scripts/simulation/battle_record_trace.gd").new()
 var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
 var _paused_returns: Dictionary = {}
 var _scheduled_toxins: Dictionary = {}
 var configuration_error: String = ""
+var _initialized := false
 var t01: T01CombatRules
 var timeline: CombatTimeline
 var cultivation: CultivationCombat
+var item_rules: BattleItemRules
 
 func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = [], legacy_fixed_defense: bool = false) -> void:
 	state = GameState.new(allies, enemies, ally_companions, enemy_companions)
 	state.legacy_fixed_defense = legacy_fixed_defense
 	_registry = registry
-	if not legacy_fixed_defense and registry.get_item("base.map_item.t01_0002") != null:
-		t01 = T01CombatRules.new(self)
-		timeline = CombatTimeline.new(self)
-		cultivation = CultivationCombat.new(self)
+	if registry == null or not registry.errors.is_empty():
+		configuration_error = "战斗内容注册器无效或加载失败。"
+		return
+	if not legacy_fixed_defense and (registry.library == null or not registry.library.error.is_empty() or registry.library.books.is_empty() or registry.library.spells.is_empty()):
+		configuration_error = "现行战斗规则缺少有效的功法／法术目录。"
+		return
 	for side in 2:
 		if state.teams[side].size() != 1 or not state.teams[side][0] is PartyMemberState or state.companions[side].size() > 2:
 			configuration_error = "Each side requires one main character and at most two companions"
@@ -43,6 +49,12 @@ func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_compan
 				if trait_data.is_empty() or registry.get_trait(trait_data.get("id", "")) != trait_data:
 					configuration_error = "Unknown or changed trait definition"
 					return
+	# Rule selection is explicit, independent of map inventory registration.
+	if not legacy_fixed_defense:
+		t01 = T01CombatRules.new(self)
+		timeline = CombatTimeline.new(self)
+		cultivation = CultivationCombat.new(self)
+		item_rules = BattleItemRules.new(self)
 	for side in 2:
 		for member in state.teams[side]:
 			member.defense_sources.clear()
@@ -56,6 +68,10 @@ func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_compan
 	if t01 != null:
 		for team: Array in state.teams:
 			t01.refresh_equipment(team[0])
+			if team[0].definition.get("initialize_equipped_full", false):
+				for resource in ["hp", "stamina", "spirit", "armor"]:
+					team[0].set(resource, team[0].maximum(resource))
+	_initialized = true
 
 static func trait_key(side: int, companion_index: int, slot: int) -> String:
 	return "run.trait.%d.%d.%d" % [side, companion_index, slot]
@@ -87,7 +103,7 @@ func trait_remaining_usec(key: String) -> int:
 		return 0
 	if state.phase == GameState.Phase.PREPARATION:
 		return roundi(float(runtime["trait"]["cooldown"]) * 1_000_000)
-	return maxi(0, int(runtime["next_activation_usec"]) - state.time_usec)
+	return maxi(0, int(runtime["next_activation_usec"]) - presentation_time_usec())
 
 func _schedule_trait(key: String, at_usec: int) -> void:
 	var runtime: Dictionary = state.trait_runtime[key]
@@ -103,8 +119,11 @@ func _activate_trait(key: String, at_usec: int) -> void:
 		return
 	var trait_data: Dictionary = runtime["trait"]
 	runtime["activation_count"] += 1
-	var source := {"trait_id": trait_data["id"], "owner_id": runtime["owner_id"], "owner_name": runtime["owner_name"], "side": side, "stamina_cost": 0}
-	_pending_events.append({"kind": "trait_activated", "at_usec": at_usec, "key": key, "owner_name": runtime["owner_name"], "trait_id": trait_data["id"]})
+	var source := {"trait_id": trait_data["id"], "owner_id": runtime["owner_id"], "owner_name": runtime["owner_name"], "side": side, "stamina_cost": 0, "kind": "trait"}
+	record_trace.begin(source, at_usec, "trait")
+	var activation := record_trace.annotate(source)
+	activation.merge({"kind": "trait_activated", "at_usec": at_usec, "key": key}, true)
+	_pending_events.append(activation)
 	var result: Dictionary
 	var target: PartyMemberState
 	if trait_data["effect"] == "damage":
@@ -127,6 +146,7 @@ func _activate_trait(key: String, at_usec: int) -> void:
 		_pending_events.append(result)
 	if target != null and target.hp == 0:
 		_pending_events.append({"kind": "fallen", "at_usec": at_usec, "target_name": target.definition["name"], "target_id": target.id})
+	record_trace.end()
 	state.revision += 1
 	_schedule_trait(key, at_usec)
 
@@ -143,6 +163,7 @@ func attach(member: PartyMemberState, side: int, id: String, inserted_during_bat
 		return
 	_definitions[id] = item
 	_owners[id] = member
+	if item_rules != null: item_rules.attach(id)
 	if item.armor_capacity > 0:
 		member.armor_capacity_sources[id] = item.armor_capacity
 	if not item.armor_type.is_empty():
@@ -227,17 +248,22 @@ func detach(id: String) -> void:
 	state.revision += 1
 
 func start() -> bool:
+	if not _initialized: return false
 	if t01 != null:
 		configuration_error = t01.configuration_issue()
 	if not configuration_error.is_empty() or state.phase != GameState.Phase.PREPARATION:
 		return false
 	state.phase = GameState.Phase.BATTLE
+	_pending_events.append({"kind": "started", "at_usec": 0})
 	if t01 != null:
 		for team: Array in state.teams:
 			t01.refresh_equipment(team[0])
 			# Equipment grants capacity, not current armor. Only an explicit
 			# starting grant can bypass waiting for armor-restoration cooldowns.
 			team[0].armor = clampf(float(team[0].definition.get("initial_armor", 0)), 0.0, team[0].maximum("armor"))
+			if team[0].definition.get("initialize_equipped_full", false):
+				for resource in ["hp", "stamina", "spirit"]: team[0].set(resource, team[0].maximum(resource))
+		item_rules.start()
 	_sync_toxins()
 	if timeline != null:
 		for id: String in _definitions: timeline.sync(id, 0)
@@ -251,10 +277,11 @@ func start() -> bool:
 	return true
 
 func _can_activate(id: String) -> bool:
-	if not _definitions.has(id):
+	if not _initialized or not _definitions.has(id):
 		return false
 	var owner: PartyMemberState = _owners[id]
 	var item: ItemData = _definitions[id]
+	if item_rules != null and not item_rules.available(id): return false
 	if t01 != null and (item.rule_version == 1 or item.category == "weapon" and item.effects.all(func(e: Dictionary): return e.effect == "damage")):
 		return owner.can_use_item(item) and not item.effects_for("on_activate").is_empty() and t01.can_activate(owner, item, state.time_usec)
 	if not owner.can_use_item(item) or owner.hp <= 0 or item.effects_for("on_activate").is_empty() or owner.stamina < item.stamina_cost:
@@ -286,6 +313,7 @@ func request_retreat() -> bool:
 
 # Wake on commands/resource events, never poll items each rendered frame.
 func _wake_items(at_usec: int) -> void:
+	if item_rules != null: item_rules.wake(at_usec)
 	if timeline != null:
 		timeline.wake(at_usec)
 		return
@@ -319,11 +347,14 @@ func _schedule(id: String, at_usec: int) -> void:
 	state.item_runtime[id]["next_activation_usec"] = at_usec
 	queue.schedule(at_usec, "activate", {"instance_id": id, "version": _versions[id]})
 
+func presentation_time_usec() -> int:
+	return state.finished_at_usec if state.is_finished() else clock.time_usec
+
 func cooling_remaining_usec(id: String) -> int:
 	if state.phase != GameState.Phase.BATTLE or not state.item_runtime.has(id):
 		return 0
-	if timeline != null: return timeline.remaining(id, true)
-	var now := maxi(state.time_usec, _owners[id].frozen_until) if t01 != null else state.time_usec
+	if timeline != null: return timeline.remaining_at(id, presentation_time_usec(), true)
+	var now := maxi(presentation_time_usec(), _owners[id].frozen_until) if t01 != null else presentation_time_usec()
 	return maxi(0, _entry_deadline(id) - now)
 
 func activation_progress(id: String) -> float:
@@ -336,14 +367,14 @@ func activation_progress(id: String) -> float:
 		return 1.0
 	var runtime: Dictionary = state.item_runtime[id]
 	if runtime.get("barrier_stopped", false): return 1.0
-	if timeline != null: return clampf(1.0 - float(timeline.remaining(id)) / timeline.full_cd(id), 0, 1)
+	if timeline != null: return clampf(1.0 - float(timeline.remaining_at(id, presentation_time_usec())) / timeline.full_cd(id), 0, 1)
 	var next: int = runtime["next_activation_usec"]
 	if next == 0:
 		next = runtime["ready_at_usec"]
-	var now := maxi(state.time_usec, _owners[id].frozen_until) if t01 != null else state.time_usec
+	var now := maxi(presentation_time_usec(), _owners[id].frozen_until) if t01 != null else presentation_time_usec()
 	return clampf(1.0 - float(next - now) / item.cooldown_usec, 0.0, 1.0) if next > 0 else 1.0
 
-func advance(real_delta: float) -> void:
+func advance(real_delta: float, flush_pending := false) -> void:
 	if state.phase != GameState.Phase.BATTLE or clock.paused:
 		return
 	if t01 != null:
@@ -357,6 +388,8 @@ func advance(real_delta: float) -> void:
 	if state.is_finished():
 		return
 	var target_usec := clock.advance(real_delta)
+	if settlement_interval_usec > 0 and not flush_pending:
+		target_usec = maxi(state.time_usec, target_usec - target_usec % settlement_interval_usec)
 	while queue.has_due(target_usec) and not state.is_finished():
 		var event := queue.pop_next()
 		var at_usec: int = event["due_usec"]
@@ -387,6 +420,10 @@ func advance(real_delta: float) -> void:
 				t01.restore(p.member, p.resource, p.value, at_usec, -1.0, p.get("source", {}))
 		elif event.kind == "t01_wake":
 			pass
+		elif event.kind == "item_periodic":
+			item_rules.periodic_tick(event.payload.key, at_usec)
+		elif event.kind == "item_followup":
+			item_rules.followup(event.payload, at_usec)
 		else:
 			_activate(event["payload"], at_usec)
 		_wake_items(at_usec)
@@ -394,7 +431,19 @@ func advance(real_delta: float) -> void:
 		_check_result(at_usec)
 	state.time_usec = state.finished_at_usec if state.is_finished() else target_usec
 
+func _record_resource_payment(_owner: PartyMemberState, _id: String, _cost: Vector2, _at: int) -> void:
+	# Training may account for exact committed costs before effects restore resources.
+	pass
+
 func _activate(payload: Dictionary, at_usec: int) -> void:
+	var id: String = payload["instance_id"]
+	if not _definitions.has(id): return
+	var owner: PartyMemberState = _owners[id]
+	record_trace.begin({"owner_id": owner.id, "owner_name": owner.definition.name, "side": state.item_runtime[id].side, "item_id": _definitions[id].id, "instance_id": id}, at_usec)
+	_activate_item(payload, at_usec)
+	record_trace.end()
+
+func _activate_item(payload: Dictionary, at_usec: int) -> void:
 	var id: String = payload["instance_id"]
 	if not _definitions.has(id) or payload["version"] != _versions[id]:
 		return
@@ -422,11 +471,15 @@ func _activate(payload: Dictionary, at_usec: int) -> void:
 		else: t01.activate(id, at_usec)
 		return
 	owner.stamina -= item.stamina_cost
+	_record_resource_payment(owner,id,Vector2(item.stamina_cost,0),at_usec)
 	runtime["activation_count"] += 1
 	state.revision += 1
 	var source := {"item_id": item.id, "instance_id": id, "owner_id": owner.id, "owner_name": owner.definition["name"], "side": side, "stamina_cost": item.stamina_cost, "stamina_after": owner.stamina}
 	source.entry = owner.inventory.get_instance(id).duplicate(true)
-	_pending_events.append({"kind": "item_activated", "at_usec": at_usec, "owner_id": owner.id, "side": side, "entry": owner.inventory.get_instance(id)})
+	source = record_trace.capture(source)
+	var activation := source.duplicate(true)
+	activation.merge({"kind": "item_activated", "at_usec": at_usec}, true)
+	_pending_events.append(activation)
 	if not item.effects_for("on_activate").filter(func(effect: Dictionary): return effect.effect in ["restore_capped", "restore_ticks", "cleanse_toxin"]).is_empty():
 		for effect: Dictionary in item.effects_for("on_activate"):
 			if effect.effect == "restore_capped":
@@ -597,6 +650,7 @@ func _check_result(at_usec: int) -> void:
 					return
 		if _pending_restores > 0:
 			return
+		if item_rules != null and item_rules.has_future_recovery(): return
 		for side in 2:
 			if state.teams[side][0].toxin_stacks > 0:
 				return

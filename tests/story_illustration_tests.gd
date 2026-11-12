@@ -25,6 +25,31 @@ func run() -> void:
 	root.size = Vector2i(1920,1080)
 	render = DisplayServer.get_name()!="headless"
 	var focused_scene := OS.get_environment("STORY_ART_SCENE_ONLY")
+	if focused_scene=="fox_rescue":
+		await switch_to("wumingjiuci",17)
+		for scene in ["fox_notice","fox_choice","fox_rescue"]:
+			var fox_event := RiverQuest.event(scene)
+			var indices := [0,1,2] if scene=="fox_rescue" else [0]
+			for index in indices:
+				map.dialogue.present(fox_event,fox_event.lines[index],fox_event.line_speakers[index],"dialogue",index)
+				check(map.dialogue.picture.requested_visible,"fox picture retained through rescue line "+str(index))
+				check(map.dialogue.picture.illustration.texture.resource_path=="res://assets/map-event-2-2a.webp","correct fox picture")
+		await shot("fox-rescue-last-picture-line")
+		var rescue := RiverQuest.event("fox_rescue")
+		map.dialogue.present(rescue,rescue.lines[3],rescue.line_speakers[3],"dialogue",3)
+		check(not map.dialogue.picture.requested_visible,"next line starts picture dismissal")
+		await create_timer(0.25).timeout
+		check(not map.dialogue.picture.visible and map.dialogue.text_label.visible,"picture finishes fade while dialogue continues")
+		await shot("fox-rescue-picture-dismissed")
+		map.dialogue.present(rescue,rescue.lines[2],rescue.line_speakers[2],"dialogue",2)
+		check(map.dialogue.picture.requested_visible,"saved action-line presentation restores picture")
+		map.dialogue.present(rescue,rescue.lines[7],rescue.line_speakers[7],"dialogue",7)
+		check(not map.dialogue.picture.requested_visible,"later rescue lines keep picture dismissed")
+		print("FOX_RESCUE_ILLUSTRATION checks=%d failures=%d directory=%s"%[checks,failures,directory])
+		map.deactivate_location()
+		map.free()
+		quit(1 if failures else 0)
+		return
 	if OS.get_environment("STORY_ART_FOX_RELEASE_ONLY")=="1": focused_scene = "fox_release"
 	if focused_scene in ["fox_release","medicine"]:
 		await switch_to("qingshihewan",20 if focused_scene=="medicine" else 2)
@@ -103,6 +128,7 @@ func run() -> void:
 	await switch_to("wumingjiuci",5)
 	check(RiverQuest.story(state).active=="mirror","mirror begins at altar")
 	for i in 3: map._advance_dialogue()
+	await click(map.reward_dialog.accept_button)
 	check(RiverQuest.story(state).line==3 and not map.dialogue.picture.requested_visible,"this mirror line before gallery")
 	settings.apply_values({"dialogue_speed":"slow"})
 	await click(map.dialogue)

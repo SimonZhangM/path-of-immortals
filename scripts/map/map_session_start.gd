@@ -50,11 +50,12 @@ func start() -> void:
 	get_tree().root.add_child(destination)
 	if not destination.startup_error.is_empty():
 		startup_error = destination.startup_error
-		# Keep the map's existing error reporting; do not write or replace the save.
-		if MapLoadoutStore.GameSaveSession.resume_requested:
-			destination.queue_free()
-			_return_to_menu("存档读取失败：" + startup_error)
-			return
+		# Direct F5 startup must reject partial maps just like the loading flow.
+		# Preserve the save and report the failure instead of leaving a nil model.
+		destination.process_mode = Node.PROCESS_MODE_DISABLED
+		destination.queue_free()
+		_return_to_menu("存档读取失败：" + startup_error)
+		return
 	MapLoadoutStore.GameSaveSession.resume_requested = false
 	get_tree().current_scene = destination
 	queue_free()

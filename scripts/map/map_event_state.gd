@@ -19,6 +19,7 @@ var _accepted_rewards: Dictionary = {}
 var encounters: Dictionary
 var enemy_lookup: Callable
 var enemy_available: Callable
+var event_unlocked: Callable
 var chest_resolver: Callable
 var _active_snapshot: Dictionary = {}
 var narrative_rng := RandomNumberGenerator.new()
@@ -38,6 +39,7 @@ func resolved_event(event_id: String) -> Dictionary:
 	return event
 
 func _available(event: Dictionary) -> bool:
+	if event_unlocked.is_valid() and not event_unlocked.call(event): return false
 	return event.get("enabled", true) and (event.get("type") != "encounter" or event.get("pending_enemy", false) or not enemy_available.is_valid() or enemy_available.call(event.enemy_id))
 
 func is_active() -> bool:
@@ -56,7 +58,7 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 	if event.type == "rest" and trigger == "arrival":
 		if not first_visit: return false
 	# Arrival encounters can be retried by clicking while standing at the node.
-	elif event.get("trigger", "click") != trigger and not (event.type in ["encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation"] and trigger == "click"):
+	elif event.get("trigger", "click") != trigger and not (event.type in ["encounter", "chest", "gathering", "rest", "shop", "clinic", "inn", "cultivation", "conversation"] and trigger == "click"):
 		return false
 	for prerequisite in registry.events[event_id].get("requires_completed", []):
 		if not completed.has(prerequisite):
@@ -70,6 +72,7 @@ func try_start(point_id: String, current_point_id: String, stationary: bool, tri
 		if not descriptions.is_empty(): _active_snapshot.description = descriptions[narrative_rng.randi_range(0, descriptions.size() - 1)]
 	line_index = 0
 	phase = event.type if event.type in ["encounter","chest","gathering","rest","shop","clinic","inn","cultivation"] else ("illustration" if event.presentation.has("illustration") else "dialogue")
+	if event.type == "conversation": phase = "clinic"
 	if event.type == "chest" and event.has("observation"):
 		phase = "chest_observation"
 	return true

@@ -199,10 +199,10 @@ static func _box(fill: Color, border: Color, radius: int, padding: int) -> Style
 static func classification_caption(value: String) -> String:
 	return "护"+value.trim_prefix("护具·") if value.begins_with("护具·") else value
 
-static func classification_tags(item: ItemData, vertical_book := false) -> Array:
+static func classification_tags(item: ItemData, vertical_book := false, owner_armor_type := "") -> Array:
 	if item.category == "book" and not item.combat.get("description", "").is_empty():
 		return item.tags.duplicate()
-	var tags := [{"book":"功法书","spell":"法术","plant":"草木","beast":"兽材","mineral":"矿石","board":"阵盘","food":"食物"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
+	var tags := [{"book":"功法书","spell":"法术","plant":"草木","beast":"兽材","mineral":"矿石","board":"阵盘","food":"食物","key":"任务物品"}.get(item.category,StoragePanel.CATEGORIES.get(item.category,item.category))]
 	if item.category == "spell": tags = item.tags.duplicate()
 	if item.category == "board": tags = []
 	if item.category == "item" and "器官" in item.tags: tags[0] = "器官"
@@ -216,19 +216,41 @@ static func classification_tags(item: ItemData, vertical_book := false) -> Array
 				break
 	if not item.armor_type.is_empty():
 		tags.append(item.armor_type)
+	elif "器官" in item.tags and item.armor_capacity > 0 and not owner_armor_type.is_empty():
+		tags.append(owner_armor_type)
+	if "器官" in item.tags or item.category == "weapon":
+		for effect: Dictionary in item.effects:
+			if effect.get("effect", "") != "damage": continue
+			var kind: String = effect.get("damage_type", "")
+			if not kind.is_empty() and kind not in tags: tags.append(kind)
+	# A dropped material describes crafting stock, never its source's combat role.
+	if item.category in ["plant", "beast", "mineral", "exotic", "material"]:
+		tags = tags.filter(func(tag): return tag not in ["无甲", "轻甲", "重甲", "灵甲"] and not EffectSystem.ARMOR_MULTIPLIERS.has(tag))
 	var footprint := Vector2i(1,2) if vertical_book else item.grid_size
-	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board", "food"]:
+	if item.category not in ["plant", "beast", "mineral", "exotic", "material", "board", "food", "key"]:
 		tags.append("占格 %d×%d" % [footprint.x, footprint.y])
 	return tags.map(func(tag): return classification_caption(str(tag)))
 
 static func effect_text(item: ItemData) -> String:
-	if item.category in ["plant", "mineral", "food"]: return item.combat.get("description", "")
+	if item.category in ["plant", "mineral", "food", "key"]: return item.combat.get("description", "")
 	if item.category == "board" or item.training: return item.combat.get("description", "")
 	if item.category == "beast": return item.combat.get("description", "兽材，仅作材料，不能放入战斗阵盘。")
 	if item.category == "book":
 		return item.combat.description if item.combat.has("description") else CultivationDescription.book(item.combat)
 	if item.category == "spell": return CultivationDescription.spell(item.combat)
 	var lines: PackedStringArray = []
+	if item.combat.get("drop_only", false): return "仅作掉落材料，不发动招式。"
+	if item.combat.has("action_name"): lines.append("招式：" + item.combat.action_name + "。")
+	for resource: String in item.combat.get("resource_bonuses", {}):
+		lines.append("上阵增加%d点%s上限。" % [item.combat.resource_bonuses[resource], RESOURCES[resource]])
+	if item.combat.has("periodic_restore"):
+		var periodic: Dictionary = item.combat.periodic_restore
+		var restored: PackedStringArray = []
+		for resource: String in periodic.resources: restored.append("%d点%s" % [periodic.resources[resource], RESOURCES[resource]])
+		lines.append("每%s秒恢复%s，首次恢复在第%s秒。" % [EffectSystem.number_text(periodic.interval), "、".join(restored), EffectSystem.number_text(periodic.interval)])
+	if item.combat.has("low_hp_physical_buff"):
+		var buff: Dictionary = item.combat.low_hp_physical_buff
+		lines.append("气血首次降至%d%%及以下时，物理伤害提高%d%%，持续%s秒，每场仅一次。" % [roundi(100.0 * buff.numerator / buff.denominator), roundi(buff.bonus*100), EffectSystem.number_text(buff.duration)])
 	if item.armor_capacity > 0:
 		lines.append("上限：护甲+%d。" % item.armor_capacity)
 	for status: String in item.combat.get("status_capacity_bonuses", {}):
@@ -240,7 +262,7 @@ static func effect_text(item: ItemData) -> String:
 	if item.rule_version == 1 and item.spirit_cost > 0:
 		active.append("每次实际发动消耗%s灵力。" % EffectSystem.number_text(item.spirit_cost))
 	if item.rule_version == 1 and item.is_consumable():
-		lines.append("同一具体物品仅一叠，每叠最多10份。" + ("首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。" if item.category == "pill" else "暗器首轮从完整CD开始，发动后消耗一件。"))
+		lines.append("同一具体物品仅一叠，每叠最多10份。" + ("首瓶开战就绪，条件满足才使用；使用后消耗一瓶并进入CD。" if item.category == "pill" else "首轮从完整CD开始，发动后消耗一件。"))
 	for effect: Dictionary in item.effects:
 		match effect.effect:
 			"delay_cooldown":
@@ -268,9 +290,11 @@ static func effect_text(item: ItemData) -> String:
 					if tag in ["斩击", "穿刺", "钝击"]:
 						damage_type = tag
 				var cost := "耗费%s点体力，" % EffectSystem.number_text(item.stamina_cost) if item.stamina_cost > 0 else ""
-				active.append("%s对敌方造成%d点%s伤害。" % [cost, effect.value, damage_type])
+				var combo: Dictionary = item.combat.get("multi_hit", {})
+				if combo.is_empty(): active.append("%s对敌方造成%d点%s伤害。" % [cost, effect.value, damage_type])
+				else: active.append("%s连续攻击%d次，每次%d点%s伤害，间隔%s秒；每轮仅扣费一次。" % [cost, combo.count, effect.value, damage_type, EffectSystem.number_text(combo.interval)])
 			"restore_armor":
-				active.append("恢复%d点护甲。" % effect.value)
+				active.append("回复%d点护甲。" % effect.value)
 			"apply_toxin":
 				active.append("对敌方施加%d层毒蚀。" % effect.value)
 			"restore_capped":
@@ -293,6 +317,11 @@ static func effect_text(item: ItemData) -> String:
 	if item.combat.has("resource_threshold"):
 		var threshold: Dictionary = item.combat.resource_threshold
 		lines.insert(0, "%s不高于上限的%d/%d时启动；启动后每%s秒恢复，超过阈值停用，不耗体。" % [RESOURCES[threshold.resource], threshold.numerator, threshold.denominator, EffectSystem.number_text(item.cooldown_usec / 1000000.0)])
+	if item.combat.has("activation_threshold"):
+		var threshold: Dictionary = item.combat.activation_threshold
+		lines.append("冷却完成后，%s不高于上限%d%%才发动；否则保持就绪。" % [RESOURCES[threshold.resource], roundi(100.0*threshold.numerator/threshold.denominator)])
+	if item.combat.has("battle_use_limit"): lines.append("每场最多发动%d次。" % item.combat.battle_use_limit)
+	if item.combat.get("requires_missing_armor", false): lines.append("护甲未满时才发动并扣费。")
 	if not String(item.combat.get("equipment_note", "")).is_empty():
 		lines.append(item.combat.equipment_note)
 	if lines.is_empty():
@@ -479,7 +508,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	art.offset_right = art.pivot_offset.x
 	art.offset_bottom = art.pivot_offset.y
 	art.scale *= 0.9
-	var center_portrait := func(): art.center_visible_at(canvas.size * 0.5)
+	var center_portrait := func(): art.center_visible_at(canvas.size * 0.5, "tooltip")
 	canvas.resized.connect(center_portrait)
 	center_portrait.call()
 	var glow := art.get_node("ItemGlow") as ColorRect
@@ -527,7 +556,7 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	chips.add_theme_constant_override("h_separation", _px(7))
 	chips.add_theme_constant_override("v_separation", _px(5))
 	heading.add_child(chips)
-	var tags := classification_tags(item,_entry.get("vertical_book",false))
+	var tags := classification_tags(item,_entry.get("vertical_book",false),_entry.get("enemy_armor_type",""))
 	if item.category == "book" and not item.combat.get("reading_only",false): tags.append(CultivationDescription.mastery_caption(int(_entry.get("book_level", 0))))
 	if not identified:
 		tags = ["？"]

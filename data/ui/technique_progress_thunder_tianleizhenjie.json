@@ -13,7 +13,7 @@
         },
         {
           "name": "雷罡固御",
-          "description": "：新雷盾值＋10%，攻击破盾麻痹由1秒增至1.5秒，雷罡反震与雷返式伤害各＋20%。",
+          "description": "：新雷盾值＋10%，攻击破盾麻痹由1秒增至2秒，雷罡反震与雷返式伤害各＋20%。",
           "icon": "res://assets/UI-thunder-tianleizhenjie-effect-02-leigangguyu.webp"
         }
       ]

@@ -1,0 +1,263 @@
+{
+  "quest_id": "quest.prologue.shanglujinghun",
+  "objectives": [
+    {
+      "id": "search",
+      "text": "前往青石河湾商道，寻找钱万顺",
+      "completed": false,
+      "show_count": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n12",
+          "world_location_id": "base.world_location.qingshihewan"
+        }
+      ]
+    },
+    {
+      "id": "battle",
+      "text": "击败袭击钱万顺的赤鬃獠猪",
+      "completed": false,
+      "show_count": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n12",
+          "world_location_id": "base.world_location.qingshihewan"
+        }
+      ]
+    },
+    {
+      "id": "talk",
+      "text": "与钱万顺交谈，确认可以返程",
+      "completed": false,
+      "show_count": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshihewan",
+          "point_id": "base.map.qingshihewan.point.n12",
+          "world_location_id": "base.world_location.qingshihewan"
+        }
+      ]
+    },
+    {
+      "id": "escort",
+      "text": "护送钱万顺返回青石镇商铺",
+      "completed": false,
+      "show_count": false,
+      "targets": [
+        {
+          "map_id": "base.map.qingshizhen",
+          "point_id": "base.map.qingshizhen.point.n16",
+          "world_location_id": "base.world_location.qingshizhen"
+        }
+      ]
+    }
+  ],
+  "people": [
+    {
+      "name": "钱万顺",
+      "portrait": "res://assets/ui-portrait-qianwanshun.webp"
+    },
+    {
+      "name": "叶松年",
+      "portrait": "res://assets/ui-portrait-yesongnian.webp"
+    }
+  ],
+  "rewards": [
+    {
+      "kind": "spirit_stones",
+      "name": "灵石",
+      "quantity": 10,
+      "icon": "res://assets/player-status-coin.webp"
+    }
+  ],
+  "road": {
+    "map_id": "base.map.qingshihewan",
+    "point_id": "base.map.qingshihewan.point.n12"
+  },
+  "town_entry": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n25"
+  },
+  "shop": {
+    "map_id": "base.map.qingshizhen",
+    "point_id": "base.map.qingshizhen.point.n16"
+  },
+  "presentation": {
+    "background": "res://assets/map-event-chatframe.webp",
+    "background_region": [
+      27,
+      126,
+      2113,
+      437
+    ],
+    "portrait": "res://assets/player-1-1.webp",
+    "portrait_region": [
+      22,
+      18,
+      448,
+      448
+    ],
+    "portrait_slot": [
+      68,
+      20,
+      374,
+      397
+    ],
+    "portrait_max_size": 374,
+    "portrait_fills_slot": true,
+    "name_rect": [
+      474,
+      54,
+      330,
+      80
+    ],
+    "next_image": "res://assets/map-event-chatframe-next.webp",
+    "next_rect": [
+      1970,
+      207,
+      52,
+      70
+    ],
+    "offset_y": 20,
+    "text_rect": [
+      512,
+      145,
+      1410,
+      205
+    ],
+    "speaker_rims": true
+  },
+  "speakers": {
+    "base.map_player.chen_yu": {
+      "portrait": "res://assets/player-1-1.webp",
+      "portrait_region": [
+        22,
+        18,
+        448,
+        448
+      ]
+    },
+    "base.npc.qianwanshun": {
+      "name": "钱万顺",
+      "portrait": "res://assets/ui-portrait-qianwanshun.webp",
+      "portrait_region": [
+        0,
+        0,
+        361,
+        361
+      ],
+      "portrait_frame": "res://assets/UI-portrait-putongren.webp"
+    }
+  },
+  "scenes": {
+    "ambush": {
+      "label": "翻车商道",
+      "lines": [
+        "（商道旁翻着一辆马车，车板撞裂了，货箱和包袱散了一地。空车辕上垂着断开的挽带，拉车的马已经不见了。）",
+        "（钱掌柜躲在岩石后，一头赤鬃獠猪正用獠牙顶着车架。）",
+        "别从车边过！它还在那儿！",
+        "钱掌柜，您躲稳了！",
+        "它一下就撞过来了，马受了惊，挣断挽带就跑了……你也留神！"
+      ],
+      "line_speakers": [
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z2-1.webp"
+      }
+    },
+    "rescued": {
+      "label": "先顾人",
+      "lines": [
+        "（扶着石头走下来，脚步还有些发虚。）",
+        "腿还在抖……方才它撞过来，我连往哪儿跑都忘了。",
+        "伤着没有？",
+        "没伤着要紧地方，就是吓得不轻。你怎么到这儿来了？",
+        "叶伯说您准备从这条路运货回来。我刚在河湾救过人，放心不下，就来看看。",
+        "你还特地跑一趟……这份情我记着。",
+        "（回头看向货车，伸手想捡近处的包袱，腿一软，又扶住了石头。）",
+        "轻的带上就行，车留在这儿。先回镇。",
+        "对，货丢了还能再挣，不能把命也搭进去。",
+        "能走吗？",
+        "能走，就是腿还有点软。你慢些，我跟着你。",
+        "（替他捡起脚边的小包，确认他能站稳，才一同往镇子的方向走。）"
+      ],
+      "line_speakers": [
+        "base.npc.qianwanshun",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z2-2.webp"
+      }
+    },
+    "town_arrival": {
+      "label": "返镇叙话",
+      "lines": [
+        "来时走的大路，绕是绕了些，好歹平安。回程偏想省这点脚程……",
+        "往后接货，多找几个人一道走吧。",
+        "是得找个伴。宁肯多等几天，也不能只图省这点工夫。"
+      ],
+      "line_speakers": [
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun"
+      ]
+    },
+    "shop_return": {
+      "label": "护送归铺",
+      "lines": [
+        "（扶着柜台坐下，缓了缓气，才从钱袋里取出谢礼。）",
+        "对了，还没问过，你叫什么名字？",
+        "我叫{player.full_name}，在叶伯的药铺帮工。",
+        "原来是叶掌柜铺里的。好，我记住了。",
+        "这点谢礼你收下。若不是你来，我怕是回不了这铺子了。",
+        "您能平安回来就好。",
+        "是啊，能回来就好。你也歇歇，今天多亏了你。"
+      ],
+      "line_speakers": [
+        "base.npc.qianwanshun",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun",
+        "base.npc.qianwanshun",
+        "base.map_player.chen_yu",
+        "base.npc.qianwanshun"
+      ],
+      "illustration": {
+        "image": "res://assets/map-event-z2-3.webp"
+      }
+    }
+  },
+  "ordinary_encounter_id": "base.map_event.qingshihewan.encounter_n17",
+  "ordinary_respawn_days": 20,
+  "battle": {
+    "id": "base.map_event.quest.shanglujinghun.battle",
+    "type": "encounter",
+    "trigger": "arrival",
+    "point_id": "base.map.qingshihewan.point.n12",
+    "title": "翻车商道",
+    "description": "钱掌柜躲在岩石后，赤鬃獠猪仍在破车旁冲撞。先将它击退，再带钱掌柜离开。",
+    "enemy_id": "base.enemy.chisong_liaozhu",
+    "battle_scene": "res://scenes/main/main.tscn",
+    "presentation": {
+      "illustration": "res://assets/battle-qingheshiwan-10.webp"
+    },
+    "enabled": true
+  }
+}

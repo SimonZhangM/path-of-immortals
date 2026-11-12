@@ -99,6 +99,7 @@ func run() -> void:
 	check(FileAccess.get_sha256(Slots.auto_path)==auto_hash,"auto protected")
 	map.loadout.spirit_stones = 5678
 	await click(browser.back_button)
+	await click(browser.overwrite_dialog.confirm_button)
 	check(Files.read(manual).spirit_stones==5678 and Files.read(manual).save_info.save_kind=="manual","explicit manual overwrite stores live state")
 	check(Files.read(manual).save_info.playtime_ms>=1234000,"manual snapshot records current accumulated playtime")
 	check(map.inventory_save_path==Slots.auto_path and FileAccess.get_sha256(Slots.auto_path)==auto_hash,"manual saving does not change automatic target or file")

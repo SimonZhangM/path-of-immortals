@@ -1,0 +1,96 @@
+{
+  "id": "base.enemy.biyetengling",
+  "name": "碧叶藤灵",
+  "art_profile": "base.enemy.biyetengling",
+  "cultivation_rank": "base.cultivation.qi_refining",
+  "cultivation_stage": "初期",
+  "max_hp": 144,
+  "max_stamina": 42,
+  "max_spirit": 28,
+  "innate_armor_type": "轻甲",
+  "innate_armor_capacity": 0,
+  "initial_armor": 18,
+  "initialize_equipped_full": true,
+  "battle_enabled": true,
+  "progression_rewards": {
+    "cultivation": 20,
+    "experience": 10
+  },
+  "loadout": [
+    {
+      "item_id": "base.organ.biyetengling_rentengxu",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.biyetengling_biwenlingye",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.biyetengling_chouya",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.biyetengling_tengpi",
+      "cell": [
+        3,
+        0
+      ]
+    },
+    {
+      "item_id": "base.organ.biyetengling_xulubao",
+      "cell": [
+        2,
+        1
+      ]
+    },
+    {
+      "item_id": "base.organ.biyetengling_huichunya",
+      "cell": [
+        0,
+        2
+      ]
+    }
+  ],
+  "loot": [
+    {
+      "item_id": "base.material.biyetengling_rentengxu",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.biyetengling_biwenlingye",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.biyetengling_tengpi",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.biyetengling_xulubao",
+      "chance": 0.25
+    },
+    {
+      "item_id": "base.material.biyetengling_huichunya",
+      "chance": 0.25
+    }
+  ],
+  "presentation": {
+    "rank_label": "炼气初期",
+    "category_label": "草木灵物",
+    "description": "藤根化形，借飞叶攻敌、抽芽养息，苞中露水能不断补充灵力。",
+    "traits": [
+      "生机恢复",
+      "周期回灵"
+    ],
+    "battle_background": "res://assets/battle-diecuifeng-biyetengling.webp",
+    "summary": []
+  }
+}

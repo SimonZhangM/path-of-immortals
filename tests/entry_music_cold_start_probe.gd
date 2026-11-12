@@ -20,8 +20,8 @@ func _ready() -> void:
 	if player==null:
 		get_tree().quit(1)
 		return
-	check(player.playing and player.stream is AudioStreamMP3 and player.stream.loop,"cold start plays looping MP3")
-	check(player.stream.data==load("res://assets/game-start.mp3").data,"cold start uses game-start")
+	check(player.playing and player.stream is AudioStreamMP3 and not player.stream.loop,"cold start plays playlist MP3 without single-track looping")
+	check(player.stream.data==load("res://assets/game-start1.mp3").data,"cold start uses game-start1")
 	var bus := AudioServer.get_bus_index(player.bus)
 	check(not AudioServer.is_bus_mute(bus),"output bus is not muted")
 	var position := player.get_playback_position()

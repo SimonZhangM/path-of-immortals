@@ -120,7 +120,6 @@ var level_sort: OptionButton
 var search_box: LineEdit
 var _level_values: Array[int] = []
 const STORAGE_CAPACITY_DISPLAY_PREVIEW := Vector2i(-1,-1) # Both bag and warehouse show actual kind counts.
-const BOARD_CAPACITY_DISPLAY_PREVIEW := Vector2i(99,99) # Visual test only; use (-1,-1) to restore live occupancy.
 var storage_toolbar: VBoxContainer
 var empty_state: VBoxContainer
 var empty_title: Label
@@ -185,6 +184,7 @@ func configure(model: MapInventoryCatalog, ui_config: Dictionary, board: BoardLa
 	if loadout != null:
 		board_change_dialog = MapExitDialog.new()
 		board_change_dialog.name = "BoardChangeDialog"
+		board_change_dialog.use_board_change_art()
 		board_change_dialog.message.text = "确定更换阵盘吗？"
 		board_change_dialog.confirm_button.get_node("Caption").text = "确认"
 		add_child(board_change_dialog)
@@ -860,7 +860,6 @@ func _build_board(parent: Node, board: BoardLayout) -> void:
 	row.add_child(capacity_row)
 	board_capacity = BoardCapacityArtwork.new()
 	board_capacity.number_offset = Vector2(-3,0)
-	board_capacity.preview_capacity = BOARD_CAPACITY_DISPLAY_PREVIEW
 	board_capacity.size = board_capacity.texture.get_size() * (title_art.size.y / board_capacity.texture.get_height())
 	board_capacity.position.y = title_art.position.y
 	capacity_row.custom_minimum_size.x = board_capacity.size.x
@@ -1629,7 +1628,7 @@ func _enable_storage_drop(node: Node) -> void:
 		_enable_storage_drop(child)
 
 func _add_item_card(entry: Dictionary) -> void:
-	if entry.category == "book" or not String(entry.get("card_frame", "")).is_empty():
+	if entry.category == "book" or (entry.category == "key" and entry.quality.is_empty()) or not String(entry.get("card_frame", "")).is_empty():
 		var framed := MapInventoryItemCard.new()
 		framed.configure(entry, catalog.category_names[entry.category], true)
 		_configure_card_transfer(framed)

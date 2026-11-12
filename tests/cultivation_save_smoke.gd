@@ -26,7 +26,7 @@ func run() -> void:
 	map._request_cultivation("technique",5)
 	check(map.cultivation_progress_dialog.visible and map.cultivation_session.site.slots==1,"town single slot runtime")
 	check(map.cultivation_session.paused and map.cultivation_session.waiting_for_books,"book modes wait for selection before time advances")
-	check(map.loadout.storage_used_slots()==97,"one guide gift in isolated copy")
+	check(map.loadout.storage_used_slots()==96,"training does not add a story gift to the isolated copy")
 	var book: String="base.cultivation_book.wood_04"
 	check(map.cultivation_session.select_books([book]) and map.cultivation_session.paused,"selection still waits for start")
 	check(not map.cultivation_session.select_books([book,"base.cultivation_book.fire_04"]),"town rejects excess books")

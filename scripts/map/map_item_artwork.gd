@@ -187,15 +187,17 @@ func apply_inventory_pose(record: Dictionary) -> void:
 func center_visible_horizontally(center_x: float) -> void:
 	position.x += center_x - (get_transform() * _visible_local_center()).x
 
-func center_visible_at(center: Vector2) -> void:
-	position += center - get_transform() * _visible_local_center(true)
+func center_visible_at(center: Vector2, context: String = "") -> void:
+	if texture is AtlasTexture and not context.is_empty():
+		center += TextureMetrics.alignment_offset(texture.atlas, context)
+	position += center - get_transform() * _visible_local_center(true, context)
 
-func _visible_local_center(optical: bool = false) -> Vector2:
+func _visible_local_center(optical: bool = false, context: String = "") -> Vector2:
 	var local_center := size * 0.5
 	if texture is AtlasTexture:
 		var metrics := TextureMetrics.inspect(texture.atlas)
 		var visible := Rect2(metrics.visible_rect)
-		var source_center := TextureMetrics.alignment_center(texture.atlas) if optical else visible.get_center()
+		var source_center := TextureMetrics.alignment_center(texture.atlas, context) if optical else visible.get_center()
 		var fitted_scale := minf(size.x / texture.get_width(), size.y / texture.get_height())
 		local_center += (source_center - texture.region.get_center()) * fitted_scale
 	return local_center

@@ -18,6 +18,7 @@
     "artifact": "法器",
     "board": "阵盘",
     "talisman": "符箓",
+    "recovery": "恢复",
     "book": "书籍",
     "pill": "丹药",
     "throwable": "掷具",
@@ -33,7 +34,7 @@
     "artifact_recipe": "器方",
     "talisman_recipe": "符方",
     "bait_recipe": "饵方",
-    "key": "关键",
+    "key": "任务",
     "misc": "杂物",
     "spell": "法术"
   },
@@ -44,7 +45,7 @@
     "cultivation": "功法",
     "consumable": "消耗",
     "material": "灵材",
-    "key": "关键",
+    "key": "任务",
     "misc": "杂物"
   },
   "book_elements": {

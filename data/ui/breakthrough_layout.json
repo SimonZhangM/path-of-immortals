@@ -1,0 +1,513 @@
+{
+  "source_size": [
+    2560,
+    1440
+  ],
+  "artwork": "res://assets/UI-tupo-zonghebuzhi.webp",
+  "artwork_sha256": "eb09617f1ff97002ed33e39099c5125a2ca5f7ffd0a18aeb203b0b104ea2aec3",
+  "reference_version": "2026-11-10-board-reference-alignment",
+  "coordinate_space": "source_pixels_top_left",
+  "reference_only": false,
+  "position_note": "2K源画布原位1:1；境界图、辅助卡、暂停组为实际布局，阵盘坐标以breakthrough_boards.json各ID档案为准。",
+  "left_categories": {
+    "current_text": "辅助功法",
+    "future_rendering": "text_from_selected_item_category",
+    "supported_labels": [
+      "辅助丹药",
+      "辅助功法",
+      "辅助法阵",
+      "灵脉环境",
+      "辅助人物",
+      "辅助场所"
+    ],
+    "label_rects": [
+      [
+        220,
+        472,
+        160,
+        44
+      ],
+      [
+        220,
+        650,
+        160,
+        44
+      ],
+      [
+        220,
+        828,
+        160,
+        44
+      ]
+    ],
+    "note": "本版三行原类别已从整图移除；凡人到炼气依次显示辅助功法、辅助人物、辅助场所。"
+  },
+  "realm_images": {
+    "current": {
+      "current_text": "凡人",
+      "rect": [
+        1061,
+        189,
+        180,
+        84
+      ],
+      "center": [
+        1151,
+        231
+      ]
+    },
+    "target": {
+      "current_text": "炼气",
+      "rect": [
+        1346,
+        189,
+        180,
+        84
+      ],
+      "center": [
+        1436,
+        231
+      ]
+    },
+    "future_rendering": "images_from_story_progress",
+    "textures": {
+      "fanren": "res://assets/UI-tupo-dengji-fanren.webp",
+      "lianqi": "res://assets/UI-tupo-dengji-lianqi.webp",
+      "zhuji": "res://assets/UI-tupo-dengji-zhuji.webp",
+      "jiedan": "res://assets/UI-tupo-dengji-jiedan.webp",
+      "yuanying": "res://assets/UI-tupo-dengji-yuanying.webp",
+      "huashen": "res://assets/UI-tupo-dengji-huashen.webp"
+    },
+    "pairs": [
+      [
+        "fanren",
+        "lianqi"
+      ],
+      [
+        "lianqi",
+        "zhuji"
+      ],
+      [
+        "zhuji",
+        "jiedan"
+      ],
+      [
+        "jiedan",
+        "yuanying"
+      ],
+      [
+        "yuanying",
+        "huashen"
+      ]
+    ]
+  },
+  "first_breakthrough_inscriptions": {
+    "pair_index": 0,
+    "left": {
+      "texture": "res://assets/UI-tupo-right-progress-left1.webp",
+      "rect": [
+        670,
+        609,
+        64,
+        192
+      ],
+      "well_rect": [
+        665,
+        580,
+        75,
+        251
+      ]
+    },
+    "right": {
+      "texture": "res://assets/UI-tupo-right-progress-right1.webp",
+      "rect": [
+        1814,
+        605,
+        64,
+        192
+      ],
+      "well_rect": [
+        1809,
+        576,
+        75,
+        251
+      ]
+    },
+    "note": "首次凡人→炼气；160×480透明字图等比0.4，参考竖匾留白。2026-11-05换用用户更新的透明素材，直接按原Alpha显示。"
+  },
+  "central_character": {
+    "rect": [
+      1106.5,
+      876.95,
+      348.8,
+      348.8
+    ],
+    "center": [
+      1280.9,
+      1051.35
+    ],
+    "seat_anchor": [
+      1281,
+      1143
+    ],
+    "future_rendering": "independent_character_art",
+    "texture": "res://assets/UI-tupo-male.webp",
+    "source_size": [
+      800,
+      800
+    ],
+    "embedded_in_composition": false,
+    "note": "2026-11-06随新版坐台左移1、下移6设计px，人物连同自带光晕和底座等比0.436；人物底座元素栏同步移动。"
+  },
+  "central_board": {
+    "profiles": "res://data/ui/breakthrough_boards.json",
+    "reference_board_id": "base.board.qinglan_1",
+    "future_rendering": "dedicated_layout_per_board_id",
+    "note": "晓岚盘现用独立图片，具体显示矩形只从各稳定阵盘ID档案读取。"
+  },
+  "ground_formation": {
+    "rect": [
+      404,
+      920,
+      1776,
+      374
+    ],
+    "center": [
+      1292,
+      1107
+    ],
+    "note": "另留人物脚下圆形法阵的参考位置，与中间方格阵盘区分。"
+  },
+  "bottom_buttons": [
+    {
+      "id": "change",
+      "current_text": "变更",
+      "rect": [
+        66,
+        1323,
+        264,
+        74
+      ],
+      "center": [
+        198,
+        1360
+      ]
+    },
+    {
+      "id": "statistics",
+      "current_text": "统计",
+      "rect": [
+        346,
+        1323,
+        272,
+        74
+      ],
+      "center": [
+        482,
+        1360
+      ]
+    },
+    {
+      "id": "start",
+      "current_text": "开始突破",
+      "rect": [
+        994,
+        1299,
+        576,
+        130
+      ],
+      "center": [
+        1282,
+        1364
+      ]
+    },
+    {
+      "id": "pause",
+      "current_text": "暂停",
+      "rect": [
+        1946,
+        1323,
+        264,
+        74
+      ],
+      "center": [
+        2078,
+        1360
+      ]
+    },
+    {
+      "id": "exit",
+      "current_text": "退出",
+      "rect": [
+        2230,
+        1323,
+        270,
+        74
+      ],
+      "center": [
+        2365,
+        1360
+      ]
+    }
+  ],
+  "right_column": {
+    "record_existing_positions": false,
+    "future_progress_bar": "between_breakthrough_progress_heading_and_success_rate_forecast",
+    "progress": {
+      "texture": "res://assets/UI-tupo-right-progress1.webp",
+      "filled_texture": "res://assets/UI-tupo-right-progress2.webp",
+      "star_texture": "res://assets/UI-tupo-right-progressstar.webp",
+      "reference_rect": [
+        1967,
+        430,
+        504,
+        104
+      ],
+      "alignment": "visible_art_width_and_center",
+      "data_binding": "first_qi_attempt",
+      "source_endpoints": [
+        29,
+        930
+      ],
+      "source_center_y": 60,
+      "white_line_width": 3,
+      "inner_half_height_profile": [
+        [
+          29,
+          0
+        ],
+        [
+          36,
+          2
+        ],
+        [
+          44,
+          16
+        ],
+        [
+          52,
+          24
+        ],
+        [
+          64,
+          30
+        ],
+        [
+          90,
+          33
+        ],
+        [
+          880,
+          33
+        ],
+        [
+          896,
+          31
+        ],
+        [
+          904,
+          28
+        ],
+        [
+          912,
+          22
+        ],
+        [
+          920,
+          12
+        ],
+        [
+          928,
+          0
+        ],
+        [
+          930,
+          0
+        ]
+      ],
+      "value_rect": [
+        1971.5,
+        522,
+        504,
+        54
+      ],
+      "value_separator_center_x": 2223.5,
+      "required_color": "e8c76d",
+      "chance_rect": [
+        2010,
+        700,
+        420,
+        76
+      ],
+      "remaining_rect": [
+        1967,
+        924,
+        245,
+        54
+      ],
+      "efficiency_rect": [
+        2238,
+        924,
+        245,
+        54
+      ],
+      "status_rect": [
+        1940,
+        1040,
+        568,
+        160
+      ],
+      "layout_note": "2026-11-05新版右栏：标题下边y428，进度图随标题上移27px；条下40号读数以/中心x2223.5对齐第一分隔线y590的光亮点，左右等宽容器，当前值一位小数、需求值整数金色。成功率、底部读数及容器外状态说明随底图下移30px。",
+      "note": "progress1/2共用959×120源画布与同一变换；内腔左右尖端源x=29/930、轴线y=60。星图几何中心与3设计px白条共用插值位置；白条按内腔保守半高轮廓收尖，星图不透明度等于完成度。0只显示空图，100%完整换为金图，原图字节不改。"
+    }
+  },
+  "pause_resume": {
+    "rect": [
+      1940,
+      1313,
+      568,
+      90
+    ],
+    "pause_art": "res://assets/UI-tupo-dibu-zanting.webp",
+    "resume_art": "res://assets/UI-tupo-dibu-jixu.webp",
+    "pause_hit_rect": [
+      1944,
+      1320,
+      264,
+      77
+    ],
+    "exit_hit_rect": [
+      2230,
+      1320,
+      272,
+      77
+    ]
+  },
+  "assistance": {
+    "pair_index": 0,
+    "rect": [
+      94,
+      471,
+      466,
+      484
+    ],
+    "row_height": 128,
+    "row_gap": 50,
+    "icon_side": 112,
+    "icon_text_gap": 18,
+    "entries": [
+      {
+        "id": "base.breakthrough_assist.yinqijue",
+        "item_id": "base.book.yinqijue",
+        "category": "辅助功法",
+        "name": "引气诀",
+        "description": "引导使用者修仙入门"
+      },
+      {
+        "id": "base.breakthrough_assist.mother",
+        "npc_id": "base.npc.mother",
+        "icon": "res://assets/ui-portrait-mom-linwanqing.webp",
+        "category": "辅助人物",
+        "name": "母亲",
+        "description": "向儿子提供指导建议",
+        "frame_fill_size": [
+          112,
+          110
+        ],
+        "image_zoom": 1.04,
+        "corner_cut": 8
+      },
+      {
+        "id": "base.breakthrough_assist.guide_stone",
+        "item_id": "base.map_item.training_guide_stone",
+        "category": "辅助物品",
+        "name": "导引石",
+        "description": "梳理气息，辅助引气入体"
+      }
+    ],
+    "icon_centers": [
+      [
+        148,
+        533.5
+      ],
+      [
+        148,
+        711.5
+      ],
+      [
+        148,
+        890.5
+      ]
+    ],
+    "alignment": "visible_art_centered_in_each_square_frame",
+    "divider_ys": [
+      553.5,
+      732.5,
+      911.5
+    ],
+    "divider_text_gap": 10,
+    "description_baseline_correction": -2
+  },
+  "playback_controls": {
+    "rect": [
+      1166,
+      1246,
+      232,
+      40
+    ],
+    "side": 40,
+    "gap": 8,
+    "note": "2026-11-06底栏下移33px后，五个40px播放控件移至主图上方居中，避免超出画布下边缘。"
+  },
+  "music": "res://assets/bgm-tupo-1.mp3",
+  "primary_action": {
+    "complete_art": "res://assets/UI-tupo-button-tupowancheng.webp",
+    "start_art": "res://assets/UI-tupo-button-kaishitupo.webp",
+    "running_art": "res://assets/UI-tupo-button-biguanyunzhuan.webp",
+    "source_size": [
+      1084,
+      362
+    ],
+    "rect": [
+      930.784,
+      1246.712,
+      702.432,
+      234.576
+    ],
+    "center": [
+      1282,
+      1364
+    ],
+    "source_scale": 0.648,
+    "note": "2026-11-06随底栏下移33设计px，两张主图共用中心1282,1364，圆环和点击矩形同步移动。",
+    "rotation_slot": {
+      "rect": [
+        1115.5,
+        1325,
+        64,
+        64
+      ],
+      "center": [
+        1147.5,
+        1357
+      ],
+      "ring_radius": 28.9,
+      "reference": "updated_composition_yellow_ring",
+      "future_rotation": false,
+      "status": "running_session_animation",
+      "texture": "res://assets/UI-tupo-circle.webp",
+      "visible_side": 64,
+      "degrees_per_second": 120
+    },
+    "enlargement_from_previous": 1.08
+  },
+  "element_buffs": {
+    "rect": [
+      1125,
+      1208,
+      314,
+      34
+    ],
+    "note": "2026-11-10按参考红框，实际七系增益移至人物底座下方、倍速键上方，复用战斗图标、层数与获得顺序；无状态时隐藏。"
+  }
+}

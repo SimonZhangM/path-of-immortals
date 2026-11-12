@@ -41,6 +41,7 @@ func run() -> void:
 	check(created.error.is_empty(), "material catalog validates: " + created.error)
 	if not created.error.is_empty() or not registry.errors.is_empty(): quit(1); return
 	var loadout: MapLoadoutState = created.state
+	loadout.growth = CultivationGrowth.initial(5)
 	check(loadout.storage_records().filter(func(r: Dictionary): return r.category == "beast").is_empty() and loadout.records.has("base.material.yanzhi_claw"), "new materials are not granted for free")
 	var sim := fixture()
 	var enemy: PartyMemberState = sim.state.teams[1][0]
@@ -122,7 +123,16 @@ func live_entry() -> void:
 	root.size = Vector2i(2560,1440)
 	var scene = load("res://scenes/main/main.tscn").instantiate()
 	var manager: GameManager = scene.get_node("GameManager")
-	manager.loadout_save_path = ""
+	var fresh_registry := ContentRegistry.new()
+	check(fresh_registry.load_base_content(),"fresh live-fixture registry")
+	var fresh: MapLoadoutState = MapLoadoutStore.create_state(fresh_registry,fresh_registry.get_board("base.board.bag")).state
+	fresh.growth = CultivationGrowth.initial(5)
+	var seeded := fresh.snapshot()
+	seeded.owned_units["test.cslz.sword"] = "base.map_item.t01_0002"
+	var seed_error := fresh.restore(seeded)
+	check(seed_error.is_empty(),"explicit sword fixture: "+seed_error)
+	manager.loadout_save_path = "res://artifacts/cslz-live-%d.json" % Time.get_ticks_usec()
+	check(MapLoadoutStore.save(fresh,manager.loadout_save_path).is_empty(),"isolated current-schema live fixture")
 	manager.enemy_id = ENEMY
 	root.add_child(scene)
 	manager.set_process(false)
@@ -130,6 +140,11 @@ func live_entry() -> void:
 	check(manager.startup_error.is_empty() and manager.enemies[0].inventory.get_instances().size() == 5, "real battle uses five organs, no old claw")
 	var flow = load("res://scripts/map/map_battle_return.gd").new()
 	flow.manager = manager
+	var content := MapEventRegistry.new()
+	var raw_event: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_events/qingshihewan_cliff_encounter.json"))
+	check(content.configure([raw_event],[raw_event.point_id]).is_empty(), "encounter configured")
+	flow.events = MapEventState.new(content,{})
+	flow.event_id = EVENT
 	flow.save_path = SAVE
 	flow._loot_rolls = [0,.99,.99,.99,.99]
 	check(not flow._award_victory().is_empty(), "cannot award materials before victory")
@@ -145,11 +160,6 @@ func live_entry() -> void:
 	flow.save_path = SAVE
 	check(flow._award_victory().is_empty() and manager._durable_snapshot.owned_units.size() == before.owned_units.size()+5, "same cached rolls save on retry")
 	check(manager.persist_consumption() and manager._durable_snapshot.battle_rewards.size() == 2, "consumption persistence preserves victory receipts")
-	var content := MapEventRegistry.new()
-	var raw_event: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_events/qingshihewan_cliff_encounter.json"))
-	check(content.configure([raw_event],[raw_event.point_id]).is_empty(), "encounter configured")
-	flow.events = MapEventState.new(content,{})
-	flow.event_id = EVENT
 	var settled := manager._durable_snapshot.duplicate(true)
 	for outcome in ["defeat","draw","retreat"]:
 		manager.simulation._finish(outcome,0)
@@ -158,7 +168,7 @@ func live_entry() -> void:
 		flow._record_result()
 		check(manager._durable_snapshot == settled and not flow.events.completed.has(EVENT), "no loot or victory receipt on " + outcome)
 	manager.restart()
-	var sword: Dictionary = manager.storage.entries().filter(func(e: Dictionary): return e.item_id == "base.map_item.qingshi_short_sword")[0]
+	var sword: Dictionary = manager.storage.entries().filter(func(e: Dictionary): return e.item_id == "base.map_item.t01_0002")[0]
 	check(manager.equip(sword.instance_id,0,Vector2i.ZERO), "real victory test sword equipped")
 	flow._recorded = false
 	flow._battle_id = "real-victory"

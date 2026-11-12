@@ -44,14 +44,14 @@ func run() -> void:
 	check(tracker.visible and map.loadout.quest_tracking.shown,"third header click opens tracker again")
 	await click(tracker.close_button)
 	check(not tracker.visible,"square button hides tracker")
-	for code in [KEY_I,KEY_G,KEY_T,KEY_M]:
+	for code in [KEY_I,KEY_G,KEY_R,KEY_M]:
 		await key(code)
 		await key(KEY_F)
 		await click(map.status_header.tasks_button)
 		check(not map.loadout.quest_tracking.shown,"F/header preserve hidden state inside large interface")
 		await key(KEY_ESCAPE)
 	await key(KEY_F)
-	for code in [KEY_I,KEY_G,KEY_T,KEY_M]:
+	for code in [KEY_I,KEY_G,KEY_R,KEY_M]:
 		await key(code)
 		await key(KEY_F)
 		check(map.loadout.quest_tracking.shown and tracker.visible and not controller.available(),"large interfaces cover tracker without changing its original form")
@@ -137,7 +137,7 @@ func run() -> void:
 	tracking = QuestTracking.toggle(tracking,fixtures[3].id,fixtures).tracking
 	check(tracking.ids==[fixtures[2].id],"cancel non-main falls back to latest main")
 	check(not QuestTracking.toggle(tracking,fixtures[2].id,fixtures).error.is_empty(),"current main cannot be cancelled")
-	await key(KEY_T)
+	await key(KEY_R)
 	map.loadout.quest_tracking.ids = [fixtures[0].id]
 	body.show_entry(entry)
 	check(not body.footer_buttons[0].disabled,"single occupied slot still allows switching")

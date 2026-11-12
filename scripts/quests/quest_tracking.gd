@@ -24,7 +24,14 @@ static func entries(state: MapLoadoutState) -> Array:
 		if entry.id==QuestState.ID: result.append(QuestState.display_entry(state,entry))
 		elif entry.id==RiverQuest.ID and not RiverQuest.story(state).accepted_location.is_empty(): result.append(RiverQuest.display_entry(state,entry))
 		elif entry.id==HerbQuest.ID and HerbQuest.accepted(state): result.append(HerbQuest.display_entry(state,entry))
-		elif entry.id not in [QuestState.ID,RiverQuest.ID,HerbQuest.ID]: result.append(entry.duplicate(true))
+		elif entry.id==HomecomingQuest.ID and HomecomingQuest.accepted(state): result.append(HomecomingQuest.display_entry(state,entry))
+		elif entry.id==QinglanDepartureQuest.ID and QinglanDepartureQuest.accepted(state): result.append(QinglanDepartureQuest.display_entry(state,entry))
+		elif entry.id==DeerRestQuest.ID and DeerRestQuest.accepted(state): result.append(DeerRestQuest.display_entry(state,entry))
+		elif entry.id==RiverBountyQuest.ID and RiverBountyQuest.accepted(state): result.append(RiverBountyQuest.display_entry(state,entry))
+		elif entry.id==OldBenchQuest.ID and OldBenchQuest.accepted(state): result.append(OldBenchQuest.display_entry(state,entry))
+		elif entry.id==FishingNetQuest.ID and FishingNetQuest.accepted(state): result.append(FishingNetQuest.display_entry(state,entry))
+		elif entry.id==MerchantRoadQuest.ID and MerchantRoadQuest.accepted(state): result.append(MerchantRoadQuest.display_entry(state,entry))
+		elif entry.id not in [QuestState.ID,RiverQuest.ID,HerbQuest.ID,HomecomingQuest.ID,FishingNetQuest.ID,MerchantRoadQuest.ID,OldBenchQuest.ID,QinglanDepartureQuest.ID,RiverBountyQuest.ID,DeerRestQuest.ID]: result.append(entry.duplicate(true))
 	return result
 
 static func category_index(id: String) -> int:

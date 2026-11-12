@@ -15,7 +15,7 @@ var companion_cards: Array[CompanionCard] = []
 var bags: Array[InventoryView] = []
 var combat_status: RichTextLabel
 var status_icons: BattleStatusIcons
-var preview_all_status_icons := true
+var preview_all_status_icons := false
 var members: Array:
 	get:
 		return manager.enemies if enemy_side else manager.party

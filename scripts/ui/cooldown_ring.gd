@@ -35,7 +35,7 @@ static func tint(registry: ContentRegistry, element: String) -> Color:
 
 static func paint(canvas: Control, center: Vector2, radius: float, remaining: float, duration: float, color: Color) -> void:
 	radius *= SIZE_SCALE
-	canvas.draw_circle(center, radius, Color("15191c", 0.94))
+	canvas.draw_circle(center, radius, Color("15191c", 0.94), true, -1, true)
 	canvas.draw_arc(center, radius - 2 * SIZE_SCALE, -PI / 2, TAU - PI / 2, 48, Color(color, 0.2), 2 * SIZE_SCALE, true)
 	var fraction := clampf(remaining / duration, 0, 1) if duration > 0 else 0.0
 	if fraction > 0:

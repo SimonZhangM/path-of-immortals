@@ -1,0 +1,42 @@
+{
+  "id": "base.organ.taibeishiling_jutu",
+  "name": "聚土",
+  "type": "item",
+  "category": "item",
+  "quality": "凡品",
+  "tags": [
+    "器官"
+  ],
+  "size": [
+    1,
+    1
+  ],
+  "icon": "res://assets/item-enemy-taibeishiling-jutu.webp",
+  "cooldown": 13,
+  "stamina_cost": 0,
+  "spirit_cost": 4,
+  "rule_version": 1,
+  "element": "base.element.none",
+  "armor_capacity": 0,
+  "combat": {
+    "source_location": "灵物V2完整方案；2026-11-10用户修订及掉落／阶段确认",
+    "art_outline_px": 1,
+    "waste_on_insufficient": true,
+    "requires_missing_armor": true
+  },
+  "effects": [
+    {
+      "trigger": "on_activate",
+      "effect": "restore_armor",
+      "value": 11
+    },
+    {
+      "trigger": "on_activate",
+      "effect": "apply_status",
+      "status": "坚韧",
+      "value": 3,
+      "target": "self",
+      "gate": "always"
+    }
+  ]
+}

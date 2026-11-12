@@ -14,7 +14,8 @@
   "volume_effects": 1.0,
   "background_mute": true,
   "bindings": {
-    "map_tasks": 84,
+    "map_tasks": 82,
+    "map_breakthrough": 84,
     "map_inventory": 73,
     "map_techniques": 71,
     "map_world_map": 77,

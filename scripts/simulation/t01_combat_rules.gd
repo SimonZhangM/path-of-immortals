@@ -63,14 +63,21 @@ static func resonance_cap(member: PartyMemberState) -> int:
 	return maxi(0, rank(member) - 2) * 10
 
 func emit(kind: String, at: int, values: Dictionary = {}) -> void:
+	values = sim.record_trace.annotate(values)
 	values.merge({"kind": kind, "at_usec": at}, true)
 	sim._pending_events.append(values)
 	sim.state.revision += 1
+
+func record_source(owner: PartyMemberState, details: Dictionary = {}) -> Dictionary:
+	var source := details.duplicate(true)
+	source.merge({"owner_id": owner.id, "owner_name": owner.definition.name, "side": 0 if owner == sim.state.teams[0][0] else 1}, not source.has("trait_id"))
+	return source
 
 func consume(member: PartyMemberState, status: String, amount: int) -> void:
 	if not member.combat_statuses.has(status):
 		return
 	var pool: Dictionary = member.combat_statuses[status]
+	var previous := layers(member, status)
 	while amount > 0 and not pool.batches.is_empty():
 		var batch: Dictionary = pool.batches[0]
 		var used := mini(amount, int(batch.count))
@@ -81,6 +88,9 @@ func consume(member: PartyMemberState, status: String, amount: int) -> void:
 	if pool.batches.is_empty():
 		member.combat_statuses.erase(status)
 		_tokens.erase(member.id + status)
+	var scope: Dictionary = sim.record_trace.current()
+	if not scope.is_empty() and previous > layers(member, status):
+		emit("status_consumed", scope.record_at, {"target_id": member.id, "target_name": member.definition.name, "status": status, "value": previous - layers(member, status)})
 
 func half_consume(member: PartyMemberState, status: String) -> void:
 	var source := member if T01Definition.is_buff(status) else sim.cultivation.status_source(member,status)
@@ -89,6 +99,16 @@ func half_consume(member: PartyMemberState, status: String) -> void:
 	consume(member,status,maxi(1,layers(member,status)/divisor))
 
 func apply_status(member: PartyMemberState, status: String, amount: int, source: PartyMemberState, at: int, thunder_chunk := false, frost_attack := -1, feedback_source: Dictionary = {}) -> bool:
+	var scope: Dictionary = sim.record_trace.current()
+	var prepared: bool = feedback_source.get("record_mode", "") == "prepared" and feedback_source.get("record_group_id", 0) != scope.get("record_group_id", 0)
+	var separate: bool = prepared or scope.is_empty() or scope.get("owner_id", "") != source.id
+	if prepared: sim.record_trace.resume(feedback_source)
+	elif separate: sim.record_trace.begin(record_source(source, feedback_source.merged({"label": status})), at, "reaction")
+	var applied := _apply_status(member, status, amount, source, at, thunder_chunk, frost_attack, feedback_source)
+	if separate: sim.record_trace.end()
+	return applied
+
+func _apply_status(member: PartyMemberState, status: String, amount: int, source: PartyMemberState, at: int, thunder_chunk: bool, frost_attack: int, feedback_source: Dictionary) -> bool:
 	var element := T01Definition.status_element(status)
 	if element.is_empty():
 		push_error("Unknown T01 status: " + status)
@@ -102,12 +122,22 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 		var applied := false
 		while amount > 0:
 			var space := capacity(member, status) - layers(member, status)
-			if space <= 0: break
+			if space <= 0:
+				if not applied: emit("status_failed", at, record_source(source, {"target_id": member.id, "target_name": member.definition.name, "status": status, "reason": "已达层数上限"}))
+				break
 			var chunk := mini(amount, mini(space, maxi(1, 10 - layers(member, status))))
 			applied = apply_status(member, status, chunk, source, at, true, frost_attack, feedback_source) or applied
 			amount -= chunk
 		return applied
-	if member.hp <= 0 or amount <= 0 or status == "毒蚀" and at < member.toxin_immune_until_usec:
+	if member.hp <= 0 or amount <= 0:
+		return false
+	var previous_layers := layers(member, status)
+	var previous_expiry: int = member.combat_statuses.get(status, {}).get("expires", 0)
+	var status_event := record_source(source, feedback_source)
+	status_event.merge({"target_id": member.id, "target_name": member.definition.name, "status": status, "layers_before": previous_layers}, true)
+	if status == "毒蚀" and at < member.toxin_immune_until_usec:
+		status_event.reason = "免疫"
+		emit("status_failed", at, status_event)
 		return false
 	var original_amount := amount
 	if status=="寒霜" and layers(member,status)==0 and sim.cultivation.spec(source,"water",1,"初霜"): amount+=1
@@ -115,6 +145,8 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 	if status=="缠绕" and layers(member,status)>0 and sim.cultivation.spec(source,"wood",1,"盘根"): amount+=1
 	var accepted := mini(amount, maxi(0, capacity(member if T01Definition.is_buff(status) else source, status) - layers(member, status)))
 	if accepted <= 0:
+		status_event.reason = "已达层数上限"
+		emit("status_failed", at, status_event)
 		return false
 	var remaining := accepted
 	var opponents: Array = []
@@ -145,7 +177,7 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 			pool.batches[-1].frost_attack = frost_attack
 			pool.batches[-1].fresh_bonus = mini(remaining,maxi(0,accepted-original_amount))
 		pool.source_id = source.id
-		pool.feedback_source = feedback_source.duplicate(true)
+		pool.feedback_source = sim.record_trace.capture(record_source(source, feedback_source))
 		if status=="流血" and not fresh and sim.cultivation.spec(source,"metal",1,"血沸"): direct_hp(member,remaining*sim.cultivation.status_strength(source,status),source,at,status)
 		if status=="灼烧" and not fresh and sim.cultivation.spec(source,"fire",1,"复燃"): pool.revival_until=at+5_000_000
 		if status in ["流血", "灼烧"]:
@@ -166,7 +198,8 @@ func apply_status(member: PartyMemberState, status: String, amount: int, source:
 			dispel.next = at + 1_000_000
 			dispel.expires = 0
 			schedule_status(member, "驱散")
-	emit("status_applied", at, {"target_id": member.id, "target_name": member.definition.name, "status": status, "value": accepted, "layers": layers(member, status)})
+	status_event.merge({"value": accepted, "layers": layers(member, status), "expires": member.combat_statuses.get(status, {}).get("expires", 0), "previous_expiry": previous_expiry}, true)
+	emit("status_applied", at, status_event)
 	return true
 
 func schedule_status(member: PartyMemberState, status: String) -> void:
@@ -191,12 +224,17 @@ func tick_status(payload: Dictionary, at: int) -> void:
 	_tokens.erase(key)
 	var pool: Dictionary = member.combat_statuses[status]
 	if int(pool.expires) > 0 and at >= int(pool.expires):
+		emit("status_expired", at, {"target_id": member.id, "target_name": member.definition.name, "status": status})
 		consume(member, status, layers(member, status))
 		return
 	var n := layers(member, status)
 	var source: PartyMemberState = sim.state.teams[0][0] if sim.state.teams[0][0].id == pool.source_id else sim.state.teams[1][0]
+	var attribution := record_source(source, pool.get("feedback_source", {}))
+	attribution.label = status
+	sim.record_trace.begin(attribution, at, "dot")
 	pool.next = at + 1_000_000
 	sim.cultivation.status_tick(member,status,pool,n,source,at)
+	sim.record_trace.end()
 	schedule_status(member, status)
 	sim.state.revision += 1
 
@@ -210,7 +248,7 @@ func convert_thunder(member: PartyMemberState, at: int) -> void:
 		var multiplier := 1+sim.cultivation.bonus(member,"thunder",2,"凝罡",.1)+sim.cultivation.bonus(member,"thunder",4,"雷罡凝实",.2)
 		if sim.cultivation.general(member,"thunder",1,"雷罡"): multiplier+=.1
 		member.thunder_shields.append(q(values[rank(member)]*multiplier))
-		emit("shield_created", at, {"target_name": member.definition.name, "value": member.thunder_shields[-1]})
+		emit("shield_created", at, record_source(member, {"target_id": member.id, "target_name": member.definition.name, "value": member.thunder_shields[-1], "resource": "thunder_shield"}))
 
 func active_injury(member: PartyMemberState, at: int) -> int:
 	return layers(member, "重伤") if at >= int(member.combat_statuses.get("重伤", {}).get("start", 9223372036854775807)) else 0
@@ -218,6 +256,7 @@ func active_injury(member: PartyMemberState, at: int) -> int:
 func restore(member: PartyMemberState, resource: String, value: float, at: int, ceiling := -1.0, attribution: Dictionary = {}) -> float:
 	if member.hp <= 0:
 		return 0
+	var requested := value
 	if resource == "armor":
 		var source := sim.cultivation.status_source(member,"破甲")
 		if sim.cultivation.spec(source,"fire",5,"熔甲难复"): value*=maxf(0,1-(layers(member,"破甲")/10)*.1)
@@ -230,9 +269,18 @@ func restore(member: PartyMemberState, resource: String, value: float, at: int, 
 			if sim.cultivation.spec(source,"earth",5,"伤势反噬"): damage(source,member,prevented*.5,"法术型","base.element.earth",at,{"kind":"derived","label":"伤势反噬"},false,{"special":sim.cultivation.has_special(member)})
 		if member.hp<=0: return 0
 	var limit := float(member.maximum(resource)) if ceiling < 0 else minf(ceiling, member.maximum(resource))
+	var before := float(member.get(resource))
 	var actual := resource_q(member,minf(value, maxf(0, limit - float(member.get(resource)))))
 	member.set(resource, resource_q(member,float(member.get(resource)) + actual))
-	emit_restore(member, resource, actual, at, attribution)
+	var feedback := attribution.duplicate(true)
+	if actual == 0:
+		feedback.resource_before = before
+		feedback.restore_limit = limit
+		if before >= limit:
+			feedback.restore_reason = "item_cap" if ceiling >= 0 and limit < member.maximum(resource) else "resource_full"
+		elif requested > 0 and value <= 0:
+			feedback.restore_reason = "injury" if resource == "hp" else "reduced"
+	emit_restore(member, resource, actual, at, feedback)
 	return actual
 
 # Presentation attribution is captured at activation, including consumed item cells.
@@ -275,6 +323,7 @@ func can_activate(member: PartyMemberState, item: ItemData, at: int) -> bool:
 	var cost := costs(member, item, at)
 	if member.hp <= 0 or member.stamina < cost.x or member.spirit < cost.y:
 		return false
+	if not BattleItemRules.conditions_met(member, item): return false
 	if item.combat.get("barrier_full_stop", false) and member.barrier >= barrier_capacity(member):
 		return false
 	if not item.is_consumable() or item.category == "throwable":
@@ -319,12 +368,14 @@ func delay_cooldowns(target: PartyMemberState, effect: Dictionary, at: int, sour
 	for candidate: Dictionary in candidates:
 		if sim.timeline.change_cd(candidate.id, roundi(effect.seconds * 1_000_000), at):
 			changed.append(candidate.id)
-			var event := source.duplicate(true)
-			event.merge({"target_id": target.id, "target_name": target.definition.name, "target_instance_id": candidate.id, "target_item_name": sim._definitions[candidate.id].display_name, "seconds": effect.seconds}, true)
-			emit("cooldown_delayed", at, event)
 	return changed
 
 func activate(id: String, at: int) -> void:
+	sim.record_trace.begin(record_source(sim._owners[id], item_source(id)), at)
+	_activate(id, at)
+	sim.record_trace.end()
+
+func _activate(id: String, at: int) -> void:
 	var runtime: Dictionary = sim.state.item_runtime[id]
 	var owner: PartyMemberState = sim._owners[id]
 	var item: ItemData = sim._definitions[id]
@@ -334,10 +385,13 @@ func activate(id: String, at: int) -> void:
 	if active_injury(owner,at)>0 and (cost.x>0 or cost.y>0): sim.cultivation.injury_event(sim.cultivation.status_source(owner,"重伤"),at)
 	owner.stamina = resource_q(owner,owner.stamina - cost.x)
 	owner.spirit = resource_q(owner,owner.spirit - cost.y)
+	sim._record_resource_payment(owner,id,cost,at)
 	runtime.activation_count += 1
+	sim.item_rules.activated(id)
 	var source := {"item_id": item.id, "instance_id": id, "owner_id": owner.id, "owner_name": owner.definition.name, "side": side, "stamina_cost": cost.x, "spirit_cost": cost.y, "kind": "active", "category": item.category}
 	var activation := source.duplicate()
 	source.entry = owner.inventory.get_instance(id).duplicate(true)
+	source = sim.record_trace.capture(source)
 	activation.entry = source.entry
 	emit("item_activated", at, activation)
 	var target := sim.state.target_for(side)
@@ -352,16 +406,21 @@ func activate(id: String, at: int) -> void:
 		# One pending enhancement per concrete target item, consumed on an actual
 		# attack attempt (including a miss), never on an unaffordable cycle.
 		attack.value += float(owner.pending_item_attacks.get(item.id, 0))
+		if float(owner.pending_item_attacks.get(item.id, 0)) > 0: source.record_statuses = ["攻击强化"]
 		owner.pending_item_attacks.erase(item.id)
 		var result := attack_item(owner, target, item, attack, at, source)
 		hit = result.hit
 		hp_loss = result.hp_loss
+		var combo: Dictionary = item.combat.get("multi_hit", {})
+		for strike in range(1, int(combo.get("count", 1))):
+			sim.queue.schedule(at + roundi(strike * combo.interval * 1_000_000), "item_followup", {"owner": owner, "target": target, "item": item, "attack": attack.duplicate(true), "source": source.duplicate(true)})
+	var restore_token := -1
 	for e: Dictionary in item.effects_for("on_activate"):
 		match e.effect:
 			"delay_cooldown": delay_cooldowns(target, e, at, source)
 			"prime_item_attack":
 				owner.pending_item_attacks[e.target_item] = e.value
-				emit("attack_primed", at, {"owner_name": owner.definition.name, "item_id": e.target_item, "value": e.value})
+				emit("attack_primed", at, {"target_id": owner.id, "target_name": owner.definition.name, "primed_item_id": e.target_item, "value": e.value})
 			"damage": pass
 			"apply_status":
 				if e.status == "寒霜" and not attack.is_empty():
@@ -377,21 +436,26 @@ func activate(id: String, at: int) -> void:
 				var stamina_bonus: int = bonus.stamina_recovery.get(id, 0)
 				if stamina_bonus > 0: restore(owner, "stamina", stamina_bonus, at, -1.0, source)
 			"restore_ticks":
-				_serial += 1
-				owner.temporary_effects[item.id] = {"until": at + roundi(e.interval * e.ticks * 1_000_000), "token": _serial}
+				if restore_token < 0:
+					_serial += 1
+					restore_token = _serial
+				owner.temporary_effects[item.id] = {"until": maxi(int(owner.temporary_effects.get(item.id, {}).get("until", 0)), at + roundi(e.interval * e.ticks * 1_000_000)), "token": restore_token}
 				for tick in range(1, int(e.ticks) + 1):
-					sim.queue.schedule(at + roundi(tick * float(e.interval) * 1_000_000), "t01_restore", {"member": owner, "resource": e.resource, "value": e.value, "item_id": item.id, "token": _serial, "source": source.duplicate(true)}, -3)
+					sim.queue.schedule(at + roundi(tick * float(e.interval) * 1_000_000), "t01_restore", {"member": owner, "resource": e.resource, "value": e.value, "item_id": item.id, "token": restore_token, "source": source.duplicate(true)}, -3)
 					sim._pending_restores += 1
 			"cleanse_toxin":
+				var removed := layers(owner, "毒蚀")
 				consume(owner, "毒蚀", layers(owner, "毒蚀"))
 				owner.toxin_immune_until_usec = at + roundi(e.duration * 1_000_000)
 				owner.temporary_effects.toxin_immunity = {"until": owner.toxin_immune_until_usec}
+				if removed > 0: emit("status_removed", at, {"target_id": owner.id, "target_name": owner.definition.name, "status": "毒蚀", "value": removed, "removal": "净化"})
+				emit("temporary_buff", at, {"target_id": owner.id, "target_name": owner.definition.name, "label": "毒蚀免疫", "duration": e.duration})
 			"barrier":
 				sim.cultivation.add_barrier(owner, e.value, item.id)
-				emit("barrier_changed", at, {"target_name": owner.definition.name, "value": owner.barrier})
 			"resistance":
 				owner.temporary_effects[item.id] = {"until": at + roundi(e.duration * 1_000_000), "element": e.element, "reduction": e.value}
 				sim.queue.schedule(at + roundi(e.duration * 1_000_000), "t01_wake", {}, -2)
+				emit("temporary_buff", at, {"target_id": owner.id, "target_name": owner.definition.name, "label": "元素伤害减免", "value": e.value, "duration": e.duration})
 			_: assert(false, "Unimplemented effect %s on %s" % [e.effect, item.id])
 	if item.is_consumable():
 		var consumed := owner.inventory.use_consumable(id)
@@ -403,6 +467,14 @@ func activate(id: String, at: int) -> void:
 	sim.timeline.restart(id, at)
 
 func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemData, attack: Dictionary, at: int, source: Dictionary) -> Dictionary:
+	source = record_source(owner, source)
+	sim.record_trace.begin_attack(source, at)
+	emit("attack_started", at, {"target_id": target.id, "target_name": target.definition.name})
+	var result := _attack_item(owner, target, item, attack, at, source)
+	sim.record_trace.end()
+	return result
+
+func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemData, attack: Dictionary, at: int, source: Dictionary) -> Dictionary:
 	var art := sim.cultivation
 	var p: Dictionary = source.get("spell", {})
 	var resonance := {}
@@ -418,6 +490,7 @@ func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemDa
 	var weapon: bool = source.category == "weapon"
 	var flame := layers(owner, "附炎")
 	source.flame = flame
+	if flame > 0: _record_status(source, "附炎")
 	consume(owner, "附炎", flame)
 	var enchant: Dictionary = {}
 	var returned_edge := 0.0
@@ -436,14 +509,16 @@ func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemDa
 	var dodge := art.trigger(dodge_id, at) if not dodge_id.is_empty() else {}
 	if not dodge.is_empty() or roll() >= chance:
 		if not dodge.is_empty():
+			sim.record_trace.resume(dodge.record_source)
 			if dodge.has("agility"): apply_status(target, "轻灵", dodge.agility, target, at)
 			if dodge.has("advance_cd"):
 				var chosen := art.cd_target(target, dodge_id, dodge, at)
 				if not chosen.is_empty(): sim.timeline.change_cd(chosen, -roundi(dodge.advance_cd * 1_000_000), at)
+			sim.record_trace.end()
 		else: half_consume(target, "轻灵")
 		if art.spec(owner, "fire", 1, "余焰"): apply_status(owner, "附炎", roundi(flame * .5), owner, at)
 		art.dodged(target, owner, at)
-		emit("miss", at, {"target_name": target.definition.name, "owner_name": owner.definition.name})
+		emit("miss", at, {"target_id": target.id, "target_name": target.definition.name, "owner_name": owner.definition.name, "reason": "闪避" if not dodge.is_empty() else "未命中"})
 		return {"hit": false, "hp_loss": 0.0, "armor_loss": 0.0, "effective": 0.0}
 	defer_thunder += 1
 	if art.spec(owner, "fire", 5, "火种不灭"): apply_status(owner, "附炎", roundi(flame * .5), owner, at)
@@ -453,7 +528,7 @@ func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemDa
 	var forced: Dictionary = source.get("forced",{})
 	var guard: Dictionary = {}
 	var used_fatigue := 0
-	if weapon:
+	if weapon or item.combat.get("physical_attack", false):
 		var fatigue_owner := art.status_source(target,"疲惫")
 		var unresisted := .05+layers(target,"疲惫")*(.01+art.bonus(fatigue_owner,"earth",2,"困乏",.004)+art.bonus(fatigue_owner,"earth",4,"疲极",.006))
 		var r := 0.0 if not forced.is_empty() else roll()
@@ -478,6 +553,7 @@ func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemDa
 					if art.spec(target,"earth",3,"岳势反镇"): apply_status(owner,"疲惫",1,target,at)
 					if art.spec(target,"earth",5,"山岳不倾"): reduction=.2
 	_serial += 1
+	if critical and used_fatigue > 0: _record_status(source, "疲惫")
 	var frost_attack := _serial
 	for e: Dictionary in item.effects_for("on_activate"):
 		if e.effect == "apply_status" and e.status == "寒霜": apply_status(target, e.status, e.value, owner, at, false, frost_attack)
@@ -566,11 +642,11 @@ func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemDa
 		if not id.is_empty():
 			var config := art.trigger(id,at)
 			if not config.is_empty(): art.counter_attack(target,owner,armor_loss * config.ratio,"earth",config,at)
-	if target.hp > 0 and guard.has("tenacity"): apply_status(target,"坚韧",guard.tenacity,target,at)
+	if target.hp > 0 and guard.has("tenacity"): apply_status(target,"坚韧",guard.tenacity,target,at,false,-1,guard.record_source)
 	if weapon and critical and forced.is_empty() and before["疲惫"] > 0:
 		if art.spec(owner,"earth",3,"乏极成伤"): apply_status(target,"重伤",1,owner,at)
 		if art.spec(owner,"earth",5,"疲势崩裂") and target.hp>0: damage(owner,target,used_fatigue*2,"法术型","base.element.earth",at,{"kind":"derived","label":"疲势崩裂"},false,{"special":art.has_special(target)})
-	if weapon and not forced.is_empty() and forced.has("injury") and effective > 0: apply_status(target,"重伤",forced.injury,owner,at)
+	if weapon and not forced.is_empty() and forced.has("injury") and effective > 0: apply_status(target,"重伤",forced.injury,owner,at,false,-1,forced.record_source)
 	if weapon and enchant.has("bleed") and direct_hp_loss > 0: apply_status(target,"流血",enchant.bleed,owner,at)
 	if owner.hp > 0 and target.hp > 0 and weapon: art.followup(owner,target,item,primary_total,at)
 	if target.hp > 0 and effective > 0: on_attacked(target,at)
@@ -583,6 +659,7 @@ func attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemDa
 # Deduct the complete actual shield loss before reacting; a lethal shield counter
 # then cancels every still-unsettled armor/HP component of that same attack.
 func allocate_attack_shields(owner: PartyMemberState, target: PartyMemberState, parts: Array, context: Dictionary, at: int) -> void:
+	context.shield_resource = "sword_screen" if not target.sword_screen.is_empty() else ("thunder_shield" if not target.thunder_shields.is_empty() else "barrier")
 	var allowance: float = context.allowance
 	var broken := 0
 	var screen: Dictionary = {}
@@ -614,11 +691,13 @@ func allocate_attack_shields(owner: PartyMemberState, target: PartyMemberState, 
 		total += absorbed
 	context.shield_total = total
 	context.planned_shield_loss = total
+	if broken > 0 or not screen.is_empty() or barrier_before > 0 and target.barrier <= 0:
+		emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": context.shield_resource})
 	if not screen.is_empty(): sim.cultivation.shield_broken(target,owner,context,at,screen)
 	for i in broken: sim.cultivation.shield_broken(target,owner,context,at)
 	if target.barrier < barrier_before: wake_barrier_items(target,at)
 	if owner.hp <= 0 and total > 0:
-		emit("shield_interrupted",at,{"target_name":target.definition.name,"value":total})
+		emit("shield_interrupted",at,{"target_id":target.id,"target_name":target.definition.name,"value":total,"resource":context.shield_resource})
 
 func adjusted_damage(owner: PartyMemberState, target: PartyMemberState, base: float, attack_type: String, element_id: String, at: int, source: Dictionary, active: bool, critical := 1.0) -> float:
 	assert(attack_type in EffectSystem.ARMOR_MULTIPLIERS, "Unknown attack type " + attack_type)
@@ -637,7 +716,12 @@ func adjusted_damage(owner: PartyMemberState, target: PartyMemberState, base: fl
 		var group: Array = T01Definition.STATUS_GROUPS[element]
 		var own := layers(owner, group[0]) + (owner.thunder_shields.size() * 10 if element == "thunder" else 0)
 		multiplier += source.get("resonance", {}).get(element, sim.cultivation.resonance(owner,target,element))
+		if cap > 0:
+			if own > 0: _record_status(source, group[0])
+			for status: String in [group[1], group[2]]:
+				if layers(target, status) > 0: _record_status(source, status)
 		if element in ["fire", "thunder"] and layers(target, "缠绕") > 0:
+			_record_status(source, "缠绕")
 			var binder := sim.cultivation.status_source(target,"缠绕")
 			multiplier += int(source.get("entangle", layers(target, "缠绕"))) * .02 * (1+sim.cultivation.bonus(binder,"wood",2,"紧缚",.2)+sim.cultivation.bonus(binder,"wood",4,"盘根愈固",.3))
 	if source.get("kind", "active") in ["active", "counter", "followup"]:
@@ -645,11 +729,33 @@ func adjusted_damage(owner: PartyMemberState, target: PartyMemberState, base: fl
 			if effect.get("element") == element_id and int(effect.until) > at:
 				multiplier -= float(effect.reduction)
 	multiplier += sim.cultivation.damage_bonus(owner,target,element,attack_type,source,active)
+	if attack_type in ["斩击", "穿刺", "钝击"]:
+		for effect: Dictionary in owner.temporary_effects.values():
+			if int(effect.get("until", 0)) > at:
+				multiplier += float(effect.get("physical_bonus", 0))
+				if float(effect.get("physical_bonus", 0)) > 0: _record_status(source, "物理攻击提高")
 	return q(base if source.get("adjusted", false) else maxf(0, base * multiplier) * critical)
 
+func _record_status(source: Dictionary, status: String) -> void:
+	if not source.has("record_statuses"): source.record_statuses = []
+	if status not in source.record_statuses: source.record_statuses.append(status)
+
 func damage(owner: PartyMemberState, target: PartyMemberState, base: float, attack_type: String, element_id: String, at: int, source: Dictionary, active: bool, round_context: Dictionary, critical := 1.0) -> Dictionary:
+	var mode: String = source.get("kind", "active")
+	var scope: Dictionary = sim.record_trace.current()
+	var separate: bool = scope.is_empty() or not active and (scope.get("record_mode", "") != mode or scope.get("label", "") != source.get("label", "") or scope.get("owner_id", "") != source.get("owner_id", owner.id))
+	if separate:
+		sim.record_trace.begin(sim.record_trace.capture(record_source(owner, source)), at, mode)
+		emit("attack_started", at, {"target_id": target.id, "target_name": target.definition.name})
+	var result := _damage(owner, target, base, attack_type, element_id, at, source, active, round_context, critical)
+	if separate: sim.record_trace.end()
+	return result
+
+func _damage(owner: PartyMemberState, target: PartyMemberState, base: float, attack_type: String, element_id: String, at: int, source: Dictionary, active: bool, round_context: Dictionary, critical := 1.0) -> Dictionary:
 	if target.hp <= 0:
 		return {}
+	var shield_resource: String = round_context.get("shield_resource", "sword_screen" if not target.sword_screen.is_empty() else ("thunder_shield" if not target.thunder_shields.is_empty() else "barrier"))
+	var armor_before := target.armor
 	var element := element_id.trim_prefix("base.element.")
 	var owner_alive := owner.hp>0
 	var adjusted := adjusted_damage(owner, target, base, attack_type, element_id, at, source, active, critical)
@@ -672,6 +778,7 @@ func damage(owner: PartyMemberState, target: PartyMemberState, base: float, atta
 		if target.sword_screen.value <= 0:
 			var screen := target.sword_screen.duplicate()
 			target.sword_screen.clear()
+			emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": shield_resource})
 			sim.cultivation.shield_broken(target,owner,round_context,at,screen)
 	elif round_context.get("special", false):
 		var allowance := q(minf(adjusted, float(round_context.get("allowance", adjusted * sim.cultivation.absorption(target)))))
@@ -683,14 +790,18 @@ func damage(owner: PartyMemberState, target: PartyMemberState, base: float, atta
 			round_context.shield_total = float(round_context.get("shield_total",0))+absorb
 			if target.thunder_shields[0] == 0:
 				target.thunder_shields.pop_front()
+				emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": shield_resource})
 				sim.cultivation.shield_broken(target,owner,round_context,at)
 	elif target.barrier > 0:
 		shield_loss = q(minf(target.barrier, minf(adjusted, float(round_context.get("allowance", adjusted * 0.3)))))
 		sim.cultivation.spend_barrier(target,shield_loss)
+		if target.barrier <= 0: emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": shield_resource})
 	if round_context.has("allowance"):
 		round_context.allowance = q(round_context.allowance - shield_loss)
 	remaining = q(remaining - shield_loss)
-	if owner_alive and owner.hp <= 0: return {"effective":shield_loss,"adjusted":adjusted,"hp_loss":0.0,"post_shield":0.0}
+	if owner_alive and owner.hp <= 0:
+		emit("shield_interrupted", at, {"target_id": target.id, "target_name": target.definition.name, "value": shield_loss, "resource": shield_resource})
+		return {"effective":shield_loss,"adjusted":adjusted,"hp_loss":0.0,"post_shield":0.0}
 	var post_shield := remaining
 	var p: Dictionary = source.get("spell",{})
 	if source.get("primary",false) and target.armor>0:
@@ -713,7 +824,13 @@ func damage(owner: PartyMemberState, target: PartyMemberState, base: float, atta
 	var event := source.duplicate()
 	event.damage_type = attack_type
 	event.element = element_id
+	event.shield_resource = shield_resource
+	event.armor_depleted = armor_before > 0 and target.armor <= 0
+	event.record_statuses = source.get("record_statuses", [])
 	event.merge({"owner_name": owner.definition.name, "owner_id": owner.id, "side": side, "target_name": target.definition.name, "target_id": target.id, "value": hp_loss, "hp_after": target.hp, "armor_absorbed": armor_loss, "shield_absorbed": shield_loss, "blocked": armor_loss + shield_loss, "adjusted_damage": adjusted, "stamina_cost": source.get("stamina_cost", 0), "label": source.get("label", "" )}, true)
+	if source.has("trait_id"):
+		event.owner_id = source.owner_id
+		event.owner_name = source.owner_name
 	emit("damage", at, event)
 	if barrier_before > target.barrier:
 		wake_barrier_items(target, at)
@@ -726,18 +843,22 @@ func damage(owner: PartyMemberState, target: PartyMemberState, base: float, atta
 	return {"effective": q(shield_loss + armor_loss + hp_loss), "adjusted": adjusted, "hp_loss": hp_loss, "post_shield": post_shield, "armor_loss":armor_loss}
 
 func direct_hp(member: PartyMemberState, amount: float, source: PartyMemberState, at: int, label: String) -> void:
+	var separate: bool = sim.record_trace.current().get("record_mode", "") != "dot"
+	if separate: sim.record_trace.begin(record_source(source, {"label": label}), at, "derived")
 	var actual := q(minf(member.hp, amount))
 	member.hp = q(member.hp - actual)
 	var side := 0 if source == sim.state.teams[0][0] else 1
 	sim.state.damage_totals[side] += actual
-	emit("status_damage", at, {"target_id": member.id, "target_name": member.definition.name, "value": actual, "status": label})
+	emit("status_damage", at, record_source(source, {"target_id": member.id, "target_name": member.definition.name, "value": actual, "status": label}))
 	if member.hp == 0:
 		emit("fallen", at, {"target_id": member.id, "target_name": member.definition.name})
+	if separate: sim.record_trace.end()
 
 func paralyze(member: PartyMemberState, at: int) -> void:
+	var previous := member.paralyzed_until
 	member.paralyzed_until = maxi(member.paralyzed_until, at + 1_000_000)
 	sim.queue.schedule(member.paralyzed_until, "t01_wake", {}, -2)
-	emit("control", at, {"target_name": member.definition.name, "status": "麻痹", "until": member.paralyzed_until})
+	emit("control", at, {"target_id": member.id, "target_name": member.definition.name, "status": "麻痹", "until": member.paralyzed_until, "previous_expiry": previous})
 
 func freeze(member: PartyMemberState, duration: int, at: int) -> void:
 	sim.timeline.apply_control(member, "freeze", "all", duration, "frost", at)
@@ -752,7 +873,7 @@ func on_attacked(member: PartyMemberState, at: int) -> void:
 		if sim.timeline.blocked(id, at, true) or not rt.entered or at < int(rt.get("reactive_ready", 9_000_000)):
 			continue
 		for e: Dictionary in sim._definitions[id].effects_for("on_attacked"):
-			if e.effect == "apply_status" and apply_status(member, e.status, e.value, member, at):
+			if e.effect == "apply_status" and apply_status(member, e.status, e.value, member, at, false, -1, item_source(id)):
 				rt.reactive_ready = at + roundi(e.cooldown * 1_000_000)
 				sim.timeline.timers[id].reactive = float(e.cooldown)*1_000_000
 
@@ -805,6 +926,8 @@ func refresh_equipment(member: PartyMemberState, excluded_id: String = "") -> vo
 			member.defense_element = element
 	member.armor_capacity_sources.t01_link = link_bonus(member, excluded_id).capacity
 	member.armor = minf(member.armor, member.maximum("armor"))
+	for resource in ["hp", "stamina", "spirit"]:
+		member.set(resource, minf(member.get(resource), member.maximum(resource)))
 
 func link_bonus(member: PartyMemberState, excluded_id: String = "") -> Dictionary:
 	return inventory_link_bonus(member.inventory, sim._registry, excluded_id)
