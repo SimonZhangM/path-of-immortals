@@ -130,4 +130,6 @@ func test_filters() -> void:
 	sim.record_trace.end()
 	var log := records(sim)
 	check(log.filtered("recovery").is_empty() and log.filtered("buff").size() == 1, "non-HP restoration excluded from healing")
-	check(log.segments(log.rows[-1]).all(func(v): return v.color == BattleLog.COLORS.buff), "restoration and buff colored blue")
+	var parts := log.segments(log.rows[-1])
+	check(parts.filter(func(part): return part.text.begins_with("恢复")).all(func(part): return part.color == BattleLog.COLORS.recovery), "restoration uses recovery color")
+	check(parts.filter(func(part): return not part.text.begins_with("恢复")).all(func(part): return part.color == BattleLog.COLORS.buff), "buff uses buff color")

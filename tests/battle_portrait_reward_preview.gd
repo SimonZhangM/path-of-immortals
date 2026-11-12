@@ -84,7 +84,7 @@ func run() -> void:
 			check(rewards.backing.texture.atlas.resource_path == story.backing.texture.atlas.resource_path,"same story reward skin")
 			check(rewards.backing.get_global_rect().is_equal_approx(story.backing.get_global_rect()),"same story reward height and center")
 			check(rewards.heading.position.is_equal_approx(story.heading.position),"same heading position")
-			check(rewards.accept_button.get_node("AcceptCaption").text == "确定" and rewards.review_button != null,"battle actions retained")
+			check(rewards.accept_button.get_node("AcceptCaption").text == "离开" and rewards.review_button != null,"battle actions retained")
 			check(rewards.grid.get_child_count() == count and rewards.empty_label.visible == (count==0),"empty and multiple loot layouts")
 			check(rewards.scroll.get_rect().end.y < rewards.accept_button.position.y,"loot viewport above actions")
 			if count == 1:

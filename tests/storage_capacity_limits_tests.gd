@@ -16,6 +16,8 @@ func check(ok: bool, label: String) -> void:
 
 func fixture(source: MapLoadoutState, count: int, exclude: Array = []) -> MapLoadoutState:
 	var state: MapLoadoutState = MapLoadoutStore.candidate(source).state
+	state.storage_capacity_rules = state.storage_capacity_rules.duplicate()
+	state.storage_capacity_rules.test_capacity_override = 0
 	var next := state.snapshot()
 	next.board_id = "base.board.bag"
 	next.placements = []
@@ -28,10 +30,42 @@ func fixture(source: MapLoadoutState, count: int, exclude: Array = []) -> MapLoa
 	ids.sort()
 	for id: String in ids:
 		if id in exclude: continue
+		if not MapLoadoutState.counts_toward_bag_capacity(state.registry.get_item(id)): continue
 		next.owned_units["capacity."+id] = id
 		if next.owned_units.size() == count: break
 	check(state.restore(next).is_empty(), "isolated fixture hydration")
 	return state
+
+func test_quest_capacity(source: MapLoadoutState) -> void:
+	var state := fixture(source,100,["base.map_item.training_guide_stone",SWORD])
+	var quest_ids := ["base.map_item.yesongnian_letter", "base.map_item.broken_mirror", "base.book.yinqijue", "base.map_item.warm_jade", "base.map_item.ancient_tree_leaf", "base.map_item.fishing_net", "base.map_item.toolkit"]
+	for item_id: String in quest_ids:
+		var reward := {"id":"base.map_reward.capacity_quest_"+str(quest_ids.find(item_id)),"item_id":item_id,"quantity":3}
+		check(MapLoadoutStore.claim_reward(state,reward,"").is_empty(),"full bag accepts quest reward "+item_id)
+		check(state.storage_used_slots()==100 and not state.storage_over_capacity(),"quest stack consumes no capacity "+item_id)
+		check(state.storage_records().any(func(record: Dictionary): return record.id==item_id and record.quantity==3),"quest items remain visible "+item_id)
+	var letter: String = quest_ids[0]
+	check(Transfer.execute(state,HOME,letter,false,"").is_empty(),"quest stack deposits")
+	var preview := Transfer.preview(state,HOME,letter,true)
+	check(preview.projected==100 and not preview.blocked and preview.sufficient,"quest withdrawal preview consumes no capacity")
+	check(Transfer.execute(state,HOME,letter,true,"").is_empty() and state.storage_used_slots()==100,"full bag accepts quest withdrawal")
+	check(MapLoadoutStore.save(state,"res://artifacts/capacity-quest-items.json").is_empty(),"quest fixture saved")
+	check(MapLoadoutStore.load_into(state,"res://artifacts/capacity-quest-items.json").is_empty() and state.storage_used_slots()==100,"saved quest items retain capacity exemption")
+	var before := state.snapshot()
+	check(not MapLoadoutStore.claim_reward(state,{"id":"base.map_reward.capacity_ordinary_control","item_id":SWORD,"quantity":1},"").is_empty(),"ordinary reward still requires free capacity")
+	check(state.snapshot()==before,"rejected ordinary reward is atomic")
+	var next := state.snapshot()
+	next.growth=CultivationGrowth.initial(0)
+	next.learning=CultivationKnowledge.new().snapshot()
+	next.owned_units["capacity.quest.guide"]="base.map_item.training_guide_stone"
+	var error := state.restore(next)
+	check(error.is_empty(),"mortal guide fixture restores "+error)
+	check(state.storage_used_slots()==100,"mortal quest guide consumes no capacity "+str(state.storage_used_slots()))
+	next=state.snapshot()
+	next.growth=CultivationGrowth.initial(1)
+	error=state.restore(next)
+	check(error.is_empty(),"unlocked guide fixture restores "+error)
+	check(not state.records["base.map_item.training_guide_stone"].quest_item and MapLoadoutState.counts_toward_bag_capacity(state.registry.get_item("base.map_item.training_guide_stone")) and state.storage_over_capacity(),"unlocked ordinary guide consumes capacity")
 
 func run() -> void:
 	create_timer(50).timeout.connect(func(): quit(2))
@@ -46,7 +80,17 @@ func run() -> void:
 	map.set_process(false)
 	check(map.startup_error.is_empty(), "map starts with new capacity rules")
 	var source: MapLoadoutState = map.loadout
+	if OS.get_environment("QUEST_CAPACITY_ONLY")=="1":
+		test_quest_capacity(source)
+		for script_path: String in ["old_bench_quest_tests", "fishing_net_quest_tests", "deer_rest_quest_tests", "river_clinic_tests"]:
+			check(load("res://tests/"+script_path+".gd")!=null,"updated task expectations parse "+script_path)
+		map.queue_free()
+		for index in 8: await process_frame
+		print("QUEST CAPACITY: %d checks, %d failures; isolated state" % [checks,failures])
+		quit(1 if failures else 0)
+		return
 	check(source.storage_capacity_limit()==100, "configured capacity is 100")
+	test_quest_capacity(source)
 	var state := fixture(source,100,[SWORD])
 	check(not state.storage_over_capacity(), "100 is not overcapacity")
 	var next := state.snapshot()

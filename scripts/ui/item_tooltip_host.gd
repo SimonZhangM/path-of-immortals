@@ -63,6 +63,16 @@ func dismiss(suppress_reopen := true) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouse: _pointer = event.position
 	if not is_instance_valid(tooltip): return
+	if tooltip.has_meta("replay") and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
+		if is_instance_valid(source):
+			var local := source.get_global_transform_with_canvas().affine_inverse()*_pointer
+			if str(source.get_meta(SOURCE_META).key_at.call(local))==source_key:
+				tooltip.call("scroll_by",-48 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 48)
+				get_viewport().set_input_as_handled()
+		return
+	if tooltip.has_meta("replay") and event is InputEventMouseButton:
+		if event.pressed: dismiss(false)
+		return
 	if event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
 		if not _awaiting_layout and tooltip.get_global_rect().has_point(event.position):
 			if event.button_index == MOUSE_BUTTON_LEFT and is_instance_valid(tooltip.details_button) and tooltip.details_button.get_global_rect().has_point(event.position): return
@@ -90,7 +100,7 @@ func _process(delta: float) -> void:
 		else:
 			if _awaiting_layout: return
 			_fit()
-			if pinned or tooltip.get_global_rect().has_point(_pointer):
+			if not tooltip.has_meta("replay") and (pinned or tooltip.get_global_rect().has_point(_pointer)):
 				_leave_time = 0.0
 				return
 	var hovered := _hover_source()
@@ -104,7 +114,7 @@ func _process(delta: float) -> void:
 		return
 	if is_instance_valid(tooltip):
 		_leave_time += delta
-		if _leave_time >= LEAVE_DELAY: dismiss(false)
+		if tooltip.has_meta("replay") or _leave_time >= LEAVE_DELAY: dismiss(false)
 	if hovered != _candidate or key != _candidate_key:
 		_candidate = hovered
 		_candidate_key = key
@@ -137,9 +147,10 @@ func _show(control: Control, key: String) -> void:
 	add_child(tooltip)
 	var rect := control.get_global_rect()
 	var screen := get_viewport().get_visible_rect().size
-	var left := rect.position.x - ItemTooltip.WIDTH - 12.0
+	var panel_width := tooltip.custom_minimum_size.x
+	var left := rect.position.x - panel_width - 12.0
 	_anchor.x = left if left >= 8.0 else rect.end.x + 12.0
-	if _anchor.x + ItemTooltip.WIDTH > screen.x - 8.0: _anchor.x = _pointer.x + 20.0
+	if _anchor.x + panel_width > screen.x - 8.0: _anchor.x = _pointer.x + 20.0
 	_anchor.y = minf(_pointer.y - 20.0, screen.y - tooltip.get_combined_minimum_size().y - 190.0)
 	_reveal_after_layout(tooltip)
 

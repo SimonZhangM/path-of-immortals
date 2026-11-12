@@ -34,6 +34,6 @@ func run() -> void:
 			sim.t01.restore(p, "stamina", 0, 8000000, -1, sim.t01.record_source(p, {"item_id": spec[0]}))
 			log.consume(sim.drain_events(), registry, false)
 			check(log.rows.size() == count, "standalone no-change resource callback stays omitted")
-			check(log.segments(row)[0].color == BattleLog.COLORS.recovery, "restoration text remains blue")
+			check(log.segments(row)[0].color == BattleLog.COLORS.recovery, "restoration text uses recovery color")
 	print("BATTLE_RECORD_RECOVERY_CAP: %d checks, %d failures" % [checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)

@@ -1,0 +1,16 @@
+{
+  "background": "res://assets/UI-battle-fupanfenlei.webp",
+  "selection": "res://assets/UI-battle-fupanfenlei-xuanzhong.webp",
+  "source_size": [2172, 443],
+  "display_scale": 0.21,
+  "selection_y": 133,
+  "caption_center_offset": [240, 109],
+  "button_size": [374, 160],
+  "items": [
+    {"id": "all", "caption": "总览", "selection_x": 75},
+    {"id": "damage", "caption": "伤害", "selection_x": 459},
+    {"id": "recovery", "caption": "恢复", "selection_x": 844},
+    {"id": "defense", "caption": "防护", "selection_x": 1232},
+    {"id": "trigger", "caption": "触发", "selection_x": 1612}
+  ]
+}

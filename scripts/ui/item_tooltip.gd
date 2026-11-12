@@ -3,6 +3,7 @@ extends PanelContainer
 
 signal technique_requested(book_id: String)
 var details_button: TextureButton
+var effect_content_builder: Callable
 
 const UI_SCALE := 4.0 / 3.0
 const WIDTH := 720.0
@@ -597,6 +598,10 @@ func configure(item: ItemData, _entry: Dictionary = {}, _owner_defense: int = -1
 	line.thickness = 1
 	divider.add_theme_stylebox_override("separator", line)
 	content.add_child(divider)
+	if effect_content_builder.is_valid():
+		effect_content_builder.call(content)
+		_ignore(self)
+		return
 	if item.category == "book" and identified and not item.combat.get("reading_only",false):
 		_add_book_practice(content, item, _entry)
 		var lower_divider := HSeparator.new()

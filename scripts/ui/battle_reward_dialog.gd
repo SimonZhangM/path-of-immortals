@@ -14,7 +14,7 @@ func _init() -> void:
 	z_index = 44
 	(get_child(0) as ColorRect).color = Color(0, 0, 0, 0.5)
 	accept_button.position.x = 300
-	accept_button.get_node("AcceptCaption").text = "确定"
+	accept_button.get_node("AcceptCaption").text = "离开"
 	review_button = TextureButton.new()
 	review_button.name = "ReviewBattle"
 	review_button.texture_normal = load("res://assets/button-quxiao.webp")

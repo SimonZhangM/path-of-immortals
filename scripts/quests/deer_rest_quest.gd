@@ -3,12 +3,13 @@ extends RefCounted
 ## One optional story encounter, with durable completion and a one-time day-later coda.
 const ID := "quest.prologue.lumianchu"
 const PREFIX := "base.map_event.quest.lumianchu."
-const REST_FLAG := "base.story.lumianchu.rest_unlocked"
+const DRIVEN_FLAG := "base.story.lumianchu.vine_driven"
+const LEGACY_REST_FLAG := "base.story.lumianchu.rest_unlocked"
 static var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/quests/deer_rest.json"))
 static var common_speakers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/dialogues/common_speakers.json"))
 
 static func initial() -> Dictionary:
-	return {"stage":"unseen","active":"","line":0,"location":{},"choice_pending":false,"battle_started":false,"accepted_location":"","accepted_at":0,"updated_at":0,"completed_day":0,"epilogue_done":false}
+	return {"stage":"unseen","active":"","line":0,"location":{},"choice_pending":false,"reward_pending":false,"battle_started":false,"accepted_location":"","accepted_at":0,"updated_at":0,"completed_day":0,"epilogue_done":false}
 
 static func story(state: MapLoadoutState) -> Dictionary:
 	return state.quests[ID]
@@ -19,6 +20,10 @@ static func accepted(state: MapLoadoutState) -> bool:
 static func normalized(raw: Dictionary) -> Dictionary:
 	var result := raw.duplicate(true)
 	for key in ["line","accepted_at","updated_at","completed_day"]: result[key] = int(result[key])
+	result.reward_pending = result.get("reward_pending",false)
+	# Preserve the dialogue cursor while moving old N11 task records to N09.
+	if not result.active.is_empty() and result.active!="deer" and result.location==data.legacy_tree:
+		result.location = data.tree.duplicate(true)
 	return result
 
 static func valid(raw: Variant) -> bool:
@@ -28,6 +33,8 @@ static func valid(raw: Variant) -> bool:
 	if raw.get("accepted_location") not in ["",data.accepted_location]: return false
 	for key in ["choice_pending","battle_started","epilogue_done"]:
 		if not raw.get(key) is bool: return false
+	if not raw.get("reward_pending",false) is bool: return false
+	if raw.get("reward_pending",false) and (raw.active!="clear" or raw.line!=data.scenes.clear.lines.size()-1): return false
 	for key in ["accepted_at","updated_at","completed_day"]:
 		if not WorldCalendar.integer_between(raw.get(key),0,WorldCalendar.MAX_DAY): return false
 	if not WorldCalendar.integer_between(raw.get("line"),0,1000): return false
@@ -38,7 +45,9 @@ static func valid(raw: Variant) -> bool:
 	if raw.stage!="completed" and (raw.completed_day!=0 or raw.epilogue_done): return false
 	if raw.active.is_empty(): return raw.line==0 and raw.location.is_empty() and not raw.choice_pending
 	if not data.scenes.has(raw.active) or raw.line>=data.scenes[raw.active].lines.size(): return false
-	if raw.location!=(data.deer if raw.active=="deer" else data.tree): return false
+	if raw.active=="deer":
+		if raw.location!=data.deer: return false
+	elif raw.location not in [data.tree,data.legacy_tree]: return false
 	if raw.choice_pending and (raw.active not in ["inspect","decision"] or raw.line!=data.scenes[raw.active].lines.size()-1 or raw.stage!="battle"): return false
 	match raw.active:
 		"deer": return raw.stage=="unseen" and not raw.choice_pending
@@ -51,6 +60,8 @@ static func valid(raw: Variant) -> bool:
 
 static func configuration_error() -> String:
 	if data.get("quest_id")!=ID: return "鹿眠处任务配置无效。"
+	var reward: Dictionary = data.get("completion_reward",{})
+	if not str(reward.get("id","")).begins_with("base.map_reward.") or str(reward.get("item_id","")).is_empty() or not ContentRegistry._positive_integer(reward.get("quantity")): return "鹿眠处奖励配置无效。"
 	for location: Dictionary in [data.deer,data.tree]:
 		if not MapLoadoutState.valid_map_location(location): return "鹿眠处地点配置无效。"
 	if data.battle.id!=PREFIX+"battle" or data.battle.point_id!=data.tree.point_id or data.battle.enemy_id!="base.enemy.biyetengling": return "鹿眠处任务战配置无效。"
@@ -112,6 +123,7 @@ static func battle_ready(state: MapLoadoutState) -> bool:
 static func record_victory(state: MapLoadoutState, event_id: String) -> void:
 	if event_id!=data.battle.id or not battle_ready(state): return
 	story(state).stage = "cleared"
+	state.narrative.flags[DRIVEN_FLAG] = true
 	story(state).updated_at = WorldCalendar.current_day(state.calendar)
 	# Ordinary vine encounters and all their cooldowns stay untouched.
 
@@ -120,11 +132,18 @@ static func _finish(saved: Dictionary) -> void:
 	saved.line = 0
 	saved.location = {}
 	saved.choice_pending = false
+	saved.reward_pending = false
+
+static func reward_record(state: MapLoadoutState) -> Dictionary:
+	var record: Dictionary = state.records[data.completion_reward.item_id].duplicate(true)
+	record.quantity = int(data.completion_reward.quantity)
+	return record
 
 static func command(state: MapLoadoutState, path: String, action: String, scene := "") -> String:
 	var prepared := MapLoadoutStore.candidate(state)
 	if not prepared.error.is_empty(): return prepared.error
 	var next: MapLoadoutState = prepared.state
+	next.storage_capacity_rules = state.storage_capacity_rules.duplicate(true)
 	var saved := story(next)
 	match action:
 		"begin":
@@ -134,23 +153,29 @@ static func command(state: MapLoadoutState, path: String, action: String, scene 
 			saved.location = next.map_location.duplicate(true)
 			saved.choice_pending = scene=="decision"
 		"advance":
-			if saved.active.is_empty() or saved.choice_pending: return ""
+			if saved.active.is_empty() or saved.choice_pending or saved.reward_pending: return ""
 			if saved.line+1<data.scenes[saved.active].lines.size(): saved.line += 1
 			elif saved.active=="inspect":
 				saved.stage = "battle"
 				saved.choice_pending = true
+			elif saved.active=="clear": saved.reward_pending = true
 			else:
 				match saved.active:
 					"deer":
 						saved.stage = "inspect"
 						saved.accepted_location = data.accepted_location
 						saved.accepted_at = WorldCalendar.current_day(next.calendar)
-					"clear":
-						saved.stage = "completed"
-						saved.completed_day = WorldCalendar.current_day(next.calendar)
-						next.narrative.flags[REST_FLAG] = true
 					"epilogue": saved.epilogue_done = true
 				_finish(saved)
+		"accept":
+			if not saved.reward_pending: return ""
+			var reward_error := next.add_reward(data.completion_reward)
+			if not reward_error.is_empty(): return reward_error
+			# add_reward restores its candidate; reacquire the normalized quest record.
+			saved = story(next)
+			saved.stage = "completed"
+			saved.completed_day = WorldCalendar.current_day(next.calendar)
+			_finish(saved)
 		"fight","leave":
 			if not saved.choice_pending or saved.location!=data.tree or next.map_location!=data.tree: return "当前不能处理这处藤灵。"
 			_finish(saved)
@@ -179,5 +204,5 @@ static func display_entry(state: MapLoadoutState, presentation: Dictionary) -> D
 	result.has_locked_next = stage_index<2
 	result.people = []
 	result.rewards = data.rewards.duplicate(true)
-	result.location = {"name":"叠翠峰·古树盘根","image":"res://assets/map-worldmap-diecuifeng.webp"}
+	result.location = {"name":"叠翠峰·盘根石径","image":"res://assets/map-worldmap-diecuifeng.webp"}
 	return result

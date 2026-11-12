@@ -35,6 +35,11 @@ var adjustment_open: bool = false
 var selected_member_index: int = 0
 var interaction_epoch: int = 0
 var _placement_rng := RandomNumberGenerator.new()
+# Seed generation belongs to the session boundary, never to the simulation clock.
+static var _battle_seed_rng := RandomNumberGenerator.new()
+static var _battle_seed_initialized := false
+static var _last_battle_seed: int = -1
+var battle_seed_override: int = -1 # Explicit deterministic fixtures; not a player setting.
 var _durable_loadout: MapLoadoutState
 var _durable_snapshot: Dictionary = {}
 var _pending_consumption: Dictionary = {}
@@ -242,6 +247,16 @@ func _commit_consumption() -> bool:
 	consumption_save_error = ""
 	return true
 
+static func _next_battle_seed() -> int:
+	if not _battle_seed_initialized:
+		_battle_seed_rng.randomize()
+		_battle_seed_initialized = true
+	var generated := int(_battle_seed_rng.randi())
+	while generated == _last_battle_seed:
+		generated = int(_battle_seed_rng.randi())
+	_last_battle_seed = generated
+	return generated
+
 func restart() -> void:
 	if not startup_error.is_empty() or party.is_empty():
 		return
@@ -254,7 +269,8 @@ func restart() -> void:
 	loot_error = ""
 	adjustment_open = false
 	interaction_epoch += 1
-	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense)
+	var battle_seed := battle_seed_override if battle_seed_override >= 0 else _next_battle_seed()
+	simulation = BattleSimulation.new(party, enemies, registry, companions, enemy_companions, legacy_fixed_defense, battle_seed)
 	simulation.settlement_interval_usec = BATTLE_SETTLEMENT_USEC
 	# A new encounter takes the preference once; in-battle commands stay local.
 	simulation.clock.set_speed(float(Settings.value("battle_speed", 1.0)))

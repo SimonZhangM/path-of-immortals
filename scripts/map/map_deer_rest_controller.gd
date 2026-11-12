@@ -1,4 +1,5 @@
 extends "res://scripts/map/map_quest_story_controller.gd"
+const ChoiceStyle = preload("res://scripts/map/map_task_choice_style.gd")
 ## Task-only encounter; the authored map encounter popup is never opened here.
 var choices: HBoxContainer
 var fight_button: Button
@@ -18,27 +19,26 @@ func _ready() -> void:
 	leave_button = _button("暂且离开","leave")
 	choices.hide()
 	map.resized.connect(_layout_choices)
+	map.dialogue.resized.connect(_layout_choices)
+	map.dialogue.picture.layout_changed.connect(_layout_choices)
 	refresh_signs()
 
 func refresh_signs() -> void:
 	if signs==null: return
 	signs.show_task_at(DeerRestQuest.marker_points(map.loadout,map.definition.id),"side")
-	# The ordinary rest sign was hidden before the task unlocked it. Do not
-	# restore that stale visibility snapshot when removing the yellow overlay.
-	var entry: Dictionary = signs.entries[DeerRestQuest.data.tree.point_id]
-	if entry.original!=null:
-		entry.original.visible = DeerRestQuest.story(map.loadout).stage=="completed"
-
-func try_arrival(point_id: String, clicked := false) -> bool:
-	if map.event_state.is_active(): return owns_dialogue()
-	var scene := DeerRestQuest.interaction(map.loadout,map.definition.id,point_id) if clicked else DeerRestQuest.arrival(map.loadout,map.definition.id,point_id)
-	if scene.is_empty(): return false
-	begin(scene)
-	return true
 
 func present() -> void:
 	var saved := DeerRestQuest.story(map.loadout)
 	if saved.active.is_empty(): return
+	if saved.reward_pending:
+		occupy(saved.active,"reward")
+		map._ensure_event_views()
+		map.dialogue.dismiss()
+		choices.hide()
+		map.reward_dialog.present(DeerRestQuest.reward_record(map.loadout),"任务物品",false,false,true)
+		map.reward_dialog.card.loadout = map.loadout
+		map.reward_dialog.card.mouse_filter = Control.MOUSE_FILTER_STOP
+		return
 	var event := DeerRestQuest.event(saved.active)
 	occupy(saved.active,"dialogue_paused" if saved.choice_pending else "dialogue")
 	map.event_state.line_index = int(saved.line)
@@ -56,6 +56,19 @@ func advance() -> void:
 func finish() -> void:
 	choices.hide()
 	super.finish()
+
+func accept_reward() -> void:
+	if not DeerRestQuest.story(map.loadout).reward_pending or map.reward_dialog.accept_button.disabled: return
+	map.reward_dialog.accept_button.disabled = true
+	var error := DeerRestQuest.command(map.loadout,map.inventory_save_path,"accept")
+	if not error.is_empty():
+		map.reward_dialog.error_label.text = error
+		map.reward_dialog.accept_button.disabled = false
+		if error.begins_with("储物袋容量不足"): _offer_receipt_deferral()
+		return
+	map.reward_dialog.pick_sound.play()
+	map.reward_dialog.hide()
+	finish()
 
 func choose(action: String) -> void:
 	if not choices.visible or fight_button.disabled: return
@@ -96,26 +109,11 @@ func handle_choice_input(event: InputEvent) -> bool:
 func _button(caption: String, action: String) -> Button:
 	var button := Button.new()
 	button.text = caption
-	button.custom_minimum_size = Vector2(240,93)
-	button.add_theme_font_override("font",load("res://assets/fonts/HarmonyOS_Sans_SC_Regular.ttf"))
-	button.add_theme_font_size_override("font_size",24)
-	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	for style_name in ["normal","hover","pressed","focus"]:
-		var style := StyleBoxTexture.new()
-		style.texture = load("res://assets/UI-game-choicebutton.webp")
-		if style_name=="hover": style.modulate_color = Color(1.15,1.15,1.15)
-		if style_name=="pressed": style.modulate_color = Color(0.85,0.85,0.85)
-		style.content_margin_left = 24
-		style.content_margin_right = 24
-		button.add_theme_stylebox_override(style_name,style)
+	ChoiceStyle.apply(button)
 	button.pressed.connect(func(): choose(action))
 	choices.add_child(button)
 	return button
 
 func _layout_choices() -> void:
 	if choices==null: return
-	var factor: float = minf(map.size.x/1920.0,map.size.y/1080.0)
-	choices.scale = Vector2.ONE*factor
-	choices.size = choices.get_combined_minimum_size()
-	var top: float = map.dialogue.background.position.y-(choices.size.y+20)*factor
-	choices.position = Vector2((map.size.x-choices.size.x*factor)*0.5,maxf(100*factor,top))
+	ChoiceStyle.layout(choices, map)

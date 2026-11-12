@@ -238,6 +238,7 @@ func reward_candidate(reward: Dictionary) -> Dictionary:
 	candidate.cultivation_rank_id = cultivation_rank_id
 	candidate.board = board
 	candidate.records = records.duplicate(true)
+	candidate.storage_capacity_rules = storage_capacity_rules.duplicate(true)
 	candidate._seed_owned = _seed_owned.duplicate()
 	candidate.formation_icons = formation_icons.duplicate()
 	candidate.knowledge.restore(knowledge.snapshot(), registry.library, int(registry.get_cultivation(cultivation_rank_id).order))
@@ -380,9 +381,13 @@ static func bag_used_slots(contents: SharedStorage, content_registry: ContentReg
 	var kinds := {}
 	for entry: Dictionary in contents.entries():
 		var item := content_registry.get_item(entry.item_id)
-		if item != null and item.category == "spell": continue
+		if not counts_toward_bag_capacity(item): continue
 		kinds[entry.item_id] = true
 	return kinds.size()
+
+static func counts_toward_bag_capacity(item: ItemData) -> bool:
+	if item == null: return true
+	return item.category not in ["spell", "key"] and "任务物品" not in item.tags
 
 # Legacy overfull bags may be organized without deleting items. Each successful
 # operation may keep/reduce their kind count, never increase it beyond capacity.

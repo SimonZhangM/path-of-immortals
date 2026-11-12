@@ -81,12 +81,11 @@ func run() -> void:
 	await shot("tool-receipt")
 	var capacity: Dictionary = state.storage_capacity_rules.duplicate(true)
 	state.storage_capacity_rules.test_capacity_override = state.storage_used_slots()
-	map._accept_reward()
-	check(Bench.story(state).reward_pending and map.old_bench_story_controller.defer_receipt_button.visible,"full bag can defer receipt")
-	map.old_bench_story_controller.defer_receipt_button.pressed.emit()
-	check(not map.travel.paused,"full bag can return to inventory")
+	var full: MapLoadoutState = MapLoadoutStore.candidate(state).state
+	full.storage_capacity_rules=state.storage_capacity_rules.duplicate(true)
+	var occupied_before := full.storage_used_slots()
+	check(Bench.command(full,directory+"full-bag.json","accept").is_empty() and not Bench.story(full).reward_pending and full.storage_used_slots()==occupied_before,"full bag accepts quest toolkit without capacity use")
 	state.storage_capacity_rules = capacity
-	check(map.old_bench_story_controller.try_arrival(Bench.data.smith.point_id,true),"pending receipt resumes")
 	var before := state.snapshot()
 	map.inventory_save_path = directory+"missing/fail.json"
 	map._accept_reward()

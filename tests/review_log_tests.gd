@@ -1,5 +1,7 @@
 extends SceneTree
 
+var exit_calls := 0
+
 func _initialize() -> void: run.call_deferred()
 func settle() -> void:
 	for i in 6: await process_frame
@@ -29,6 +31,9 @@ func run() -> void:
 	game.set_process(false)
 	assert(game.startup_error.is_empty())
 	var ui = scene.get_node("MainUI")
+	ui.battle_exit_handler = func() -> String:
+		exit_calls += 1
+		return ""
 	game.start_battle()
 	game._process(1.0)
 	game.simulation._finish("victory", game.simulation.state.time_usec)
@@ -55,10 +60,10 @@ func run() -> void:
 	assert(not ui._log_panel.visible and ui.victory_view == ui.VictoryView.REVIEW)
 	assert(game.simulation.state.is_finished() and game.simulation.state.time_usec == time)
 	click(ui._battle_button.get_global_rect().get_center())
-	await settle()
-	assert(ui.victory_rewards.visible and ui._log_button.disabled)
+	await create_timer(0.15).timeout
+	assert(exit_calls == 1 and not ui.victory_rewards.visible)
 	scene.queue_free()
 	await settle()
 	await create_timer(.2).timeout
-	print("PASS: review opens real log contents, closes back to review, exit restores rewards; no battle resume")
+	print("PASS: review opens real log contents, closes back to review, exit calls battle return directly")
 	quit()

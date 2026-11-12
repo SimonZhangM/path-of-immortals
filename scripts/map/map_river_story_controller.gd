@@ -1,4 +1,5 @@
 extends Node
+const ChoiceStyle = preload("res://scripts/map/map_task_choice_style.gd")
 ## Adapter for the existing map modal, dialogue and reward views.
 var map: Control
 var signs: RefCounted
@@ -27,6 +28,8 @@ func _ready() -> void:
 	map.add_child(choices)
 	choices.hide()
 	map.resized.connect(_layout_choices)
+	map.dialogue.resized.connect(_layout_choices)
+	map.dialogue.picture.layout_changed.connect(_layout_choices)
 	map.loadout.changed.connect(refresh)
 	refresh()
 
@@ -213,21 +216,7 @@ func _show_choices(entries: Array, callback: Callable) -> void:
 	for entry: Dictionary in entries:
 		var button := Button.new()
 		button.text = entry.text
-		button.custom_minimum_size = Vector2(240,93)
-		button.alignment = HORIZONTAL_ALIGNMENT_CENTER
-		button.add_theme_font_override("font",load("res://assets/fonts/HarmonyOS_Sans_SC_Regular.ttf"))
-		button.add_theme_font_size_override("font_size",24)
-		for style_name in ["normal","hover","pressed","focus"]:
-			var style := StyleBoxTexture.new()
-			style.texture = load("res://assets/UI-game-choicebutton.webp")
-			if style_name == "hover": style.modulate_color = Color(1.15,1.15,1.15)
-			if style_name == "pressed": style.modulate_color = Color(0.85,0.85,0.85)
-			style.content_margin_left = 24
-			style.content_margin_right = 24
-			style.content_margin_top = 0
-			style.content_margin_bottom = 0
-			button.add_theme_stylebox_override(style_name,style)
-		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		ChoiceStyle.apply(button)
 		button.pressed.connect(func(): callback.call(entry.id))
 		choices.add_child(button)
 	var button_size := Vector2(240,93)
@@ -240,12 +229,7 @@ func _show_choices(entries: Array, callback: Callable) -> void:
 
 func _layout_choices() -> void:
 	if choices==null: return
-	var factor: float = minf(map.size.x/1920.0,map.size.y/1080.0)
-	choices.scale = Vector2.ONE*factor
-	choices.size = choices.get_combined_minimum_size()
-	var top: float = map.dialogue.background.position.y-(choices.size.y+20)*factor
-	if map.event_state.phase=="reward": top = map.size.y*0.73
-	choices.position = Vector2((map.size.x-choices.size.x*factor)*0.5,maxf(100*factor,top))
+	ChoiceStyle.layout(choices, map)
 
 func finish(previous: String) -> void:
 	map.dialogue.dismiss()

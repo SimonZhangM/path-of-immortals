@@ -704,13 +704,14 @@ point_id = "base.map.diecuifeng.point.n11"
 location_note = "古树盘根"
 
 [node name="Sign" type="Sprite2D" parent="Points/N11"]
-position = Vector2(0, -223.928571)
-scale = Vector2(0.861276987, 0.861276987)
-texture = SubResource("Atlas_circle")
+position = Vector2(0, -250.714286)
+scale = Vector2(0.942605784, 0.942605784)
+texture = SubResource("Atlas_diamond")
 
-[node name="RestIcon" type="Sprite2D" parent="Points/N11/Sign"]
-scale = Vector2(0.688291799, 0.688291799)
-texture = SubResource("Atlas_rest")
+[node name="EnemyIcon" type="Sprite2D" parent="Points/N11/Sign"]
+position = Vector2(0, 10)
+scale = Vector2(0.61176471, 0.61176471)
+texture = SubResource("Atlas_enemy")
 
 [node name="N12" type="Sprite2D" parent="Points"]
 position = Vector2(1344.8438, 614.3573)

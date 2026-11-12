@@ -19,10 +19,12 @@ var sword_screen: Dictionary = {}
 var weapon_enchantment: Dictionary = {}
 var return_edge := ""
 var thunder_shields: Array[float] = []
+var thunder_shield_origins: Array[Dictionary] = []
 var paralyzed_until := 0
 var frozen_until := 0
 var temporary_effects: Dictionary = {}
 var pending_item_attacks: Dictionary = {}
+var pending_attack_origins: Dictionary = {}
 var body_element := "base.element.none"
 var defense_element := "base.element.none"
 var armor: float = 0.0
@@ -117,6 +119,7 @@ func reset_resources() -> void:
 	combat_statuses.clear()
 	temporary_effects.clear()
 	pending_item_attacks.clear()
+	pending_attack_origins.clear()
 
 	barrier = 0
 	barrier_sources.clear()
@@ -124,6 +127,7 @@ func reset_resources() -> void:
 	weapon_enchantment.clear()
 	return_edge = ""
 	thunder_shields.clear()
+	thunder_shield_origins.clear()
 	paralyzed_until = 0
 	frozen_until = 0
 	toxin_stacks = 0

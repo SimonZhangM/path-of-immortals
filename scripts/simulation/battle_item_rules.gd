@@ -59,6 +59,7 @@ func periodic_tick(key: String, at: int) -> void:
 	var periodic: Dictionary = record.item.combat.periodic_restore
 	if sim._owners.has(record.id) and unit(record.id) == record:
 		sim.record_trace.begin(sim.t01.record_source(owner, sim.t01.item_source(record.id)), at, "periodic")
+		sim.t01.emit("replay_trigger", at, {"target_id":owner.id})
 		for resource: String in periodic.resources:
 			sim.t01.restore(owner, resource, periodic.resources[resource], at, -1.0, sim.t01.item_source(record.id))
 		sim.record_trace.end()
@@ -73,8 +74,11 @@ func wake(at: int) -> void:
 		var owner: PartyMemberState = record.owner
 		if passive.is_empty() or owner.hp <= 0 or owner.hp * passive.denominator > owner.maximum("hp") * passive.numerator: continue
 		record.triggered = true
-		owner.temporary_effects[record.item.id] = {"until": at + roundi(passive.duration * 1_000_000), "physical_bonus": passive.bonus}
-		sim.t01.emit("item_passive", at, sim.t01.record_source(owner, {"item_id": record.item.id, "target_id": owner.id, "target_name": owner.definition.name, "label": "物理攻击提高", "value": passive.bonus, "duration": passive.duration}))
+		var origin := sim.t01.record_source(owner, sim.t01.item_source(record.id))
+		owner.temporary_effects[record.item.id] = {"until": at + roundi(passive.duration * 1_000_000), "physical_bonus": passive.bonus, "replay_sources":BattleAttribution.sources(origin)}
+		sim.record_trace.begin(origin, at, "passive")
+		sim.t01.emit("item_passive", at, origin.merged({"target_id": owner.id, "target_name": owner.definition.name, "label": "物理攻击提高", "value": passive.bonus, "duration": passive.duration}))
+		sim.record_trace.end()
 
 func has_future_recovery() -> bool:
 	for record: Dictionary in units.values():

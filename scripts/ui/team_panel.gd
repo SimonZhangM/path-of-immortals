@@ -3,7 +3,7 @@ extends VBoxContainer
 
 const WIDTH := 822.0
 const BAG_SIDE := 548.0
-const ENEMY_BOARD_SCALE := 0.9
+const ENEMY_BOARD_SCALE := 0.9 * 1.05
 const ACTOR_Y_OFFSET := -11.25 # Previous -3.75, shifted up another 10 native 2K pixels.
 const PLAYER_BOARD_VISIBLE_SIZE := Vector2(650, 630)
 const PLAYER_BOARD_CENTER_Y_OFFSET := -40.0
@@ -105,7 +105,7 @@ func rebuild() -> void:
 	inventory_row.add_child(bag)
 	bag.bind_game(manager, 0, enemy_side)
 	if enemy_side:
-		# Anchors preserve the exact center with a fractional 493.2px size;
+		# Anchors preserve the exact center with a fractional display size;
 		# CenterContainer rounds its child position to whole design pixels.
 		bag.set_anchors_preset(Control.PRESET_CENTER)
 		bag.offset_left = -bag.display_side * 0.5

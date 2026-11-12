@@ -1,13 +1,13 @@
 {
   "id": "base.map_event.diecuifeng.rest_n11",
   "type": "rest",
-  "point_id": "base.map.diecuifeng.point.n11",
+  "point_id": "base.map.diecuifeng.point.n09",
   "trigger": "click",
   "presentation": {
     "illustration": "",
     "background": "res://assets/tanchuang-huifu-linjiangouhuo1.webp"
   },
-  "title": "古树盘根",
+  "title": "盘根石径",
   "rest_kind": "outdoor",
   "description": "在草窝外侧的平石上歇息。",
   "note": "树荫渐静，\n暂歇此间。",

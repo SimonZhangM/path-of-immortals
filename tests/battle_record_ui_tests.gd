@@ -39,6 +39,7 @@ func run() -> void:
 	root.size = Vector2i(1920, 1080)
 	var scene = load("res://scenes/main/main.tscn").instantiate()
 	var game: GameManager = scene.get_node("GameManager")
+	game.battle_seed_override = BattleSimulation.DEFAULT_RANDOM_SEED
 	game.use_saved_loadout = false
 	game.loadout_save_path = ""
 	game.enemy_id = "base.enemy.qingfenglingtang"

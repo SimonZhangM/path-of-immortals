@@ -19,9 +19,11 @@ var players: Dictionary = {}
 var music: MusicPlayer
 var _victory_started := false
 var _battle_track: AudioStreamMP3
+var _source_map_id := ""
 
 func configure(manager: GameManager, defer_music: bool = false, source_map_id: String = "") -> void:
 	configure_effects()
+	_source_map_id = source_map_id
 	var tracks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/battle_music.json"))
 	_battle_track = load(tracks.maps.get(source_map_id, tracks.default)) as AudioStreamMP3
 	manager.inventory_interaction.connect(play)
@@ -31,6 +33,7 @@ func configure(manager: GameManager, defer_music: bool = false, source_map_id: S
 	music.music_gain = db_to_linear(-6.0)
 	music.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(music)
+	music.finished.connect(_on_music_finished)
 	manager.battle_restarted.connect(start_music)
 	if not defer_music:
 		start_music()
@@ -49,6 +52,9 @@ func configure_effects() -> void:
 
 func start_music() -> void:
 	_victory_started = false
+	var presentation := get_node("/root/MapPresentation")
+	if not _source_map_id.is_empty() and presentation.map_id == _source_map_id and presentation.music_state in ["playing", "resuming"]:
+		presentation.suspend_for_overlay()
 	var track := _battle_track.duplicate() as AudioStreamMP3
 	track.loop = true
 	track.loop_offset = 0.0
@@ -65,6 +71,13 @@ func play_victory() -> void:
 	music.stream = track
 	music.music_gain = db_to_linear(-6.0)
 	music.start_playback()
+
+func _on_music_finished() -> void:
+	var presentation := get_node("/root/MapPresentation")
+	if not _victory_started or _source_map_id.is_empty() or presentation.transitioning:
+		return
+	if presentation.map_id == _source_map_id:
+		presentation.enter_map({"id": _source_map_id, "music": presentation.playlist})
 
 func play(kind: String) -> void:
 	if players.has(kind):

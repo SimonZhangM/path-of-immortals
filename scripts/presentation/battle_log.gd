@@ -3,7 +3,7 @@ extends RefCounted
 ## One row per source, target and independent settlement.
 
 const RESOURCE_NAMES := {"hp": "气血", "stamina": "体力", "spirit": "灵力", "armor": "护甲", "spiritual_armor": "灵甲", "barrier": "灵盾", "thunder_shield": "雷盾", "sword_screen": "剑幕"}
-const COLORS := {"normal": "d9e2e3", "damage": "f07968", "recovery": "68b8f0", "buff": "68b8f0", "debuff": "bd8bef"}
+const COLORS := {"normal": "d9e2e3", "damage": "f07968", "recovery": "7edc8a", "buff": "68b8f0", "debuff": "bd8bef"}
 var rows: Array[Dictionary] = []
 var status_details: Array[Dictionary] = []
 var revision := 0

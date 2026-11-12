@@ -39,7 +39,7 @@ func capture(source: Dictionary) -> Dictionary:
 	var result := source.duplicate(true)
 	var scope := current()
 	if scope.get("owner_id", "") == source.get("owner_id", ""):
-		for key in ["owner_name", "side", "item_id", "instance_id", "trait_id", "label", "record_mode", "record_at"]:
+		for key in ["owner_name", "side", "item_id", "instance_id", "trait_id", "label", "record_mode", "record_at", "replay_sources"]:
 			if scope.has(key) and not result.has(key): result[key] = scope[key]
 	for key in ["record_action_id", "record_group_id", "record_parent_id"]:
 		if scope.has(key): result[key] = scope[key]
@@ -52,7 +52,7 @@ func annotate(values: Dictionary) -> Dictionary:
 	var result := values.duplicate(true)
 	var scope := current()
 	var same_owner: bool = not result.has("owner_id") or result.owner_id == scope.get("owner_id", "")
-	for key in ["owner_id", "owner_name", "side", "item_id", "instance_id", "trait_id", "label"]:
+	for key in ["owner_id", "owner_name", "side", "item_id", "instance_id", "trait_id", "label", "replay_sources"]:
 		if same_owner and scope.has(key) and not result.has(key): result[key] = scope[key]
 	if same_owner and scope.has("record_mode"): result.record_mode = scope.record_mode
 	for key in ["record_action_id", "record_group_id", "record_parent_id"]:

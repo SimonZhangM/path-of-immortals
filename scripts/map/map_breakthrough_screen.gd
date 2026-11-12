@@ -50,6 +50,8 @@ var playback_controls: HBoxContainer
 var playback_pause: Button
 var speed_buttons: Dictionary = {}
 var element_buffs: BattleStatusIcons
+var ambient_vfx: Control
+var chance_percent: Label
 
 func _init() -> void:
 	name = "MapBreakthroughScreen"
@@ -86,6 +88,8 @@ func _init() -> void:
 	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stage.size = Vector2(2560,1440)
 	add_child(stage)
+	ambient_vfx = preload("res://scripts/presentation/breakthrough_vfx.gd").new()
+	stage.add_child(ambient_vfx)
 	board_profiles = JSON.parse_string(FileAccess.get_file_as_string(layout_reference.central_board.profiles))
 	board_reference = Control.new()
 	board_reference.name = "BoardReference"
@@ -239,7 +243,12 @@ func _build_progress_art() -> void:
 	progress_separator.text="/"
 	progress_required.add_theme_color_override("font_color",Color(config.required_color))
 	progress_value.hide()
-	chance_value=_value_label("SuccessChance",config.chance_rect,70)
+	chance_value=_value_label("SuccessChance",config.chance_rect,73)
+	chance_value.position.x=2219.2-chance_value.size.x*.5
+	chance_percent=_value_label("SuccessChancePercent",[0,0,70,76],73)
+	chance_percent.text="%"
+	chance_percent.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
+	_numeric_glow(chance_percent)
 	_numeric_glow(chance_value)
 	remaining_value=_value_label("RemainingDays",config.remaining_rect,40)
 	efficiency_value=HBoxContainer.new()
@@ -296,7 +305,7 @@ func _value_label(node_name: String, values: Array, font_size: int) -> Label:
 func _refresh_progress() -> void:
 	var run: RefCounted=session.runtime
 	var show_values: bool = run!=null and (int(loadout.growth.realm)==0 or run.phase=="succeeded")
-	for control: Control in [progress_value,chance_value,remaining_value,efficiency_value]: control.visible=show_values
+	for control: Control in [progress_value,chance_value,chance_percent,remaining_value,efficiency_value]: control.visible=show_values
 	status_value.hide()
 	progress_fill.present(float(run.progress())/run.target() if show_values else 0.0,show_values and session.started)
 	if run==null: return
@@ -306,7 +315,9 @@ func _refresh_progress() -> void:
 	if not show_values: return
 	progress_current.text=CultivationGrowth.display(run.progress()/100.0)
 	progress_required.text=str(int(run.target()/100))
-	chance_value.text=String.num(run.success_chance()*100.0,1).trim_suffix(".0")+"%"
+	chance_value.text=String.num(run.success_chance()*100.0,1).trim_suffix(".0")
+	var digit_width := chance_value.get_theme_font("font").get_string_size(chance_value.text,HORIZONTAL_ALIGNMENT_LEFT,-1,73).x
+	chance_percent.position=Vector2(2219.2+digit_width*.5+2.0,chance_value.position.y)
 	remaining_value.text="%d天" % run.remaining_days()
 	efficiency_number.text=CultivationGrowth.display(run.recent_gain()/100.0)
 
@@ -326,6 +337,9 @@ func _build_circle_art() -> void:
 	rotation_reference.add_child(circle_art)
 	rotation_reference.hide()
 
+func advance_ambient(delta: float) -> void:
+	ambient_vfx.advance_visual(delta)
+
 func refresh_rotation() -> void:
 	if session==null: return
 	if board_view!=null: board_view.refresh_cooldown_animation()
@@ -334,6 +348,7 @@ func refresh_rotation() -> void:
 	rotation_reference.rotation = deg_to_rad(fposmod(float(session.elapsed_usec)/1000000.0*degrees_per_second,360.0))
 
 func bind_session(value: RefCounted, equipment: MapLoadoutState) -> void:
+	ambient_vfx.session=value
 	session = value
 	loadout = equipment
 	board_view = BreakthroughBoard.new()

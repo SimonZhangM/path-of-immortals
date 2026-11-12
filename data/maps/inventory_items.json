@@ -4555,5 +4555,26 @@
     "effects": [],
     "description": "韩铁山借给你的工具包，旧皮卷里收着小铁锤、铁钳和锥子。带到古树下修稳长凳，用完后归还铁匠铺。",
     "flavor_description": "旧具在手，修得一处安稳。"
+  },
+  {
+    "id": "base.map_item.ancient_tree_leaf",
+    "name": "古树灵叶",
+    "category": "key",
+    "subcategory": "任务物品",
+    "quality": "",
+    "quest_item": true,
+    "grant_on_start": false,
+    "quantity": 1,
+    "acquired_at": 0,
+    "enhancement_level": 0,
+    "icon": "res://assets/item-qita-rw-gushulingye.webp",
+    "card_frame": "",
+    "card_border_color": "777f8a",
+    "footprint_columns": 1,
+    "footprint_rows": 1,
+    "cooldown": 0,
+    "effects": [],
+    "description": "在叠翠峰古树下整理鹿窝时拾得的灵叶。叶色青碧，脉络间隐有微光，暂不知有何用途。",
+    "flavor_description": "老树无言，一叶藏光。"
   }
 ]

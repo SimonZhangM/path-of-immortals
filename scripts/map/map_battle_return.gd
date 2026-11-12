@@ -41,7 +41,7 @@ func _record_result() -> void:
 			reward_error = _award_victory()
 			manager.loot_error = reward_error
 			if not reward_error.is_empty():
-				manager.loot_summary = reward_error + " 点击确定重试。"
+				manager.loot_summary = reward_error + " 点击离开重试。"
 				return
 			if not _progression_recorded and player_status != null:
 				if not manager._durable_snapshot.get("growth",{}).is_empty():

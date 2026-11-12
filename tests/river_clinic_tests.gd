@@ -167,7 +167,10 @@ func run() -> void:
 	var branch: MapLoadoutState = MapLoadoutStore.candidate(state).state
 	branch.storage_capacity_rules = state.storage_capacity_rules.duplicate(true)
 	branch.storage_capacity_rules.test_capacity_override = branch.storage_used_slots()
-	check(not RiverQuest.command(branch,directory+"full.json","accept").is_empty(),"full bag cannot silently overflow")
+	var full: MapLoadoutState = MapLoadoutStore.candidate(branch).state
+	full.storage_capacity_rules=branch.storage_capacity_rules.duplicate(true)
+	var occupied_before := full.storage_used_slots()
+	check(RiverQuest.command(full,directory+"full-accept.json","accept").is_empty() and RiverQuest.bag_count(full,BOOK)==1 and full.storage_used_slots()==occupied_before,"full bag accepts quest book without capacity use")
 	check(RiverQuest.command(branch,directory+"full.json","reserve").is_empty(),"book can be packed for later")
 	check(RiverQuest.story(branch).active=="gift_book" and RiverQuest.command(branch,directory+"full.json","advance").is_empty(),"packed book continues its remaining dialogue")
 	check(RiverQuest.arrival(branch,RiverQuest.TOWN,clinic.point_id).is_empty() and not branch.narrative.flags.get(RESCUED,false),"reserved but unreceived book cannot finish quest")

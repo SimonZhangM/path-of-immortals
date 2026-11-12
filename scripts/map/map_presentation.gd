@@ -185,6 +185,7 @@ func change_map(source: Control, destination: Control, outgoing: Vector2, incomi
 	transitioning = false
 
 func change_battle_scene(source: Node, destination: Node, source_view: CanvasItem, destination_view: CanvasItem, entering_battle: bool, battle_audio: GameAudio) -> void:
+	var region_music_continues: bool = not entering_battle and music_state in ["playing", "resuming"] and map_id == destination.definition.get("id", "")
 	source.process_mode = Node.PROCESS_MODE_DISABLED
 	destination.process_mode = Node.PROCESS_MODE_DISABLED
 	transitioning = true
@@ -195,7 +196,8 @@ func change_battle_scene(source: Node, destination: Node, source_view: CanvasIte
 	_cancel_fade()
 	if entering_battle:
 		music_state = "pausing"
-	await _uniform_fade(1.0, music if entering_battle else battle_audio.music, 0.0)
+	var outgoing_music := music if entering_battle or region_music_continues else battle_audio.music
+	await _uniform_fade(1.0, outgoing_music, MUSIC_VOLUME if region_music_continues else 0.0)
 	if entering_battle:
 		music.set_context_paused(true)
 		music_state = "paused"
@@ -211,7 +213,8 @@ func change_battle_scene(source: Node, destination: Node, source_view: CanvasIte
 		battle_audio.music.music_gain = 0.0
 	else:
 		enter_map(destination.definition, 0.0)
-		music.music_gain = 0.0
+		if not region_music_continues:
+			music.music_gain = 0.0
 		music_state = "resuming"
 	await _uniform_fade(0.0, battle_audio.music if entering_battle else music, MUSIC_VOLUME)
 	if not entering_battle:

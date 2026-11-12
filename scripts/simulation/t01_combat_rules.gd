@@ -1,5 +1,6 @@
 class_name T01CombatRules
 extends RefCounted
+const Attribution = preload("res://scripts/simulation/battle_attribution.gd")
 
 # Shared T01 settlement. Owns no nodes, wall clock or UI state. Every clock is
 # scheduled through BattleSimulation's stable microsecond queue.
@@ -16,7 +17,7 @@ var defer_thunder := 0
 
 func _init(battle: BattleSimulation) -> void:
 	_simulation = weakref(battle)
-	rng.seed = 29092026
+	rng.seed = battle.random_seed
 
 static func q(value: float) -> float:
 	return floorf(maxf(0, value) * 10.0 + 0.50000001) / 10.0
@@ -71,6 +72,7 @@ func emit(kind: String, at: int, values: Dictionary = {}) -> void:
 func record_source(owner: PartyMemberState, details: Dictionary = {}) -> Dictionary:
 	var source := details.duplicate(true)
 	source.merge({"owner_id": owner.id, "owner_name": owner.definition.name, "side": 0 if owner == sim.state.teams[0][0] else 1}, not source.has("trait_id"))
+	if source.has("instance_id") and not source.has("replay_sources"): source.replay_sources = Attribution.sources(source)
 	return source
 
 func consume(member: PartyMemberState, status: String, amount: int) -> void:
@@ -172,7 +174,7 @@ func _apply_status(member: PartyMemberState, status: String, amount: int, source
 			member.combat_statuses[status] = {"batches": [], "start": at + delay, "next": at + delay, "expires": 0, "source_id": source.id}
 		var pool: Dictionary = member.combat_statuses[status]
 		_serial += 1
-		pool.batches.append({"at": at, "serial": _serial, "count": remaining, "source": source.id})
+		pool.batches.append({"at": at, "serial": _serial, "count": remaining, "source": source.id, "origin": sim.record_trace.capture(record_source(source, feedback_source))})
 		if status == "寒霜" and frost_attack >= 0 and amount > original_amount:
 			pool.batches[-1].frost_attack = frost_attack
 			pool.batches[-1].fresh_bonus = mini(remaining,maxi(0,accepted-original_amount))
@@ -198,7 +200,7 @@ func _apply_status(member: PartyMemberState, status: String, amount: int, source
 			dispel.next = at + 1_000_000
 			dispel.expires = 0
 			schedule_status(member, "驱散")
-	status_event.merge({"value": accepted, "layers": layers(member, status), "expires": member.combat_statuses.get(status, {}).get("expires", 0), "previous_expiry": previous_expiry}, true)
+	status_event.merge({"value": accepted, "replay_added_layers":remaining, "layers": layers(member, status), "expires": member.combat_statuses.get(status, {}).get("expires", 0), "previous_expiry": previous_expiry}, true)
 	emit("status_applied", at, status_event)
 	return true
 
@@ -229,7 +231,7 @@ func tick_status(payload: Dictionary, at: int) -> void:
 		return
 	var n := layers(member, status)
 	var source: PartyMemberState = sim.state.teams[0][0] if sim.state.teams[0][0].id == pool.source_id else sim.state.teams[1][0]
-	var attribution := record_source(source, pool.get("feedback_source", {}))
+	var attribution := record_source(source, Attribution.status_context(member, status))
 	attribution.label = status
 	sim.record_trace.begin(attribution, at, "dot")
 	pool.next = at + 1_000_000
@@ -243,15 +245,40 @@ func convert_thunder(member: PartyMemberState, at: int) -> void:
 	var maximums := [1, 1, 2, 2, 3, 4]
 	var values := [10, 20, 40, 60, 80, 100]
 	while layers(member, "雷蕴") >= 10 and member.thunder_shields.size() < maximums[rank(member)]:
+		var origins := Attribution.pool(member, "雷蕴", 10)
 		consume(member, "雷蕴", 10)
-		member.sword_screen.clear()
+		discard_special(member, "sword_screen", at)
 		var multiplier := 1+sim.cultivation.bonus(member,"thunder",2,"凝罡",.1)+sim.cultivation.bonus(member,"thunder",4,"雷罡凝实",.2)
 		if sim.cultivation.general(member,"thunder",1,"雷罡"): multiplier+=.1
 		member.thunder_shields.append(q(values[rank(member)]*multiplier))
-		emit("shield_created", at, record_source(member, {"target_id": member.id, "target_name": member.definition.name, "value": member.thunder_shields[-1], "resource": "thunder_shield"}))
+		member.thunder_shield_origins.append({"replay_sources": origins})
+		emit("shield_created", at, record_source(member, {"target_id": member.id, "target_name": member.definition.name, "value": member.thunder_shields[-1], "resource": "thunder_shield", "replay_sources": origins}))
 
 func active_injury(member: PartyMemberState, at: int) -> int:
 	return layers(member, "重伤") if at >= int(member.combat_statuses.get("重伤", {}).get("start", 9223372036854775807)) else 0
+
+func shield_absorbed(member: PartyMemberState, value: float, origin: Dictionary, resource: String, at: int) -> void:
+	if value <= 0: return
+	var event := record_source(member, {"replay_sources": origin.get("replay_sources", []), "resource": resource, "value": value})
+	emit("replay_shield_absorbed", at, event)
+
+func thunder_origin(member: PartyMemberState) -> Dictionary:
+	return member.thunder_shield_origins[0] if not member.thunder_shield_origins.is_empty() else {}
+
+func pop_thunder_origin(member: PartyMemberState) -> Dictionary:
+	return member.thunder_shield_origins.pop_front() if not member.thunder_shield_origins.is_empty() else {}
+
+func discard_special(member: PartyMemberState, resource: String, at: int) -> void:
+	if resource == "sword_screen":
+		if not member.sword_screen.is_empty():
+			emit("replay_shield_discarded", at, record_source(member, {"value":member.sword_screen.value,"replay_sources":member.sword_screen.get("replay_sources",[])}))
+		member.sword_screen.clear()
+	else:
+		for index in member.thunder_shields.size():
+			var origin: Dictionary = member.thunder_shield_origins[index] if index < member.thunder_shield_origins.size() else {}
+			emit("replay_shield_discarded", at, record_source(member, {"value":member.thunder_shields[index],"replay_sources":origin.get("replay_sources",[])}))
+		member.thunder_shields.clear()
+		member.thunder_shield_origins.clear()
 
 func restore(member: PartyMemberState, resource: String, value: float, at: int, ceiling := -1.0, attribution: Dictionary = {}) -> float:
 	if member.hp <= 0:
@@ -407,7 +434,10 @@ func _activate(id: String, at: int) -> void:
 		# attack attempt (including a miss), never on an unaffordable cycle.
 		attack.value += float(owner.pending_item_attacks.get(item.id, 0))
 		if float(owner.pending_item_attacks.get(item.id, 0)) > 0: source.record_statuses = ["攻击强化"]
+		if owner.pending_attack_origins.has(item.id):
+			source.replay_flat_support = owner.pending_attack_origins[item.id].duplicate(true)
 		owner.pending_item_attacks.erase(item.id)
+		owner.pending_attack_origins.erase(item.id)
 		var result := attack_item(owner, target, item, attack, at, source)
 		hit = result.hit
 		hp_loss = result.hp_loss
@@ -420,6 +450,7 @@ func _activate(id: String, at: int) -> void:
 			"delay_cooldown": delay_cooldowns(target, e, at, source)
 			"prime_item_attack":
 				owner.pending_item_attacks[e.target_item] = e.value
+				owner.pending_attack_origins[e.target_item] = {"value":e.value,"replay_sources":Attribution.sources(source)}
 				emit("attack_primed", at, {"target_id": owner.id, "target_name": owner.definition.name, "primed_item_id": e.target_item, "value": e.value})
 			"damage": pass
 			"apply_status":
@@ -453,7 +484,7 @@ func _activate(id: String, at: int) -> void:
 			"barrier":
 				sim.cultivation.add_barrier(owner, e.value, item.id)
 			"resistance":
-				owner.temporary_effects[item.id] = {"until": at + roundi(e.duration * 1_000_000), "element": e.element, "reduction": e.value}
+				owner.temporary_effects[item.id] = {"until": at + roundi(e.duration * 1_000_000), "element": e.element, "reduction": e.value, "replay_sources":Attribution.sources(source)}
 				sim.queue.schedule(at + roundi(e.duration * 1_000_000), "t01_wake", {}, -2)
 				emit("temporary_buff", at, {"target_id": owner.id, "target_name": owner.definition.name, "label": "元素伤害减免", "value": e.value, "duration": e.duration})
 			_: assert(false, "Unimplemented effect %s on %s" % [e.effect, item.id])
@@ -489,6 +520,7 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 	source.category = item.category if not source.has("category") else source.category
 	var weapon: bool = source.category == "weapon"
 	var flame := layers(owner, "附炎")
+	var flame_origins := Attribution.pool(owner,"附炎")
 	source.flame = flame
 	if flame > 0: _record_status(source, "附炎")
 	consume(owner, "附炎", flame)
@@ -516,12 +548,12 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 				if not chosen.is_empty(): sim.timeline.change_cd(chosen, -roundi(dodge.advance_cd * 1_000_000), at)
 			sim.record_trace.end()
 		else: half_consume(target, "轻灵")
-		if art.spec(owner, "fire", 1, "余焰"): apply_status(owner, "附炎", roundi(flame * .5), owner, at)
+		if art.spec(owner, "fire", 1, "余焰"): apply_status(owner, "附炎", roundi(flame * .5), owner, at, false, -1, {"replay_sources":flame_origins})
 		art.dodged(target, owner, at)
 		emit("miss", at, {"target_id": target.id, "target_name": target.definition.name, "owner_name": owner.definition.name, "reason": "闪避" if not dodge.is_empty() else "未命中"})
 		return {"hit": false, "hp_loss": 0.0, "armor_loss": 0.0, "effective": 0.0}
 	defer_thunder += 1
-	if art.spec(owner, "fire", 5, "火种不灭"): apply_status(owner, "附炎", roundi(flame * .5), owner, at)
+	if art.spec(owner, "fire", 5, "火种不灭"): apply_status(owner, "附炎", roundi(flame * .5), owner, at, false, -1, {"replay_sources":flame_origins})
 	var critical := false
 	var critical_scale := 1.5
 	var reduction := 0.0
@@ -590,15 +622,24 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 		if not enchant.is_empty() and part.main:
 			var extra := source.duplicate(true)
 			extra.erase("spell")
+			extra.replay_sources=enchant.get("replay_sources",[])
+			extra.replay_damage_kind="damage_status"
+			extra.erase("replay_flat_support")
 			extra.damage_pct = -reduction
 			extra.adjusted = true
 			var raw_extra := source.duplicate(true)
 			raw_extra.erase("spell")
+			raw_extra.erase("replay_flat_support")
 			raw_extra.damage_pct = -reduction
-			components.append({"value": adjusted_damage(owner, target, part.original * enchant.ratio, "法术型", "base.element.metal", at, raw_extra, true), "type":"法术型", "element":"base.element.metal", "source":extra})
+			var enchant_value := adjusted_damage(owner, target, part.original * enchant.ratio, "法术型", "base.element.metal", at, raw_extra, true)
+			extra.replay_supports=raw_extra.get("replay_supports",[])
+			components.append({"value":enchant_value,"type":"法术型","element":"base.element.metal","source":extra})
 	if flame > 0:
 		var flame_source := source.duplicate(true)
 		flame_source.erase("spell")
+		flame_source.erase("replay_flat_support")
+		flame_source.replay_sources=flame_origins
+		flame_source.replay_damage_kind="damage_status"
 		flame_source.damage_pct = -reduction + art.bonus(owner, "fire", 2, "蕴火", .1) + art.bonus(owner, "fire", 4, "炎势炽盛", .2)
 		var value := adjusted_damage(owner, target, flame, "法术型", "base.element.fire", at, flame_source, true)
 		flame_source.adjusted = true
@@ -627,15 +668,17 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 	if weapon and owner.hp > 0 and target.hp > 0 and before["锋痕"] > 0:
 		var marks: int = before["锋痕"]
 		var retained := roundi(marks * .25) if art.spec(owner, "metal", 1, "留痕") else 0
+		var mark_sources := Attribution.pool(target,"锋痕")
 		consume(target, "锋痕", marks - retained)
-		var mark_result := damage(owner, target, marks, "法术型", "base.element.metal", at, {"kind":"derived", "label":"锋痕", "damage_pct":art.bonus(owner,"metal",2,"刻痕",.1)+art.bonus(owner,"metal",4,"深痕",.2)}, false, round_context)
-		if mark_result.get("hp_loss",0) > 0 and art.spec(owner,"metal",3,"锋痕见血"): apply_status(target,"流血",1,owner,at)
+		var mark_result := damage(owner, target, marks, "法术型", "base.element.metal", at, {"kind":"derived", "label":"锋痕", "replay_sources":mark_sources, "damage_pct":art.bonus(owner,"metal",2,"刻痕",.1)+art.bonus(owner,"metal",4,"深痕",.2)}, false, round_context)
+		if mark_result.get("hp_loss",0) > 0 and art.spec(owner,"metal",3,"锋痕见血"): apply_status(target,"流血",1,owner,at,false,-1,{"replay_sources":mark_sources})
 	art.after_primary(owner,target,item,p,before,{"hit":true,"hp_loss":direct_hp_loss,"armor_loss":armor_loss,"effective":effective,"post_shield":post_shield},source,at,round_context)
 	if target.hp > 0 and owner.hp > 0 and post_shield > 0 and weapon and layers(target,"反锋") > 0:
 		var n := layers(target,"反锋")
+		var counter_sources := Attribution.pool(target,"反锋")
 		consume(target,"反锋",n - (roundi(n * .25) if art.spec(target,"metal",1,"回锋") else 0))
-		var counter := damage(target,owner,n,"法术型","base.element.metal",at,{"kind":"counter","label":"反锋","damage_pct":art.bonus(target,"metal",2,"蕴锋",.1)+art.bonus(target,"metal",4,"化锋",.2)},false,{"special":art.has_special(owner)})
-		if counter.get("hp_loss",0)>0 and art.spec(target,"metal",3,"反锋生痕"): apply_status(owner,"锋痕",1,target,at)
+		var counter := damage(target,owner,n,"法术型","base.element.metal",at,{"kind":"counter","label":"反锋","replay_sources":counter_sources,"damage_pct":art.bonus(target,"metal",2,"蕴锋",.1)+art.bonus(target,"metal",4,"化锋",.2)},false,{"special":art.has_special(owner)})
+		if counter.get("hp_loss",0)>0 and art.spec(target,"metal",3,"反锋生痕"): apply_status(owner,"锋痕",1,target,at,false,-1,{"replay_sources":counter_sources})
 		if art.spec(target,"metal",5,"反锋镇兵") and sim.timeline.timers.has(source.get("instance_id","")): sim.state.item_runtime[source.instance_id].next_cd_extra = 1_000_000
 	if target.hp > 0 and owner.hp > 0 and armor_loss > 0:
 		var id := art.prepared(target,"armor_counter",at)
@@ -647,7 +690,7 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 		if art.spec(owner,"earth",3,"乏极成伤"): apply_status(target,"重伤",1,owner,at)
 		if art.spec(owner,"earth",5,"疲势崩裂") and target.hp>0: damage(owner,target,used_fatigue*2,"法术型","base.element.earth",at,{"kind":"derived","label":"疲势崩裂"},false,{"special":art.has_special(target)})
 	if weapon and not forced.is_empty() and forced.has("injury") and effective > 0: apply_status(target,"重伤",forced.injury,owner,at,false,-1,forced.record_source)
-	if weapon and enchant.has("bleed") and direct_hp_loss > 0: apply_status(target,"流血",enchant.bleed,owner,at)
+	if weapon and enchant.has("bleed") and direct_hp_loss > 0: apply_status(target,"流血",enchant.bleed,owner,at,false,-1,{"replay_sources":enchant.get("replay_sources",[])})
 	if owner.hp > 0 and target.hp > 0 and weapon: art.followup(owner,target,item,primary_total,at)
 	if target.hp > 0 and effective > 0: on_attacked(target,at)
 	defer_thunder -= 1
@@ -662,6 +705,7 @@ func allocate_attack_shields(owner: PartyMemberState, target: PartyMemberState, 
 	context.shield_resource = "sword_screen" if not target.sword_screen.is_empty() else ("thunder_shield" if not target.thunder_shields.is_empty() else "barrier")
 	var allowance: float = context.allowance
 	var broken := 0
+	var broken_origins: Array = []
 	var screen: Dictionary = {}
 	var barrier_before := target.barrier
 	var total := 0.0
@@ -670,6 +714,7 @@ func allocate_attack_shields(owner: PartyMemberState, target: PartyMemberState, 
 		var absorbed := 0.0
 		if context.special and not target.sword_screen.is_empty():
 			absorbed = q(minf(target.sword_screen.value,available))
+			shield_absorbed(target,absorbed,target.sword_screen,"sword_screen",at)
 			target.sword_screen.value = q(target.sword_screen.value-absorbed)
 			if target.sword_screen.value <= 0:
 				screen = target.sword_screen.duplicate(true)
@@ -677,15 +722,17 @@ func allocate_attack_shields(owner: PartyMemberState, target: PartyMemberState, 
 		elif context.special:
 			while available > 0 and not target.thunder_shields.is_empty():
 				var used := q(minf(available,target.thunder_shields[0]))
+				shield_absorbed(target,used,thunder_origin(target),"thunder_shield",at)
 				target.thunder_shields[0] = q(target.thunder_shields[0]-used)
 				available = q(available-used)
 				absorbed += used
 				if target.thunder_shields[0] <= 0:
 					target.thunder_shields.pop_front()
+					broken_origins.append(pop_thunder_origin(target))
 					broken += 1
 		elif target.barrier > 0:
 			absorbed = q(minf(target.barrier,available))
-			sim.cultivation.spend_barrier(target,absorbed)
+			sim.cultivation.spend_barrier(target,absorbed,"",true,at)
 		allowance = q(allowance-absorbed)
 		part.shield_loss = absorbed
 		total += absorbed
@@ -694,13 +741,16 @@ func allocate_attack_shields(owner: PartyMemberState, target: PartyMemberState, 
 	if broken > 0 or not screen.is_empty() or barrier_before > 0 and target.barrier <= 0:
 		emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": context.shield_resource})
 	if not screen.is_empty(): sim.cultivation.shield_broken(target,owner,context,at,screen)
-	for i in broken: sim.cultivation.shield_broken(target,owner,context,at)
+	for i in broken: sim.cultivation.shield_broken(target,owner,context,at,{},broken_origins[i].get("replay_sources",[]))
 	if target.barrier < barrier_before: wake_barrier_items(target,at)
 	if owner.hp <= 0 and total > 0:
 		emit("shield_interrupted",at,{"target_id":target.id,"target_name":target.definition.name,"value":total,"resource":context.shield_resource})
 
 func adjusted_damage(owner: PartyMemberState, target: PartyMemberState, base: float, attack_type: String, element_id: String, at: int, source: Dictionary, active: bool, critical := 1.0) -> float:
 	assert(attack_type in EffectSystem.ARMOR_MULTIPLIERS, "Unknown attack type " + attack_type)
+	var supports: Array = []
+	if source.has("replay_flat_support"):
+		supports.append(source.replay_flat_support.merged({"label":"攻击强化","flat":true}))
 	var multiplier := EffectSystem.armor_multiplier(attack_type, target.armor_type)
 	var element := element_id.trim_prefix("base.element.")
 	var defense := target.defense_element.trim_prefix("base.element.")
@@ -720,21 +770,46 @@ func adjusted_damage(owner: PartyMemberState, target: PartyMemberState, base: fl
 			if own > 0: _record_status(source, group[0])
 			for status: String in [group[1], group[2]]:
 				if layers(target, status) > 0: _record_status(source, status)
+			for status: String in group:
+				var subject := owner if status == group[0] else target
+				if layers(subject,status)>0: supports.append({"label":status,"replay_sources":Attribution.pool(subject,status)})
 		if element in ["fire", "thunder"] and layers(target, "缠绕") > 0:
 			_record_status(source, "缠绕")
 			var binder := sim.cultivation.status_source(target,"缠绕")
 			multiplier += int(source.get("entangle", layers(target, "缠绕"))) * .02 * (1+sim.cultivation.bonus(binder,"wood",2,"紧缚",.2)+sim.cultivation.bonus(binder,"wood",4,"盘根愈固",.3))
+			supports.append({"label":"缠绕","replay_sources":Attribution.pool(target,"缠绕")})
 	if source.get("kind", "active") in ["active", "counter", "followup"]:
 		for effect: Dictionary in target.temporary_effects.values():
 			if effect.get("element") == element_id and int(effect.until) > at:
 				multiplier -= float(effect.reduction)
+				supports.append({"label":"元素伤害减免","value":-float(effect.reduction),"replay_sources":effect.get("replay_sources",[])})
 	multiplier += sim.cultivation.damage_bonus(owner,target,element,attack_type,source,active)
 	if attack_type in ["斩击", "穿刺", "钝击"]:
 		for effect: Dictionary in owner.temporary_effects.values():
 			if int(effect.get("until", 0)) > at:
 				multiplier += float(effect.get("physical_bonus", 0))
 				if float(effect.get("physical_bonus", 0)) > 0: _record_status(source, "物理攻击提高")
+				if float(effect.get("physical_bonus",0))>0: supports.append({"label":"物理攻击提高","value":float(effect.physical_bonus),"replay_sources":effect.get("replay_sources",[])})
+	# Bookkeeping only: a single additive support has an exact counterfactual.
+	# Overlapping/chance-based interactions retain participation, not invented totals.
+	if not source.get("adjusted",false):
+		if supports.size()==1 and supports[0].has("value"):
+			var support: Dictionary = supports[0]
+			var without := maxf(0,base-float(support.value))*multiplier if support.get("flat",false) else base*(multiplier-float(support.value))
+			support.without = q(maxf(0,without)*critical)
+			support.metric = "damage_assist" if float(support.value)>0 else "damage_mitigated"
+		source.replay_supports = supports
 	return q(base if source.get("adjusted", false) else maxf(0, base * multiplier) * critical)
+
+func record_supports(source: Dictionary, target: PartyMemberState, at: int, actual: float, capacity_before: float, exact: bool) -> void:
+	for support: Dictionary in source.get("replay_supports",[]):
+		var quantified: bool = exact and support.has("without")
+		var event := {"target_id":target.id,"label":support.label,"replay_sources":support.get("replay_sources",[]),"quantified":quantified}
+		emit("replay_support",at,event)
+		if quantified:
+			var other := minf(capacity_before,float(support.without))
+			var value := maxf(0,actual-other) if support.metric=="damage_assist" else maxf(0,other-actual)
+			emit("replay_assist",at,event.merged({"metric":support.metric,"value":value}))
 
 func _record_status(source: Dictionary, status: String) -> void:
 	if not source.has("record_statuses"): source.record_statuses = []
@@ -756,6 +831,7 @@ func _damage(owner: PartyMemberState, target: PartyMemberState, base: float, att
 		return {}
 	var shield_resource: String = round_context.get("shield_resource", "sword_screen" if not target.sword_screen.is_empty() else ("thunder_shield" if not target.thunder_shields.is_empty() else "barrier"))
 	var armor_before := target.armor
+	var hp_before := target.hp
 	var element := element_id.trim_prefix("base.element.")
 	var owner_alive := owner.hp>0
 	var adjusted := adjusted_damage(owner, target, base, attack_type, element_id, at, source, active, critical)
@@ -774,6 +850,7 @@ func _damage(owner: PartyMemberState, target: PartyMemberState, base: float, att
 		shield_loss = round_context.allocated_shield
 	elif round_context.get("special", false) and not target.sword_screen.is_empty():
 		shield_loss = q(minf(target.sword_screen.value,minf(adjusted,float(round_context.get("allowance",adjusted*target.sword_screen.absorption)))))
+		shield_absorbed(target,shield_loss,target.sword_screen,"sword_screen",at)
 		target.sword_screen.value = q(target.sword_screen.value-shield_loss)
 		if target.sword_screen.value <= 0:
 			var screen := target.sword_screen.duplicate()
@@ -784,17 +861,19 @@ func _damage(owner: PartyMemberState, target: PartyMemberState, base: float, att
 		var allowance := q(minf(adjusted, float(round_context.get("allowance", adjusted * sim.cultivation.absorption(target)))))
 		while allowance > 0 and not target.thunder_shields.is_empty():
 			var absorb := q(minf(target.thunder_shields[0], allowance))
+			shield_absorbed(target,absorb,thunder_origin(target),"thunder_shield",at)
 			target.thunder_shields[0] = q(target.thunder_shields[0] - absorb)
 			allowance = q(allowance - absorb)
 			shield_loss += absorb
 			round_context.shield_total = float(round_context.get("shield_total",0))+absorb
 			if target.thunder_shields[0] == 0:
 				target.thunder_shields.pop_front()
+				var origin := pop_thunder_origin(target)
 				emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": shield_resource})
-				sim.cultivation.shield_broken(target,owner,round_context,at)
+				sim.cultivation.shield_broken(target,owner,round_context,at,{},origin.get("replay_sources",[]))
 	elif target.barrier > 0:
 		shield_loss = q(minf(target.barrier, minf(adjusted, float(round_context.get("allowance", adjusted * 0.3)))))
-		sim.cultivation.spend_barrier(target,shield_loss)
+		sim.cultivation.spend_barrier(target,shield_loss,"",true,at)
 		if target.barrier <= 0: emit("shield_broken", at, {"target_id": target.id, "target_name": target.definition.name, "resource": shield_resource})
 	if round_context.has("allowance"):
 		round_context.allowance = q(round_context.allowance - shield_loss)
@@ -817,7 +896,7 @@ func _damage(owner: PartyMemberState, target: PartyMemberState, base: float, att
 	if source.get("label")=="灼烧" and sim.cultivation.spec(owner,"fire",5,"灼骨"): health_part*=1.5
 	var hp_loss := q(minf(target.hp, health_part))
 	target.hp = q(target.hp - hp_loss)
-	if hp_loss>0 and source.get("flame_packet",false) and sim.cultivation.spec(owner,"fire",3,"炎入灼痕"): apply_status(target,"灼烧",2,owner,at)
+	if hp_loss>0 and source.get("flame_packet",false) and sim.cultivation.spec(owner,"fire",3,"炎入灼痕"): apply_status(target,"灼烧",2,owner,at,false,-1,source)
 	if bypass>0 and hp_loss>0 and sim.cultivation.spec(owner,"fire",3,"熔火生灼"): apply_status(target,"灼烧",2,owner,at)
 	var side := 0 if owner == sim.state.teams[0][0] else 1
 	sim.state.damage_totals[side] += hp_loss
@@ -832,6 +911,7 @@ func _damage(owner: PartyMemberState, target: PartyMemberState, base: float, att
 		event.owner_id = source.owner_id
 		event.owner_name = source.owner_name
 	emit("damage", at, event)
+	record_supports(source,target,at,hp_loss+armor_loss+shield_loss,hp_before+armor_before,shield_loss==0 and barrier_before==0 and not round_context.get("special",false) and bypass==0 and not p.has("armor_only") and not p.has("armor_bonus") and not (source.get("label")=="灼烧" and sim.cultivation.spec(owner,"fire",5,"灼骨")))
 	if barrier_before > target.barrier:
 		wake_barrier_items(target, at)
 	if adjusted > 0 and target.hp > 0 and source.get("kind", "active") == "active" and not source.has("resonance"):
@@ -874,6 +954,7 @@ func on_attacked(member: PartyMemberState, at: int) -> void:
 			continue
 		for e: Dictionary in sim._definitions[id].effects_for("on_attacked"):
 			if e.effect == "apply_status" and apply_status(member, e.status, e.value, member, at, false, -1, item_source(id)):
+				emit("replay_trigger",at,item_source(id))
 				rt.reactive_ready = at + roundi(e.cooldown * 1_000_000)
 				sim.timeline.timers[id].reactive = float(e.cooldown)*1_000_000
 

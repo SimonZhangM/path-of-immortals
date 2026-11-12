@@ -6,7 +6,7 @@
   },
   "tree": {
     "map_id": "base.map.diecuifeng",
-    "point_id": "base.map.diecuifeng.point.n11"
+    "point_id": "base.map.diecuifeng.point.n09"
   },
   "accepted_location": "叠翠峰·鹿鸣草地",
   "presentation": {
@@ -143,16 +143,22 @@
     },
     "clear": {
       "lines": [
-        "窝口的藤须已经退去，树根间只剩下一道浅浅的拖痕。风穿过枝叶，里面的干草轻轻动了动。",
-        "（等了一会儿，确认藤须没有再探回来，才把横在窝口的枯枝挪到一旁。）",
+        "窝口的藤须已经退去，树根间留下一道浅浅的拖痕。里面的干草还好好留着。",
+        "（等了一会儿，见藤须没有再探回来，便把横在窝口的枯枝挪到一旁。）",
         "这下能进去了。",
-        "（看了看里头一大一小的卧痕，没有翻动干草，又将外侧平石上的碎叶拂净。）",
-        "里头留给你们。往后路过，我就在外头歇歇脚。",
-        "窝口重新空了出来，里面的干草还好好留着。外侧的平石离窝口稍远，坐在那里，也不会挡着进出的路。"
+        "（看了看里头一大一小的卧痕，将散在入口的几根草梗拢到边上，没有再动窝里的干草。）",
+        "枯枝下压着一片青碧的叶子，模样与头顶古树的叶片相似，叶脉间却隐约泛着微光。",
+        "这片叶子……倒有些特别。",
+        "（拾起灵叶收好，又往草坡的方向看了一眼。）",
+        "好了，等你们回来。",
+        "你沿着石径离开，树荫重新静了下来。"
       ],
       "line_speakers": [
         "base.narrator",
         "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.map_player.chen_yu",
+        "base.narrator",
         "base.map_player.chen_yu",
         "base.map_player.chen_yu",
         "base.map_player.chen_yu",
@@ -167,8 +173,8 @@
       "lines": [
         "窝口的软土上，多了几枚新蹄印。里面的干草又卧平了，小小的一团，紧贴着大的那一侧。",
         "看来，昨晚回来睡过了。",
-        "（把药篓搁在外头的平石上，坐了一会儿。）",
-        "风吹过树梢，几片叶影从石面上慢慢移过去。你没有再往窝里探，只在树荫里歇了片刻。"
+        "（在石径边停了一会儿，没有再往窝里探。）",
+        "风吹过树梢，你看了看那处草窝，继续往山上走去。"
       ],
       "line_speakers": [
         "base.narrator",
@@ -185,7 +191,7 @@
   "battle": {
     "id": "base.map_event.quest.lumianchu.battle",
     "type": "encounter",
-    "point_id": "base.map.diecuifeng.point.n11",
+    "point_id": "base.map.diecuifeng.point.n09",
     "trigger": "click",
     "presentation": {
       "illustration": ""
@@ -206,7 +212,7 @@
       "targets": [
         {
           "map_id": "base.map.diecuifeng",
-          "point_id": "base.map.diecuifeng.point.n11"
+          "point_id": "base.map.diecuifeng.point.n09"
         }
       ]
     },
@@ -218,19 +224,19 @@
       "targets": [
         {
           "map_id": "base.map.diecuifeng",
-          "point_id": "base.map.diecuifeng.point.n11"
+          "point_id": "base.map.diecuifeng.point.n09"
         }
       ]
     },
     {
       "id": "clear",
-      "text": "整理窝口与树下的平石",
+      "text": "清理草窝入口",
       "show_count": false,
       "completed": false,
       "targets": [
         {
           "map_id": "base.map.diecuifeng",
-          "point_id": "base.map.diecuifeng.point.n11"
+          "point_id": "base.map.diecuifeng.point.n09"
         }
       ]
     }
@@ -238,11 +244,21 @@
   "people": [],
   "rewards": [
     {
-      "kind": "unlock",
-      "name": "树下歇息",
+      "kind": "item",
+      "item_id": "base.map_item.ancient_tree_leaf",
+      "name": "古树灵叶",
       "quantity": 1,
-      "badge_text": "开放",
-      "icon": "res://assets/map-xiux-shiwai.webp"
+      "icon": "res://assets/item-qita-rw-gushulingye.webp",
+      "show_tooltip": true
     }
-  ]
+  ],
+  "legacy_tree": {
+    "map_id": "base.map.diecuifeng",
+    "point_id": "base.map.diecuifeng.point.n11"
+  },
+  "completion_reward": {
+    "id": "base.map_reward.lumianchu.leaf",
+    "item_id": "base.map_item.ancient_tree_leaf",
+    "quantity": 1
+  }
 }

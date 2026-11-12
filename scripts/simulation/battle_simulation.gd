@@ -1,6 +1,9 @@
 class_name BattleSimulation
 extends RefCounted
 
+const DEFAULT_RANDOM_SEED := 29092026
+var random_seed: int = DEFAULT_RANDOM_SEED
+
 const INSERTION_COOLDOWN_USEC := 3_000_000
 var insertion_cooldown_usec: int = INSERTION_COOLDOWN_USEC
 var settlement_interval_usec: int = 0
@@ -13,6 +16,8 @@ var _versions: Dictionary = {}
 var _registry: ContentRegistry
 var _effects := EffectSystem.new()
 var _pending_events: Array[Dictionary] = []
+var replay := preload("res://scripts/simulation/battle_replay_stats.gd").new()
+var replay_enabled := true
 var record_trace := preload("res://scripts/simulation/battle_record_trace.gd").new()
 var _pending_restores: int = 0
 var _unit_entry_until: Dictionary = {}
@@ -25,7 +30,8 @@ var timeline: CombatTimeline
 var cultivation: CultivationCombat
 var item_rules: BattleItemRules
 
-func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = [], legacy_fixed_defense: bool = false) -> void:
+func _init(allies: Array, enemies: Array, registry: ContentRegistry, ally_companions: Array = [], enemy_companions: Array = [], legacy_fixed_defense: bool = false, battle_seed: int = DEFAULT_RANDOM_SEED) -> void:
+	random_seed = battle_seed
 	state = GameState.new(allies, enemies, ally_companions, enemy_companions)
 	state.legacy_fixed_defense = legacy_fixed_defense
 	_registry = registry
@@ -254,7 +260,7 @@ func start() -> bool:
 	if not configuration_error.is_empty() or state.phase != GameState.Phase.PREPARATION:
 		return false
 	state.phase = GameState.Phase.BATTLE
-	_pending_events.append({"kind": "started", "at_usec": 0})
+	_pending_events.append({"kind": "started", "at_usec": 0, "random_seed": random_seed})
 	if t01 != null:
 		for team: Array in state.teams:
 			t01.refresh_equipment(team[0])
@@ -693,6 +699,7 @@ func _finish(result: String, at_usec: int) -> void:
 			member.combat_statuses.clear()
 			member.temporary_effects.clear()
 			member.thunder_shields.clear()
+			member.thunder_shield_origins.clear()
 			member.barrier = 0
 			member.barrier_sources.clear()
 			member.sword_screen.clear()
@@ -709,4 +716,10 @@ func _finish(result: String, at_usec: int) -> void:
 func drain_events() -> Array[Dictionary]:
 	var events := _pending_events
 	_pending_events = []
+	if events.is_empty(): return events
+	for i in events.size():
+		if not events[i].has("record_sequence"): events[i] = record_trace.annotate(events[i])
+	if replay_enabled:
+		replay.register(state.teams)
+		replay.consume(events)
 	return events

@@ -49,6 +49,7 @@ func present() -> void:
 	if saved.choice_pending:
 		_ensure_choice()
 		choice_dialog.present_confirmation("替周伯去铁匠铺取件？")
+		preload("res://scripts/map/map_task_choice_style.gd").apply_confirmation(choice_dialog)
 		choice_dialog.confirm_button.get_node("Caption").text = "去取件"
 		choice_dialog.cancel_button.get_node("Caption").text = "稍后再来"
 

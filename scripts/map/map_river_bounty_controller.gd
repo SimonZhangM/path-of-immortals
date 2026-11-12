@@ -44,6 +44,7 @@ func present() -> void:
 			choice_dialog.confirmed.connect(func(): choose(true))
 			choice_dialog.cancelled.connect(func(): choose(false))
 		choice_dialog.present_confirmation("接下清理河湾兽患的悬赏？")
+		preload("res://scripts/map/map_task_choice_style.gd").apply_confirmation(choice_dialog)
 		choice_dialog.confirm_button.get_node("Caption").text = "接下悬赏"
 		choice_dialog.cancel_button.get_node("Caption").text = "暂不接取"
 

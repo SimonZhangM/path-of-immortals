@@ -1393,6 +1393,9 @@ func _present_event_progress(completed_id: String = "") -> void:
 		dialogue.present(event_state.active_event(), event_state.current_line(), event_state.current_speaker_id(), event_state.phase)
 
 func _accept_reward() -> void:
+	if deer_rest_controller!=null and deer_rest_controller.owns_dialogue():
+		deer_rest_controller.accept_reward()
+		return
 	if river_bounty_controller!=null and river_bounty_controller.owns_dialogue():
 		river_bounty_controller.accept_reward()
 		return
@@ -2184,6 +2187,7 @@ func _process(delta: float) -> void:
 	if is_breakthrough_open():
 		if not is_instance_valid(breakthrough_exit_dialog) or not breakthrough_exit_dialog.visible:
 			breakthrough_session.advance(delta)
+			breakthrough_screen.advance_ambient(delta)
 		breakthrough_screen.refresh_rotation()
 	if is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open(): return
 	if cultivation_session != null and not Engine.is_editor_hint(): cultivation_session.advance(delta)

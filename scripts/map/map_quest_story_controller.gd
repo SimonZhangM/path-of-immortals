@@ -83,7 +83,10 @@ func occupy(scene: String, phase := "dialogue") -> void:
 
 func try_arrival(point_id: String, clicked := false) -> bool:
 	if map.event_state.is_active(): return owns_dialogue()
-	var scene: String = model.interaction(map.loadout,map.definition.id,point_id) if clicked and model in [HerbQuest,HomecomingQuest,FishingNetQuest] else model.arrival(map.loadout,map.definition.id,point_id)
+	# A quest's authoritative marker targets also authorize arrival interaction.
+	# Do not infer eligibility from a visible sprite or auto-open unmarked chats.
+	var marked: bool = model.has_method("marker_points") and point_id in model.marker_points(map.loadout,map.definition.id)
+	var scene: String = model.interaction(map.loadout,map.definition.id,point_id) if (clicked or marked) and model.has_method("interaction") else model.arrival(map.loadout,map.definition.id,point_id)
 	if scene.is_empty(): return false
 	begin(scene)
 	return true

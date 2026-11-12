@@ -46,6 +46,12 @@ var _last_time_usec: int = -1
 var board_layout := BoardLayout.plain()
 var board_texture: Texture2D
 var _tooltip_entry: Dictionary = {}
+var replay_mode := false
+var replay_filter := "all"
+const ReplayFormat = preload("res://scripts/presentation/battle_replay_format.gd")
+var _replay_font: FontVariation
+const REPLAY_VEIL := Color(0.125, 0.145, 0.173, 0.55)
+const REPLAY_ICON_SIDE := 23.0*1.1
 
 func _ready() -> void:
 	ItemTooltipHost.bind(self, _tooltip_key_at, build_item_tooltip)
@@ -267,6 +273,9 @@ func make_drag_preview(item: ItemData, entry: Dictionary) -> Control:
 func _draw() -> void:
 	if manager == null or inventory == null:
 		return
+	# Board artwork and item art draw behind this control. Cover only the inner
+	# playing surface, then draw the statistics above it; preserve the outer frame.
+	if replay_mode: draw_rect(grid_rect().grow(-3), REPLAY_VEIL)
 	var visible_items := inventory.get_instances()
 	for id in _pulses:
 		if inventory.get_instance(id).is_empty():
@@ -278,6 +287,9 @@ func _draw() -> void:
 		var rect := board_layout.footprint_rect(instance["cell"], Vector2i(1,2) if instance.get("vertical_book",false) else item.grid_size, size).grow(-4)
 		var id: String = instance["instance_id"]
 		var ghost := inventory.get_instance(id).is_empty()
+		if replay_mode:
+			if not ghost: _draw_replay(rect,item,manager.simulation.replay.item(id))
+			continue
 		if _textures.has(item.id):
 			var texture: Texture2D = _textures[item.id]
 			var icon_draw_rect := ItemDragPreview.fitted_icon_rect(texture, rect.grow(4))
@@ -443,14 +455,19 @@ func _tooltip_key_at(at_position: Vector2) -> String:
 		return ""
 	var item := manager.registry.get_item(entry["item_id"])
 	_tooltip_entry = entry
-	return item.id
+	return ("replay/%s/%s" % [manager.simulation.replay.battle_id,entry.instance_id]) if replay_mode else item.id
 
 func build_item_tooltip(_for_text: String) -> Object:
 	if _tooltip_entry.is_empty():
 		return null
 	var item := manager.registry.get_item(_tooltip_entry["item_id"])
-	var panel := ItemTooltip.new()
 	var owner: PartyMemberState = (manager.enemies if enemy_side else manager.party)[member_index]
+	if replay_mode:
+		var stats_panel = preload("res://scripts/ui/battle_replay_tooltip.gd").new()
+		var context := {"enemy_armor_type": EnemyPresentation.combat_tags(owner).armor} if enemy_side else {}
+		stats_panel.configure_stats(item,manager.simulation.replay.item(_tooltip_entry.instance_id),manager.registry,manager.simulation.replay.snapshot(),get_viewport_rect().size,context)
+		return stats_panel
+	var panel := ItemTooltip.new()
 	if enemy_side:
 		_tooltip_entry["enemy_armor_type"] = EnemyPresentation.combat_tags(owner).armor
 	else:
@@ -466,3 +483,24 @@ static func rotation_ring_center(rect: Rect2, item: ItemData) -> Vector2:
 	# Bottom left for stacks reserves bottom right for quantity; otherwise bottom right.
 	var inset := 23.0 * CooldownRing.SIZE_SCALE + 2.0
 	return Vector2(rect.position.x + inset if item.is_consumable() else rect.end.x - inset, rect.end.y - inset)
+
+func _draw_replay(rect: Rect2, item: ItemData, row: Dictionary) -> void:
+	var entries := ReplayFormat.lines(item,row,replay_filter)
+	if entries.is_empty(): return
+	if _replay_font==null:
+		_replay_font=FontVariation.new()
+		_replay_font.base_font=get_theme_default_font()
+		_replay_font.variation_embolden=0.8
+	var font: Font = _replay_font
+	var line_height := REPLAY_ICON_SIDE-2
+	var grid: bool = entries.size()==4 and rect.size.y<line_height*4+6
+	var rows := 2 if grid else entries.size()
+	var start := Vector2(rect.position.x+4,rect.end.y-rows*line_height-3)
+	for i in entries.size():
+		var entry: Dictionary = entries[i]
+		var offset := Vector2((i%2)*rect.size.x*0.5,(i/2)*line_height) if grid else Vector2(0,i*line_height)
+		var position := start+offset
+		var width := rect.size.x/(2 if grid else 1)-6
+		var text_x := REPLAY_ICON_SIDE+4
+		draw_texture_rect(ReplayFormat.icon(entry.key),Rect2(position+Vector2(1,0.5),Vector2.ONE*REPLAY_ICON_SIDE),false)
+		draw_string(font,position+Vector2(text_x,18),entry.text,HORIZONTAL_ALIGNMENT_LEFT,width-text_x,16,Color.WHITE)

@@ -32,6 +32,9 @@ func pretend_exit() -> String:
 func run() -> void:
 	create_timer(50).timeout.connect(func(): quit(2))
 	AudioServer.set_bus_mute(0, true)
+	var presentation := root.get_node("MapPresentation")
+	var region: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/qingshihewan.json"))
+	presentation.enter_map(region, 0.0)
 	root.size = Vector2i(2560, 1440)
 	var scene = load("res://scenes/main/main.tscn").instantiate()
 	var game: GameManager = scene.get_node("GameManager")
@@ -52,6 +55,7 @@ func run() -> void:
 	flow._loot_rolls = [0,0,0,0,0]
 	scene.add_child(flow)
 	var ui = scene.get_node("MainUI")
+	ui.source_map_id = region.id
 	ui.battle_exit_handler = pretend_exit
 	root.add_child(scene)
 	current_scene = scene
@@ -85,10 +89,11 @@ func run() -> void:
 	await settle()
 	check(ui.victory_view == ui.VictoryView.REWARDS and exit_calls == 0, "click skips banner without confirming next modal")
 	var reward = ui.victory_rewards
-	check(reward.grid.columns == 3 and reward.grid.get_child_count() == 5, "five distinct drops, three columns")
+	check(reward.grid.columns == 2 and reward.grid.get_child_count() == 5, "five distinct drops, two columns")
+	check(reward.accept_button.get_node("AcceptCaption").text == "离开", "reward exit caption")
 	check(reward.scroll.get_v_scroll_bar().max_value > reward.scroll.size.y, "second row scrollable")
 	check(reward.review_button.position.x < reward.accept_button.position.x, "review left and confirm right")
-	check(reward.grid.get_child(0).size.x < 152, "cards smaller than story reward card")
+	check(is_equal_approx(reward.grid.get_child(0).size.x, 152), "reward card uses current 152px size")
 	await screenshot("victory-rewards")
 	click(reward.scroll.get_global_rect().get_center(), MOUSE_BUTTON_WHEEL_DOWN)
 	await settle()
@@ -106,14 +111,14 @@ func run() -> void:
 	check(not game.can_adjust() and game.simulation.state.is_finished(), "review cannot modify or resume battle")
 	await screenshot("victory-review")
 	click(ui._battle_button.get_global_rect().get_center())
-	await settle()
-	check(ui.victory_view == ui.VictoryView.REWARDS and reward.grid.get_child_count() == 5, "leave battlefield reopens same rewards")
+	await create_timer(0.15).timeout
+	check(exit_calls == 1 and reward.visible and reward.error_label.text.contains("失败"), "review exit calls return handler and reports a retryable failure")
 	check(game._durable_snapshot == receipt, "review cycling cannot duplicate rewards")
 	check(flow._award_victory().is_empty() and game._durable_snapshot == receipt and game.loot_item_ids.size() == 5, "settlement retry uses saved receipt")
 	# Error remains in the modal; both actions become usable again.
 	click(reward.accept_button.get_global_rect().get_center())
 	await create_timer(0.15).timeout
-	check(exit_calls == 1 and reward.visible and not reward.accept_button.disabled and reward.error_label.text.contains("失败"), "confirm failure shows retryable error")
+	check(exit_calls == 2 and reward.visible and not reward.accept_button.disabled and reward.error_label.text.contains("失败"), "reward exit failure shows retryable error")
 	# Empty and one-item layouts have no invented reward.
 	var drops := game.loot_item_ids.duplicate()
 	game.loot_item_ids.clear()
@@ -125,14 +130,14 @@ func run() -> void:
 	await settle()
 	check(not reward.empty_label.visible and reward.grid.get_child_count() == 1, "one drop uses one card")
 	game.loot_item_ids.assign(drops)
-	# Two-second fade followed by the existing three-second hold.
+	# Current half-second fade followed by the 1.5-second hold.
 	reward.hide()
 	ui.victory_view = ui.VictoryView.BANNER
 	banner.present("base.cultivation.spirit_transformation")
-	await create_timer(4.8).timeout
+	await create_timer(1.8).timeout
 	check(banner.visible, "banner remains before fade plus hold ends")
 	await create_timer(0.35).timeout
-	check(not banner.visible and reward.visible and ui.victory_view == ui.VictoryView.REWARDS, "automatically opens rewards after three seconds")
+	check(not banner.visible and reward.visible and ui.victory_view == ui.VictoryView.REWARDS, "automatically opens rewards after two seconds")
 	reward.hide()
 	ui.victory_view = ui.VictoryView.BANNER
 	banner.present("base.cultivation.spirit_transformation")
@@ -150,9 +155,19 @@ func run() -> void:
 	ui.victory_view = ui.VictoryView.REWARDS
 	ui._show_victory_rewards()
 	ui.battle_exit_handler = flow.return_to_map
-	click(reward.accept_button.get_global_rect().get_center())
+	# The music test covers a natural finish. Exercise its signal during replay
+	# here so the real map return also preserves an already resumed region track.
+	ui.game_audio.play_victory()
+	ui.game_audio.music.stop()
+	ui.game_audio.music.finished.emit()
+	var region_playback: AudioStreamPlayback = presentation.music.get_stream_playback()
+	check(not presentation.music.context_paused, "victory completion resumes regional music before exit")
+	click(reward.review_button.get_global_rect().get_center())
+	await settle()
+	click(ui._battle_button.get_global_rect().get_center())
 	await create_timer(2.5).timeout
-	check(not is_instance_valid(scene), "confirm leaves battle through real map transition")
+	check(not is_instance_valid(scene), "review exit leaves battle through real map transition")
+	check(presentation.music.get_stream_playback() == region_playback and not presentation.music.context_paused, "return keeps regional music playback continuous")
 	var maps := root.get_children().filter(func(node): return node.scene_file_path == "res://scenes/maps/qingshihewan.tscn")
 	check(maps.size() == 1 and maps[0].startup_error.is_empty(), "original map opens successfully")
 	if maps.size() == 1:

@@ -83,7 +83,6 @@ func configure(game: GameManager, records: BattleLog) -> void:
 		button.size_flags_horizontal = SIZE_EXPAND_FILL
 		button.toggle_mode = true
 		button.button_group = group
-		button.tooltip_text = filter[1]
 		var center := CenterContainer.new()
 		center.name = "CenteredCaption"
 		center.mouse_filter = MOUSE_FILTER_IGNORE

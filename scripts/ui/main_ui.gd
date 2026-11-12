@@ -22,6 +22,10 @@ var _timer_frame: PanelContainer
 var _header_separator: Control
 var _backdrop: Control
 var _battle_emblem: BattleActionButton
+var _duel_emblem_art: Texture2D
+var _replay_emblem_art: Texture2D
+const REPLAY_EMBLEM_RISE := 84.0
+const REPLAY_EMBLEM_SCALE := 0.6*0.95
 var _status: Label
 var _bag_button: Button
 var _battle_button: BattleActionButton
@@ -42,6 +46,10 @@ var _log_panel: Control
 var storage_panel
 var _speed_buttons: Dictionary = {}
 var _battle_log := BattleLog.new()
+var replay_active := false
+var replay_filter := "all"
+var _replay_controls: BattleReplayFilters
+var _replay_buttons: Dictionary = {}
 var game_audio: GameAudio
 var defer_battle_music := false
 var source_map_id := ""
@@ -148,12 +156,7 @@ func _build_ui() -> void:
 	var header := Control.new()
 	header.custom_minimum_size.y = 106
 	root.add_child(header)
-	var title_backdrop := _art("res://assets/title-bg.webp")
-	title_backdrop.name = "TitleBackdrop"
-	title_backdrop.position = Vector2(-81, -116.0 / 6.0)
-	title_backdrop.size = Vector2(520, 116.0 * 4.0 / 3.0)
-	header.add_child(title_backdrop)
-	var identity := _art("res://assets/title.webp")
+	var identity := _art("res://assets/UI-battle-logo.webp")
 	identity.name = "GameTitle"
 	identity.size = Vector2(268, 88)
 	identity.position = Vector2(36, 12)
@@ -221,6 +224,8 @@ func _build_ui() -> void:
 	var duel := _action_button(self, "res://assets/battle-start.webp", Vector2(216, 216), _start_from_emblem)
 	duel.dim_when_disabled = false
 	_battle_emblem = duel
+	_duel_emblem_art = duel.artwork
+	_replay_emblem_art = load("res://assets/UI-battle-fupan.webp")
 	duel.name = "BattleEmblem"
 	duel.anchor_left = 0.5
 	duel.anchor_right = 0.5
@@ -269,6 +274,7 @@ func _build_ui() -> void:
 		enemy_panel.position.y = -7.5
 	)
 	_build_log()
+	_build_replay_controls()
 	var divider: Control = preload("res://scripts/ui/battle_footer_divider.gd").new()
 	divider.name = "BattleFooterDivider"
 	middle.add_child(divider)
@@ -280,7 +286,6 @@ func _build_ui() -> void:
 	var log_art: Vector2 = log_button.artwork.get_size()
 	log_button.custom_minimum_size.x = action_height * log_art.x / log_art.y
 	log_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	log_button.tooltip_text = "查看战斗记录"
 	log_button.name = "BattleLogButton"
 	_log_button = log_button
 	var footer_padding := Control.new()
@@ -404,8 +409,8 @@ func _start_from_emblem() -> void:
 func _toggle_battle() -> void:
 	if manager.simulation == null:
 		return
-	if victory_view == VictoryView.REVIEW:
-		_show_victory_rewards()
+	if replay_active:
+		_exit_battle()
 		return
 	if manager.simulation.state.phase == GameState.Phase.PREPARATION:
 		manager.start_battle()
@@ -438,7 +443,6 @@ func _refresh_shortcut_hints() -> void:
 	var actions := {0.5: ["半速", "speed_half"], 1.0: ["正常播放", "speed_normal"], 2.0: ["2倍速", "speed_double"]}
 	for speed in _speed_buttons:
 		_speed_buttons[speed].tooltip_text = SettingsInput.caption(actions[speed][0], actions[speed][1])
-	if is_instance_valid(_bag_button): _bag_button.tooltip_text = SettingsInput.caption("储物袋", "map_inventory")
 
 func _build_retreat_dialog() -> void:
 	var dialog := MapExitDialog.new()
@@ -461,7 +465,7 @@ func _build_retreat_dialog() -> void:
 	_review_button = dialog.cancel_button
 	_exit_button = dialog.confirm_button
 	_review_button.get_parent().move_child(_review_button, 0)
-	_review_button.get_node("Caption").text = "战斗记录"
+	_review_button.get_node("Caption").text = "战斗复盘"
 	_exit_button.get_node("Caption").text = "返回地图" if battle_exit_handler.is_valid() else "退出战斗"
 	dialog.cancelled.connect(manager.request_battle_review)
 	dialog.confirmed.connect(manager.request_battle_exit)
@@ -496,6 +500,44 @@ func _build_log() -> void:
 	add_child(_log_panel)
 	_log_panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_log_panel.configure(manager, _battle_log)
+
+func _build_replay_controls() -> void:
+	_replay_controls=BattleReplayFilters.new()
+	_replay_controls.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	# Align the artwork's central tips with the screen/emblem/exit-button axis.
+	_replay_controls.position=Vector2(960,827)-Vector2(1086,242)*0.21
+	add_child(_replay_controls)
+	_replay_buttons=_replay_controls.buttons
+	_replay_controls.filter_selected.connect(func(key:String):
+		replay_filter=key
+		for panel in [ally_panel,enemy_panel]:
+			for board:InventoryView in panel.bags:
+				board.replay_filter=key
+				board.queue_redraw())
+	_replay_controls.hide()
+
+func _set_replay(enabled:bool)->void:
+	if replay_active==enabled:return
+	ItemTooltipHost.for_control(self).dismiss(false)
+	replay_active=enabled
+	_battle_emblem.artwork=_replay_emblem_art if enabled else _duel_emblem_art
+	var emblem_size := _replay_emblem_art.get_size()*REPLAY_EMBLEM_SCALE if enabled else Vector2(216,216)
+	var center_y := -20.0-(REPLAY_EMBLEM_RISE if enabled else 0.0)
+	_battle_emblem.custom_minimum_size=emblem_size
+	_battle_emblem.offset_left=-emblem_size.x*.5
+	_battle_emblem.offset_right=emblem_size.x*.5
+	_battle_emblem.offset_top=center_y-emblem_size.y*.5
+	_battle_emblem.offset_bottom=center_y+emblem_size.y*.5
+	_battle_emblem.pivot_offset=emblem_size*.5
+	_battle_emblem.queue_redraw()
+	replay_filter="all"
+	_replay_controls.select_filter("all")
+	for panel in [ally_panel,enemy_panel]:
+		if panel==null:continue
+		for board:InventoryView in panel.bags:
+			board.replay_mode=enabled
+			board.replay_filter="all"
+			board.queue_redraw()
 
 func _open_battle_record() -> void:
 	if manager.simulation == null: return
@@ -615,13 +657,15 @@ func _refresh() -> void:
 	_time.text = format_battle_time(sim.presentation_time_usec())
 	_layout_time_suffix()
 	_bag_button.disabled = not manager.can_adjust()
-	var reviewing := victory_view == VictoryView.REVIEW
+	var reviewing := replay_active
 	for panel in [ally_panel, enemy_panel]:
 		for board: InventoryView in panel.bags:
 			board.show_cooldown_badges = not reviewing
+			board.replay_mode = reviewing
+			board.replay_filter = replay_filter
+	_replay_controls.visible = reviewing
 	_battle_button.disabled = state.is_finished() and not reviewing
 	_battle_button.caption = "离开战场" if reviewing else ("战斗开始" if preparing else ("战斗结束" if state.is_finished() else ("战斗继续" if sim.clock.paused else "战斗暂停")))
-	_battle_button.tooltip_text = SettingsInput.caption(_battle_button.caption, "battle_pause") if preparing or fighting else _battle_button.caption
 	_battle_button.action_icon = null if reviewing else (_wait_icon if fighting and not sim.clock.paused else _battle_icon)
 	_battle_button.icon_reference = null if reviewing else _battle_icon
 	_battle_button.caption_reference = "离开战场" if reviewing else "战斗继续"
@@ -633,7 +677,7 @@ func _refresh() -> void:
 	_pause_button.set_pressed_no_signal(fighting and sim.clock.paused)
 	_retreat_button.disabled = not fighting or state.retreat_at_usec >= 0
 	_countdown.update_remaining(state.retreat_at_usec - sim.presentation_time_usec() if state.retreat_at_usec >= 0 else 0)
-	_retreat_dialog.visible = state.is_finished() and state.result != "victory" and (state.result == "defeat" or battle_exit_handler.is_valid())
+	_retreat_dialog.visible = not reviewing and state.is_finished() and state.result != "victory" and (state.result == "defeat" or battle_exit_handler.is_valid())
 	if _retreat_dialog.visible:
 		_result_heading.text = {"victory": "战斗胜利", "defeat": "战斗失败", "draw": "平局", "retreat": "战斗失败"}.get(state.result, "战斗结束")
 		_loot_label.text = manager.loot_summary
@@ -646,6 +690,7 @@ func _refresh() -> void:
 		_status.text = "战斗已暂停" if sim.clock.paused else "战斗进行中"
 
 func _on_restart() -> void:
+	_set_replay(false)
 	_clear_restore_flights()
 	victory_view = VictoryView.NONE
 	victory_banner.reset()
@@ -694,6 +739,7 @@ func _begin_victory() -> void:
 					player.play()
 
 func _show_victory_rewards() -> void:
+	_set_replay(false)
 	if manager.simulation == null or manager.simulation.state.result != "victory": return
 	victory_view = VictoryView.REWARDS
 	victory_banner.reset()
@@ -710,11 +756,14 @@ func _show_victory_rewards() -> void:
 	_refresh()
 
 func _review_victory() -> void:
-	if manager.simulation == null or manager.simulation.state.result != "victory":
-		_open_battle_record()
+	if manager.simulation == null or not manager.simulation.state.is_finished(): return
+	if manager.simulation.state.result != "victory":
+		_set_replay(true)
+		_refresh()
 		return
 	if victory_view != VictoryView.REWARDS or victory_rewards.accept_button.disabled: return
 	victory_view = VictoryView.REVIEW
+	_set_replay(true)
 	victory_rewards.hide()
 	victory_banner.reset()
 	_refresh()

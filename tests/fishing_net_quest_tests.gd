@@ -72,12 +72,11 @@ func run() -> void:
 	await shot("net-receipt")
 	var capacity: Dictionary = state.storage_capacity_rules.duplicate(true)
 	state.storage_capacity_rules.test_capacity_override = state.storage_used_slots()
-	map._accept_reward()
-	check(Net.story(state).reward_pending and map.fishing_net_story_controller.defer_receipt_button.visible,"full bag offers safe receipt deferral")
-	map.fishing_net_story_controller.defer_receipt_button.pressed.emit()
-	check(not map.travel.paused and not map.reward_dialog.visible and Net.story(state).reward_pending,"full bag can leave dialogue with receipt retained")
+	var full: MapLoadoutState = MapLoadoutStore.candidate(state).state
+	full.storage_capacity_rules=state.storage_capacity_rules.duplicate(true)
+	var occupied_before := full.storage_used_slots()
+	check(Net.command(full,directory+"full-bag.json","accept").is_empty() and Net.story(full).net_received and full.storage_used_slots()==occupied_before,"full bag accepts quest net without capacity use")
 	state.storage_capacity_rules = capacity
-	check(map.fishing_net_story_controller.try_arrival(Net.data.reef.point_id,true) and map.reward_dialog.visible,"returning to reef resumes pending receipt")
 	var pending := state.snapshot()
 	map.inventory_save_path = directory+"missing/fail.json"
 	map._accept_reward()

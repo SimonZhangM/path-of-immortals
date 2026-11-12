@@ -47,7 +47,7 @@ func run() -> void:
 	var screen: Control=map.breakthrough_screen
 	var flow: RefCounted=map.breakthrough_session
 	var active: RefCounted=flow.runtime
-	check(screen.chance_value.text=="100%" and screen.remaining_value.text=="30天","initial chance and whole days")
+	check(screen.chance_value.text+screen.chance_percent.text=="100%" and screen.remaining_value.text=="30天","initial chance and whole days")
 	check(screen.efficiency_number.text=="0.0" and screen.efficiency_unit.text=="/天","initial efficiency zero, requested unit")
 	for side: String in ["left","right"]:
 		var view: TextureRect=screen.left_inscription if side=="left" else screen.right_inscription

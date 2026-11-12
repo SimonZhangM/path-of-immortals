@@ -11,5 +11,8 @@
   "enemy_id": "base.enemy.biyetengling",
   "battle_scene": "res://scenes/main/main.tscn",
   "enabled": true,
-  "respawn_days": 20
+  "respawn_days": 20,
+  "requires_story_flags": [
+    "base.story.lumianchu.vine_driven"
+  ]
 }

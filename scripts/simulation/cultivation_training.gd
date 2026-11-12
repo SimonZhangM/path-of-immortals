@@ -15,6 +15,7 @@ func _init(player: PartyMemberState, registry: ContentRegistry) -> void:
 	player.definition.training_precision = true
 	var dummy := PartyMemberState.new({"id":"run.training.target", "name":"修炼靶", "max_hp":1000000000, "max_stamina":1000000000, "max_spirit":1000000000, "cultivation_rank":player.cultivation_rank_id},registry)
 	super([player],[dummy],registry)
+	replay_enabled = false
 
 func _check_result(_at: int) -> void:
 	# A target never dies or grants anything. Clear incoming effects only on it;

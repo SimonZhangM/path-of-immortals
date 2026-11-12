@@ -126,6 +126,8 @@ static func delivery_units(state: MapLoadoutState) -> Array[String]:
 	return result
 
 static func sync_flags(state: MapLoadoutState) -> void:
+	state.narrative.flags.erase(DeerRestQuest.LEGACY_REST_FLAG)
+	state.narrative.flags[DeerRestQuest.DRIVEN_FLAG] = DeerRestQuest.story(state).stage in ["cleared","completed"]
 	HerbQuest.refresh_objectives(state)
 	RiverBountyQuest.refresh_objectives(state)
 	HomecomingQuest.sync_practice_flags(state)
