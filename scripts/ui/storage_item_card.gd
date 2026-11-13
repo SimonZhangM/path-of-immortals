@@ -143,6 +143,12 @@ func drag_data() -> Dictionary:
 func selected_quantity() -> int:
 	return int(quantity_picker.value) if quantity_picker != null else 1
 
+func cursor_hover_state(_point: Vector2) -> int:
+	return GameCursorManager.State.DRAG_READY if not drag_data().is_empty() else GameCursorManager.State.NORMAL
+
+func cursor_drag_is_valid(data: Variant) -> bool:
+	return data is Dictionary and data.get("epoch") == manager.interaction_epoch and not drag_data().is_empty()
+
 func _get_drag_data(_point: Vector2) -> Variant:
 	var data := drag_data()
 	if data.is_empty():
@@ -152,6 +158,7 @@ func _get_drag_data(_point: Vector2) -> Variant:
 		return null
 	_native_drag_active = true
 	set_drag_preview(preview)
+	get_node("/root/CursorManager").begin_drag(self)
 	return data
 
 func _make_drag_preview() -> Control:
@@ -166,6 +173,7 @@ func _begin_drag(data: Dictionary) -> void:
 	if preview != null:
 		_native_drag_active = true
 		force_drag(data, preview)
+		get_node("/root/CursorManager").begin_drag(self)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END and _native_drag_active:

@@ -28,6 +28,7 @@ var _refreshing := false
 var _key_buttons: Dictionary = {}
 
 func _ready() -> void:
+	get_node("/root/CursorManager").cancel_drag()
 	name = "SystemSettings"
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	z_index = 90
@@ -234,13 +235,15 @@ func _build_audio() -> void:
 
 func _build_other() -> void:
 	var page: Control = pages.other
-	_heading(page,"版本信息",0,1420)
+	_heading(page,"其他设置",0,1420)
 	var row := _row(page,"当前版本",90,44,1380)
 	var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui/start_menu.json"))
 	var version := _label(row,String(config.get("version","v0.1")).trim_prefix("版本 "),Rect2(),31)
 	version.custom_minimum_size.x = 420
 	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	version.add_theme_color_override("font_color",GOLD)
+	_choice(_row(page,"鼠标指针",230,44,1380),"custom_cursor",[["仙侠指针",true],["系统指针",false]],360)
+	_choice(_row(page,"指针大小",370,44,1380),"cursor_size",[["标准（40×40）","normal"],["较大（56×56）","large"]],360)
 
 func _toggle(row: Control, key: String) -> void:
 	var button := Toggle.new()
@@ -413,6 +416,7 @@ func _refresh_values() -> void:
 func _refresh_dependencies() -> void:
 	widgets.auto_save_minutes.disabled = not bool(draft.get("auto_save",true))
 	widgets.resolution.disabled = draft.get("display_mode","borderless")!="windowed"
+	widgets.cursor_size.disabled = not bool(draft.get("custom_cursor",true))
 	pages.display.get_node("ResolutionHint").visible = widgets.resolution.disabled
 
 func select_page(page: String) -> void:
@@ -422,7 +426,7 @@ func select_page(page: String) -> void:
 	for id: String in tabs:
 		tabs[id].get_node("Selected").visible = id==page
 		tabs[id].add_theme_color_override("font_color",GOLD if id==page else Color("efe7d2"))
-	if reset_button!=null: reset_button.disabled = page=="other"
+	if reset_button!=null: reset_button.disabled = false
 	if message!=null: message.text = ""
 	_refresh_values()
 

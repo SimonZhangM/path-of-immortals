@@ -118,3 +118,6 @@ func _can_drop_data(_point: Vector2, data: Variant) -> bool:
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):
 		manager.unequip(data["member_index"], data["instance_id"])
+
+func cursor_drop_state(point: Vector2, data: Variant) -> int:
+	return int(_can_drop_data(point, data))

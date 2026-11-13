@@ -162,6 +162,9 @@ func _build_action(index: int) -> void:
 	card.name = "ActionCard%d" % index
 	card.focus_mode = FOCUS_NONE
 	card.mouse_default_cursor_shape = CURSOR_POINTING_HAND
+	var cursor_provider := func(_point: Vector2) -> int:
+		return GameCursorManager.State.INTERACT if _action_enabled(index) else GameCursorManager.State.FORBIDDEN
+	card.set_meta("cursor_hover", cursor_provider)
 	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
 		card.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 	_place(card, rect)
@@ -193,6 +196,7 @@ func _build_action(index: int) -> void:
 	button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
 	button.focus_mode = FOCUS_NONE
 	button.mouse_default_cursor_shape = CURSOR_POINTING_HAND
+	button.set_meta("cursor_hover", cursor_provider)
 	_place(button, Rect2(rect.get_center().x-85,715+ACTION_OFFSET_Y,170,66))
 	button.pressed.connect(func(): activate_action(index))
 	action_buttons.append(button)

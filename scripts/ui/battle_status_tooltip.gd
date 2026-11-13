@@ -2,6 +2,7 @@ class_name BattleStatusTooltip
 extends PanelContainer
 
 const WIDTH := 440.0
+const SpecialStatuses = preload("res://scripts/presentation/battle_special_status_view.gd")
 var word: String
 var member: PartyMemberState
 var manager: GameManager
@@ -30,18 +31,19 @@ func configure(status: String, actor: PartyMemberState, game: GameManager) -> vo
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation",13)
 	add_child(column)
-	var buff: bool = ItemTooltip.status_keyword_kinds().get(word) == "buff"
+	var special: Dictionary = SpecialStatuses.definitions().get(word, {})
+	var buff: bool = special.get("kind", ItemTooltip.status_keyword_kinds().get(word)) == "buff"
 	var title := _label(column,word + (" · 增益" if buff else " · 减益"),28)
-	title.add_theme_color_override("font_color",Color(ItemTooltip.status_keyword_colors()[word]))
+	title.add_theme_color_override("font_color",Color(ItemTooltip.status_keyword_colors()[special.get("color_from", word)]))
 	title.add_theme_font_override("font",ItemTooltip._term_font)
-	var effect: String = ItemTooltip.status_keyword_meanings()[word]
+	var effect: String = special.get("description", ItemTooltip.status_keyword_meanings().get(word, ""))
 	if word == "毒蚀": effect = "首次1秒后开始，每秒按当前层数直接扣气血，绕过盾甲，每次减少1层。"
 	if word == "雷蕴": effect += "\n雷盾：按60%吸收伤害，每层破裂向敌方施加1秒麻痹；优先于灵盾。"
 	_label(column,effect,23)
 	_line(column)
 	var totals := HBoxContainer.new()
 	column.add_child(totals)
-	var caption := _label(totals,"当前 / 上限",22)
+	var caption := _label(totals,"当前状态" if not special.is_empty() else "当前 / 上限",22)
 	caption.custom_minimum_size.x = 0
 	caption.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_current = _label(totals,"",22)
@@ -53,8 +55,11 @@ func configure(status: String, actor: PartyMemberState, game: GameManager) -> vo
 	_line(column)
 	_label(column,"状态来源",22).add_theme_color_override("font_color",Color("f9f8c8"))
 	_sources = _label(column,"",21)
-	_label(column,"上限来源",22).add_theme_color_override("font_color",Color("f9f8c8"))
+	var capacity_title := _label(column,"上限来源",22)
+	capacity_title.add_theme_color_override("font_color",Color("f9f8c8"))
 	_capacity = _label(column,"",21)
+	capacity_title.visible = special.is_empty()
+	_capacity.visible = special.is_empty()
 	_refresh()
 	_ignore(self)
 
@@ -100,6 +105,9 @@ func _capacity_text(actor: PartyMemberState) -> String:
 
 func _refresh() -> void:
 	if member == null: return
+	if SpecialStatuses.definitions().has(word):
+		_refresh_special()
+		return
 	var count := T01CombatRules.layers(member,word)
 	if word == "毒蚀" and count == 0: count = member.toxin_stacks
 	var pool: Dictionary = member.combat_statuses.get(word,{})
@@ -126,6 +134,20 @@ func _refresh() -> void:
 		timing.append("下次结算：%.1f秒后" % ((next-now)/1000000.0))
 	if expires > now: timing.append("剩余时间：%.1f秒" % ((expires-now)/1000000.0))
 	_timing.text = "\n".join(timing)
+	_timing.visible = not _timing.text.is_empty()
+
+func _refresh_special() -> void:
+	var simulation: BattleSimulation = manager.simulation if is_instance_valid(manager) else null
+	var active: Dictionary = SpecialStatuses.snapshot(member, simulation).get(word, {})
+	_current.text = active.get("current", "当前未生效")
+	var names: Array[String] = []
+	for id: String in active.get("sources", []):
+		var actor := _actor(id)
+		if actor != null and _actor_name(actor) not in names: names.append(_actor_name(actor))
+	_sources.text = "、".join(names) if not names.is_empty() else ("当前未生效" if active.is_empty() else "来源未记录")
+	var now: int = simulation.state.time_usec if simulation != null else 0
+	var until: int = active.get("until", 0)
+	_timing.text = "剩余时间：%.1f秒" % ((until - now) / 1000000.0) if until > now else ""
 	_timing.visible = not _timing.text.is_empty()
 
 func _process(_delta: float) -> void:

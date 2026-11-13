@@ -1,12 +1,22 @@
 # 苍澜界
 
+**战斗图标与头像状态（2026-11-13）：**14—24已接入用户WebP、无损mipmap。20免疫（当前为毒蚀免疫）、21麻痹、22冻结、23定身、24雷盾同步显示在双方头像状态区，按实际持续状态出现／消失，雷盾显示层数与盾量；17气血消耗仅储备。[现行规则](docs/battle-replay-design.md#新增五种头像状态图标2026-11-13)。隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/battle_special_status_tests.gd -Render`，95项及1080p／2K通过，不操作鼠标。复盘静态103项、状态排序单独12项通过，旧综合排序脚本后半段遭遇弹窗接口过期限制见PROJECT_PROGRESS。重启游戏加载。
+
+**突破入口（2026-11-13）：**新增突破图标位于储物袋之上；普通档仅满足资格时显示并允许T键打开，当前测试档可查看。新状态／创角输出默认非测试，创角最后一步正式建档仍待接入。[完整边界](docs/map-interaction-design.md#突破入口追加2026-11-13)。隔离APPDATA／LOCALAPPDATA后运行`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run_t01.ps1 -Script res://tests/breakthrough_shortcut_tests.gd`；设置`BREAKTHROUGH_SHORTCUT_VISUAL_ONLY=1`并加`-Render`仅做静态出图。35项专项、6项静态及双分辨率画面通过。
+
+**地图左下四入口（2026-11-13）：**已接储物袋／功法／任务／地图圆形图标，可收起展开，悬停3秒显示金边简短说明；新物品／功法／任务／世界地点亮红点，打开对应界面清除。按开局储物袋、首个任务、首次离镇、首本功法分进度开放，旧档自动识别，重启查看。[规则与扩展配置](docs/map-interaction-design.md#地图左下入口栏2026-11-13)。隔离APPDATA／LOCALAPPDATA后运行`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run_t01.ps1 -Script res://tests/map_shortcuts_tests.gd`；测试脚本附加`-- --visual-only`只做状态／布局和渲染，不重跑鼠标链路。最新定向58项及原生1080p／2K画面通过。
+
+**五态鼠标已接入（2026-11-13）：**区域地图空白及弹窗普通区域使用normal，路径节点、世界地点、选择及按钮使用interact。可平移地图空白处按住左键显示握手，松开恢复normal。系统设置→其他可切换系统指针或较大尺寸，点击应用生效，仅当前进程保存。重新运行游戏加载。状态及验证见[接入说明](docs/five-state-cursor-integration.md)。隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/cursor_integration_tests.gd`，原生API及静态两档预览运行`cursor_visual_preview.gd -Render`。
+
+**六区域吊牌v2已接入（2026-11-13）：**运行assets六图均完成RGB各加10，透明度保留，重新运行游戏查看。旧运行素材已清理，v2制作原稿保存在归档。[清单与亮度记录](output/imagegen/区域场景/区域地图吊牌/README.md)。本轮其余五图1080p静态渲染通过。复核使用隔离APPDATA／LOCALAPPDATA运行tests/qingshizhen_title_preview.gd加-Render。
+
 **任务物品免储物袋容量（2026-11-12）** 数量显示、满袋领取、超额判定和仓库取回预览已同步。隔离APPDATA／LOCALAPPDATA，设置`$env:QUEST_CAPACITY_ONLY='1'`后运行`./tests/run_t01.ps1 -Script res://tests/storage_capacity_limits_tests.gd`可做直接检查。[现行规则](docs/map-inventory-design.md#任务物品免储物袋容量2026-11-12)。
 
 **战斗随机种子（2026-11-12）：**正式战斗每次新开局生成新种子，失败或撤退后的再次挑战也重抽；暂停、倍速、调整阵盘不重置本场序列。重启游戏后新战斗生效。隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/battle_seed_tests.gd`，保留指定种子的测试复现能力。[规则](docs/01_核心定案_七系功法与战斗规则.md#正式战斗每场新随机种子2026-11-12已确认并实现)。
 
 **突破动态光效（2026-11-12）：**重启游戏进入突破面板，点击开始后播放完整光环／蓝带／瀑布／星芒／莲花效果；暂停、隐藏、退出确认或结束停止流动。突破0.5／1／2／4倍对应视觉0.75／1／1.5／2倍，蓝带基础速度为原预览一半。[规则与样张](docs/breakthrough-panel-design.md#动态光效原生接入2026-11-12)。必要专项：隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/breakthrough_vfx_tests.gd`，加`-Render`核对GL兼容画面；默认D3D12可用Godot直接执行同一测试脚本，不指定rendering-method。测试仅操作隔离存档，不操作系统鼠标。
 
-**战后阵盘复盘（2026-11-12）：**新开战斗结束后，在胜利获得框或失败／撤退结果框点「战斗复盘」，可查看双方物品的总览／伤害／恢复／防护／触发简条；悬停物品显示储物袋同款基本信息卡，下层功能说明替换为完整战斗统计，停留时滚轮翻阅。五项筛选已换独立底图与选中图，文字居中，三组装饰尖头对齐屏幕中线。退出恢复原物品说明。最新样式为盘面统一灰色蒙版（保留外框）、16号纯白加粗无描边数字及25.3px图标，全部数值无正负号，统计行距缩小3设计px，敌盘按中心放大5%；中央复盘标题图按原图57%显示，中心累计上移84设计px。[实现与归因边界](docs/battle-replay-design.md)。隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/battle_replay_tests.gd`或`battle_replay_ui_tests.gd`；后者headless只测相关交互，`-Render`不操作系统鼠标，输出三尺寸及晓岚截图到`artifacts/replay-20261112/`。纯视觉出图可先设`$env:REPLAY_VISUAL_ONLY="1"`再运行UI脚本加`-Render`，跳过交互检查。未新增历史战绩或突破复盘。
+**战后阵盘复盘（2026-11-13）：**新开战斗结束后，在胜利获得框或失败／撤退结果框点「战斗复盘」，可查看双方物品的总览／伤害／恢复／防护／触发简条。悬停物品打开UI-battle-item-info方形卡，按2K原生610×610显示、与上下图片中线对齐；抬头在新容器内独立排版并去掉第三行描述，双标题加任务小菱形、金色左对齐，表格贴合内细线，图标大小与中心线统一；下方分类表可滚动、右侧主圆环以同阵营完整同类总量计算占比，双恢复物品增加第二资源圆环，上下卡等宽等高、中隔10px，底卡贴内线，去掉阵营底部文字。恢复图02／03／04不再兼作消耗，14—24共11张统计／效果图已接入（含未来气血消耗储备及雷盾）；额外状态缺图见素材清单。[卡片布局与数据边界](docs/battle-replay-tooltip-design.md)。五项筛选沿用独立底图与选中图，退出恢复原物品说明。盘面统一灰色蒙版（保留外框）、16号纯白加粗无描边数字及25.3px图标，全部数值无正负号，统计行距缩小3设计px，敌盘按中心放大5%；中央复盘标题图按原图57%显示，中心与两侧头像圆心共线。[整体实现与归因](docs/battle-replay-design.md)。隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/battle_replay_tests.gd`或`battle_replay_ui_tests.gd`。纯视觉出图设`$env:REPLAY_VISUAL_ONLY='1'`及`$env:REPLAY_INFO_VISUAL='1'`后运行UI脚本加`-Render`，跳过鼠标检查，卡片双分辨率及六用途夹具截图输出至`artifacts/replay-dual-share-20261113/`。最新容器净上移8原生px，战斗Logo缩小10%、累计左移27设计px，抬头分割线位于图标框底与表格顶正中，最新双占比130项统计、103项静态及双分辨率渲染通过，未重跑鼠标交互；重启后新开战斗采集完整新增数据。未新增历史战绩或突破复盘。
 
 **鹿眠处支线（2026-11-11）：**N18到达看鹿→N09到达调查与剧情二选一→独立藤灵战→清理入口并领取古树灵叶任务物品；隔日一次尾声，旁白用淡墨远山头像。2026-11-12任务双图和四张剧情图已接，均启用mipmap。[运行说明](docs/序章任务/05_实施衔接与待办.md#鹿眠处接入2026-11-11)。直接检查：`./tests/run_t01.ps1 -Script res://tests/deer_rest_quest_tests.gd`，加`-Render`核对画面；运行前隔离APPDATA／LOCALAPPDATA，不使用真实存档。
 
@@ -32,7 +42,7 @@
 
 **2026-11-07更新：**主线四前四段已接。主线三结束后，在母亲家红牌原地点击或离开后返回接取；随后到药铺、医馆及宗门铺辞别问路。重启游戏读取现有存档即可。信牌只记进度，后半任务未接。隔离定向检查：`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run_t01.ps1 -Script res://tests/qinglan_departure_tests.gd`，加 `-Render` 核对画面。[实施范围](docs/序章任务/05_实施衔接与待办.md#青岚初阶前四段接入2026-11-07)。
 
-区域场景素材从[分类入口](output/imagegen/区域场景/README.md)查阅。[区域地图专目录](output/imagegen/区域场景/区域地图/README.md)及[地图图片总览](output/imagegen/区域场景/区域地图/preview.html)收录全部5张现用底图与6批制作资料，按现用／制作稿分层。[左上角区域地图吊牌](output/imagegen/区域场景/区域地图吊牌/preview.html)及[逐地图清单](output/imagegen/区域场景/区域地图吊牌/README.md)包含5张现用吊牌，白沙村已接入map-title-baishacun.png；原生制作稿、来源和规格同时保留。
+区域场景素材从[分类入口](output/imagegen/区域场景/README.md)查阅。[区域地图专目录](output/imagegen/区域场景/区域地图/README.md)及[地图图片总览](output/imagegen/区域场景/区域地图/preview.html)收录全部5张现用底图与6批制作资料，按现用／制作稿分层。[左上角区域地图吊牌](output/imagegen/区域场景/区域地图吊牌/preview.html)及[逐地图清单](output/imagegen/区域场景/区域地图吊牌/README.md)包含6张现用完整牌身v2吊牌；原生制作稿、来源和规格同时保留。
 
 2026-11-07《树下旧凳》完整接入。重启后，支线二完成后古树N11开放黄牌对白，随后去N23铁匠铺取件与工具包、回树下修凳、归还工具结算2灵石。旧到访门槛已撤销；未接任务按新条件开放，已接进度保留。四段剧情图及任务双图已接。必要专项：`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run_t01.ps1 -Script res://tests/old_bench_quest_tests.gd -Render`，须隔离APPDATA／LOCALAPPDATA。[现行规则](docs/序章任务/05_实施衔接与待办.md#树下旧凳完整接入2026-11-07)。
 
@@ -119,6 +129,8 @@
 任务追踪（2026-11-02最新）：默认主线、暂只追踪1项；选择其他任务会替换，取消非主线回到最新主线，当前主线不能取消。F仍可隐藏面板，指引保持。处于追踪态即用UI-task-right-map-location标出下一步：同场景标当前目标，跨场景标下一出口，仅用户指定的例外关闭。交药阶段标药铺N14，采药阶段标尚未完成的草药位置；任务路牌底框换为mapdot4o。[规则与专项](docs/task-panel-design.md#区域地图任务追踪器2026-10-30)，直接检查`powershell -NoProfile -ExecutionPolicy Bypass -File tests/run_t01.ps1 -Script res://tests/task_location_marker_tests.gd -Render`，隔离存档验证并输出1080p／2K画面，不运行鼠标输入。
 
 世界地图地点发现（2026-11-01）：新开局只显示青石镇；其他地点在首次进入对应场景后显示，并随存档保留。未到访地点没有悬浮／点击资料或任务定位图标。历史到访记录继续有效，重启后生效。[规则与验证](docs/map-interaction-design.md#世界地点首次进入后显示2026-11-01)；直接专项为tests/world_map_discovery_tests.gd，用户参数`-- --visual-only`仅做两分辨率静态渲染。
+
+2026-11-12世界地图已加入叠翠峰定位及青岚山道预留定位。进入叠翠峰后按M即可查看当前位置，历史到访可沿用。青岚山道运行场景等待后续注册。隔离APPDATA／LOCALAPPDATA后运行`./tests/run_t01.ps1 -Script res://tests/world_map_mountain_locations_tests.gd -Render`核对两处静态定位。[坐标与验证](docs/map-interaction-design.md#叠翠峰与青岚山道世界定位2026-11-12)。
 
 河湾逢险医馆收尾（2026-11-01）：重启后，已离祠角色可在河湾N20带止血草／青藤根各1继续，送药后在河湾归还温玉佩，再按任务提示往返医馆N32请医／接人／安置。河湾归还玉佩框标题“交出”，仅“确认”，点击扣行囊1个；玉佩若在阵盘或仓库须先取回。医馆安置后直接收下功法书《引气诀》（2026-11-03已接UI-otherbook-yinqijue物品图），最后对白结束才完成任务。两件属任务物品，纳入“关键”筛选、禁止出售；任务完成前玉佩无法由宝箱和商铺获取。满包赠书可先包好，腾空后自动领取，再回医馆收尾。[实现与验证](docs/序章任务/06_河湾旧祠接入记录.md)，隔离专项`tests/run_t01.ps1 -Script res://tests/river_clinic_tests.gd -Render`。本次修复清禾头像裁切缺失，不需清档。
 

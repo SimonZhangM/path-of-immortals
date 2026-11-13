@@ -257,7 +257,9 @@ func spend_barrier(member: PartyMemberState, amount: float, source := "", absorb
 	if source.is_empty():
 		var tracked := 0.0
 		for batch: Dictionary in batches: tracked += batch.value
-		remaining = maxf(0,remaining-maxf(0,member.barrier-tracked))
+		var untracked_used := minf(remaining, maxf(0, member.barrier - tracked))
+		if absorbed: rules.shield_absorbed(member, untracked_used, {}, "barrier", at)
+		remaining = maxf(0, remaining - untracked_used)
 		# Core 1.22: damage consumes all other origins before weapon conversion.
 		batches = batches.filter(func(b: Dictionary): return b.source != "base.spell.metal_07") + batches.filter(func(b: Dictionary): return b.source == "base.spell.metal_07")
 	for batch: Dictionary in batches:

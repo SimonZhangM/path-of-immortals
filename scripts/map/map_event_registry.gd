@@ -13,7 +13,9 @@ static func encounter_at(point_id: String) -> Dictionary:
 	if encounter_catalog.is_empty():
 		var world: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/world_map_locations.json"))
 		for location: Dictionary in world.locations.values():
-			var map_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(location.map_definition))
+			var definition_path: String = location.get("map_definition", "")
+			if definition_path.is_empty(): continue
+			var map_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
 			for path: String in map_definition.get("event_files",[]):
 				var event: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
 				if event.get("type")=="encounter":

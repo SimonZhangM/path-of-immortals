@@ -58,6 +58,18 @@ func _storage_drag_data() -> Dictionary:
 	if entry.category == "book": return {}
 	return loadout.drag_data("storage", entry.get("storage_id", ""), selected_quantity()) if loadout != null and equipment_actions_enabled else {}
 
+func cursor_hover_state(_point: Vector2) -> int:
+	if transfer_drag_provider.is_valid(): return GameCursorManager.State.DRAG_READY
+	if loadout != null and equipment_actions_enabled and entry.category != "book" and loadout.can_use_item(entry.id) and not _storage_drag_data().is_empty():
+		return GameCursorManager.State.DRAG_READY
+	return GameCursorManager.State.INTERACT if square_layout else GameCursorManager.State.NORMAL
+
+func cursor_drag_is_valid(data: Variant) -> bool:
+	if not data is Dictionary or loadout == null: return false
+	if data.get("kind") == "warehouse_transfer":
+		return transfer_drag_provider.is_valid() and data == _storage_drag_data()
+	return loadout.valid_drag(data)
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		_left_armed = false
@@ -140,6 +152,7 @@ func _begin_drag(data: Dictionary) -> void:
 		ItemTooltipHost.for_control(self).dismiss()
 		loadout.interaction.emit("pick")
 		force_drag(data,preview)
+		get_node("/root/CursorManager").begin_drag(self)
 		modulate.a = 0.4
 		return
 	if entry.category == "book" or not equipment_actions_enabled or not is_visible_in_tree() or not loadout.valid_drag(data) or not loadout.can_use_item(entry.id) or get_viewport().gui_is_dragging():
@@ -148,6 +161,7 @@ func _begin_drag(data: Dictionary) -> void:
 	ItemTooltipHost.for_control(self).dismiss()
 	loadout.interaction.emit("pick")
 	force_drag(data, target_board.make_preview(data))
+	get_node("/root/CursorManager").begin_drag(self)
 	modulate.a = 0.4
 
 func _notification(what: int) -> void:

@@ -30,6 +30,14 @@ func run() -> void:
 	var before := []
 	for path: String in real_paths: before.append(FileAccess.get_sha256(path))
 	var raw := Files.read(Slots.AUTO_PATH)
+	if raw.is_empty():
+		# Fresh isolated APPDATA has no player save; build an in-memory fixture.
+		var registry := ContentRegistry.new()
+		check(registry.load_base_content(),"fresh settings fixture content")
+		var created := MapLoadoutStore.create_state(registry,registry.get_board("base.board.bag"))
+		check(created.error.is_empty(),"fresh settings fixture loadout")
+		if not created.error.is_empty(): quit(1); return
+		raw = created.state.snapshot()
 	Slots.auto_path = directory+"auto.json"
 	Session.index_path = directory+"session.json"
 	Session.clear_selection()
@@ -61,7 +69,7 @@ func run() -> void:
 	check(map.travel.map_position==prior_position,"settings pauses travel")
 	var center: Vector2 = panel.canvas.get_global_rect().get_center()
 	check(center.is_equal_approx(Vector2(root.size)*0.5),"settings canvas centered on viewport")
-	check(panel.pages.size()==5 and panel.widgets.size()==16 and panel._key_buttons.size()==10,"five pages and seventeen settings including ten-action key mapping")
+	check(panel.pages.size()==5 and panel.widgets.size()==18 and panel._key_buttons.size()==panel._config.bindings.size(),"five pages and nineteen settings including configured key mapping")
 	check(panel.reset_button.get_theme_stylebox("normal").texture.resource_path.ends_with("UI-start-button3.webp"),"default button uses requested button3")
 	check(panel.reset_button.get_theme_stylebox("hover").texture.resource_path.ends_with("UI-start-button2.webp"),"hover uses requested button2")
 	for resolution in [Vector2i(2560,1440),Vector2i(1920,1080)]:
@@ -75,11 +83,13 @@ func run() -> void:
 			if page=="game":
 				row_start = panel.first_rows[page].global_position
 				heading_start = panel.heading_origins[page].global_position
-			check(panel.first_rows[page].global_position.is_equal_approx(row_start),"first setting row shares x/y "+page)
+			# Controls has a dedicated compact key grid, not the standard first row.
+			if panel.first_rows.has(page):
+				check(panel.first_rows[page].global_position.is_equal_approx(row_start),"first setting row shares x/y "+page)
 			check(panel.heading_origins[page].global_position.is_equal_approx(heading_start),"heading shares x/y "+page)
 			check(panel.canvas.get_global_rect().get_center().is_equal_approx(Vector2(resolution)*0.5),"center remains fixed "+page)
 			if render: await capture("%s-%d" % [page,resolution.x])
-		check(panel.reset_button.disabled,"read-only page reset disabled")
+		check(not panel.reset_button.disabled,"other page cursor preferences can reset")
 	if not render:
 		panel.select_page("game")
 		await settle()

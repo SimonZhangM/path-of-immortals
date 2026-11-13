@@ -75,14 +75,7 @@ func recent_gain() -> int:
 	return gained
 
 func eligibility_error() -> String:
-	if int(loadout.growth.realm)!=int(rule.realm):
-		var realm_name: String = loadout.registry.get_cultivation(loadout.cultivation_rank_id).name
-		return "当前为%s%s层。此处仅开放凡人→炼气的首次突破。" % [realm_name,WorldCalendar.chinese_number(int(loadout.growth.layer))]
-	if not HomecomingQuest.ready_for_practice(loadout): return "请先完成母亲的修行指导。"
-	if not HomecomingQuest.cultivation_full(loadout): return "请先积累修为至100%，再回母亲家尝试突破。"
-	if loadout.map_location!={"map_id":rule.map_id,"point_id":rule.point_id}: return "请回母亲家进行首次引气。"
-	if loadout.board.id=="base.board.bag": return "基础行囊无法用于突破，请至少装备晓岚阵盘。"
-	return ""
+	return preload("res://scripts/map/map_breakthrough_access.gd").eligibility_error(loadout)
 
 func _make_training() -> bool:
 	training=MapCultivationSession.new()

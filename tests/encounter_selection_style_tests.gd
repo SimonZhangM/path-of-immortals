@@ -22,7 +22,7 @@ func move_to(point: Vector2) -> void:
 	root.push_input(event, true)
 	await settle()
 
-func click(control: Control) -> void:
+func click(control: Control, expected_cursor: int = GameCursorManager.State.INTERACT) -> void:
 	var point := control.get_global_rect().get_center()
 	await move_to(point)
 	for pressed in [true, false]:
@@ -32,7 +32,8 @@ func click(control: Control) -> void:
 		event.button_index = MOUSE_BUTTON_LEFT
 		event.pressed = pressed
 		root.push_input(event, true)
-	await settle()
+		await settle()
+		check(root.get_node("CursorManager").current_state == expected_cursor, "press and release keep the action cursor")
 
 func check_art(dialog: MapEncounterDialog) -> void:
 	for index in 3:
@@ -56,7 +57,9 @@ func run() -> void:
 		root.add_child(dialog)
 		dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		dialog.retreat_requested.connect(func(): requests += 1)
-		dialog.fight_requested.connect(func(): requests += 1)
+		dialog.fight_requested.connect(func():
+			requests += 1
+			dialog.set_busy(true))
 		dialog.intimidate_requested.connect(func(): requests += 1)
 		dialog.present(event,enemy)
 		await settle()
@@ -75,8 +78,12 @@ func run() -> void:
 			check_art(dialog)
 			dialog.set_busy(true)
 			check_art(dialog)
+			await click(dialog.action_buttons[1])
+			check(requests == 1, "busy button retains interact without repeating the command")
+			await move_to(dialog.action_cards[1].get_global_rect().position + Vector2(10,10))
+			check(root.get_node("CursorManager").current_state == GameCursorManager.State.INTERACT, "busy action card retains interact")
 			dialog.set_busy(false)
-			await click(dialog.action_buttons[2])
+			await click(dialog.action_buttons[2], GameCursorManager.State.FORBIDDEN)
 			check(dialog.selected_index==1 and requests==1 and dialog.disabled_masks[2].visible, "disabled intimidation cannot select or execute")
 			dialog.present(event,enemy)
 			check(dialog.selected_index == -1, "reopen resets selection")

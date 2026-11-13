@@ -1,15 +1,18 @@
 class_name BattleReplayFormat
 extends RefCounted
 const METRICS := {
-	"damage_total":[1,"造成伤害"],"hp_restored":[2,"恢复气血"],"stamina_restored":[3,"恢复体力"],"stamina_spent":[3,"消耗体力"],
-	"spirit_restored":[4,"恢复灵力"],"spirit_spent":[4,"消耗灵力"],"armor_granted":[5,"提供护甲"],"shield_generated":[6,"生成护盾"],
+	"damage_total":[1,"造成伤害"],"hp_restored":[2,"恢复气血"],"stamina_restored":[3,"恢复体力"],"stamina_spent":[18,"消耗体力"],
+	"spirit_restored":[4,"恢复灵力"],"spirit_spent":[19,"消耗灵力"],"hp_spent":[17,"消耗气血"],"armor_granted":[5,"提供护甲"],"shield_generated":[6,"生成护盾"],
 	"buff_apply":[7,"施加增益"],"debuff_apply":[8,"施加减益"],"rotation":[9,"转轮次数"],"damage_assist":[10,"增伤贡献"],
 	"damage_mitigated":[11,"减伤贡献"],"shield_absorbed":[12,"护盾承伤"],"trigger":[13,"参与触发"]}
 static var _icons: Dictionary = {}
 
 static func icon(metric: String) -> Texture2D:
 	var id: int = METRICS.get(metric,[13,""])[0]
-	if not _icons.has(id): _icons[id] = load("res://assets/UI-battle-icon-%02d.webp" % id)
+	# Reserved artwork leaves its slot empty until imported; never substitute recovery art.
+	if not _icons.has(id):
+		var path := "res://assets/UI-battle-icon-%02d.webp" % id
+		_icons[id] = load(path) if ResourceLoader.exists(path) else null
 	return _icons[id]
 
 static func number(value: float) -> String:

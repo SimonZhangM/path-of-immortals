@@ -11,7 +11,7 @@ const PAGE_KEYS := {
 	"controls": ["bindings", "invert_zoom", "shortcut_hints"],
 	"display": ["display_mode", "resolution", "fps_limit"],
 	"audio": ["volume_master", "volume_music", "volume_effects", "background_mute"],
-	"other": []
+	"other": ["custom_cursor", "cursor_size"]
 }
 const BINDING_CONTEXTS := [
 	["map_inventory", "map_techniques", "map_world_map", "map_tasks", "map_breakthrough", "map_task_tracker"],
@@ -120,9 +120,10 @@ func validate_values(draft: Dictionary) -> String:
 	for key: Variant in draft:
 		if not combined.has(key): return "未知设置项。"
 		combined[key] = draft[key]
-	for key: String in ["dialogue_auto", "background_pause", "auto_save", "quick_save", "invert_zoom", "shortcut_hints", "background_mute"]:
+	for key: String in ["dialogue_auto", "background_pause", "auto_save", "quick_save", "invert_zoom", "shortcut_hints", "background_mute", "custom_cursor"]:
 		if not combined[key] is bool: return "设置开关值无效。"
 	if combined.dialogue_speed not in ["slow", "medium", "fast", "instant"]: return "对话速度无效。"
+	if combined.cursor_size not in ["normal", "large"]: return "指针大小无效。"
 	if not _number(combined.battle_speed) or float(combined.battle_speed) not in [0.5, 1.0, 2.0]: return "战斗倍速无效。"
 	if not _number(combined.auto_save_minutes) or float(combined.auto_save_minutes) not in [5.0, 10.0, 15.0, 30.0]: return "自动保存间隔无效。"
 	if not _number(combined.fps_limit) or float(combined.fps_limit) not in [30.0, 60.0]: return "帧率上限只支持30或60帧。"

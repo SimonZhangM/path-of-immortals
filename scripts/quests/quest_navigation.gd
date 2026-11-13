@@ -8,8 +8,9 @@ func _init() -> void:
 	for id: String in session.scenes: scene_ids[session.scenes[id]] = id
 	var world: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/world_map_locations.json"))
 	for location: Dictionary in world.locations.values():
-		if not location.map_id.is_empty():
-			definitions[location.map_id] = JSON.parse_string(FileAccess.get_file_as_string(location.map_definition))
+		var definition_path: String = location.get("map_definition", "")
+		if not location.map_id.is_empty() and not definition_path.is_empty():
+			definitions[location.map_id] = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
 
 func exit_toward(current: String, destination: String) -> Dictionary:
 	if current==destination: return {}

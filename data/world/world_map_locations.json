@@ -36,6 +36,16 @@
       "phrase": "石桥烟火 · 山外仙缘",
       "description": "青石铺街，溪水绕屋，炉火与药香伴着市声悠悠散开。有人在此安居，也有人自此辞家，循着山路去寻仙缘。"
     },
+    "base.world_location.diecuifeng": {
+      "name": "叠翠峰", "map_id": "base.map.diecuifeng", "position": [2591, 1613], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "map_definition": "res://data/maps/diecuifeng.json",
+      "region_id": "base.world_region.qinglanshanlu",
+      "picture": "res://assets/map-worldmap-diecuifeng.webp"
+    },
+    "base.world_location.qinglanshandao": {
+      "name": "青岚山道", "map_id": "base.map.qinglanshandao", "position": [2748, 1628], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
+      "region_id": "base.world_region.qinglanshanlu"
+    },
     "base.world_location.xiyuanyaopo": {
       "name": "溪源药坡", "map_id": "base.map.xiyuanyaopo", "position": [2569, 1746], "marker_texture": "res://assets/UI-map-size0.webp", "marker_width": 28,
       "map_definition": "res://data/maps/xiyuanyaopo.json",

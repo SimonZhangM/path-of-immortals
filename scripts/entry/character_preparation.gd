@@ -239,6 +239,7 @@ func _request_preparation() -> void:
 	if root_panel.enter_button.disabled: return
 	# Formal character creation will consume this draft; never overwrite an existing save here.
 	preparation_requested.emit({
+		"is_test_save": false,
 		"full_name": creation_draft.full_name, "surname": creation_draft.surname,
 		"given_name": creation_draft.given_name, "gender": creation_draft.gender,
 		"root_selection": creation_draft.root_selection.duplicate(true)

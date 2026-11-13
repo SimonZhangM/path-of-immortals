@@ -23,6 +23,7 @@ func run()->void:
 	test_sources()
 	test_shields()
 	test_events_and_format()
+	test_contribution_totals()
 	test_command_costs()
 	test_derived_and_passive()
 	test_support_and_replacement()
@@ -96,6 +97,13 @@ func test_shields()->void:
 	check(is_equal_approx(metrics(sim,"weapon").generated_barrier,30),"ordinary shield records actual additions")
 	check(is_equal_approx(metrics(sim,"weapon").absorbed_barrier,3),"ordinary shield owner absorption")
 	check(is_equal_approx(sim.replay.unassigned_damage,20),"fixture unsourced attacker totals kept separate")
+	var team_absorbed: float = sim.replay.snapshot().team_metrics[0].shield_absorbed
+	var item_absorbed: float = metrics(sim,"weapon").shield_absorbed
+	p.barrier += 10
+	sim.t01.damage(e,p,10,"钝击","base.element.none",3,{"adjusted":true},false,{})
+	sim.drain_events()
+	check(is_equal_approx(sim.replay.snapshot().team_metrics[0].shield_absorbed,team_absorbed+3),"unattributed ordinary shield absorption remains in faction denominator")
+	check(is_equal_approx(metrics(sim,"weapon").shield_absorbed,item_absorbed),"unattributed ordinary shield is not assigned to visible items")
 
 func test_events_and_format()->void:
 	var stats:=Stats.new()
@@ -119,6 +127,61 @@ func test_events_and_format()->void:
 	check(lines.size()==4 and lines[3].key=="rotation","three recovery rows plus rotation")
 	check(Format.lines(recovery,{"metrics":{"rotation":4}}).size()==1,"zero recovery hidden")
 	check(Format.formatted("stamina_spent",7.6)=="7.6","cost displayed without minus sign")
+
+func test_contribution_totals() -> void:
+	var details = preload("res://scripts/presentation/battle_replay_details.gd")
+	var stats := Stats.new()
+	var shared := [{"instance_id":"x", "side":0, "weight":2.0/3.0}, {"instance_id":"y", "side":0, "weight":1.0/3.0}]
+	var events: Array[Dictionary] = [
+		{"kind":"damage", "record_sequence":1, "record_group_id":1, "instance_id":"x", "side":0, "target_id":"enemy", "value":5, "armor_absorbed":4, "shield_absorbed":3, "critical":true},
+		{"kind":"status_damage", "record_sequence":2, "record_group_id":2, "record_mode":"dot", "status":"灼烧", "replay_sources":shared, "target_id":"enemy", "value":3},
+		{"kind":"damage", "record_sequence":3, "record_group_id":3, "side":0, "value":6},
+		{"kind":"damage", "record_sequence":4, "record_group_id":4, "side":1, "value":9},
+		{"kind":"miss", "record_sequence":5, "record_group_id":5, "instance_id":"x", "side":0},
+		{"kind":"immune", "record_sequence":6, "record_group_id":6, "instance_id":"x", "side":0},
+		{"kind":"status_applied", "record_sequence":7, "record_action_id":7, "status":"灼烧", "layers":2, "layers_before":0, "replay_sources":shared, "target_id":"enemy"},
+		{"kind":"restore", "record_sequence":8, "side":0, "resource":"hp", "value":10},
+		{"kind":"restore", "record_sequence":9, "instance_id":"x", "side":0, "resource":"hp", "value":5},
+		{"kind":"restore", "record_sequence":10, "instance_id":"x", "side":0, "resource":"stamina", "value":0, "restore_reason":"resource_full"},
+		{"kind":"status_failed", "record_sequence":11, "record_action_id":11, "instance_id":"x", "side":0, "status":"灼烧", "target_id":"enemy", "reason":"免疫"},
+		{"kind":"status_removed", "record_sequence":12, "record_action_id":12, "instance_id":"x", "side":0, "status":"毒蚀", "target_id":"ally", "removal":"净化"},
+	]
+	stats.consume(events)
+	stats.consume(events)
+	stats.register([])
+	var snapshot := stats.snapshot()
+	var row := stats.item("x")
+	check(snapshot.team_metrics[0].damage_total == 21 and snapshot.team_metrics[1].damage_total == 9, "team totals include unattributed damage and keep opponents separate")
+	check(row.metrics.damage_total == 14 and row.effect_stats["灼烧"].metrics.damage_total == 2, "shared state damage keeps its effect and item attribution")
+	check(row.metrics.attack_hits == 1 and row.metrics.attack_crits == 1, "periodic ticks do not count as attack hits or crits")
+	check(row.metrics.attack_misses == 1 and row.metrics.attack_immune == 1, "miss and immunity have separate counts")
+	check(snapshot.team_metrics[0].debuff_apply == 1 and row.effect_stats["灼烧"].metrics.debuff_apply == 1, "shared applications and repeated events are deduplicated")
+	check(snapshot.team_metrics[0].hp_restored == 15, "restoration denominator includes other sources")
+	var weapon := registry.get_item("base.map_item.qingshi_short_sword")
+	var share: Dictionary = details.share(weapon, row, snapshot)
+	check(is_equal_approx(share.ratio, 2.0/3.0) and not row.on_board, "departed items remain in full team share")
+	check(details.share(weapon, {}, {}).percent == "—", "legacy snapshot without totals does not invent a percentage")
+	check(details.primary_metric(registry.get_item("base.map_item.t01_0020")) == "stamina_restored", "stamina recovery uses its own resource denominator")
+	check(details.primary_metric(registry.get_item("base.organ.xiwenlingyuan_shuixinang")) == "spirit_restored", "periodic resource recovery uses its defined resource")
+	var dual_row := {"side":0, "metrics":{"hp_restored":12, "spirit_restored":6}}
+	var dual_snapshot := {"team_metrics":[{"hp_restored":24, "spirit_restored":24}, {"hp_restored":100, "spirit_restored":100}]}
+	var dual: Array = details.shares(registry.get_item("base.map_item.t01_0086"), dual_row, dual_snapshot)
+	check(dual.size() == 2 and dual[0].percent == "50.0%" and dual[1].percent == "25.0%", "dual restoration uses separate same-faction denominators")
+	dual_row.metrics.spirit_restored = 0
+	check(details.shares(registry.get_item("base.map_item.t01_0086"), dual_row, dual_snapshot)[1].percent == "0.0%", "defined secondary recovery remains visible at zero actual restoration")
+	for id in ["base.map_item.warm_jade", "base.map_item.t01_0027", "base.map_item.t01_0104"]:
+		var combined: Array = details.shares(registry.get_item(id), {}, {})
+		check(combined.size() == 2 and combined[0].key == "hp_restored" and combined[1].key == "stamina_restored", "hp and stamina recovery share cards for " + id)
+	check(details.shares(weapon, row, snapshot).size() == 1, "other profiles retain one primary chart")
+	check(row.restore_reasons.stamina == "resource_full", "zero recovery retains the actual cause")
+	check(row.effect_stats["灼烧"].metrics.status_failed == 1 and row.effect_stats["毒蚀"].metrics.status_removed == 1, "failed applications and active removal stay in their effect rows")
+	var supported := 0
+	for definition: ItemData in registry._items.values():
+		if definition.category not in ["weapon", "armor", "artifact", "pill", "throwable", "spell", "item"]: continue
+		var formatted: Array = details.rows(definition, {"metrics": {}}, registry, {})
+		if not formatted.is_empty() and formatted[0].key == details.primary_metric(definition): supported += 1
+	check(supported > 100, "all registered combat item types produce a stable primary row")
+	print("REPLAY_DETAIL_PROFILES: ", supported)
 
 func test_command_costs()->void:
 	for spell in ["base.spell.metal_06","base.spell.metal_08"]:

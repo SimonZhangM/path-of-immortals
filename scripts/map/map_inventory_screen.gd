@@ -1619,7 +1619,9 @@ func _enable_storage_drop(node: Node) -> void:
 	if loadout == null:
 		return
 	if node is Control:
-		node.set_drag_forwarding(Callable(), func(_point: Vector2, data: Variant): return _can_transfer(data) if not warehouse_id.is_empty() else loadout.valid_drag(data) and data.source == "board", func(_point: Vector2, data: Variant):
+		var can_drop := func(_point: Vector2, data: Variant): return _can_transfer(data) if not warehouse_id.is_empty() else loadout.valid_drag(data) and data.source == "board"
+		node.set_meta("cursor_drop_allowed", can_drop)
+		node.set_drag_forwarding(Callable(), can_drop, func(_point: Vector2, data: Variant):
 			if not warehouse_id.is_empty():
 				if _can_transfer(data): warehouse_transfer_requested.emit(warehouse_id,data.item_id,data.withdraw)
 			else: loadout.take_back(data)
@@ -1739,6 +1741,10 @@ func _gui_input(event: InputEvent) -> void:
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
 	return warehouse_id.is_empty() and loadout != null and loadout.valid_drag(data) and data.source == "board" and storage_panel.get_global_rect().has_point(get_global_transform() * point)
+
+func cursor_drop_state(point: Vector2, data: Variant) -> int:
+	if not storage_panel.get_global_rect().has_point(get_global_transform() * point): return -1
+	return int(_can_drop_data(point, data))
 
 func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point, data):

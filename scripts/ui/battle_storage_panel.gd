@@ -67,6 +67,7 @@ func _add_item_card(entry: Dictionary) -> void:
 func _enable_storage_drop(node: Node) -> void:
 	if node is Control:
 		node.set_drag_forwarding(Callable(), _can_drop_data, _drop_data)
+		node.set_meta("cursor_drop_allowed", _can_drop_data)
 	for child in node.get_children():
 		_enable_storage_drop(child)
 

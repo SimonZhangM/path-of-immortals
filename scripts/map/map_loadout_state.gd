@@ -7,6 +7,53 @@ const TEST_SPELL_GRANT := "test.combat_spells.20261019"
 signal changed
 signal interaction(kind: String)
 signal formations_changed
+signal map_shortcuts_changed
+
+const MapShortcuts = preload("res://scripts/map/map_shortcut_state.gd")
+var map_shortcuts: Dictionary = {}
+var is_test_save := false
+
+func _init() -> void:
+	changed.connect(sync_map_shortcuts)
+
+func sync_map_shortcuts() -> void:
+	if MapShortcuts.sync(self): map_shortcuts_changed.emit()
+
+func map_shortcut_available(action: String) -> bool:
+	if action=="map_breakthrough": return preload("res://scripts/map/map_breakthrough_access.gd").can_open(self)
+	var entry := MapShortcuts.entry_for_action(action)
+	return entry.is_empty() or entry.id in map_shortcuts.get("unlocked",[])
+
+func mark_map_shortcut_read(action: String) -> bool:
+	var entry := MapShortcuts.entry_for_action(action)
+	if entry.is_empty() or entry.id not in map_shortcuts.get("unread",[]): return false
+	map_shortcuts.unread.erase(entry.id)
+	revision+=1
+	map_shortcuts_changed.emit()
+	return true
+
+func set_map_shortcuts_collapsed(collapsed: bool) -> void:
+	if bool(map_shortcuts.get("collapsed",false))==collapsed: return
+	map_shortcuts.collapsed=collapsed
+	revision+=1
+	map_shortcuts_changed.emit()
+
+func unlock_map_shortcut(id: String) -> void:
+	if not id.begins_with("base.map_shortcut.") or id in map_shortcuts.get("unlocked",[]): return
+	sync_map_shortcuts()
+	map_shortcuts.unlocked.append(id)
+	if id not in map_shortcuts.unread: map_shortcuts.unread.append(id)
+	revision+=1
+	map_shortcuts_changed.emit()
+
+func notify_map_shortcut(id: String) -> void:
+	# Extension hook for future entry types with their own authoritative facts.
+	if not id.begins_with("base.map_shortcut."): return
+	sync_map_shortcuts()
+	if id in map_shortcuts.unread: return
+	map_shortcuts.unread.append(id)
+	revision+=1
+	map_shortcuts_changed.emit()
 
 var registry: ContentRegistry
 var cultivation_rank_id := "base.cultivation.mortal"
@@ -82,15 +129,19 @@ func set_map_location(map_id: String, point_id: String) -> bool:
 	revision += 1
 	# Ordinary path movement need not rebuild UI; a revealed quest stage does.
 	if quest_updated: changed.emit()
+	# Breakthrough eligibility can change between two nodes of the same region.
+	sync_map_shortcuts()
 	return true
 
 func visit_map_point(map_id: String, point_id: String) -> bool:
 	if not point_id.begins_with(map_id + ".point."): return false
 	var points: Array = map_visited.get(map_id, [])
 	if point_id in points: return false
+	var first_region_visit := points.is_empty()
 	points.append(point_id)
 	map_visited[map_id] = points
 	revision += 1
+	if first_region_visit: sync_map_shortcuts()
 	# No inventory geometry changed; leave inventory UI rebuild signals alone.
 	return true
 
@@ -553,7 +604,10 @@ func _commit() -> void:
 	interaction.emit("place")
 
 func snapshot() -> Dictionary:
+	sync_map_shortcuts()
 	var result := layout_snapshot()
+	result.map_shortcuts=map_shortcuts.duplicate(true)
+	result.is_test_save=is_test_save
 	result.version = 2
 	if not growth.is_empty():
 		result.growth = growth.duplicate(true)
@@ -655,6 +709,9 @@ func restore(raw: Variant, enforce_capacity: bool = false, legacy_growth: Dictio
 func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	if not raw is Dictionary:
 		return "行囊存档格式无效。"
+	var saved_shortcuts: Variant=raw.get("map_shortcuts",{})
+	if not MapShortcuts.valid(saved_shortcuts): return "地图入口提示记录无效。"
+	if raw.has("is_test_save") and not raw.is_test_save is bool: return "测试存档标记无效。"
 	var saved_stones: Variant = raw.get("spirit_stones", int(JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/status_header.json")).spirit_stones))
 	var saved_serial: Variant = raw.get("purchase_serial", 0)
 	if not WorldCalendar.integer_between(saved_stones,0,1000000000) or not WorldCalendar.integer_between(saved_serial,0,1000000000): return "灵石或交易流水存档无效。"
@@ -702,6 +759,9 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	var receipts: Variant = raw.get("content_grants", {})
 	if not receipts is Dictionary:
 		return "内容补发凭证无效。"
+	# Only dedicated historical test grants identify legacy test saves. A normal
+	# explicit marker always wins, even if a save later received test content.
+	var saved_test: bool=raw.get("is_test_save",bool(receipts.get(TEST_SPELL_GRANT,false)) or bool(receipts.get("test.cultivation_books.20261019",false)))
 	if raw.get("version", 1) == 2:
 		if not raw.get("owned_units") is Dictionary:
 			return "持有单位账本无效。"
@@ -802,6 +862,8 @@ func _restore_state(raw: Variant, enforce_capacity: bool = false) -> String:
 	HomecomingQuest.migrate(quests[HomecomingQuest.ID],narrative)
 	RiverQuest.migrate_root_discovery(quests[RiverQuest.ID],granted_rewards)
 	quest_tracking = saved_tracking.duplicate(true)
+	map_shortcuts=saved_shortcuts.duplicate(true)
+	is_test_save=saved_test
 	if quests[QuestState.ID].counts.deliver>0: quest_tracking.ids.erase(QuestState.ID)
 	bag_capacity = int(saved_capacity)
 	spirit_stones = int(saved_stones)

@@ -33,6 +33,14 @@ func _gui_input(event: InputEvent) -> void:
 		_begin_drag.call_deferred(drag_data())
 		accept_event()
 
+func cursor_hover_state(_point: Vector2) -> int:
+	if manager != null and manager.can_edit_inventory() and is_instance_valid(battle_board) and not drag_data().is_empty():
+		return GameCursorManager.State.DRAG_READY
+	return GameCursorManager.State.INTERACT
+
+func cursor_drag_is_valid(data: Variant) -> bool:
+	return data is Dictionary and manager != null and manager.can_edit_inventory() and data.get("epoch") == manager.interaction_epoch and not manager.storage.get_entry(data.get("storage_id", "")).is_empty()
+
 func _storage_drag_data() -> Dictionary:
 	return drag_data()
 
@@ -60,6 +68,7 @@ func _begin_drag(data: Dictionary) -> void:
 		force_drag(data, holder)
 	else:
 		force_drag(data, battle_board.make_drag_preview(item, units))
+	get_node("/root/CursorManager").begin_drag(self)
 	modulate.a = 0.4
 
 func _notification(what: int) -> void:

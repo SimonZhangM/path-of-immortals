@@ -67,9 +67,9 @@ func run() -> void:
 	for route: MapRoute in map.content.get_node("Routes").get_children():
 		check(route.curve.get_point_position(0).is_equal_approx(route.get_node(route.start_point).position),"curve start " + route.name)
 		check(route.curve.get_point_position(route.curve.point_count-1).is_equal_approx(route.get_node(route.end_point).position),"curve end " + route.name)
-	for asset in ["map-wumingjiuci","map-title-wumingjiuci"]:
+	for asset in ["map-wumingjiuci","map-title-wumingjiuci-complete"]:
 		check((load("res://assets/"+asset+".webp") as Texture2D).get_image().has_mipmaps(),"mipmaps " + asset)
-	check(map.definition.title_image=="res://assets/map-title-wumingjiuci.webp","supplied hanging title")
+	check(map.definition.title_image=="res://assets/map-title-wumingjiuci-complete.webp","supplied hanging title")
 	await capture("entry")
 	for point: MapRoutePoint in map.content.get_node("Points").get_children(): point.present_exploration(true,true)
 	for route: MapRoute in map.content.get_node("Routes").get_children(): route.present_exploration(true,false,false,72)

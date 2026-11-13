@@ -76,6 +76,7 @@ func _init() -> void:
 	map_window.mouse_filter = MOUSE_FILTER_STOP
 	stage.add_child(map_window)
 	map_window.gui_input.connect(_map_input)
+	map_window.set_meta("cursor_hover", _map_cursor_state)
 	map_image = _image("res://assets/map-worldmap.webp", map_window)
 	var source := map_image.texture.get_size()
 	var minimum := maxf(map_window.size.x/source.x,map_window.size.y/source.y)
@@ -140,6 +141,7 @@ func _trimmed_image(path: String, parent: Control, width: float) -> TextureRect:
 
 func _build_zoom_control() -> void:
 	zoom_control = Control.new()
+	zoom_control.set_meta("cursor_hover", func(_point: Vector2): return GameCursorManager.State.DRAG_READY)
 	zoom_control.name = "ZoomControl"
 	zoom_control.position = Vector2(MAP_RECT.end.x-18-SLIDER_SIZE.x,MAP_RECT.get_center().y-SLIDER_SIZE.y*0.5)
 	zoom_control.size = SLIDER_SIZE
@@ -292,6 +294,20 @@ func _hover_location(point: Vector2) -> void:
 	map_window.mouse_default_cursor_shape = CURSOR_POINTING_HAND if not location_id.is_empty() else CURSOR_ARROW
 	map_window.tooltip_text = locations[location_id].name if not location_id.is_empty() else ""
 
+func _map_cursor_state(point: Vector2) -> int:
+	if not location_at(point).is_empty(): return GameCursorManager.State.INTERACT
+	return GameCursorManager.State.NORMAL
+
+func cursor_press_feedback_enabled(_point: Vector2) -> bool:
+	return (get_viewport().gui_get_hovered_control() == map_window and _cursor_can_pan()
+		and location_at(map_window.get_local_mouse_position()).is_empty())
+
+func _cursor_can_pan() -> bool:
+	return map_image.size.x > map_window.size.x + 0.01 or map_image.size.y > map_window.size.y + 0.01
+
+func cursor_cancel_drag() -> void:
+	_end_drag()
+
 func _layout() -> void:
 	if size.x <= 0 or size.y <= 0: return
 	var margin := 24.0 * minf(size.x/1920.0,size.y/1080.0)
@@ -325,6 +341,8 @@ func _slider_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_star_dragging = event.pressed
+			if event.pressed: get_node("/root/CursorManager").begin_drag(self, false)
+			else: get_node("/root/CursorManager").end_drag(self)
 			if event.pressed:
 				_star_grab_offset = event.position.y-scroll_star.get_rect().get_center().y if scroll_star.get_rect().grow(5).has_point(event.position) else 0.0
 				_set_slider_y(event.position.y-_star_grab_offset)
@@ -407,6 +425,7 @@ func _map_input(event: InputEvent) -> void:
 		if not dragging:
 			if event.position.distance_to(_press_pointer)*stage.scale.x <= CLICK_SLOP_PIXELS: return
 			dragging = true
+			if _cursor_can_pan(): get_node("/root/CursorManager").begin_drag(self, false)
 			map_window.mouse_default_cursor_shape = CURSOR_DRAG
 			map_window.tooltip_text = ""
 		map_image.position += event.position-_last_pointer
@@ -422,6 +441,7 @@ func _notification(what: int) -> void:
 
 func _end_drag() -> void:
 	dragging = false
+	if is_inside_tree(): get_node("/root/CursorManager").end_drag(self)
 	_pointer_down = false
 	_pressed_location = ""
 	_star_dragging = false

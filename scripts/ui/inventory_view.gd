@@ -48,6 +48,7 @@ var board_texture: Texture2D
 var _tooltip_entry: Dictionary = {}
 var replay_mode := false
 var replay_filter := "all"
+var replay_tooltip_center: Callable
 const ReplayFormat = preload("res://scripts/presentation/battle_replay_format.gd")
 var _replay_font: FontVariation
 const REPLAY_VEIL := Color(0.125, 0.145, 0.173, 0.55)
@@ -369,6 +370,19 @@ func drag_data_at(point: Vector2) -> Dictionary:
 	selection_changed.emit(instance["item_id"])
 	return {"kind": "inventory", "epoch": manager.interaction_epoch, "source": get_instance_id(), "generation": _generation, "member_index": member_index, "instance_id": hit, "offset": _grab_offset}
 
+func cursor_hover_state(point: Vector2) -> int:
+	if manager == null or inventory == null or enemy_side or replay_mode:
+		return GameCursorManager.State.NORMAL
+	if not inventory.locked and manager.can_edit_inventory() and not inventory.item_at(_cell_at(point)).is_empty():
+		return GameCursorManager.State.DRAG_READY
+	return GameCursorManager.State.NORMAL
+
+func cursor_drop_state(point: Vector2, data: Variant) -> int:
+	return int(_can_drop_data(point, data))
+
+func cursor_drag_is_valid(data: Variant) -> bool:
+	return data is Dictionary and manager != null and manager.can_edit_inventory() and data.get("epoch") == manager.interaction_epoch and not inventory.get_instance(data.get("instance_id", "")).is_empty()
+
 func _get_drag_data(point: Vector2) -> Variant:
 	var data := drag_data_at(point)
 	if data.is_empty():
@@ -376,6 +390,7 @@ func _get_drag_data(point: Vector2) -> Variant:
 	_native_drag_active = true
 	var item := manager.registry.get_item(inventory.get_instance(data["instance_id"])["item_id"])
 	set_drag_preview(make_drag_preview(item, inventory.get_instance(data["instance_id"])))
+	get_node("/root/CursorManager").begin_drag(self)
 	return data
 
 func _can_drop_data(point: Vector2, data: Variant) -> bool:
@@ -465,6 +480,7 @@ func build_item_tooltip(_for_text: String) -> Object:
 	if replay_mode:
 		var stats_panel = preload("res://scripts/ui/battle_replay_tooltip.gd").new()
 		var context := {"enemy_armor_type": EnemyPresentation.combat_tags(owner).armor} if enemy_side else {}
+		if replay_tooltip_center.is_valid(): context.replay_center = replay_tooltip_center
 		stats_panel.configure_stats(item,manager.simulation.replay.item(_tooltip_entry.instance_id),manager.registry,manager.simulation.replay.snapshot(),get_viewport_rect().size,context)
 		return stats_panel
 	var panel := ItemTooltip.new()
@@ -502,5 +518,7 @@ func _draw_replay(rect: Rect2, item: ItemData, row: Dictionary) -> void:
 		var position := start+offset
 		var width := rect.size.x/(2 if grid else 1)-6
 		var text_x := REPLAY_ICON_SIDE+4
-		draw_texture_rect(ReplayFormat.icon(entry.key),Rect2(position+Vector2(1,0.5),Vector2.ONE*REPLAY_ICON_SIDE),false)
+		var icon := ReplayFormat.icon(entry.key)
+		if icon != null:
+			draw_texture_rect(icon,Rect2(position+Vector2(1,0.5),Vector2.ONE*REPLAY_ICON_SIDE),false)
 		draw_string(font,position+Vector2(text_x,18),entry.text,HORIZONTAL_ALIGNMENT_LEFT,width-text_x,16,Color.WHITE)

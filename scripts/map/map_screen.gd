@@ -85,6 +85,8 @@ var breakthrough_session = preload("res://scripts/map/map_breakthrough_session.g
 var _breakthrough_adjusting := false
 var _breakthrough_result_tween: Tween
 var world_map: Control
+var shortcut_bar: Control
+var _shortcut_actions: Dictionary = {}
 var save_browser_controller: Node
 var system_menu_controller: Node
 const Checkpoints = preload("res://scripts/entry/save_checkpoints.gd")
@@ -385,9 +387,42 @@ func _setup_inventory(registry: ContentRegistry) -> void:
 	merchant_story_controller.map = self
 	merchant_story_controller.model = MerchantRoadQuest
 	add_child(merchant_story_controller)
+	_setup_shortcut_bar()
 	if not defer_optional_views:
 		_ensure_inventory_view()
 		_ensure_technique_view()
+
+func _setup_shortcut_bar() -> void:
+	register_shortcut_action("map_breakthrough",func(): set_breakthrough_open(true))
+	register_shortcut_action("map_inventory",func(): set_inventory_open(true))
+	register_shortcut_action("map_techniques",func(): set_technique_open(true))
+	register_shortcut_action("map_tasks",func(): set_task_open(true))
+	register_shortcut_action("map_world_map",func(): set_world_map_open(true))
+	loadout.sync_map_shortcuts()
+	shortcut_bar=preload("res://scripts/map/map_shortcut_bar.gd").new()
+	add_child(shortcut_bar)
+	shortcut_bar.entry_requested.connect(_open_shortcut)
+	shortcut_bar.collapsed_changed.connect(func(collapsed: bool):
+		loadout.set_map_shortcuts_collapsed(collapsed)
+		var error := _save_loadout()
+		if not error.is_empty(): push_warning(error))
+	loadout.map_shortcuts_changed.connect(func(): shortcut_bar.refresh(loadout.map_shortcuts))
+	shortcut_bar.refresh(loadout.map_shortcuts)
+	_sync_shortcut_visibility()
+
+func _shortcut_available(action: String) -> bool:
+	return loadout!=null and loadout.map_shortcut_available(action)
+
+func register_shortcut_action(action: String, open_callback: Callable) -> void:
+	_shortcut_actions[action]=open_callback
+
+func _open_shortcut(action: String) -> void:
+	if not _shortcut_available(action) or not can_save_timed_checkpoint(): return
+	if _shortcut_actions.has(action): _shortcut_actions[action].call()
+
+func _sync_shortcut_visibility() -> void:
+	if shortcut_bar==null: return
+	shortcut_bar.visible=can_save_timed_checkpoint()
 
 func _ensure_inventory_view() -> void:
 	if inventory_screen != null: return
@@ -426,6 +461,12 @@ func _ensure_technique_view() -> void:
 
 func _update_optional_view_visibility() -> void:
 	_update_calendar_visibility()
+	_sync_shortcut_visibility()
+	for action: String in ["map_inventory","map_techniques","map_tasks","map_world_map","map_breakthrough"]:
+		var opened: bool = {"map_inventory":is_inventory_open(),"map_techniques":is_technique_open(),"map_tasks":is_task_open(),"map_world_map":is_world_map_open(),"map_breakthrough":is_breakthrough_open()}[action]
+		if opened and loadout!=null and loadout.mark_map_shortcut_read(action):
+			var error := _save_loadout()
+			if not error.is_empty(): push_warning(error)
 	if sign_motion != null: sign_motion.set_suspended(is_task_open() or is_breakthrough_open() or is_inventory_open() or is_technique_open() or is_world_map_open() or is_save_browser_open() or is_system_menu_open())
 
 func is_system_menu_open() -> bool:
@@ -452,6 +493,7 @@ func is_world_map_open() -> bool:
 	return world_map != null and world_map.visible
 
 func set_world_map_open(open: bool) -> void:
+	if open and not _shortcut_available("map_world_map"): return
 	if open and (is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open()): return
 	if is_world_map_open() == open: return
 	if open and (not is_visible_in_tree() or player == null or not startup_error.is_empty() or MapPresentation.transitioning or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
@@ -550,6 +592,7 @@ func is_breakthrough_open() -> bool:
 	return breakthrough_screen != null and breakthrough_screen.visible
 
 func set_breakthrough_open(open: bool) -> void:
+	if open and not _shortcut_available("map_breakthrough"): return
 	if is_breakthrough_open()==open: return
 	if open and (not is_visible_in_tree() or player==null or loadout==null or not startup_error.is_empty() or MapPresentation.transitioning): return
 	if open and (is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state!=null and event_state.is_active())): return
@@ -652,6 +695,7 @@ func _return_from_breakthrough_inventory() -> void:
 	_clear_hover()
 
 func set_task_open(open: bool) -> void:
+	if open and not _shortcut_available("map_tasks"): return
 	if is_task_open()==open: return
 	if open and (not is_visible_in_tree() or player==null or loadout==null or not startup_error.is_empty() or MapPresentation.transitioning): return
 	if open and (is_system_menu_open() or is_save_browser_open() or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open() or is_breakthrough_open() or is_exit_open() or (event_state!=null and event_state.is_active())): return
@@ -678,6 +722,7 @@ func _ensure_task_view() -> void:
 		task_screen.visibility_changed.connect(_update_optional_view_visibility)
 
 func _open_book_details(book_id: String) -> void:
+	if not _shortcut_available("map_techniques"): return
 	if _breakthrough_adjusting: return
 	if is_task_open() or is_breakthrough_open(): return
 	if not is_visible_in_tree() or not loadout.registry.library.books.has(book_id): return
@@ -695,6 +740,7 @@ func _open_book_details(book_id: String) -> void:
 	_clear_hover()
 
 func set_technique_open(open: bool) -> void:
+	if open and not _shortcut_available("map_techniques"): return
 	if open and (is_task_open() or is_breakthrough_open() or is_save_browser_open() or is_system_menu_open()): return
 	if is_technique_open() == open: return
 	if open and (is_world_map_open() or is_inventory_open() or is_exit_open() or (event_state != null and event_state.is_active())): return
@@ -743,6 +789,7 @@ func _handle_fullscreen_switch(event: InputEventKey) -> bool:
 	for action in ["map_inventory","map_techniques","map_tasks","map_breakthrough","map_world_map"]:
 		if event.is_action_pressed(action): target = action
 	if target.is_empty(): return false
+	if not _shortcut_available(target): return true
 	if _breakthrough_adjusting:
 		if target=="map_inventory": return false
 		if target=="map_breakthrough": set_inventory_open(false)
@@ -2184,6 +2231,7 @@ func _setup_player() -> void:
 	_clamp_position()
 
 func _process(delta: float) -> void:
+	_sync_shortcut_visibility()
 	if is_breakthrough_open():
 		if not is_instance_valid(breakthrough_exit_dialog) or not breakthrough_exit_dialog.visible:
 			breakthrough_session.advance(delta)
@@ -2255,6 +2303,29 @@ func _refresh_cursor() -> void:
 func _clear_hover() -> void:
 	_cursor_position = Vector2(-1, -1)
 	_refresh_cursor()
+
+func cursor_hover_state(point: Vector2) -> int:
+	if not _cursor_map_available():
+		return GameCursorManager.State.NORMAL
+	if not map_viewport.get_rect().has_point(point): return GameCursorManager.State.NORMAL
+	if not _node_at(point).is_empty(): return GameCursorManager.State.INTERACT
+	return GameCursorManager.State.NORMAL
+
+func cursor_press_feedback_enabled(point: Vector2) -> bool:
+	return (get_viewport().gui_get_hovered_control() == self and _cursor_map_available()
+		and map_viewport.get_rect().has_point(point) and _cursor_can_pan() and _node_at(point).is_empty())
+
+func _cursor_map_available() -> bool:
+	return not (definition.is_empty() or is_save_browser_open() or is_system_menu_open()
+		or is_world_map_open() or is_inventory_open() or is_technique_open() or is_task_open()
+		or is_breakthrough_open() or is_exit_open() or (event_state != null and event_state.is_active()))
+
+func _cursor_can_pan() -> bool:
+	var extent := _source_size() * content.scale
+	return extent.x > map_viewport.size.x + 0.01 or extent.y > map_viewport.size.y + 0.01
+
+func cursor_cancel_drag() -> void:
+	_end_drag()
 
 func _source_size() -> Vector2:
 	return Vector2(definition["source_size"][0], definition["source_size"][1])
@@ -2345,6 +2416,7 @@ func _gui_input(event: InputEvent) -> void:
 				_refresh_cursor()
 				return
 			_dragging = true
+			if _cursor_can_pan(): get_node("/root/CursorManager").begin_drag(self, false)
 			mouse_default_cursor_shape = Control.CURSOR_MOVE
 			content.position += _drag_delta
 		else:
@@ -2363,6 +2435,9 @@ func _notification(what: int) -> void:
 func _end_drag() -> void:
 	_dragging = false
 	_pointer_down = false
+	if not Engine.is_editor_hint() and is_inside_tree():
+		get_node("/root/CursorManager").end_drag(self)
+		if get_viewport().gui_is_dragging(): get_node("/root/CursorManager").cancel_drag()
 	_refresh_cursor()
 
 func _resume_fullscreen_parent() -> void:

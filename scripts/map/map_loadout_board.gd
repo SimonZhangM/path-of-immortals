@@ -111,6 +111,17 @@ func make_preview(data: Dictionary) -> Control:
 func _ready() -> void:
 	ItemTooltipHost.bind(self, _tooltip_key_at, build_item_tooltip)
 
+func cursor_hover_state(point: Vector2) -> int:
+	if state == null or state.inventory.locked or _tooltip_key_at(point).is_empty():
+		return GameCursorManager.State.NORMAL
+	return GameCursorManager.State.DRAG_READY
+
+func cursor_drop_state(point: Vector2, data: Variant) -> int:
+	return int(_can_drop_data(point, data))
+
+func cursor_drag_is_valid(data: Variant) -> bool:
+	return state != null and state.valid_drag(data)
+
 func _get_tooltip(_at_position: Vector2) -> String:
 	return ""
 
@@ -147,6 +158,7 @@ func _begin_drag(data: Dictionary) -> void:
 	_drag_active = true
 	state.interaction.emit("pick")
 	force_drag(data, make_preview(data))
+	get_node("/root/CursorManager").begin_drag(self)
 	if _items.has(data.id):
 		_items[data.id].modulate.a = 0.25
 

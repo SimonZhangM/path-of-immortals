@@ -180,6 +180,10 @@ func _fit() -> void:
 	var minimum := tooltip.get_combined_minimum_size()
 	if not tooltip.size.is_equal_approx(minimum): tooltip.reset_size()
 	var screen := get_viewport().get_visible_rect().size
+	if tooltip.has_meta("replay_center"):
+		var provider: Callable = tooltip.get_meta("replay_center")
+		if provider.is_valid():
+			_anchor = provider.call() - tooltip.size * 0.5
 	if source is MapInventoryItemCard:
 		# Use the card's canvas-space bounds and the laid-out core, not the
 		# pointer or an initial (pre-container-layout) tooltip height.

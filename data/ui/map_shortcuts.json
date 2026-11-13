@@ -1,0 +1,16 @@
+{
+  "icon_diameter": 64,
+  "icon_step": 78,
+  "left_center": 62,
+  "bottom_center": 56,
+  "toggle_diameter": 32,
+  "tooltip_delay": 3.0,
+  "red_dot": "res://assets/UI-map-icon-reddot.webp",
+  "entries": [
+    {"id":"base.map_shortcut.breakthrough","action":"map_breakthrough","title":"突破","description":"调整阵盘，尝试突破境界","icon":"res://assets/UI-map-icon-tupo.webp","source":"breakthrough","unlock":"breakthrough","dynamic":true},
+    {"id":"base.map_shortcut.bag","action":"map_inventory","title":"储物袋","description":"查看物品、整理阵盘","icon":"res://assets/UI-map-icon-bag.webp","source":"items","unlock":"always"},
+    {"id":"base.map_shortcut.techniques","action":"map_techniques","title":"功法","description":"查看、修习与管理功法","icon":"res://assets/UI-map-icon-gongfa.webp","source":"books","unlock":"book"},
+    {"id":"base.map_shortcut.tasks","action":"map_tasks","title":"任务","description":"查看任务与当前目标","icon":"res://assets/UI-map-icon-task.webp","source":"quests","unlock":"task"},
+    {"id":"base.map_shortcut.world","action":"map_world_map","title":"地图","description":"查看已到访地点与当前位置","icon":"res://assets/UI-map-icon-map.webp","source":"locations","unlock":"world"}
+  ]
+}

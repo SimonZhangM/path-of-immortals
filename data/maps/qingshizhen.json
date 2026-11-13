@@ -19,7 +19,7 @@
   "sign_motion": "res://data/ui/map_sign_motion.json",
   "start_point": "base.map.qingshizhen.point.n25",
   "show_map_title": true,
-  "title_image": "res://assets/map-title-qingshizhen.webp",
+  "title_image": "res://assets/map-title-qingshizhen-complete.webp",
   "exits": [
     {
       "point_id": "base.map.qingshizhen.point.n30",

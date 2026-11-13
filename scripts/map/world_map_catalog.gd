@@ -12,7 +12,9 @@ func _init() -> void:
 	for location: Dictionary in locations.values():
 		var map_id: String = location.map_id
 		if map_id.is_empty() or not session.scenes.has(map_id) or _points_by_map.has(map_id): continue
-		var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(location.map_definition))
+		var definition_path: String = location.get("map_definition", "")
+		if definition_path.is_empty(): continue
+		var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
 		assert(definition.id == map_id, "World location must match its map definition")
 		var layout: PackedScene = load(definition.layout_scene)
 		var state := layout.get_state()

@@ -1,0 +1,10 @@
+{
+  "sizes": {"normal": 40, "large": 56},
+  "states": [
+    {"name": "normal", "texture": "res://assets/UI-map-cursor-normal.webp", "hotspot": [53, 22]},
+    {"name": "interact", "texture": "res://assets/UI-map-cursor-interact.webp", "hotspot": [51, 22]},
+    {"name": "drag_ready", "texture": "res://assets/UI-map-cursor-drag_ready.webp", "hotspot": [108, 110]},
+    {"name": "dragging", "texture": "res://assets/UI-map-cursor-dragging.webp", "hotspot": [108, 110]},
+    {"name": "forbidden", "texture": "res://assets/UI-map-cursor-forbidden.webp", "hotspot": [47, 22]}
+  ]
+}

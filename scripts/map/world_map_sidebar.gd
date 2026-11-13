@@ -156,11 +156,14 @@ func _label(node_name: String, rect: Rect2, font: Font, font_size: int, color: C
 func display(location: Dictionary, region: Dictionary, counts: Dictionary) -> void:
 	location_name.text = location.name
 	_display_title(location.get("title_image",""))
-	phrase.text = location.phrase
-	description.text = location.description
-	var path: String = location.picture
-	if not _pictures.has(path): _pictures[path] = load(path)
-	picture.texture = _pictures[path]
+	phrase.text = location.get("phrase", "")
+	description.text = location.get("description", "")
+	var path: String = location.get("picture", "")
+	picture.visible = not path.is_empty()
+	picture.texture = null
+	if picture.visible:
+		if not _pictures.has(path): _pictures[path] = load(path)
+		picture.texture = _pictures[path]
 	region_name.text = region.name
 	connections.text = "、".join(region.connected_regions)
 	region_description.text = region.get("compact_description",region.description)

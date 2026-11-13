@@ -24,7 +24,6 @@ var _backdrop: Control
 var _battle_emblem: BattleActionButton
 var _duel_emblem_art: Texture2D
 var _replay_emblem_art: Texture2D
-const REPLAY_EMBLEM_RISE := 84.0
 const REPLAY_EMBLEM_SCALE := 0.6*0.95
 var _status: Label
 var _bag_button: Button
@@ -116,6 +115,7 @@ func _fit_native_layout() -> void:
 	size = LAYOUT_SIZE
 	scale = Vector2.ONE * factor
 	position = ((available - LAYOUT_SIZE * factor) * 0.5).round()
+	_align_replay_emblem.call_deferred()
 
 func _build_ui() -> void:
 	var ui_theme := Theme.new()
@@ -158,8 +158,8 @@ func _build_ui() -> void:
 	root.add_child(header)
 	var identity := _art("res://assets/UI-battle-logo.webp")
 	identity.name = "GameTitle"
-	identity.size = Vector2(268, 88)
-	identity.position = Vector2(36, 12)
+	identity.size = Vector2(452.25, 148.5)
+	identity.position = Vector2(-47, -10)
 	header.add_child(identity)
 	_timer_frame = PanelContainer.new()
 	_timer_frame.anchor_left = 0.5
@@ -272,6 +272,7 @@ func _build_ui() -> void:
 	arena.sort_children.connect(func():
 		ally_panel.position.y = -7.5
 		enemy_panel.position.y = -7.5
+		_align_replay_emblem.call_deferred()
 	)
 	_build_log()
 	_build_replay_controls()
@@ -522,7 +523,7 @@ func _set_replay(enabled:bool)->void:
 	replay_active=enabled
 	_battle_emblem.artwork=_replay_emblem_art if enabled else _duel_emblem_art
 	var emblem_size := _replay_emblem_art.get_size()*REPLAY_EMBLEM_SCALE if enabled else Vector2(216,216)
-	var center_y := -20.0-(REPLAY_EMBLEM_RISE if enabled else 0.0)
+	var center_y := -20.0
 	_battle_emblem.custom_minimum_size=emblem_size
 	_battle_emblem.offset_left=-emblem_size.x*.5
 	_battle_emblem.offset_right=emblem_size.x*.5
@@ -530,14 +531,37 @@ func _set_replay(enabled:bool)->void:
 	_battle_emblem.offset_bottom=center_y+emblem_size.y*.5
 	_battle_emblem.pivot_offset=emblem_size*.5
 	_battle_emblem.queue_redraw()
+	if enabled:
+		_align_replay_emblem.call_deferred()
+	elif enemy_panel != null and not enemy_panel.cards.is_empty():
+		enemy_panel.cards[0].position.y = TeamPanel.ACTOR_Y_OFFSET
 	replay_filter="all"
 	_replay_controls.select_filter("all")
 	for panel in [ally_panel,enemy_panel]:
 		if panel==null:continue
 		for board:InventoryView in panel.bags:
 			board.replay_mode=enabled
+			board.replay_tooltip_center = _replay_item_info_center
 			board.replay_filter="all"
 			board.queue_redraw()
+
+func _align_replay_emblem() -> void:
+	if not replay_active or ally_panel.cards.is_empty() or enemy_panel.cards.is_empty():
+		return
+	var ally_portrait := ally_panel.cards[0].portrait
+	var enemy_card := enemy_panel.cards[0]
+	var ally_center := ally_portrait.get_global_rect().get_center()
+	var enemy_center := enemy_card.portrait.get_global_rect().get_center()
+	# The player's enlarged frame previously raised its circle slightly.
+	# Align the enemy group to that circle only while viewing the replay.
+	enemy_card.position.y += (ally_center.y - enemy_center.y) / enemy_card.get_global_transform().get_scale().y
+	var local_center := get_global_transform().affine_inverse() * ally_center
+	_battle_emblem.position.y = local_center.y - _battle_emblem.size.y * 0.5
+
+func _replay_item_info_center() -> Vector2:
+	var emblem := _battle_emblem.get_global_transform_with_canvas() * Rect2(Vector2.ZERO, _battle_emblem.size)
+	var filters := _replay_controls.get_global_transform_with_canvas() * Rect2(Vector2.ZERO, _replay_controls.size)
+	return Vector2(emblem.get_center().x, (emblem.end.y + filters.position.y) * 0.5 - 8)
 
 func _open_battle_record() -> void:
 	if manager.simulation == null: return

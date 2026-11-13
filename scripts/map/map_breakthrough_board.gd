@@ -79,6 +79,9 @@ func recovery_origin(event: Dictionary) -> Vector2:
 func _gui_input(_event: InputEvent) -> void:
 	pass
 
+func cursor_hover_state(_point: Vector2) -> int:
+	return GameCursorManager.State.NORMAL
+
 func _begin_drag(_data: Dictionary) -> void:
 	pass
 

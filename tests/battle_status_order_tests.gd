@@ -51,7 +51,7 @@ func run() -> void:
 	check(shown(grid) == ["润脉","流血"],"expired status removed and others keep order")
 	grid.show_all_for_testing = true
 	grid.refresh(owner)
-	check(shown(grid).size() == 21 and shown(grid)[0] == "反锋","test preview retains full reference ordering")
+	check(shown(grid).size() == 26 and shown(grid)[0] == "反锋","test preview retains full reference ordering")
 	grid.show_all_for_testing = false
 	grid.refresh(owner)
 	check(shown(grid) == ["润脉","流血"],"normal mode restores chronological order")

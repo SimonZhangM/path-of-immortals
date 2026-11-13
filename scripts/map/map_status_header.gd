@@ -2,6 +2,7 @@ class_name MapStatusHeader
 extends Control
 
 const BASE_WIDTH := 1920.0
+const DEFAULT_TITLE_IMAGE := "res://assets/map-title-qshw-complete.webp"
 const PLAYER_FRAMES = preload("res://scripts/presentation/player_portrait_frames.gd")
 const RESOURCE_PATHS := ["res://assets/map-head.webp", "res://assets/map-head2.webp", "res://assets/map-head3.webp",
 	"res://assets/player-status-health.webp", "res://assets/player-status-stamina.webp", "res://assets/player-status-spirit.webp",
@@ -9,7 +10,7 @@ const RESOURCE_PATHS := ["res://assets/map-head.webp", "res://assets/map-head2.w
 
 static func startup_textures(title_image: String) -> Array:
 	var paths: Array = RESOURCE_PATHS.duplicate()
-	paths.append(title_image if not title_image.is_empty() else "res://assets/map-title-qshw.webp")
+	paths.append(title_image if not title_image.is_empty() else DEFAULT_TITLE_IMAGE)
 	paths.append_array(PLAYER_FRAMES.paths.values())
 	paths.append_array(PLAYER_FRAMES.portrait_paths.values())
 	return paths
@@ -82,22 +83,17 @@ func configure(status: MapPlayerStatus, config: Dictionary, title_image := "") -
 	connection.antialiased = true
 	connection.gradient = Gradient.new()
 	# Keep the hanging cord behind head3; the plaque stays fixed with the header.
-	var title_region := Rect2(46, 0, 236, 1031)
-	var title_size := title_region.size * 0.36
-	var title_origin := Vector2(18, 128)
-	if not title_image.is_empty():
-		if not ResourceLoader.exists(title_image, "Texture2D"):
-			return "地图标题图片不存在。"
-		var title_texture := load(title_image) as Texture2D
-		title_region = Rect2(title_texture.get_image().get_used_rect())
-		if not title_region.has_area(): return "地图标题图片没有可见内容。"
-		# Same hanging axis and height as the river plaque, preserving source aspect.
-		title_size = title_region.size * (371.16 / title_region.size.y)
-		title_origin.x += (84.96-title_size.x)*0.5
-	else:
-		title_image = "res://assets/map-title-qshw.webp"
+	if title_image.is_empty(): title_image = DEFAULT_TITLE_IMAGE
+	if not ResourceLoader.exists(title_image, "Texture2D"):
+		return "地图标题图片不存在。"
+	var title_texture := load(title_image) as Texture2D
+	var title_region := Rect2(title_texture.get_image().get_used_rect())
+	if not title_region.has_area(): return "地图标题图片没有可见内容。"
+	# All complete plaques share the existing hanging axis and display height.
+	var title_size := title_region.size * (371.16 / title_region.size.y)
+	var title_origin := Vector2(60.48 - title_size.x * 0.5, 128)
 	map_title = _image(title_image, title_region)
-	if title_image == "res://assets/map-title-qingshizhen.webp":
+	if title_image == "res://assets/map-title-qingshizhen-complete.webp":
 		title_origin.y -= 2.0
 	map_title.name = "MapTitle"
 	map_title.position = title_origin

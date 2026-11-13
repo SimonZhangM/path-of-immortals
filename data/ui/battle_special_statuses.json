@@ -1,0 +1,7 @@
+[
+  {"name":"免疫","kind":"buff","icon":"res://assets/UI-battle-icon-20.webp","color_from":"坚韧","description":"毒蚀免疫：持续期间不会被施加毒蚀。仅代表当前实际生效的免疫范围，不代表免疫所有伤害或控制。"},
+  {"name":"麻痹","kind":"debuff","icon":"res://assets/UI-battle-icon-21.webp","color_from":"雷印","description":"麻痹期间无法发动攻击或法术；按实际战斗时间结束。"},
+  {"name":"冻结","kind":"debuff","icon":"res://assets/UI-battle-icon-22.webp","color_from":"寒霜","description":"冻结期间全盘计时暂停，相关反应与追击仍按既有规则结算；结束后继续原进度。"},
+  {"name":"定身","kind":"debuff","icon":"res://assets/UI-battle-icon-23.webp","color_from":"疲惫","description":"当前定身作用于武器：武器计时暂停，结束后继续原进度。"},
+  {"name":"雷盾","kind":"buff","icon":"res://assets/UI-battle-icon-24.webp","color_from":"雷蕴","description":"雷蕴转化的特殊护盾，按层承伤并优先于普通灵盾。被攻击击破时触发麻痹，吸收率与麻痹时长受已学功法影响。"}
+]

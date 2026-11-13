@@ -4,6 +4,7 @@ extends GridContainer
 const COLUMNS := 8
 const ICON_SIDE := 32.0
 const LAYER_FONT_SIZE := 13
+const SpecialStatuses = preload("res://scripts/presentation/battle_special_status_view.gd")
 # The battle layout is scaled by 4/3 at native 2K: 0.375 becomes 0.5px.
 const OUTLINE_RADIUS := 0.375
 var show_all_for_testing := false
@@ -32,6 +33,10 @@ func configure() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var paths := ItemTooltip.status_keyword_icons()
 	var kinds := ItemTooltip.status_keyword_kinds()
+	if not element_buffs_only:
+		for word: String in SpecialStatuses.definitions():
+			paths[word] = SpecialStatuses.definitions()[word].icon
+			kinds[word] = SpecialStatuses.definitions()[word].kind
 	var ordered: Array[String] = []
 	for kind in ["buff", "debuff"]:
 		for word: String in paths:
@@ -119,13 +124,18 @@ func refresh(current_member: PartyMemberState) -> void:
 		hide()
 		return
 	var any_visible := false
+	var simulation: BattleSimulation = manager.simulation if is_instance_valid(manager) else null
+	var special := SpecialStatuses.snapshot(member, simulation)
 	for word: String in slots:
 		var layers := T01CombatRules.layers(member,word)
 		if word == "毒蚀" and layers == 0: layers = member.toxin_stacks
 		var shown := show_all_for_testing or layers > 0
-		slots[word].visible = shown
-		counts[word].visible = layers > 0
 		var text := str(layers) if layers > 0 else ""
+		if SpecialStatuses.definitions().has(word):
+			shown = show_all_for_testing or special.has(word)
+			text = str(special.get(word, {}).get("badge", ""))
+		slots[word].visible = shown
+		counts[word].visible = not text.is_empty()
 		if counts[word].text != text:
 			counts[word].text = text
 			for edge: Label in counts[word].get_children(): edge.text = text

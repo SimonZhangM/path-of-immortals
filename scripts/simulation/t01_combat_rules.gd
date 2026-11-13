@@ -624,6 +624,7 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 			extra.erase("spell")
 			extra.replay_sources=enchant.get("replay_sources",[])
 			extra.replay_damage_kind="damage_status"
+			extra.replay_status="兵刃附魔"
 			extra.erase("replay_flat_support")
 			extra.damage_pct = -reduction
 			extra.adjusted = true
@@ -640,6 +641,7 @@ func _attack_item(owner: PartyMemberState, target: PartyMemberState, item: ItemD
 		flame_source.erase("replay_flat_support")
 		flame_source.replay_sources=flame_origins
 		flame_source.replay_damage_kind="damage_status"
+		flame_source.replay_status="附炎"
 		flame_source.damage_pct = -reduction + art.bonus(owner, "fire", 2, "蕴火", .1) + art.bonus(owner, "fire", 4, "炎势炽盛", .2)
 		var value := adjusted_damage(owner, target, flame, "法术型", "base.element.fire", at, flame_source, true)
 		flame_source.adjusted = true

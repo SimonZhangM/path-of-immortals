@@ -150,18 +150,14 @@ func _process(_delta: float) -> void:
 		var member: PartyMemberState = members[0]
 		status_icons.refresh(member)
 		var parts: PackedStringArray = []
-		if not member.thunder_shields.is_empty():
-			parts.append("雷盾 " + "/".join(member.thunder_shields.map(func(value): return EffectSystem.number_text(value))))
 		if not member.sword_screen.is_empty(): parts.append("剑幕 %s" % EffectSystem.number_text(member.sword_screen.value))
 		var now: int = manager.simulation.state.time_usec
-		if member.frozen_until > now: parts.append("冻结 %.1fs" % ((member.frozen_until - now) / 1000000.0))
-		if member.paralyzed_until > now: parts.append("麻痹 %.1fs" % ((member.paralyzed_until - now) / 1000000.0))
 		if manager.simulation.timeline != null:
 			for control: Dictionary in manager.simulation.timeline.controls.values():
-				if control.member == member and control.kind != "freeze" and control.until > now:
+				if control.member == member and control.kind not in ["freeze", "root"] and control.until > now:
 					parts.append("%s %.1fs" % [CombatTimeline.CONTROL_NAMES[control.kind],(control.until-now)/1000000.0])
 		for effect_id: String in member.temporary_effects:
-			if effect_id == "weakness": continue
+			if effect_id in ["weakness", "toxin_immunity"]: continue
 			if member.temporary_effects[effect_id].until > now:
 				var item := manager.registry.get_item(effect_id)
 				parts.append("%s %.1fs" % [item.display_name if item != null else {"toxin_immunity":"毒蚀免疫","wind_accuracy":"乘风留影"}.get(effect_id,effect_id), (member.temporary_effects[effect_id].until - now) / 1000000.0])
